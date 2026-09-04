@@ -19,7 +19,10 @@
 const assert = require('assert');
 const { loadClient } = require('./lib-dom');
 
-// One card, wired the way the real page nests it, with counting stubs on the two source buttons.
+// BOTH swipeable cards, wired the way the real page nests them, with counting stubs on the three
+// source buttons. v89_g added the entry card; before it, `#sum-sumtext` was left DETACHED here and
+// two sections asserted it was out of scope — an assertion that was only ever true because the
+// harness has no page tree, and that v89_g made false in the real app. It is built now.
 function open() {
   const C = loadClient({ quiet: true });
   C.run(`
@@ -34,15 +37,35 @@ function open() {
     text.innerHTML = '<span id="plain-span">plain text</span>' +
                      '<mark class="story-vocab-hl wp-tap" id="hl-mark">Wort</mark>';
     sb.innerHTML = '<span id="sb-icon">A</span>';
-    document.getElementById('sum-sumtext').innerHTML = '<span id="sum-plain-span">summary</span>';
 
-    var nextCalls = 0, prevCalls = 0;
+    // The ENTRY card, same shape: #summary-screen > #sum-body > #sum-sumtext, with the machinery in
+    // the sibling #sum-nav-modal. Verified against index.html.
+    var sumScreen = document.getElementById('summary-screen');
+    var sumBody   = document.getElementById('sum-body');
+    var sumText   = document.getElementById('sum-sumtext');
+    var sumModal  = document.getElementById('sum-nav-modal');
+    var sumSb     = document.getElementById('sum-storyboard');
+    sumScreen.appendChild(sumBody); sumBody.appendChild(sumText);
+    sumScreen.appendChild(sumModal); sumModal.appendChild(sumSb);
+    sumText.innerHTML = '<span id="sum-plain-span">summary</span>';
+    sumSb.innerHTML = '<span id="sum-sb-icon">B</span>';
+
+    // The STORY-FINISHED card, built so "out of scope" is a claim about the real page rather than
+    // an artefact of the harness having no page tree. It is deliberately absent from _SWIPE_CARDS.
+    var finScreen = document.getElementById('finished-screen');
+    var finStory  = document.getElementById('fin-story');
+    finScreen.appendChild(finStory);
+    finStory.innerHTML = '<span id="fin-span">finished</span>';
+
+    var nextCalls = 0, prevCalls = 0, sumNextCalls = 0;
     var next = document.getElementById('comp-next'), prev = document.getElementById('comp-prev');
+    var sumNext = document.getElementById('sum-next');
     next.onclick = function(){ nextCalls++; };
     prev.onclick = function(){ prevCalls++; };
-    next.style.display = ''; prev.style.display = '';
-    next.disabled = false;   prev.disabled = false;
-    window.__calls = function(){ return { nextCalls: nextCalls, prevCalls: prevCalls }; };
+    sumNext.onclick = function(){ sumNextCalls++; };
+    next.style.display = ''; prev.style.display = ''; sumNext.style.display = '';
+    next.disabled = false;   prev.disabled = false;   sumNext.disabled = false;
+    window.__calls = function(){ return { nextCalls: nextCalls, prevCalls: prevCalls, sumNextCalls: sumNextCalls }; };
     window.getSelection = function(){ return { isCollapsed: true, rangeCount: 0 }; };
     true;`, 'open');
   return C;
@@ -59,10 +82,10 @@ function swipe(C, startId, dx, dy) {
 {
   const C = open();
   assert.strictEqual(swipe(C, 'plain-span', -120, 4), true, 'a clear leftward swipe navigates');
-  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0 },
+  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0, sumNextCalls: 0 },
     'swiping LEFT presses comp-next exactly once (the card moves away to the left = forward)');
   assert.strictEqual(swipe(C, 'plain-span', 120, -4), true, 'a clear rightward swipe navigates');
-  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 1 },
+  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 1, sumNextCalls: 0 },
     'swiping RIGHT presses comp-prev exactly once — the two directions are genuinely distinguishable');
 }
 console.log('  swipe left = comp-next, swipe right = comp-prev, one press each: OK');
@@ -74,7 +97,7 @@ console.log('  swipe left = comp-next, swipe right = comp-prev, one press each: 
   const C = open();
   assert.strictEqual(swipe(C, 'hl-mark', -120, 0), true, 'a swipe starting ON a highlighted word still navigates');
   assert.strictEqual(swipe(C, 'comp-story-panel', -120, 0), true, 'and one starting on the panel around it');
-  assert.deepStrictEqual(calls(C), { nextCalls: 2, prevCalls: 0 }, 'both reached comp-next');
+  assert.deepStrictEqual(calls(C), { nextCalls: 2, prevCalls: 0, sumNextCalls: 0 }, 'both reached comp-next');
 }
 console.log('  a swipe over a highlighted word, or over the card chrome, navigates like any other: OK');
 
@@ -84,25 +107,31 @@ console.log('  a swipe over a highlighted word, or over the card chrome, navigat
   assert.strictEqual(swipe(C, 'plain-span', -40, 0), false, 'a 40px drag is under the 60px minimum');
   assert.strictEqual(swipe(C, 'plain-span', -80, -200), false, 'a mostly-VERTICAL drag is a scroll, not a swipe');
   assert.strictEqual(swipe(C, 'plain-span', 0, 0), false, 'a stationary touch (a tap) does nothing');
-  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0 }, 'none of the three navigated');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 0 }, 'none of the three navigated');
   // Non-vacuity: the same start element with a qualifying gesture DOES fire, so §3 is the geometry
   // talking and not some other state this fixture happens to be in.
   assert.strictEqual(swipe(C, 'plain-span', -80, -30), true, 'the same element with a horizontal-enough drag does navigate');
-  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0 }, 'and it pressed comp-next');
+  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0, sumNextCalls: 0 }, 'and it pressed comp-next');
 }
 console.log('  short, stationary and mostly-vertical drags are all ignored; a horizontal one is not: OK');
 
-// ── 4. Scope: only the progress card, and not its ☰ popup ──────────────────────────────────────
+// ── 4. Scope: the two swipeable cards, and neither of their ☰ popups ───────────────────────────
+// ⚠️ REWRITTEN at v89_g. This section used to assert the ENTRY card was out of scope; the user asked
+// for it to be IN scope, so that claim inverted. Its replacement is `#finished-screen`, which really
+// is absent from `_SWIPE_CARDS` — and, unlike the old fixture's detached `#sum-sumtext`, is built
+// into the tree here, so "out of scope" is a claim about the page rather than about the harness.
 {
   const C = open();
-  assert.strictEqual(swipe(C, 'sum-plain-span', -120, 0), false,
-    'the ENTRY card is out of scope — this is not a page-wide gesture');
+  assert.strictEqual(swipe(C, 'fin-span', -120, 0), false,
+    'the STORY-FINISHED card is out of scope — this is not a page-wide gesture');
   assert.strictEqual(swipe(C, 'sb-icon', -120, 0), false,
     'inside #comp-nav-modal is out of scope — the popup\'s own horizontally-scrolling chapter strip keeps its drag');
   assert.strictEqual(swipe(C, 'comp-nav-modal', -120, 0), false, 'and the popup backdrop itself');
-  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0 }, 'none of the out-of-scope starts navigated');
+  assert.strictEqual(swipe(C, 'sum-sb-icon', -120, 0), false, 'likewise inside the ENTRY card\'s own popup');
+  assert.strictEqual(swipe(C, 'sum-nav-modal', -120, 0), false, 'and its backdrop');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 0 }, 'none of the out-of-scope starts navigated');
 }
-console.log('  the gesture is scoped to the progress card and excludes its ☰ popup: OK');
+console.log('  the gesture is scoped to the two swipeable cards and excludes both ☰ popups: OK');
 
 // ── 5. A hidden or disabled arrow is not reachable by swiping ──────────────────────────────────
 // A gesture has no greyed state of its own to show, so it must respect the state the card resolved.
@@ -112,13 +141,13 @@ console.log('  the gesture is scoped to the progress card and excludes its ☰ p
   assert.strictEqual(swipe(C, 'plain-span', 120, 0), false, 'a HIDDEN comp-prev (no previous chapter) is not reachable');
   C.run(`document.getElementById('comp-next').disabled = true; true;`);
   assert.strictEqual(swipe(C, 'plain-span', -120, 0), false, 'a DISABLED comp-next is not reachable');
-  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0 }, 'neither fired');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 0 }, 'neither fired');
   // Non-vacuity: restoring each state restores the swipe.
   C.run(`document.getElementById('comp-prev').style.display = '';
          document.getElementById('comp-next').disabled = false; true;`);
   assert.strictEqual(swipe(C, 'plain-span', 120, 0), true, 'shown again, comp-prev is reachable');
   assert.strictEqual(swipe(C, 'plain-span', -120, 0), true, 'enabled again, comp-next is reachable');
-  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 1 }, 'and each fired exactly once');
+  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 1, sumNextCalls: 0 }, 'and each fired exactly once');
 }
 console.log('  a hidden or disabled arrow cannot be pressed by swiping; restoring it restores the swipe: OK');
 
@@ -128,7 +157,7 @@ console.log('  a hidden or disabled arrow cannot be pressed by swiping; restorin
   const C = open();
   C.run(`window.getSelection = function(){ return { isCollapsed: false, rangeCount: 1, toString: function(){ return 'picked words'; } }; }; true;`);
   assert.strictEqual(swipe(C, 'plain-span', -120, 0), false, 'a horizontal drag that SELECTED text does not navigate');
-  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0 }, 'nothing fired');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 0 }, 'nothing fired');
   C.run(`window.getSelection = function(){ return { isCollapsed: true, rangeCount: 0 }; }; true;`);
   assert.strictEqual(swipe(C, 'plain-span', -120, 0), true, 'with the selection collapsed, the identical gesture does navigate');
 }
@@ -142,14 +171,14 @@ console.log('  a drag that selected text stays a selection, not a swipe: OK');
     _cardSwipeEnd({ changedTouches: [{ clientX: ${endX}, clientY: 300 }] });
     true;`, 'drive');
   drive(`[{ clientX: 200, clientY: 300 }]`, 60);
-  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0 },
+  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0, sumNextCalls: 0 },
     'one finger travelling 140px left, through the real touch handlers, presses comp-next');
   drive(`[{ clientX: 200, clientY: 300 }, { clientX: 260, clientY: 300 }]`, 60);
-  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0 },
+  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0, sumNextCalls: 0 },
     'the SAME travel with TWO fingers down is a pinch and navigates nothing — count unchanged');
   // A touchend with no recorded start (the two-finger case left none) must not throw or navigate.
   C.run(`_cardSwipeEnd({ changedTouches: [{ clientX: 60, clientY: 300 }] }); true;`, 'orphan-end');
-  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0 }, 'an orphan touchend is inert');
+  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0, sumNextCalls: 0 }, 'an orphan touchend is inert');
 }
 console.log('  the touch handlers pass a one-finger swipe through and drop a two-finger one: OK');
 
@@ -287,13 +316,13 @@ console.log('  the axis locks once: horizontal drags move the card and preempt t
   assert.strictEqual(C.run(`_cardSwipeNav({ x: 200, y: 300, axis: 'y',
     target: document.getElementById('plain-span') }, { x: 40, y: 310 })`), false,
     'a gesture the lock called a SCROLL does not navigate even when its END delta qualifies');
-  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0 }, 'nothing fired');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 0 }, 'nothing fired');
   // Non-vacuity: the identical numbers with an x lock DO navigate, so §12 is the lock talking and
   // not the geometry.
   assert.strictEqual(C.run(`_cardSwipeNav({ x: 200, y: 300, axis: 'x',
     target: document.getElementById('plain-span') }, { x: 40, y: 310 })`), true,
     'the same numbers with an x lock DO navigate');
-  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0 }, 'and that one pressed comp-next');
+  assert.deepStrictEqual(calls(C), { nextCalls: 1, prevCalls: 0, sumNextCalls: 0 }, 'and that one pressed comp-next');
 }
 console.log('  a scroll that curves sideways still does not navigate: OK');
 
@@ -340,7 +369,7 @@ console.log('  a direction with nowhere to go gets a short hard wall; a live one
   assert.ok(/^transform \.22s/.test(sprung.transition), 'and EASES back rather than jumping: ' + sprung.transition);
   assert.strictEqual(sprung.userSelect, '', 'selection is handed back');
   assert.strictEqual(sprung.dragging, false, 'and the drag is over');
-  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0 }, 'a 30px drag committed nothing');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 0 }, 'a 30px drag committed nothing');
 
   // Committed (a full swipe left): SNAPS, and the transform is already gone by the time the
   // destination's handler runs — asserted from INSIDE that handler, which is the only place the
@@ -392,11 +421,11 @@ console.log('  an abandoned drag eases home; a committed one snaps back BEFORE t
 console.log('  touchcancel, a second finger, an empty touchmove and an orphan touchend all put the card back: OK');
 
 // ── 16. Out of scope means no drag at all ──────────────────────────────────────────────────────
-// The drag and the commit share `_cardSwipeInScope`, so this is the same boundary §4 asserts — but
+// The drag and the commit share `_cardSwipeCardFor`, so this is the same boundary §4 asserts — but
 // asserted on the VISUAL half, which would otherwise be free to move a card that then refuses.
 {
   const C = open();
-  for (const id of ['sum-plain-span', 'sb-icon']) {
+  for (const id of ['fin-span', 'sb-icon', 'sum-sb-icon']) {
     C.run(`document.getElementById('comp-body').style.transform = '';
       _cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById(${JSON.stringify(id)}) });
       _cardSwipeMove({ touches: [{ clientX: 300, clientY: 302 }], cancelable: false }); true;`);
@@ -406,5 +435,75 @@ console.log('  touchcancel, a second finger, an empty touchmove and an orphan to
   }
 }
 console.log('  a drag starting outside the progress card moves nothing: OK');
+
+// ══ v89_g — the ENTRY card swipes too ══════════════════════════════════════════════════════════
+// User: "the swipe should also work on the entry/summary card." That card has NO back button at all
+// (see INTERNALS: only `sum-next` got a header duplicate, there is no `sum-sum-prev`), so it is the
+// case that proves `prev: null` needs no special handling anywhere — it flows into the SAME
+// "nothing there" answer a hidden or disabled arrow already produced.
+
+// ── 17. Forward works; backward has nowhere to go ──────────────────────────────────────────────
+{
+  const C = open();
+  assert.strictEqual(swipe(C, 'sum-plain-span', -120, 4), true, 'a swipe LEFT on the entry card navigates');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 1 },
+    'and it presses sum-next — NOT the progress card\'s own comp-next');
+  assert.strictEqual(swipe(C, 'sum-plain-span', 120, -4), false,
+    'a swipe RIGHT does nothing: this card has no back button, which is the same answer a hidden arrow gives');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 1 }, 'nothing else fired');
+  // The geometry rules are the card table's, not a second copy: the same rejections apply here.
+  assert.strictEqual(swipe(C, 'sum-plain-span', -40, 0), false, 'under the 60px minimum, on this card too');
+  assert.strictEqual(swipe(C, 'sum-plain-span', -80, -200), false, 'and a mostly-vertical drag');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 1 }, 'still one press total');
+}
+console.log('  the entry card swipes forward to sum-next and has nowhere to go backward: OK');
+
+// ── 18. It drags ITS OWN body, and never the other card's ──────────────────────────────────────
+// ⚠️ The failure this catches is a card table that resolves the SCREEN correctly but still moves the
+// hard-coded `#comp-body` — which would look right on the progress card and move an invisible
+// element on the entry card.
+{
+  const C = open();
+  // `|| ''` because the harness's style object returns UNDEFINED for a property never set, while a
+  // property the product cleared reads as ''. Both mean "not moved"; the distinction is the stub's,
+  // not the app's.
+  const bodies = () => JSON.parse(C.run(`JSON.stringify({
+    comp: document.getElementById('comp-body').style.transform || '',
+    sum:  document.getElementById('sum-body').style.transform || '' })`));
+  C.run(`_cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('sum-plain-span') });
+         _cardSwipeMove({ touches: [{ clientX: 160, clientY: 302 }], cancelable: false }); true;`);
+  assert.deepStrictEqual(bodies(), { comp: '', sum: 'translateX(-40px)' },
+    'dragging the entry card moves #sum-body and leaves #comp-body alone');
+  C.run(`_cardSwipeCancel();
+         _cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('plain-span') });
+         _cardSwipeMove({ touches: [{ clientX: 160, clientY: 302 }], cancelable: false }); true;`);
+  assert.deepStrictEqual(bodies(), { comp: 'translateX(-40px)', sum: '' },
+    'and dragging the progress card moves #comp-body and leaves #sum-body alone');
+}
+console.log('  each card drags its own body and never the other one\'s: OK');
+
+// ── 19. The dead BACKWARD direction gets the short wall on this card ───────────────────────────
+// The entry card is where `_SWIPE_DEAD_MAX` is not an edge case but the normal state of one
+// direction, so it is worth pinning here as well as on a hidden arrow.
+{
+  const C = open();
+  const tf = () => C.run(`document.getElementById('sum-body').style.transform || ''`);
+  C.run(`_cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('sum-plain-span') });
+         _cardSwipeMove({ touches: [{ clientX: 500, clientY: 302 }], cancelable: false }); true;`);
+  assert.strictEqual(tf(), 'translateX(24px)', 'pulling BACKWARD on the entry card stops at the short wall');
+  C.run(`_cardSwipeCancel();
+         _cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('sum-plain-span') });
+         _cardSwipeMove({ touches: [{ clientX: -100, clientY: 302 }], cancelable: false }); true;`);
+  const live = tf();
+  assert.ok(/^translateX\(-(8[0-9]|9[0-5])px\)$/.test(live),
+    'while FORWARD, which has a destination, gets the full travel: ' + live);
+  // And releasing an over-pulled dead direction still just springs home, committing nothing.
+  C.run(`_cardSwipeStart({ touches: [{ clientX: 200, clientY: 300 }], target: document.getElementById('sum-plain-span') });
+         _cardSwipeMove({ touches: [{ clientX: 500, clientY: 302 }], cancelable: false });
+         _cardSwipeEnd({ changedTouches: [{ clientX: 500, clientY: 302 }] }); true;`);
+  assert.strictEqual(tf(), '', 'and it returns home on release');
+  assert.deepStrictEqual(calls(C), { nextCalls: 0, prevCalls: 0, sumNextCalls: 0 }, 'having committed nothing');
+}
+console.log('  on the entry card the backward direction is a short wall that commits nothing: OK');
 
 console.log('unit-card-swipe-nav: ALL PASSED');

@@ -2191,6 +2191,79 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_g — the swipe reaches the entry card, and WHICH cards swipe becomes a table
+
+User: *"the swipe should also work on the entry/summary card."* **ZERO `ui.json` keys.**
+
+### A table, not a second copy
+
+The two cards are the same shape — a `.comp-body` with the machinery in a sibling ☰ popup that owns
+its own drags — so the hard-coded ids became `_SWIPE_CARDS`:
+
+```
+{ screen: 'complete-screen', modal: 'comp-nav-modal', body: 'comp-body', next: 'comp-next', prev: 'comp-prev' }
+{ screen: 'summary-screen',  modal: 'sum-nav-modal',  body: 'sum-body',  next: 'sum-next',  prev: null }
+```
+
+`_cardSwipeInScope` became `_cardSwipeCardFor(target)` → the row or null, and `_cardSwipeBtnFor` took
+a second argument. Both the drag and the commit read the same row, so they still cannot disagree.
+
+**The entry card has NO back button at all** (only `sum-next` ever got a header duplicate; there is
+no `sum-sum-prev`) — and `prev: null` needed **no special case anywhere**. It flows into
+`_cardSwipeBtnFor` returning null, which the drag already rendered as the short `_SWIPE_DEAD_MAX`
+wall and the commit already refused. That is the payoff of `v89_e` having put those two rules in one
+place.
+
+`#finished-screen` is deliberately NOT in the table — it was not asked for, and adding it is one row.
+`id="sum-body"` is the only new markup.
+
+### ⚠️ Two assertions had to INVERT, and why that is the interesting part
+
+`unit-card-swipe-nav` §4 and §16 pinned *"the ENTRY card is out of scope — this is not a page-wide
+gesture."* That claim was **only ever true because the harness has no page tree**: the fixture set
+`#sum-sumtext`'s innerHTML but never attached it under `#summary-screen`, so `closest()` found
+nothing. The assertion passed for a reason that had nothing to do with the product, and `v89_g` made
+it false in the real app.
+
+Both sections now use **`#finished-screen`**, which genuinely is absent from the table — and the
+fixture BUILDS it, so "out of scope" is a claim about the page rather than about the stub. Same
+correction for the entry card itself: it is nested properly now
+(`#summary-screen` > `#sum-body` > `#sum-sumtext`, and `#summary-screen` > `#sum-nav-modal`).
+
+**This is the standing "a guard can become an assertion of the wrong thing without ever going red"
+rule arriving from the third direction in one line** — after `v89_d`'s `Array.isArray`, `v89_e`'s
+`|| !APP._swipeEl` and `v89_f`'s too-weak fixture.
+
+### Verified live on the entry card
+
+Real `TouchEvent`s against the running app:
+
+- **backward** (300px pull, no destination): `translateX(24px)` — the short dead wall — `#comp-body`
+  untouched, springs home, still on `#summary-screen`. **Nothing committed.**
+- **forward** (300px pull): `translateX(-91px)`, the full damped travel; release left transform and
+  transition both **empty** (a snap) and landed on `#complete-screen`.
+
+### Guards
+
+`unit-card-swipe-nav.test.js`, 16 sections → **19**. The new ones pin that a swipe on the entry card
+presses `sum-next` and **not** `comp-next`, that backward does nothing, that **each card drags its
+OWN body** (§18 — the failure it catches is a table that resolves the SCREEN correctly but still
+moves the hard-coded `#comp-body`, which would look right on one card and move an invisible element
+on the other), and that the dead direction still springs home committing nothing.
+
+**Nine mutations red; two stayed GREEN and both were UNFALSIFIABLE CODE, now removed** — not weak
+tests:
+
+- `id && document.getElementById(id)` — a null id yields no element in a browser, and the
+  `typeof onclick` check catches it either way, so the extra condition only made the real checks
+  harder to falsify.
+- `APP._swipeCard = null` in `_cardSwipeDragEnd` — `_swipeEl` is the "am I dragging" flag and
+  `_swipeCard` is only ever read while it is set, so nulling it was hygiene on a reference to a
+  static table row that leaks nothing.
+
+Both removals follow `v89_e`'s own precedent, and the two checks that now carry those cases
+(`display === 'none'`, `typeof onclick`) were re-mutated and are red.
+
 ## ✅ v89_f — the backfill: the corpus's own form labels, repaired
 
 User: *"yes, do the backfill"*. **ZERO `ui.json` keys.** Run for real against `lessons.json`:

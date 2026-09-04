@@ -2213,6 +2213,19 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_g` — the swipe reaches the ENTRY card; which cards swipe becomes a TABLE** (user request)
+
+| what | where |
+|---|---|
+| the table | `_SWIPE_CARDS` (index.html) — `{screen, modal, body, next, prev}` per card. `complete-screen`/`comp-body`/`comp-next`/`comp-prev`, and `summary-screen`/`sum-body`/`sum-next`/**`prev: null`**. `#finished-screen` is deliberately absent; adding it is one row |
+| resolution | `_cardSwipeInScope` became **`_cardSwipeCardFor(target)`** → the row or null; `_cardSwipeBtnFor(dx, card)` took a second argument. The drag and the commit read the SAME row, so they still cannot disagree |
+| ⚠️ **`prev: null` needed no special case** | the entry card has no back button at all (only `sum-next` ever got a header duplicate — there is no `sum-sum-prev`). Null flows into `_cardSwipeBtnFor` returning null, which the drag already rendered as the short `_SWIPE_DEAD_MAX` wall and the commit already refused. That is the payoff of `v89_e` having put those two rules in one place |
+| new markup | `id="sum-body"` on `#summary-screen`'s `.comp-body`, the only addition |
+| ⚠️ **TWO ASSERTIONS HAD TO INVERT** | `unit-card-swipe-nav` §4/§16 pinned "the ENTRY card is out of scope". That was true **only because the harness has no page tree** — the fixture set `#sum-sumtext`'s innerHTML but never attached it under `#summary-screen`, so `closest()` found nothing and the assertion passed for a reason unrelated to the product. Both now use `#finished-screen`, which genuinely is absent from the table, and the fixture BUILDS it — so "out of scope" is a claim about the page, not the stub. Third direction the "a guard can become an assertion of the wrong thing without going red" rule arrived from in one line |
+| live-verified on the entry card | backward (300px, no destination) → `translateX(24px)`, `#comp-body` untouched, springs home, still on `#summary-screen`, **nothing committed**; forward (300px) → `translateX(-91px)`, release left transform AND transition empty (a snap) and landed on `#complete-screen` |
+| the acceptance tests | `unit-card-swipe-nav.test.js`, 16 → **19 sections**. §18 is the load-bearing new one: **each card drags its OWN body** — the failure it catches is a table that resolves the SCREEN correctly and still moves the hard-coded `#comp-body`, which looks right on one card and moves an invisible element on the other |
+| ⚠️ **two mutations stayed GREEN, both UNFALSIFIABLE CODE — removed, not excused** | `id && document.getElementById(id)` (a null id yields no element in a browser, and the `typeof onclick` check catches it either way) and `APP._swipeCard = null` in `_cardSwipeDragEnd` (`_swipeEl` is the drag flag; `_swipeCard` is only ever read while it is set). Both follow `v89_e`'s own precedent, and the checks that now carry those cases were re-mutated and are red |
+
 **`v89_f` — the BACKFILL: the corpus's own form labels, repaired** (user request; ran for real —
 15 lessons, 28 of 60 items rewritten, the rest already correct)
 
