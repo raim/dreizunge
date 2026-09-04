@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_n` cut
+# Session prompt — written at the `v89_o` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_n`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_o`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -174,6 +174,16 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   space, what was RULED OUT by reading the source (the type list IS rendered for a one-panel comic —
   `_genArcApplicable()` returns `n >= 1` for non-LLM modes), and an explicit **do not attempt a fix
   before reading the server log**.
+- **`v89_o`** — ⚠️ **DIAGNOSED from the user's server log, and it is a one-line cause.** A
+  **one-chapter book silently discards every selected lesson type**: `_runBookJob`'s arc block is
+  gated on **`i >= 1`**, so for a single photographed panel or one-chunk PDF (`i` is only ever `0`)
+  the whole block is skipped. The log shows the five types RECEIVED and echoed back
+  (`arc=[standard,word_forms,inflections,conjugation,comprehension]`) and then `Lesson 1/1` — one
+  standard lesson, nothing else. ⚠️ **It needs a RULING, not a patch**: the tick-list reads as "which
+  types should each chapter get", the code is built as "which types reinforce EARLIER chapters".
+  Separately, the same log line shows **`continuedFrom=-`** — the lineage was lost CLIENT-side, the
+  server never received it, and that send path reading controls the learner's route may never have
+  populated is now a THREE-TIME hazard (`AL`, `v86_v`, here).
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -244,7 +254,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 98 storylines, 33 languages, 758 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_n'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_o'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

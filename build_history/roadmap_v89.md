@@ -36,8 +36,11 @@ this file stays current through the whole v89 line.
 | **THE LARGER PLAN** | the folded `implementation_plan.md`. Cite it as `PLAN §X`. **A bare `§3` is this file's item; `PLAN §3` is Track C.** `PLAN §12`, `PLAN §7.0` Track A (CP1-5), and `PLAN §13` are ALL fully shipped. `PLAN §7.0` CP6 remains open (a CONDITIONAL, not a queued slice). `PLAN §2.4` / Track A4 (comic/image ingest) is fully shipped as its FOUR-milestone core plus several `v85`/`v86`/`v87`/`v88`-line follow-ups. |
 
 Standing rules are in the "Rules earned in session 28…34" blocks, plus two more from the `v83` line,
-three from the `v84` line, six from the `v85` line, EIGHT from the `v86` line, and the `v88` line's
-own block below — read the **"⚠️ How the rules are NUMBERED"** note before citing one. The `v87`
+three from the `v84` line, six from the `v85` line, EIGHT from the `v86` line, the `v88` line's own
+block below, and **TEN from the `v89` line** — read the **"⚠️ How the rules are NUMBERED"** note
+before citing one. ⚠️ **`v89`'s rule 1 is the one to read first if you are about to make a large
+mechanical edit to a file**: a substring used to BOUND an edit deleted 2,518 lines of this very
+document, and only a commit made minutes earlier saved it. The `v87`
 line's rules are in `roadmap_v87.md`'s own copy.
 
 ## ⚠️ Session protocol — READ FIRST
@@ -131,51 +134,57 @@ in the carried sections further down and, where noted, in the older roadmaps.*
 
 **🆕 Raised by the user at the `v89_m` cut:**
 
-- **⚠️ A comic-sourced chapter lost its "continued from" — CONFIRMED from the data, cause NOT yet
-  found.** User report: for `sl_1758031306` they had selected several lesson types AND
-  "continued from" to extend `sl_143869450`; both looked lost.
+- **⚠️⚠️ A one-chapter book SILENTLY DISCARDS every selected lesson type — DIAGNOSED, not fixed.**
+  User report, then the user supplied the server log for the run itself, expecting it to be post-hoc.
+  **It was the run, and it closes the investigation completely.**
 
-  **Measured, not guessed:**
-  - `tp_17885199795390000039` ("Hub Domburg", user-pasted photo of a sign) has **no
-    `continuedFromId` and no `continuedFrom`**, and landed in a NEW one-chapter storyline.
-  - **Every other user-pasted chapter in the corpus has one** and joined `sl_143869450` (8 of 8
-    checked). So the path DOES normally work — this is a specific failure, not a dead feature.
-  - ⚠️ **The lesson half was ALSO a real loss.** An earlier version of this entry called it a race —
-    the chapter read `lessons: []` and had entries minutes later — and **that was wrong**. The user
-    corrected it: *"i restarted those manually."* The entries that appeared were their own re-adds,
-    and the job labels said so at the time (`Adding word_forms lesson` is `/api/lessons/add-lesson`,
-    NOT the book job). **The evidence was in hand and read the wrong way round.** The original
-    generation produced **zero** lessons. (The 65 s translation, against a 12–16 s norm, remains
-    true and still indicates a loaded box — but it explains slowness, not emptiness.)
+  ```
+  Book generation started: 1 chapter(s) (from upload), id=book_8c0ac123f3a75740
+    lang=nl srcLang=de difficulty=1 format=standard
+    arc=[standard,word_forms,inflections,conjugation,comprehension]  arcScript=off  continuedFrom=-
+  [book …] chapter 1/1: "Flexvervoer…" arc[+standard,word_forms,inflections,conjugation,comprehension]
+  [qwen3.6:35b-a3b] Lesson 1/1…
+  Done in 239.7s — 2067 total tokens
+  ```
 
-  **RULED OUT by reading the source (so nobody re-checks these):**
-  - *"The type list was never rendered for a one-panel comic."* No. `_applyLessonCardUI` renders it
-    under `!skip && _genArcApplicable()`, and `_genArcApplicable()` returns **`n >= 1` for non-LLM
-    modes** — true for a single panel. The `APP.numChapters > 1` gate is on `onNumChaptersSlider`'s
-    call site only, which the comic path does not use. The user could and did see the list.
-  - *"`comicCreateChapter` never sends these fields."* No — it sends `continuedFrom`, `skipLessons`,
-    and `arc`/`arcTypes`. Item `AL` fixed the missing-`continuedFrom` bug already.
+  The five types were **sent, received and echoed back**; `skipLessons` was NOT set; and exactly
+  **one** lesson was generated — `Lesson 1/1`, the standard one.
 
-  **What is left, and why none of it is conclusive from the source alone:**
-  1. **`skipLessons` was true.** It is the only mechanism found that yields *exactly zero* lessons,
-     and the route forces `arc:false` when it is set — which would discard the selected types too,
-     explaining BOTH symptoms with one cause. ⚠️ **But it does not explain the lost lineage**
-     (`continuedFrom` is sent regardless), and `_applyLessonCardUI` HIDES the arc row when skip is
-     checked, so the user could not have picked types while it was on — unless they picked first and
-     ticked skip after.
-  2. **Two independent losses**, both from card-3/card-1 controls not being in the state the send
-     path reads. ⚠️ `comicOpenReview`'s own comment records the *inverse* failure already
-     (`v86_v`: the card auto-opening meant `#gen-skip-lessons-cb` "is still at its default and
-     comicCreateChapter() read it as generate everything"), which establishes that **this send path
-     reading card 3's controls when the learner's journey did not go through card 3 is a KNOWN
-     hazard shape here** — just previously seen in the other direction.
-  3. The book job errored mid-way after the early `lessons: []` save (`v69_q`'s crash-recovery
-     save). The 65 s translation says the box was loaded, so a timeout is plausible.
+  **THE CAUSE, one line in `_runBookJob` (server.js):**
 
-  **The decisive artifact is the server log for that job**, and it separates all three in one read:
-  `generate()` logs `Continuing from: "…"` on receipt, the route logs the resolved lesson plan, and a
-  failure logs itself. ⚠️ **Do not attempt a fix before reading it** — three live hypotheses and a
-  silent send path is exactly the shape that produces a confident wrong patch.
+  ```js
+  // Arc reinforcement lessons. Reinforcement only begins from the SECOND chapter…
+  if (!base.skipLessons && base.arc && i >= 1 && Array.isArray(data.lessons)) {
+  ```
+
+  ⚠️ **`i >= 1`.** For a one-chapter book — **every photographed comic panel and every one-chunk
+  PDF** — `i` is only ever `0`, so the block never runs and every selected type is discarded in
+  silence, *after being logged back as though honoured*. That echo is what made it hard to see.
+
+  **It is a UI/server MISMATCH, and each half is defensible alone:**
+  - Client: `_genArcApplicable()` returns **`n >= 1` for non-LLM modes**, so the tick-list renders
+    and is settable for a single panel (`v89_n` verified this by reading the source).
+  - Server: `i >= 1` is right **if** these are reinforcement of PRIOR chapters — chapter 1 has none.
+
+  ⚠️ **So the fix needs a RULING, not a patch.** Do the ticks mean *"which lesson types should each
+  chapter get"* (server wrong for chapter 1) or *"which types reinforce earlier chapters"* (UI must
+  not offer them at `n === 1`)? The tick-list reads as the former to a user; the code is built as the
+  latter. **Whichever it is, silently discarding an explicit selection is the bug** — at minimum the
+  server should LOG the discard instead of echoing the types back.
+
+- **⚠️ "Continued from" was lost CLIENT-SIDE — the server never received it.** Same log line:
+  **`continuedFrom=-`**. `comicCreateChapter` sends
+  `document.getElementById('continue-select')?.value || null`, so an empty or unrendered picker sends
+  `null` silently. **The server is exonerated.** ⚠️ This send path reading card-1/card-3 controls
+  that the learner's route may never have populated is now a **THREE-TIME hazard**: item `AL` (the
+  field was never sent at all), `v86_v` (the same shape inverted — an auto-opened card meant
+  `#gen-skip-lessons-cb` was read at its default), and now this. **Worth fixing as a class**: have
+  the send path ASSERT its inputs rather than `?.value || null` them away.
+
+- **⚠️ The chapter-title post-pass failed silently in the same run.** `Chapter-title post-pass failed:
+  no usable titles after 3 attempts` — which is why the chapter kept the raw first-40-characters
+  placeholder as its title. Visible in the log, invisible in the app. Separate defect, recorded here
+  because it came from the same evidence.
 
 - **⚠️ The static build cannot offer the LLM-free alphabet course.** `build-static.js` BAKES
   `window.SCRIPTS_DATA` into `docs/index.html`, and `loadScripts()` exists precisely to pick it up
@@ -2475,6 +2484,61 @@ Known violations inventoried in `INTERNALS.md` → "Design principle"; the worst
 
 ---
 
+## Rules earned in the v89 line
+
+*The incident behind each lives in this file's own entry for that release.*
+
+1. **⚠️ A substring search used to BOUND AN EDIT is the containment defect wearing a different hat,
+   and it destroys files rather than shipping a bug** (`v89_o`). Two independent `.index()` calls
+   were used to bracket a roadmap section for replacement. The closing marker — an open-list bullet —
+   also existed, almost identically worded, inside a SHIPPED entry hundreds of lines below; the only
+   difference was a period inside the bold. The edit deleted **2,518 lines**: every shipped entry,
+   both new planning sections, and every standing-rules block. Recovered only because the file had
+   been committed minutes earlier.
+   **Bound an edit by an ASSERTED line range, or by `count(...) == 1` over the WHOLE region — never
+   by two searches that are each individually plausible.** This is rule 1 of the `v88` line
+   ("assert on the delimited value, never on 'the string appears somewhere'") applied to the editing
+   tool instead of to a test, and it was being cited elsewhere in the same session while being
+   violated here.
+2. **⚠️ COMMIT BEFORE A LARGE MECHANICAL EDIT.** The only reason `v89_o` cost minutes instead of a
+   session was that `v89_n` had just been committed. Treat "the working tree is the only copy" as the
+   actual risk it is.
+3. **When a diagnosis needs a SERVER-SIDE ARTIFACT, ask for it FIRST and stop analysing** (`v89_o`).
+   Three releases went to one bug report: `v89_m` called it a race (wrong), `v89_n` corrected that and
+   narrowed to three hypotheses, `v89_o` closed it from a single log the user had all along. **The log
+   was named as decisive at `v89_m` and would have ended it there.** Two releases were spent narrowing
+   a hypothesis space one line of log collapsed to nothing.
+4. **A label in evidence you already hold is evidence** (`v89_n`). `Adding word_forms lesson` is
+   `/api/lessons/add-lesson`, the MANUAL route — quoted during the investigation, then reasoned past,
+   producing a confident "race, not a loss" that the user had to correct. **A chapter filling up is
+   not evidence of WHAT filled it.**
+5. **A server that ECHOES a parameter back is not a server that HONOURED it** (`v89_o`). The book job
+   logged `arc=[standard,word_forms,inflections,conjugation,comprehension]` and then built one
+   standard lesson, because the arc block is gated on `i >= 1`. **A log line that reports intent
+   rather than outcome actively hides the defect** — prefer logging what was DONE, and log discards
+   explicitly.
+6. **⚠️ Reproduce the INTERACTION, not the STATE** (`v89_k`). `v89_i` measured a popover's rect from a
+   programmatically-set selection plus a bare synthetic `touchend` — a sequence that never reaches the
+   handlers under suspicion — concluded it was healthy, and shipped a fix for the wrong thing. The bug
+   lived entirely in the two events the repro skipped.
+7. **A running server silently reverts every offline edit to `lessons.json`** (`v89_g`/`v89_h`). Now
+   in INTERNALS' silent-failure-modes section, with the recovery procedure. It ate a completed
+   backfill.
+8. **Measure the model, do not reason about its size** (`v89_l`). The cheapest model was the one
+   disqualified (a false ACCEPT, the one direction that must not fail), and a dense 12B was 4× slower
+   than a 3B-active MoE three times its size. **Active parameters, not parameter count, predicted
+   latency.**
+9. **An instruction is not a mechanism** (`v89_c`/`v89_d`). `PROMPTS.inflections` asked for
+   source-language labels for three release lines and was obeyed in **1 run of 3** even after
+   hardening. The fix that worked was a post-parse TRANSFORMATION the model cannot skip.
+10. **When a mutation stays GREEN, that is the finding — and ask WHICH of the two it is** (`v89_d`,
+    `v89_e`, `v89_f`, `v89_g`, `v89_k`). Five releases in this line hit it. Sometimes the GUARD was
+    unfalsifiable and had to go (`Array.isArray`, `|| !APP._swipeEl`); sometimes the guard was right
+    and the FIXTURE was too weak (`type !== 'inflections'`); sometimes an OLDER guard was masking the
+    new one (`v89_k`, twice in one file). **These have different fixes. Decide which before editing
+    either side.**
+
+
 ## Rules earned in the v88 line
 
 *Thirty-nine point releases. These are the ones that cost something to learn; the incident behind
@@ -2548,6 +2612,76 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_o — the log settled it: a one-chapter book discards every selected lesson type
+
+User supplied the server log for the failing run, expecting it to be post-hoc. **It was the run
+itself, and it closes the investigation completely.** **Documentation only — the fix needs a ruling
+first. ZERO `ui.json` keys.**
+
+### The evidence, in three lines
+
+```
+Book generation started: 1 chapter(s) (from upload), id=book_8c0ac123f3a75740
+  … arc=[standard,word_forms,inflections,conjugation,comprehension]  arcScript=off  continuedFrom=-
+[qwen3.6:35b-a3b] Lesson 1/1…
+```
+
+The five types were **sent, received and echoed back**. `skipLessons` was not set. Exactly **one**
+lesson was generated.
+
+### The cause: `i >= 1`
+
+```js
+// Arc reinforcement lessons. Reinforcement only begins from the SECOND chapter:
+// chapter 1 ships just its standard vocab lesson…
+if (!base.skipLessons && base.arc && i >= 1 && Array.isArray(data.lessons)) {
+```
+
+For a one-chapter book — **every single photographed comic panel and every one-chunk PDF** — `i` is
+only ever `0`. The block never runs. The types are discarded in silence, after being logged back as
+though they had been honoured, which is precisely what made this hard to see from the outside.
+
+### ⚠️ It is a UI/server mismatch, and needs a RULING rather than a patch
+
+| side | says |
+|---|---|
+| client | `_genArcApplicable()` returns **`n >= 1`** for non-LLM modes, so the tick-list renders and is settable for a single panel (`v89_n` verified this) |
+| server | `i >= 1` is correct **if** these are reinforcement of PRIOR chapters — chapter 1 has none |
+
+Do the ticks mean *"which lesson types should each chapter get"* (server wrong for chapter 1) or
+*"which types reinforce earlier chapters"* (UI must not offer them at `n === 1`)? **The tick-list
+reads as the former to a user; the code is built as the latter.** Whichever the user rules,
+**silently discarding an explicit selection is the bug** — and at minimum the server should log the
+discard instead of echoing the types back.
+
+### The other two findings from the same log
+
+- **`continuedFrom=-` — the lineage was lost CLIENT-side.** The server never received it, so it is
+  exonerated. `comicCreateChapter` sends `document.getElementById('continue-select')?.value || null`,
+  so an empty or unrendered picker sends `null` silently. ⚠️ **This send path reading card-1/card-3
+  controls the learner's route may never have populated is now a THREE-TIME hazard**: item `AL` (the
+  field was never sent at all), `v86_v` (the same shape inverted — an auto-opened card meant
+  `#gen-skip-lessons-cb` was read at its default), and now this. **Worth fixing as a class**: have
+  the send path assert its inputs rather than `?.value || null` them away.
+- **The chapter-title post-pass failed silently.** `no usable titles after 3 attempts` — which is why
+  the chapter kept the raw first-40-characters placeholder as its title. Visible in the log, invisible
+  in the app.
+
+### And one confirmation, unlooked for
+
+The same log shows `v89_j`'s answer re-check working in the user's own session:
+`"umsonst" vs "kostenlos" -> also_acceptable`, `"kostenlos" vs "gratis" -> wrong` (×3). Live, on real
+answers, with the conservative default holding.
+
+### The method note worth keeping
+
+Three releases were spent on this report: `v89_m` called it a race (wrong), `v89_n` corrected that and
+listed three hypotheses, and `v89_o` closed it from **one artifact the user had all along**. ⚠️ **The
+log was asked for at `v89_m` and would have ended the investigation there.** When a diagnosis needs a
+server-side artifact, ask for it FIRST and stop analysing — two of the three releases here were spent
+narrowing a hypothesis space that a single log line collapsed to nothing.
+
 
 ## ✅ v89_n — a correction: the missing lessons were a LOSS, not a race
 
