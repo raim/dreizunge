@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_h` cut
+# Session prompt — written at the `v89_i` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_h`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_i`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -121,6 +121,15 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   Also records two new user items in the open list: **a "wrong" answer that is also correct** (with
   the instance, and why an instruction alone is not a mechanism), and **the phone select-text→tutor
   popover**, diagnosed but NOT fixed.
+- **`v89_i`** — the phone select-text→tutor popover, FIXED. It is pinned to the **TOP of the VISIBLE
+  area** (`visualViewport.offsetTop + 8`, because `position:fixed` is relative to the LAYOUT
+  viewport and the two diverge as Android's URL bar collapses). ⚠️ **The durable lesson, now earned
+  twice: pinning to a fixed viewport EDGE is the losing move** — `v84_d` moved it to the bottom to
+  escape the Copy/Share toolbar, and the bottom is where Chrome draws *Touch to Search*. Both edges
+  belong to the browser. Verified in emulation: rect `top 8 / bottom 44` of 812, **768px clear of the
+  bottom band**, and identical for a completely different selection rect. ⚠️ **The Google bar itself
+  is NOT suppressed and cannot be** from a page — moving the popover out of its way is the whole
+  remedy available.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -191,7 +200,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_h'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_i'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

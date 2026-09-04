@@ -2231,6 +2231,20 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_i` — the phone select-text→tutor popover, out from under the browser's chrome** (user report,
+the SECOND for this same bug)
+
+| what | where |
+|---|---|
+| the placement | `_storySelShowPopover`'s touch branch (index.html): `top = visualViewport.offsetTop + _STORY_SEL_TOUCH_TOP`, `bottom:'auto'`, `left:50%`, `translateX(-50%)`. Desktop unchanged |
+| ⚠️ **the durable lesson, earned twice** | `v84_d` fixed this once by moving the popover OFF the selection and pinning it to the BOTTOM — and the bottom is where Android Chrome draws *Touch to Search*. **Pinning to a fixed viewport EDGE is the losing move**: both edges belong to the browser (selection toolbar follows the selection, Touch to Search owns the bottom, the URL bar the top) and a page can neither see nor out-z-index any of them. Pick the region the chrome does not use ON THIS GESTURE — here the top, because the story text always sits below a header |
+| ⚠️ why `visualViewport`, not `top:8px` | `position:fixed` is relative to the **LAYOUT** viewport; on Android Chrome the visual one shifts as the URL bar collapses. `visualViewport.offsetTop` is the only API that says where the visible area starts |
+| ⚠️ `bottom:'auto'` is explicit | a new `top` left beside a stale `bottom` stretches the element between them. Its own mutation is red |
+| ⚠️ **what was RULED OUT before changing anything** | reproduced under mobile emulation (375×812, `maxTouchPoints:5`, explorer ON): the popover was created, `position:fixed`, rect `top 700 / bottom 736` — INSIDE the viewport. So neither "explorer mode blocks it" nor "`--bottom-bar-h` collapsed to 0" was the cause. 76px from the bottom is simply inside Chrome's own band. **Both easy answers were wrong** |
+| verified after | same emulation, same selection: rect `top 8 / bottom 44` of 812 — **768px clear of the bottom band**, identical for a completely different selection rect, screenshotted with both buttons visible |
+| ⚠️ **NOT fixable from a page** | the Google *Touch to Search* bar itself. It is browser chrome; no page-side lever removes it. Moving the popover out of its way is the whole remedy — recorded in the code comment so nobody hunts for a switch that does not exist |
+| the acceptance tests | `unit-tutor-selection.test.js` §10, **RE-SCOPED** (it pinned `bottom-bar-h`, the very ruling this replaces). It now asserts the DURABLE claim separately from the current edge: a fixed, viewport-anchored, horizontally-centred spot that **does not depend on where the selection is** — a second call with a wildly different rect must land identically. Six mutations, all red |
+
 **`v89_g` — the swipe reaches the ENTRY card; which cards swipe becomes a TABLE** (user request)
 
 | what | where |

@@ -24394,20 +24394,49 @@ function _plainTextNoFurigana(html){
 // so touch devices get a different strategy entirely: a fixed spot well clear of wherever the
 // native toolbar draws, rather than trying to guess/avoid it. Desktop (mouse selection, no native
 // toolbar to collide with) keeps the original near-the-selection placement unchanged.
+//
+// ⚠️ v89_i — SECOND USER REPORT OF THE SAME BUG, and the reason the strategy above changed AGAIN.
+// The fix that comment describes pinned the popover to the BOTTOM. On Android Chrome the bottom is
+// where "Touch to Search" draws (the Google bar offering to search the selected words) — so the
+// popover went straight back under a different piece of browser chrome, and the feature read as
+// simply not working. Measured under mobile emulation before touching anything: the popover IS
+// created and IS inside the viewport (375×812, rect top 700 / bottom 736), so neither "explorer mode
+// blocks it" nor "--bottom-bar-h collapsed to 0" was the cause — both hypotheses were ruled out.
+// 76px from the bottom edge is simply inside Chrome's own band.
+//
+// THE LESSON, recorded because this is now twice: **pinning to a fixed viewport EDGE is the losing
+// move.** Both edges belong to the browser — the selection toolbar draws near the selection, Touch
+// to Search draws at the bottom, the URL bar at the top — and a page cannot see or out-z-index any
+// of them. What it CAN do is pick the region the chrome does not use on THIS gesture: the selection
+// toolbar follows the selection, and on these cards the story text sits below a header (and often a
+// comic image), so the top strip is free exactly when a story selection is being made. The popover
+// goes there.
+//
+// `visualViewport.offsetTop` rather than a bare `top: 8px`: `position:fixed` is relative to the
+// LAYOUT viewport, and on Android Chrome the two diverge as the URL bar collapses and expands. This
+// is the one API that reports where the visible area actually starts.
+//
+// ⚠️ NOT fixed, and not fixable from the page: the Google "Touch to Search" bar ITSELF. It is
+// browser chrome; no page-side lever removes it. Moving the popover out of its way is the whole
+// remedy available here — the bar is still there, it just no longer covers anything.
 function _isTouchDevice(){
   return ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0;
 }
+// How far below the top of the VISIBLE area the popover sits on touch.
+const _STORY_SEL_TOUCH_TOP = 8;
 function _storySelShowPopover(range){
   const pop = document.getElementById('story-sel-popover');
   if (!pop) return;
   _tutorApplyLabels();
   pop.style.display = 'flex';
   if (_isTouchDevice()){
-    // Pinned just above #bottom-bar (v84_d) — `position:fixed` so it stays put regardless of
-    // scroll, unlike the desktop path below which anchors to document coordinates.
+    // v89_i: pinned to the TOP of the VISIBLE area — see the block comment above for why not the
+    // bottom, and why not `top: 8px`. `position:fixed` so it stays put regardless of scroll, unlike
+    // the desktop path below which anchors to document coordinates.
     pop.style.position = 'fixed';
-    pop.style.top = 'auto';
-    pop.style.bottom = 'calc(var(--bottom-bar-h) + 12px)';
+    pop.style.bottom = 'auto';
+    pop.style.top = Math.round(((window.visualViewport && window.visualViewport.offsetTop) || 0)
+                               + _STORY_SEL_TOUCH_TOP) + 'px';
     pop.style.left = '50%';
     pop.style.transform = 'translateX(-50%)';
     return;

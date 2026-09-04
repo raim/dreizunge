@@ -173,8 +173,10 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   changes `markSolved`/BKT state, and a wrong verdict there corrupts progress rather than one
   question. Show the verdict, and decide the progress question separately.
 
-- **On a phone, the select-text→tutor popover is unusable (`PLAN §12`); it works on a laptop.** User
-  report with a screenshot. **Diagnosed at the `v89_h` cut, NOT yet fixed:**
+- ~~On a phone, the select-text→tutor popover is unusable~~ — **FIXED at `v89_i`** (pinned to the top
+  of the visible area via `visualViewport.offsetTop`). What REMAINS open from this report: **the
+  Google "Touch to Search" bar itself is not suppressed, and cannot be from a page.** The diagnosis
+  is kept below because its lesson outlives the fix:
   - **The popover IS created and IS placed correctly.** Reproduced under mobile emulation (375×812,
     `maxTouchPoints:5`, explorer mode ON as in the screenshot): `display:flex`, `position:fixed`,
     rect `top 700 / bottom 736` in an 812 viewport — inside it. So neither "explorer mode blocks it"
@@ -2241,6 +2243,69 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_i — the phone select-text→tutor popover, out from under the browser's chrome
+
+User request, after the diagnosis at `v89_h`: *"yes, do the popover fix."* **ZERO `ui.json` keys.**
+
+### ⚠️ The durable lesson, earned twice now
+
+`v84_d` fixed this bug once: the popover was hidden under the native **Copy / Share** toolbar, which
+mobile browsers draw right at the selection. Its fix was to stop anchoring near the selection and
+pin the popover to the **BOTTOM** instead. That is where Android Chrome draws **Touch to Search** —
+the Google bar offering to search the selected words — so the popover went straight back under a
+different piece of chrome, and the feature read as simply not working.
+
+> **Pinning to a fixed viewport EDGE is the losing move.** Both edges belong to the browser: the
+> selection toolbar follows the selection, Touch to Search owns the bottom, the URL bar the top.
+> A page can neither see nor out-z-index any of them.
+
+What a page CAN do is pick the region the chrome does not use **on this gesture**. The selection
+toolbar follows the selection, and on these cards the story text sits below a header (and often a
+comic image) — so the top strip is free exactly when a story selection is being made.
+
+| what | where |
+|---|---|
+| the placement | `_storySelShowPopover`'s touch branch (index.html) — `top = visualViewport.offsetTop + _STORY_SEL_TOUCH_TOP`, `bottom: auto`, `left: 50%`, `translateX(-50%)` |
+| ⚠️ why `visualViewport`, not `top: 8px` | `position:fixed` is relative to the **LAYOUT** viewport, and on Android Chrome the two diverge as the URL bar collapses and expands. `visualViewport.offsetTop` is the one API that reports where the visible area actually starts |
+| ⚠️ `bottom: 'auto'` is explicit | leaving the old `bottom` alongside a new `top` is how an element ends up stretched between the two. Its own mutation is red |
+| desktop | completely unchanged — mouse selection has no native toolbar to collide with, so the near-selection placement stays |
+
+### The diagnosis this rests on (from `v89_h`, kept here because it is what ruled out the easy answers)
+
+Reproduced under mobile emulation (375×812, `maxTouchPoints:5`, explorer mode ON as in the user's
+screenshot) **before changing anything**: the popover was `display:flex`, `position:fixed`, rect
+`top 700 / bottom 736` — created, and inside the viewport. So **neither** "explorer mode blocks it"
+**nor** "`--bottom-bar-h` collapsed to 0" was the cause; both were measured and ruled out. 76px from
+the bottom edge is simply inside Chrome's own band.
+
+### Verified after
+
+Same emulation, same selection: rect **`top 8 / bottom 44`** of an 812 viewport — **768px clear of
+the bottom band**, and nowhere near the mid-screen selection where the Copy/Share toolbar draws.
+Screenshotted: both buttons (🔤 Grammatik, 💬 Bedeutung) fully visible at the top while the
+selection stays highlighted in the story below.
+
+### ⚠️ NOT fixed, and not fixable from a page
+
+**The Google "Touch to Search" bar itself.** It is browser chrome; no page-side lever removes it.
+The user asked for it to be suppressed and the honest answer is that moving the popover out of its
+way is the whole remedy available here — the bar is still there, it just no longer covers anything.
+Recorded in the code comment so the next session does not go looking for a switch that does not
+exist.
+
+### Guards
+
+`unit-tutor-selection.test.js` §10 **RE-SCOPED, not deleted** — it pinned `bottom-bar-h`, which is
+exactly the ruling this cut replaces. It now asserts the durable claim separately from the current
+edge: touch gets a **fixed, viewport-anchored, horizontally-centred** spot that **does not depend on
+where the selection is** (a second call with a wildly different rect must land identically — the
+property that actually matters), plus the current top edge, the explicit `bottom: auto`, and that
+`visualViewport.offsetTop` is honoured (56 + 8 → `64px`).
+
+**Six mutations, all red**: going back to the bottom edge, leaving a stale `bottom`, ignoring
+`visualViewport.offsetTop`, re-anchoring horizontally to the selection, re-anchoring vertically to
+it, and giving touch the desktop placement.
 
 ## ✅ v89_h — a running server silently reverts every offline edit to `lessons.json`
 

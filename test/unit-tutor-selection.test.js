@@ -195,13 +195,25 @@ console.log('  popover: markup present, wired to both modes, labels localized: O
 }
 console.log('  ui.json: new selection-popover strings present, en only: OK');
 
-// ── 10. Touch devices get a DIFFERENT popover placement than desktop (v84_d) ────
+// ── 10. Touch devices get a DIFFERENT popover placement than desktop (v84_d, RE-RULED at v89_i) ──
 // User report: on a phone the popover WAS appearing, just hidden underneath the browser's OWN
 // native "Copy / Share" selection toolbar, which draws directly above the selection — a screen
 // position this page cannot see or out-z-index (it's browser-chrome UI, not part of the DOM).
 // Desktop (mouse selection, no native toolbar to collide with) keeps the original near-the-
-// selection placement; touch gets a fixed spot well clear of it instead of trying to guess/avoid
-// wherever the native toolbar happens to render.
+// selection placement; touch gets a fixed spot well clear of it.
+//
+// ⚠️ WHICH fixed spot is the part that changed, and this section's assertion changed WITH it rather
+// than being deleted. v84_d chose the BOTTOM (above #bottom-bar). A second user report showed that
+// is where Android Chrome draws "Touch to Search", so the popover went straight back under a
+// different piece of chrome. It is now pinned to the TOP of the VISIBLE area
+// (`visualViewport.offsetTop`, because `position:fixed` is relative to the LAYOUT viewport and the
+// two diverge as the URL bar collapses).
+//
+// The durable claim — the one worth keeping when this is re-ruled a third time — is NOT "bottom" or
+// "top". It is: touch gets a FIXED, viewport-anchored, horizontally-CENTRED spot that does not
+// depend on where the selection is, because every position near the selection belongs to the
+// browser. That is what the assertions below are written against, with the current edge pinned
+// explicitly and separately so a future change has to be deliberate.
 {
   // Desktop: no touch signals on `navigator`/`window` — the harness's own default sandbox shape.
   const desktop = loadClient({ quiet: true });
@@ -225,18 +237,41 @@ console.log('  ui.json: new selection-popover strings present, en only: OK');
     _storySelShowPopover({ getBoundingClientRect: () => ({ top: 300, left: 100, width: 50, height: 20 }) });
     ({ position: document.getElementById('story-sel-popover').style.position,
        bottom: document.getElementById('story-sel-popover').style.bottom,
+       top: document.getElementById('story-sel-popover').style.top,
        left: document.getElementById('story-sel-popover').style.left,
        transform: document.getElementById('story-sel-popover').style.transform });
   `, 'touch-popover');
   assert.strictEqual(tPop.position, 'fixed', 'touch: popover is fixed-positioned (viewport-relative, ignores scroll)');
-  assert.ok(/bottom-bar-h/.test(tPop.bottom), 'touch: pinned above #bottom-bar via the SAME shared height variable, not a re-guessed number');
   assert.strictEqual(tPop.left, '50%', 'touch: horizontally centered, not anchored to the (invisible-to-us) selection position');
   assert.strictEqual(tPop.transform, 'translateX(-50%)', 'touch: centering transform actually applied');
+  // v89_i: the TOP edge, and the bottom explicitly released — leaving a stale `bottom` alongside a
+  // new `top` is how an element ends up stretched between the two.
+  assert.strictEqual(tPop.bottom, 'auto', 'touch: the old bottom anchor is explicitly cleared, not just overridden');
+  assert.strictEqual(tPop.top, '8px', 'touch: pinned to the top of the visible area');
+  // ⚠️ The placement must not depend on the SELECTION's position: every spot near the selection is
+  // where the browser draws its own toolbar. A second call with a wildly different rect must land in
+  // exactly the same place.
+  const tPop2 = touch.run(`
+    _storySelShowPopover({ getBoundingClientRect: () => ({ top: 20, left: 5, width: 300, height: 90 }) });
+    ({ top: document.getElementById('story-sel-popover').style.top,
+       left: document.getElementById('story-sel-popover').style.left });
+  `, 'touch-popover-2');
+  assert.strictEqual(tPop2.top, tPop.top, 'touch: a completely different selection rect places the popover identically');
+  assert.strictEqual(tPop2.left, tPop.left, 'touch: horizontally too');
+
+  // `position:fixed` is relative to the LAYOUT viewport; on Android Chrome the VISUAL one shifts as
+  // the URL bar collapses. The offset must be honoured, or the popover drifts under the URL bar.
+  touch.run(`window.visualViewport = { offsetTop: 56, height: 700 }; true;`, 'seed-vv');
+  const tPop3 = touch.run(`
+    _storySelShowPopover({ getBoundingClientRect: () => ({ top: 300, left: 100, width: 50, height: 20 }) });
+    document.getElementById('story-sel-popover').style.top;
+  `, 'touch-popover-vv');
+  assert.strictEqual(tPop3, '64px', 'touch: visualViewport.offsetTop is added to the inset (56 + 8)');
 
   // Non-vacuity: the two paths really do disagree, not just on unrelated fields.
   assert.notStrictEqual(dPop.position, tPop.position, 'sanity: desktop and touch genuinely take different code paths');
 }
-console.log('  touch devices get a fixed, bar-adjacent popover placement; desktop keeps the near-selection one: OK');
+console.log('  touch gets a fixed, selection-independent popover pinned to the top of the VISIBLE area; desktop keeps the near-selection one: OK');
 
 // ── 11. A short tap on PLAIN story text advances, like Next (mobile follow-up) ──
 // User request: on the progress/entry cards, a short tap on plain (unhighlighted) story text
