@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_g` cut
+# Session prompt — written at the `v89_h` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_g`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_h`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -110,6 +110,17 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   §4/§16 pinned "the entry card is out of scope", and that was only ever true because the harness has
   no page tree and the fixture left `#sum-sumtext` DETACHED. The replacement out-of-scope surface is
   `#finished-screen`, and it is BUILT into the fixture, so the claim is about the page.
+- **`v89_h`** — ⚠️ **A RUNNING SERVER SILENTLY REVERTS EVERY OFFLINE EDIT TO `lessons.json`.**
+  `server.js` reads it ONCE at boot (`let store = loadStore()`) and `saveStore` writes its whole
+  in-memory copy, so a server already running holds a pre-edit snapshot and writes it back the next
+  time anything saves. It ate `v89_f`'s 28 backfilled items within minutes; found only by diffing the
+  worktree against the commit. Affects **every** `backfill-*.js` here. Now in INTERNALS' silent-
+  failure-modes section, and `backfill-inflection-labels.js` REFUSES to write while a server answers
+  (`serverIsAnswering`, `--force` overrides). **Recovering a clobber: do NOT `git checkout` the file**
+  — the clobbering write carries the other writer's genuine work too; re-apply content-keyed.
+  Also records two new user items in the open list: **a "wrong" answer that is also correct** (with
+  the instance, and why an instruction alone is not a mechanism), and **the phone select-text→tutor
+  popover**, diagnosed but NOT fixed.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -180,7 +191,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_g'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_h'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

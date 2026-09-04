@@ -13,7 +13,7 @@
 'use strict';
 const assert = require('assert');
 const path = require('path');
-const { planBackfill, applyPlan } = require(path.join(__dirname, '..', 'backfill-inflection-labels.js'));
+const { planBackfill, applyPlan, serverIsAnswering } = require(path.join(__dirname, '..', 'backfill-inflection-labels.js'));
 
 const item = (surfaceForm, choices, correctIndex, sentence) => ({
   sentence: sentence || ('Een zin met ' + surfaceForm + '.'), surfaceForm,
@@ -203,4 +203,43 @@ console.log('  a topic or lesson deleted between the read and the write is repor
 }
 console.log('  an unchanged reply writes nothing, and re-running a repair is not a second write: OK');
 
-console.log('unit-inflection-label-backfill: ALL PASSED');
+// ── 9. ⚠️ The running-server detector (v89_h) ──────────────────────────────────────────────────
+// server.js reads lessons.json ONCE at boot and saveStore writes its whole in-memory copy, so a
+// server that was already running holds a snapshot from before a backfill and reverts it the next
+// time anything saves. That is not hypothetical: it ate v89_f's 28 items within minutes, and only
+// the git diff showed it. The write refuses while a server answers, rather than printing a success
+// message for work that is about to be thrown away.
+(async () => {
+  const http = require('http');
+  // A port with nothing on it must NOT read as a live server — otherwise the refusal fires always
+  // and the backfill can never write at all.
+  const freePort = await new Promise((res) => {
+    const srv = http.createServer(() => {});
+    srv.listen(0, '127.0.0.1', () => { const p = srv.address().port; srv.close(() => res(p)); });
+  });
+  assert.strictEqual(await serverIsAnswering(freePort, 800), false,
+    'a port with nothing listening reads as no server — the refusal must not fire on a clean machine');
+
+  // Anything that ANSWERS is a live server, whatever it replies with: a 404 still means a process
+  // is holding lessons.json in memory, which is the thing that matters.
+  for (const status of [200, 404, 500]) {
+    const srv = http.createServer((req, res) => { res.writeHead(status); res.end('{}'); });
+    const port = await new Promise((r) => srv.listen(0, '127.0.0.1', () => r(srv.address().port)));
+    assert.strictEqual(await serverIsAnswering(port, 1500), true,
+      `a server replying ${status} still counts as running — it is the PROCESS that reverts the file, not the route`);
+    await new Promise((r) => srv.close(r));
+  }
+
+  // A port that accepts the connection and then says nothing must TIME OUT to false rather than
+  // hang the script forever.
+  const mute = http.createServer(() => {});   // never responds
+  const mutePort = await new Promise((r) => mute.listen(0, '127.0.0.1', () => r(mute.address().port)));
+  const t0 = Date.now();
+  assert.strictEqual(await serverIsAnswering(mutePort, 400), false, 'a silent port times out to false');
+  assert.ok(Date.now() - t0 < 3000, 'and does so promptly rather than hanging: ' + (Date.now() - t0) + 'ms');
+  await new Promise((r) => mute.close(r));
+
+  console.log('  the running-server detector: silent and dead ports read false, any answer reads true: OK');
+  console.log('unit-inflection-label-backfill: ALL PASSED');
+})().catch(e => { console.error(e); process.exit(1); });
+

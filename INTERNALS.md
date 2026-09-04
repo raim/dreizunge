@@ -77,6 +77,24 @@ reload. Not measured (no live Ollama in the dev container). If comprehension gen
 The dangerous class: things that produce a plausible result while doing the wrong thing. Nothing
 throws, no test necessarily fails, and the output looks fine.
 
+**⚠️ A RUNNING SERVER SILENTLY REVERTS EVERY OFFLINE EDIT TO `lessons.json` (`v89_g`).** `server.js`
+reads the file ONCE, at boot — `let store = loadStore()`, one call site — and `saveStore` writes its
+**whole in-memory copy**. So a server that was already running holds a snapshot from before any
+offline edit, and the next time anything saves (a learner answering ONE question is enough) it
+writes that snapshot back over it. Nothing throws, nothing warns, and the script that made the edit
+has already printed its success message.
+
+This is **not specific to one script**: every `backfill-*.js` here, and any hand-edit of
+`lessons.json`, is exposed. It cost `v89_f`'s 28 backfilled items, which were reverted within
+minutes and found only by diffing the worktree against the commit.
+
+- **Before an offline edit: stop or restart the server.** After one: restart it, so it reloads.
+- `backfill-inflection-labels.js` REFUSES to write while a server answers on the configured port
+  (`serverIsAnswering`, `--force` overrides) — the pattern to copy, not to reinvent.
+- **Recovering a clobbered edit: do NOT `git checkout` the file.** The clobbering write also carries
+  the user's own genuine work from the same window. Re-apply the edit onto the CURRENT file,
+  content-keyed (see `applyPlan`), and verify the other writer's changes survived.
+
 **A data drop can leave `docs/` behind the live corpus, and the FIXERS hide it (`v78_b`).** Both
 data-sensitive guards (`unit-static-freshness`, `unit-script-choice`) have a documented one-line
 remedy, and running it is what destroys the evidence about whether the remedy was right. At the

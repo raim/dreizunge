@@ -29,6 +29,7 @@
 // SKIPPED, never guessed at.
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 const llm = require('./llm.js');
 const {
   shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTokens,
@@ -103,7 +104,32 @@ function applyPlan(store, results) {
   return { applied, skipped };
 }
 
-module.exports = { planBackfill, applyPlan };
+// ⚠️ THE HAZARD THIS EXISTS FOR, found the hard way at v89_g. server.js reads lessons.json ONCE, at
+// boot (`let store = loadStore()`), and `saveStore` writes its WHOLE in-memory copy. So a running
+// server holds a snapshot from before this script ran, and the next time anything saves — a learner
+// answering one question is enough — it writes that snapshot back and every repair here is silently
+// GONE. That is exactly what happened to v89_f's 28 items: they were reverted within minutes, and
+// only the git diff showed it.
+//
+// This is NOT specific to this script: every backfill-*.js in this repo edits lessons.json offline
+// and is exposed to the same revert. It is recorded in INTERNALS' silent-failure-modes section.
+//
+// So the write REFUSES while a server is answering, rather than producing a success message for
+// work that is about to be thrown away. `--force` overrides, for the case where the operator knows
+// the server is about to be restarted anyway.
+function serverIsAnswering(port, timeoutMs) {
+  return new Promise((resolve) => {
+    const req = http.request({ host: '127.0.0.1', port, path: '/api/info', method: 'GET' }, (res) => {
+      res.resume();
+      resolve(res.statusCode > 0);   // anything that answers at all is a live server
+    });
+    req.setTimeout(timeoutMs || 1500, () => { req.destroy(); resolve(false); });
+    req.on('error', () => resolve(false));
+    req.end();
+  });
+}
+
+module.exports = { planBackfill, applyPlan, serverIsAnswering };
 
 // ── CLI ───────────────────────────────────────────────────────────────────────────────────────
 if (require.main === module) main();
@@ -116,6 +142,19 @@ async function main() {
   const TOPIC = argVal('--topic');
   const MODEL = argVal('--model') || process.env.OLLAMA_TRANSLATION_MODEL || process.env.OLLAMA_MODEL;
   if (!MODEL) { console.error('No model: pass --model <name> or set OLLAMA_TRANSLATION_MODEL.'); process.exit(1); }
+
+  const FORCE = ARGS.includes('--force');
+  const PORT = Number(argVal('--port') || process.env.PORT || 3000);
+  // Checked BEFORE the model calls, not after: ten minutes of generation followed by "refusing to
+  // write" would be the most annoying possible ordering.
+  if (WRITE && !FORCE && await serverIsAnswering(PORT)) {
+    console.error(`\n⛔ A server is answering on port ${PORT}.\n` +
+      `   It loaded lessons.json at boot and writes its whole in-memory copy on every save, so it\n` +
+      `   would silently REVERT this backfill the moment anyone answers a question. (That is not\n` +
+      `   hypothetical — it ate v89_f's 28 items within minutes.)\n\n` +
+      `   Stop or restart that server, then re-run. Use --force to write anyway.\n`);
+    process.exit(1);
+  }
 
   const store = JSON.parse(fs.readFileSync(FILE, 'utf8'));
   let plan = planBackfill(store, { topic: TOPIC });
@@ -173,4 +212,5 @@ async function main() {
   fs.copyFileSync(FILE, FILE + '.bak');
   fs.writeFileSync(FILE, JSON.stringify(fresh, null, 2));
   console.log(`\n✅ ${applied} item(s) written (backup at ${path.basename(FILE)}.bak)`);
+  console.log('   ⚠️ RESTART any server that was already running — it holds an older copy of this file');
 }

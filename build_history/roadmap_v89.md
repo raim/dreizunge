@@ -142,6 +142,57 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   where a form label is pure metalanguage with nothing to lose. Wants its own design pass — most
   likely a prompt that is told to leave quoted material alone, then a measurement like `v89_c`'s.
 
+**🆕 Raised by the user at the `v89_h` cut:**
+
+- **⭐ A "wrong" answer is sometimes ALSO CORRECT — a general defect across every MCQ type.** User
+  request: *"Note in the roadmap on a general problem: sometimes the wrong answer is actually also
+  correct. We should find strategies to either solve this or minimize its occurrence."*
+
+  **The instance they sent** (`Gratis und Kostenlos`, nl→de, `read_translate`): target `KOSTELOOS`,
+  options `This is incorrect.` / `KOSTENLOS` / `UMSONST` / `(das Bord stehen lassen)`, correct
+  answer `UMSONST`. **`KOSTENLOS` is a perfectly good German rendering** — arguably the closest one —
+  and the learner was marked wrong for it. ⚠️ Note also, though it is a DIFFERENT defect: one
+  distractor (`This is incorrect.`) is in ENGLISH in a German-source lesson.
+
+  The user named the two strategy families, and they are not alternatives — they are cheap-and-partial
+  vs. expensive-and-real:
+  1. **Minimise at GENERATION, via the prompt** — tell the model that a distractor must be wrong for
+     *this* item, not merely different. ⚠️ **`v89_c`/`v89_d` are the cautionary precedent**: the
+     inflections prompt asked for source-language labels for three whole release lines and was obeyed
+     in **1 run of 3** once hardened. **An instruction is not a mechanism.** Worth doing (it is
+     nearly free) and worth measuring the way `v89_c` did — never worth believing without the
+     measurement.
+  2. **Decide with a LIVE model**, either at generation (a QC pass over each option: "is this
+     genuinely wrong for THIS item?") or at answer time (only when the learner picked a "wrong" one,
+     so the cost is paid on the rare path). **The shapes already exist** — `qcCheckPair`/`callLLMQC`
+     for the first, and `POST /api/writing-feedback` (stateless, no job, graded live at play time)
+     for the second. Answer-time is the better bet: it costs nothing on correct answers, and a
+     "your answer is also acceptable" verdict is more useful to a learner than a silently-fixed
+     lesson.
+  ⚠️ **Do not ship (2) as a silent auto-accept.** A model deciding the learner was right after all
+  changes `markSolved`/BKT state, and a wrong verdict there corrupts progress rather than one
+  question. Show the verdict, and decide the progress question separately.
+
+- **On a phone, the select-text→tutor popover is unusable (`PLAN §12`); it works on a laptop.** User
+  report with a screenshot. **Diagnosed at the `v89_h` cut, NOT yet fixed:**
+  - **The popover IS created and IS placed correctly.** Reproduced under mobile emulation (375×812,
+    `maxTouchPoints:5`, explorer mode ON as in the screenshot): `display:flex`, `position:fixed`,
+    rect `top 700 / bottom 736` in an 812 viewport — inside it. So neither "explorer mode blocks it"
+    nor "`--bottom-bar-h` collapsed to 0" is the cause; both were measured and ruled out.
+  - **What is left is where 76px-from-the-bottom lands on a real Android Chrome**: its
+    *Touch to Search* bar draws over roughly the bottom 130–150 CSS px, and the native Copy/Share
+    toolbar draws near the selection. Both are BROWSER CHROME, not DOM — no z-index reaches them.
+    The popover is behind the Touch-to-Search bar in the user's screenshot.
+  - ⚠️ **This is the SECOND time this exact bug has been fixed.** The `v84`-era comment on
+    `_storySelShowPopover` records the first: the popover was hidden under the native Copy/Share
+    toolbar, and the fix was to pin it to the BOTTOM. That fix has now collided with a different
+    piece of chrome at the bottom. **Pinning to a fixed edge is the losing move; pick the region no
+    chrome uses (the TOP, below the app header) or place from `window.visualViewport`.**
+  - **The other half — "suppress the automatic Google search link" — is Chrome's Touch to Search,
+    and a page cannot remove it directly.** Do not promise it without testing on a real device;
+    the levers worth trying are consuming the tap (`preventDefault` on the story surfaces) and
+    `-webkit-touch-callout`, neither of which this session could verify from an emulator.
+
 **⚠️ Blocked on a user decision — do NOT start without one:**
 - **Card 2's green "✨ Generate" button is mislabelled** (`#comic-generate-btn` runs the TEXT
   EXTRACTION but is labelled `form.image_generate` = "✨ Generate"). Rewording costs that string's
@@ -2190,6 +2241,75 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_h — a running server silently reverts every offline edit to `lessons.json`
+
+Not a feature: a hazard found the hard way at the `v89_g` cut, and the two user items raised in the
+same window, recorded. **ZERO `ui.json` keys.**
+
+### What happened
+
+`v89_f` backfilled 28 inflection form labels and committed them. Minutes later the worktree copy was
+back to Dutch. The cause, read out of `server.js` rather than guessed:
+
+```
+line 756:  let store = loadStore();     // ONCE, at boot. The only call site.
+saveStore(s):  fs.writeFileSync(STORAGE_FILE, JSON.stringify(out, null, 2))   // the WHOLE in-memory copy
+```
+
+A server that was already running holds a snapshot from **before** any offline edit. The next time
+anything saves — **a learner answering one question is enough** — it writes that snapshot back over
+the edit. Nothing throws, nothing warns, and the script that made the edit has already printed its
+success message.
+
+**This is not specific to one script.** Every `backfill-*.js` in this repo edits `lessons.json`
+offline, as does any hand-edit. All of them are exposed. It is now in INTERNALS' **silent failure
+modes** section, which is where it belongs — the defining property is a plausible result while the
+wrong thing happens.
+
+### The guard
+
+`backfill-inflection-labels.js` REFUSES to write while a server answers on the configured port
+(`serverIsAnswering(port, timeoutMs)`, `--port`, `--force` to override). Checked **before** the model
+calls, not after — ten minutes of generation followed by "refusing to write" would be the most
+annoying possible ordering. A successful write now also prints *"restart any server that was already
+running"*.
+
+**Anything that answers counts as running**, including a 404 or a 500: it is the PROCESS holding the
+file in memory that reverts it, not the route. A silent port times out to `false` rather than
+hanging the script.
+
+### ⚠️ How to recover a clobber — do NOT `git checkout` the file
+
+The clobbering write also carries **the other writer's genuine work from the same window**. Here it
+carried a real story/`comicPanels`/`aiStory` edit to *"Strom fließt wieder"*. Re-apply the lost edit
+onto the CURRENT file, **content-keyed** (the same match `applyPlan` uses: topic id → lesson id →
+sentence + surfaceForm + option count), and verify the other writer's changes survived. Both were
+verified explicitly at `v89_g`: 28 items restored, their edit intact, 60 items with 0 broken
+invariants and 0 duplicate choice sets.
+
+### Guards
+
+`unit-inflection-label-backfill.test.js` §9 — a free port reads `false` (or the refusal would fire on
+a clean machine and the backfill could never write at all), 200/404/500 all read `true`, a silent
+port times out to `false` promptly. **Three mutations red**, one of them by HANGING the test, which
+is why the mutation runner needs its own `timeout`.
+
+⚠️ **Stated honestly: the refusal's WIRING into `main()` is not unit-covered** — `main()` is the CLI
+path, and removing the check leaves the suite green. It was verified by running the real command
+against the live server and reading the refusal it printed. The DETECTOR is what the tests pin.
+
+### Two user items recorded, not built
+
+Both are in **"🆕 Raised by the user at the `v89_h` cut"** in the open list, with the evidence:
+
+- **A "wrong" answer is sometimes also correct** — with the instance (`KOSTENLOS` marked wrong for
+  Dutch `kosteloos` in favour of `UMSONST`), the two strategy families the user named, and the
+  warning that `v89_c`/`v89_d` already proved an instruction is not a mechanism.
+- **The phone select-text→tutor popover** — DIAGNOSED under mobile emulation (the popover is created
+  and correctly placed; both obvious hypotheses were measured and ruled out) and **not fixed**. It is
+  the second time this exact bug has been fixed, and the lesson is that pinning to a fixed viewport
+  edge is the losing move.
 
 ## ✅ v89_g — the swipe reaches the entry card, and WHICH cards swipe becomes a table
 
