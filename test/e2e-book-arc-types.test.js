@@ -39,9 +39,23 @@ const { boot, post, waitBookJob, assert } = require('./lib');
     const ch2 = topics.find(t => t.continuedFromId === root.id);
     assert(ch2, 'a second chapter exists');
 
-    // Chapter 1 is the vocab gate only — the arc starts from chapter 2 (unchanged by v71_u).
-    assert((root.lessons || []).length === 1,
-      'chapter 1 is still the gate lesson only (got ' + (root.lessons || []).length + ')');
+    // ⚠️ RE-SCOPED at v89_p, not deleted. This asserted "chapter 1 is still the gate lesson only",
+    // which pinned exactly the `i >= 1` gate the user's ruling replaced: *"the ticks mean lesson
+    // types per chapter."* Chapter 1 now gets the ticked types too — that IS the change — so the
+    // assertion is inverted here rather than dropped, and the count is spelled out so a regression
+    // in either direction names itself.
+    const rootTypes = (root.lessons || []).map(l => l && (l.type || 'standard'));
+    console.log('  chapter 1 lesson types:', JSON.stringify(rootTypes));
+    for (const want of arcTypes) {
+      assert(rootTypes.includes(want),
+        'THE v89_p RULING: chapter 1 gets the ticked type "' + want + '" too — got ' + JSON.stringify(rootTypes));
+    }
+    // Its own standard gate lesson survives, and is NOT duplicated: 'standard' is filtered out of
+    // the arc loop because generate() already produced it whenever arc is on.
+    assert(rootTypes.filter(t => t === 'standard').length === 1,
+      'chapter 1 keeps exactly ONE standard lesson, not two (got ' + JSON.stringify(rootTypes) + ')');
+    assert((root.lessons || []).length === arcTypes.length + 1,
+      'chapter 1 has its gate lesson plus one per ticked type (got ' + (root.lessons || []).length + ')');
 
     const types = (ch2.lessons || []).map(l => l && (l.type || 'standard'));
     console.log('  chapter 2 lesson types:', JSON.stringify(types));
@@ -116,6 +130,68 @@ const { boot, post, waitBookJob, assert } = require('./lib');
     assert(/data\.lessons\.push\(lesson\);\s*\n[\s\S]{0,900}_persistGenerated\(data, contFrom, parent \? parent\.id : null\);/.test(arcLoopSrc),
       'the arc-reinforcement loop persists immediately after EACH successful lesson, not just once at the end of the whole chapter');
     console.log('  arc-reinforcement loop persists incrementally, per lesson (source check): OK');
+
+    // ── v89_p: THE REPORTED SHAPE — a ONE-chapter book from an upload ────────────────────────
+    // ⚠️ This is the case the whole cut exists for, and no test covered it. Every photographed comic
+    // panel and every one-chunk PDF is a one-chapter book, so `i` is only ever 0 and the arc block
+    // was skipped entirely. The user's own log: five types sent and echoed back, `Lesson 1/1`
+    // generated, four types silently gone.
+    //
+    // Driven through `chunks` (the upload path) rather than `generated`, because that is what
+    // comicCreateChapter()/pdfGenerateAll() actually send — the difference matters here, since the
+    // generated path could not produce a one-chapter book in the first place.
+    const soloTypes = ['word_forms', 'inflections', 'comprehension'];
+    const solo = await post(sport, '/api/generate-book', {
+      chunks: [{ title: 'Solo panel', text: 'Es war einmal ein Test. Die Katze und das Haus blieben gleich.',
+                 wordCount: 11 }],
+      lang: 'de', srcLang: 'en', difficulty: 2, lessonFormat: 'standard',
+      arc: true, arcTypes: ['standard', ...soloTypes] });
+    assert(solo.status === 202, 'one-chapter book accepted (got ' + solo.status + ' ' + solo.raw + ')');
+    const soloFinal = await waitBookJob(sport, solo.body.bookId);
+    assert(soloFinal && soloFinal.status === 'done',
+      'one-chapter book finished (status=' + (soloFinal && soloFinal.status) + ')');
+
+    const soloCh = (env.readStore().topics || []).find(t => t.userTopic === 'Solo panel' || t.topic === 'Solo panel');
+    assert(soloCh, 'the one-chapter book produced its chapter');
+    const soloLessonTypes = (soloCh.lessons || []).map(l => l && (l.type || 'standard'));
+    console.log('  one-chapter book lesson types:', JSON.stringify(soloLessonTypes));
+    for (const want of soloTypes) {
+      assert(soloLessonTypes.includes(want),
+        'THE REPORTED BUG: a one-chapter book honours the ticked type "' + want +
+        '" — got ' + JSON.stringify(soloLessonTypes));
+    }
+    // 'standard' was ticked AND generate() makes one: exactly one, never two.
+    assert(soloLessonTypes.filter(t => t === 'standard').length === 1,
+      'and "standard" appears exactly once even though it was ticked too (got ' +
+      JSON.stringify(soloLessonTypes) + ')');
+    console.log('  a ONE-chapter book honours every ticked type (v89_p): OK');
+
+    // ⚠️ 'review' is the one part of the old `i >= 1` reading that survives: on a first chapter
+    // there is no prior vocab, so a review would drill nothing. It must be skipped — and the skip
+    // must be VISIBLE in the log, because a silently-dropped type is the exact defect this cut
+    // exists to end.
+    const rev = await post(sport, '/api/generate-book', {
+      chunks: [{ title: 'Review probe', text: 'Es war einmal ein Test. Die Katze und das Haus blieben gleich.',
+                 wordCount: 11 }],
+      lang: 'de', srcLang: 'en', difficulty: 2, lessonFormat: 'standard',
+      arc: true, arcTypes: ['review', 'word_forms'] });
+    assert(rev.status === 202, 'review-probe book accepted');
+    const revFinal = await waitBookJob(sport, rev.body.bookId);
+    assert(revFinal && revFinal.status === 'done', 'review-probe book finished');
+    const revCh = (env.readStore().topics || []).find(t => t.userTopic === 'Review probe' || t.topic === 'Review probe');
+    const revTypes = (revCh.lessons || []).map(l => l && (l.type || 'standard'));
+    assert(revTypes.includes('word_forms'), 'the other ticked type is still generated: ' + JSON.stringify(revTypes));
+    // ⚠️ NOT asserted via `_arcMode === 'reinforce'` — that marker is set on EVERY arc lesson, not
+    // only reviews (see generateArcLesson's sharedGenOpts), so the first version of this assertion
+    // failed against a correct fix. A skipped 'review' is observable as the absence of a SECOND
+    // 'standard' lesson: generateArcLesson('review') produces one, titled "Review words".
+    assert(revTypes.filter(t => t === 'standard').length === 1,
+      'no review-of-nothing lesson on a first chapter — only the gate standard remains: ' + JSON.stringify(revTypes));
+    assert(!(revCh.lessons || []).some(l => l && l.title === 'Review words'),
+      'and nothing carries the review lesson\'s own title');
+    assert(/skipping arc type 'review' — no prior chapter to review/.test(env.srvlog()),
+      'and the skip is LOGGED with its reason, not silent — the defect this cut exists to end');
+    console.log('  "review" is skipped on a first chapter, and the skip says why: OK');
 
     console.log('e2e-book-arc-types: ALL PASSED');
   } catch (e) {

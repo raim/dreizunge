@@ -134,7 +134,9 @@ in the carried sections further down and, where noted, in the older roadmaps.*
 
 **🆕 Raised by the user at the `v89_m` cut:**
 
-- **⚠️⚠️ A one-chapter book SILENTLY DISCARDS every selected lesson type — DIAGNOSED, not fixed.**
+- ~~A one-chapter book silently discards every selected lesson type~~ — **FIXED at `v89_p`**
+  (the `i >= 1` gate removed; `standard` and parentless `review` filtered with logged reasons). The
+  diagnosis is kept below because its method note outlives the fix:
   User report, then the user supplied the server log for the run itself, expecting it to be post-hoc.
   **It was the run, and it closes the investigation completely.**
 
@@ -2612,6 +2614,93 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_p — a one-chapter book now honours every ticked lesson type
+
+User ruling on `v89_o`'s question: *"the ticks mean lesson types per chapter — fix the server."*
+**ZERO `ui.json` keys.**
+
+### The fix
+
+`_runBookJob`'s arc block was gated on **`i >= 1`**, so on a one-chapter book — **every photographed
+comic panel and every one-chunk PDF** — it never ran and every ticked type was discarded, *after the
+route had logged them back as if honoured*. The gate is gone.
+
+```js
+- if (!base.skipLessons && base.arc && i >= 1 && Array.isArray(data.lessons)) {
++ if (!base.skipLessons && base.arc && Array.isArray(data.lessons)) {
+```
+
+### Two types are FILTERED instead, and each skip is LOGGED
+
+⚠️ **The logging is not decoration.** `v89_o`'s own finding was that a route which echoes a parameter
+back while quietly dropping it is what makes this class of bug invisible for months. So each skip
+now prints its reason.
+
+- **`'standard'`** — `generate()` above **already** produced this chapter's standard lesson
+  (`lessonFormat` is forced to `'standard'` whenever `base.arc` is set), so generating it again in
+  the loop is a straight duplicate. ⚠️ **That duplicate is PRE-EXISTING for chapters 2+**, not
+  introduced here. It is removed for **every** chapter rather than left inconsistent — opening the
+  gate for chapter 1 would otherwise have added a second copy there too.
+  *(Context, not attribution: 80 of 344 corpus chapters carry more than one `standard` lesson.
+  Several routes can produce that, so the number does not prove this path caused them.)*
+- **`'review'` when there is no parent** — it drills the vocab of PRIOR chapters
+  (`vocabMode:'reinforce'` over `chainVocab`); on a first chapter that list is empty, so it would
+  review nothing. **This is the one part of the old `i >= 1` reading that survives the ruling**, and
+  it survives narrowly: for this type only.
+
+### ⚠️ The guard that pinned the old ruling was RE-SCOPED, not deleted
+
+`e2e-book-arc-types.test.js` asserted *"chapter 1 is still the gate lesson only"* — **exactly the
+`i >= 1` behaviour the user replaced.** It is inverted in place, with the count spelled out so a
+regression in either direction names itself: chapter 1 now carries one lesson per ticked type **plus**
+its single standard gate lesson.
+
+### Two new sections, for the case nothing covered
+
+⚠️ **No test in the suite exercised a ONE-chapter book** — which is the shape of every comic and
+one-chunk PDF, and the entire reason this bug survived. Both new sections drive `chunks` (the upload
+path that `comicCreateChapter`/`pdfGenerateAll` actually use), not `generated`, which cannot produce a
+one-chapter book at all.
+
+- **The reported shape**: a one-chapter book with `['standard','word_forms','inflections',
+  'comprehension']` gets all three real types, and `'standard'` **exactly once** despite being ticked.
+- **The `review` carve-out**: skipped on a first chapter, the *other* ticked type still generated, and
+  the log line asserted verbatim — a silently-dropped type is the defect this cut exists to end.
+
+⚠️ One assertion had to be corrected while writing it: `_arcMode === 'reinforce'` is set on **every**
+arc lesson, not only reviews, so the first version failed against a correct fix. The observable
+signature of a skipped review is the absence of a **second** `standard` lesson.
+
+### Five mutations, all red
+
+Restoring the `i >= 1` gate (the bug itself), dropping either filter, dropping both, and skipping
+silently without the log line.
+
+### ⚠️ A THIRD guard broke on this change, and its anchor was the problem
+
+`unit-arc-reinforce-types` sliced the server source from the literal
+`base.arc && i >= 1 && Array.isArray(data.lessons))` — **the very condition the ruling removed**. Its
+own comment records that this anchor had already broken once (`v87`'s decoupling added
+`!base.skipLessons &&`) and had been re-anchored on *"the STABLE suffix"*. `i >= 1` was part of that
+suffix.
+
+⚠️ **It failed CONFUSINGLY, not clearly**: `indexOf` returned `-1`, `slice(-1)` yielded one
+character, and the reported failure was the unrelated-sounding *"the book arc dispatches through
+it"*.
+
+Re-anchored on **`for (const aType of _types)`** — the loop the claim is actually about. A condition
+in front of a block is precisely what a future ruling changes; the loop is what would have to be
+rewritten for the assertion to stop meaning anything. And **the anchor now asserts it was found**, so
+a miss fails AT the anchor instead of silently going vacuous. Verified both ways: renaming the loop
+variable makes it fail loudly.
+
+### Still open from the same report
+
+**The lost "continued from" is NOT fixed and is not server-side.** `v89_o` proved it from the log:
+`continuedFrom=-` — the client never sent it. See the open list; the send path's
+`?.value || null` pattern is a three-time hazard there and wants fixing as a class.
+
 
 ## ✅ v89_o — the log settled it: a one-chapter book discards every selected lesson type
 

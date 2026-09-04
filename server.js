@@ -284,7 +284,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_o';
+const APP_VERSION  = 'v89_p';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6879,15 +6879,21 @@ async function _runBookJob(bookId, chunks, base) {
       // PDF chapters supply their own story, so the chain link is recorded via prevStoryTopic.
       const data  = await generate(storyTopic, base.lang, base.srcLang, base.diff, generated ? contFrom : null, wc, jobId, userOpts);
 
-      // Arc reinforcement lessons. Reinforcement only begins from the SECOND chapter:
-      // chapter 1 ships just its standard vocab lesson (the new chapter's words, from
-      // generate() above). From chapter 2 on we add ONE extra lesson:
-      //   'vocab'   (default): a single review lesson drilling the vocab of ALL
-      //             pre-existing chapters in the storyline (chainVocab walks to the root).
-      //   'grammar' (alt): grammar / conjugation / synonyms reinforcement lessons.
-      // (collectChainVocab(parent) excludes the current chapter — which is persisted
-      // below — so the review covers prior chapters and the standard lesson covers this one.)
-      if (!base.skipLessons && base.arc && i >= 1 && Array.isArray(data.lessons)) {
+      // The ticked lesson types, generated for EVERY chapter.
+      //
+      // ⚠️ v89_p — USER RULING, and it replaces the gate this block carried since it was written:
+      // *"the ticks mean lesson types per chapter — fix the server."* The condition was `i >= 1`,
+      // on the reading that these are REINFORCEMENT of prior chapters, which chapter 1 has none of.
+      // The tick-list does not read that way to a learner: it reads as "which lesson types do I
+      // want", and it is rendered and settable for a one-chapter run (`_genArcApplicable()` returns
+      // `n >= 1` for non-LLM modes). So a photographed comic panel or a one-chunk PDF — ALWAYS a
+      // one-chapter book, so `i` is only ever 0 — had every ticked type silently discarded, **after
+      // the route had logged them back as if honoured**, which is what hid it for so long. Found
+      // from a user's server log at `v89_o`; the reported run ticked five types and produced one.
+      //
+      // (collectChainVocab(parent) excludes the current chapter — which is persisted below — so a
+      // review covers prior chapters and the standard lesson covers this one.)
+      if (!base.skipLessons && base.arc && Array.isArray(data.lessons)) {
         const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [] };
         const arcStory = userStory || data.story || '';
         // v71_u: the book path used to offer exactly two arc shapes ('vocab' → one review lesson,
@@ -6895,7 +6901,30 @@ async function _runBookJob(bookId, chunks, base) {
         // since v71_p. Same operation, two different UIs and two different code paths — so a type
         // added to one silently did not exist in the other (comprehension, added in v71_l, was
         // never reachable from a book at all). Both now dispatch through generateArcLesson.
-        const _types = base.arcTypes;
+        // ⚠️ Two types are FILTERED rather than generated, each for its own reason, and each skip is
+        // LOGGED — `v89_o`'s own lesson was that a route echoing a parameter back while quietly
+        // dropping it is what makes this class of bug invisible.
+        //
+        //  • 'standard' — `generate()` above ALREADY produced this chapter's standard lesson:
+        //    `lessonFormat` is forced to 'standard' whenever `base.arc` is set. Generating it again
+        //    here is a straight duplicate. ⚠️ That duplicate is PRE-EXISTING for chapters 2+, not
+        //    something this cut introduces — it is removed for every chapter rather than left
+        //    inconsistent, because opening the gate for chapter 1 would otherwise have added a
+        //    second copy there too. (Measured while deciding: 80 of 344 corpus chapters carry more
+        //    than one 'standard' lesson. Several routes can produce that, so the number is context,
+        //    not attribution.)
+        //  • 'review' with NO PARENT — it drills the vocab of PRIOR chapters
+        //    (`vocabMode:'reinforce'` over `chainVocab`). On a first chapter that list is empty, so
+        //    it would generate a review of nothing. This is the one part of the old `i >= 1` reading
+        //    that survives the ruling, and it survives narrowly: for this type only.
+        const _types = (base.arcTypes || []).filter(aType => {
+          const drop = aType === 'standard'
+            ? "generate() already produced this chapter's standard lesson"
+            : (aType === 'review' && !parent) ? 'no prior chapter to review' : null;
+          if (!drop) return true;
+          console.log(`  [book ${bookId}] chapter ${i+1}: skipping arc type '${aType}' — ${drop}`);
+          return false;
+        });
         // The current chapter is not persisted yet at this point, so it cannot be walked from the
         // store the way the storyline path does. A synthetic node carrying this chapter's story and
         // a link to its parent gives collectChainStory the same shape it expects: current chapter

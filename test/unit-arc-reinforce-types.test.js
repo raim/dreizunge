@@ -116,11 +116,22 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
     "and legacy 'grammar' still maps to word_forms + synonyms — the v46 fix, preserved");
   assert.ok(/async function generateArcLesson\(aType, ctx\)/.test(server),
     'there is one shared per-type generator');
-  // Decoupling chaptering from lesson generation (roadmap_v87.md) added a leading
-  // `!base.skipLessons &&` to this condition — the anchor now matches on the STABLE suffix rather
-  // than the whole condition, so a future guard addition here doesn't re-break this same way.
-  const book = server.slice(server.indexOf('base.arc && i >= 1 && Array.isArray(data.lessons))'));
-  const bookBlock = book.slice(0, 2500);
+  // ⚠️ THIRD TIME THIS ANCHOR HAS BROKEN, and the second time for the same reason: it was pinned to
+  // the CONDITION guarding the block rather than to the block. `v87`'s decoupling added a leading
+  // `!base.skipLessons &&` and it was re-anchored on "the STABLE suffix"; `v89_p` then REMOVED
+  // `i >= 1` from that very suffix on a user ruling, and it broke again — silently, because
+  // `indexOf` returned -1 and `slice(-1)` yielded one character, so the failure surfaced as the
+  // unrelated-looking "the book arc dispatches through it".
+  //
+  // Anchored on the LOOP itself now — the thing the claim is actually about. A condition in front of
+  // a block is exactly what a future ruling changes; the loop is what would have to be rewritten for
+  // this assertion to stop meaning anything. And the anchor now ASSERTS it was found, so a miss
+  // fails AT the anchor instead of pretending to test the claim.
+  const bookAt = server.indexOf('for (const aType of _types)');
+  assert.ok(bookAt > -1,
+    "the book arc's per-type loop is still `for (const aType of _types)` — if it was renamed, " +
+    're-anchor this section deliberately rather than letting the assertions below go vacuous');
+  const bookBlock = server.slice(bookAt, bookAt + 2500);
   assert.ok(/generateArcLesson\(aType, \{/.test(bookBlock), 'the book arc dispatches through it');
   assert.ok(!/base\.arcMode === 'grammar'/.test(bookBlock),
     'and no longer branches on the two-value mode');

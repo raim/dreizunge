@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_o` cut
+# Session prompt — written at the `v89_p` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_o`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_p`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -184,6 +184,15 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   Separately, the same log line shows **`continuedFrom=-`** — the lineage was lost CLIENT-side, the
   server never received it, and that send path reading controls the learner's route may never have
   populated is now a THREE-TIME hazard (`AL`, `v86_v`, here).
+- **`v89_p`** — **FIXED**, on the user's ruling *"the ticks mean lesson types per chapter."* The
+  `i >= 1` gate is gone: every chapter gets its ticked types. Two types are FILTERED and each skip is
+  **logged with its reason** — `'standard'` (⚠️ `generate()` already produced it whenever arc is on,
+  so the arc loop was a straight duplicate; **pre-existing for chapters 2+**, removed for all
+  chapters rather than left inconsistent) and `'review'` **when there is no parent** (it drills prior
+  chapters' vocab; on chapter 1 that list is empty). ⚠️ `e2e-book-arc-types`' *"chapter 1 is still
+  the gate lesson only"* assertion pinned the very gate the ruling replaced and was **RE-SCOPED, not
+  deleted**. Five mutations red, including restoring the bug itself. **The lineage half of that same
+  report is still OPEN** — it is client-side (`continuedFrom=-`).
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -254,7 +263,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 98 storylines, 33 languages, 758 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_o'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_p'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

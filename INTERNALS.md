@@ -2233,6 +2233,20 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_p` — a one-chapter book now honours every ticked lesson type** (user ruling, after `v89_o`
+diagnosed it from their server log)
+
+| what | where |
+|---|---|
+| the fix | `_runBookJob`'s arc block (server.js) — the **`i >= 1`** gate is gone, so every chapter gets its ticked types |
+| ⚠️ why it hid for so long | a one-chapter book is **every photographed comic panel and every one-chunk PDF**, so `i` was only ever 0 — and the route LOGGED the types back as if honoured. `v89_o`'s user log: five types echoed, `Lesson 1/1` produced |
+| two types are FILTERED, each skip LOGGED | `'standard'` — `generate()` already made it whenever `base.arc` is set, so the loop was a straight duplicate (⚠️ **pre-existing for chapters 2+**; removed for ALL chapters rather than left inconsistent). `'review'` when there is no parent — it drills PRIOR chapters' vocab, empty on chapter 1. ⚠️ **The logging is load-bearing**: `v89_o`'s finding was that a route echoing a parameter while dropping it is what makes this class invisible |
+| ⚠️ the guard that pinned the OLD ruling | `e2e-book-arc-types`' *"chapter 1 is still the gate lesson only"* — exactly the `i >= 1` behaviour. **RE-SCOPED, not deleted**, with the count spelled out so a regression in either direction names itself |
+| ⚠️ **nothing in the suite exercised a ONE-chapter book** | which is why this survived. The two new sections drive `chunks` (the upload path `comicCreateChapter`/`pdfGenerateAll` use), not `generated`, which cannot produce a one-chapter book at all |
+| a test-writing trap | `_arcMode === 'reinforce'` is set on **every** arc lesson, not only reviews — the first version of the review-skip assertion failed against a correct fix. The observable signature of a skipped review is the absence of a SECOND `standard` lesson |
+| five mutations, all red | restoring `i >= 1`, dropping either filter, dropping both, and skipping silently |
+| ⚠️ still open | the lost **"continued from"** from the same report is CLIENT-side (`continuedFrom=-` in the log) and is not fixed |
+
 **`v89_l` — the answer re-check gets its own model role, and the default was MEASURED** (user
 question, then request)
 
