@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_k` cut
+# Session prompt — written at the `v89_l` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_k`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_l`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -149,6 +149,15 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   selection AT THE AXIS LOCK — before any drag begins, any `user-select` is touched, or
   `preventDefault` is reached. ⚠️ **The lesson: `v89_i`'s placement fix was correct and was not the
   bug.** Two releases were spent on the visible symptom.
+- **`v89_l`** — the answer re-check gets **its own model role**, `OLLAMA_ANSWERCHECK_MODEL`, after
+  measuring four installed models on the real prompt with 5 known-answer cases (3 of them tempting
+  near-misses, because the failure that matters is a FALSE accept):
+  `qwen2.5:7b` **3/5 with 1 FALSE ACCEPT** at 22.6s · `translategemma:12b` 5/5 at 106s ·
+  **`qwen2.5:14b` 5/5 at 25.3s ← the new default** · `qwen3.6:35b-a3b` 5/5 at 39.1s (the old one).
+  ⚠️ **The cheapest model is the disqualified one**, and a dense 12B loses badly to a 3B-active MoE.
+  ⚠️ Five cases is an indication, not a verdict — re-measure before treating the default as settled.
+  It is the ONLY role whose default names a model no other role does, which is why it also had to
+  join `configuredModels()` (the idle/shutdown release list).
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -218,8 +227,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **343 topics, 97 storylines, 33 languages, 758 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_k'`.
+Corpus at this cut: **344 topics, 98 storylines, 33 languages, 758 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_l'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

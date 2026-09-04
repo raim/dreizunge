@@ -6338,8 +6338,1115 @@
       },
       "sourceTextHash": "1bf618f39861",
       "analyzedAt": "2026-09-02T20:14:03.245Z"
+    },
+    "tp_17885199795390000039": {
+      "chapterId": "tp_17885199795390000039",
+      "lang": "nl",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 8,
+      "tokenCount": 80,
+      "sentences": [
+        {
+          "sentenceId": "tp_17885199795390000039:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17885199795390000039:s0:t0",
+              "idx": 0,
+              "surface": "Flexvervoer",
+              "lemma": "flexvervoer",
+              "form": "Substantiv, Neutrum, Singular, Nominativ/Akkusativ",
+              "sense": "flexibler Transportdienst",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-04T11:10:40.544Z",
+            "sentenceId": "tp_17885199795390000039:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Flexvervoer",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17885199795390000039:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17885199795390000039:s1:t0",
+              "idx": 0,
+              "surface": "Welkom",
+              "lemma": "welkom",
+              "form": "Adjektiv (unflektiert)",
+              "sense": "willkommen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t1",
+              "idx": 1,
+              "surface": "op",
+              "lemma": "op",
+              "form": "Präposition",
+              "sense": "auf",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t2",
+              "idx": 2,
+              "surface": "de",
+              "lemma": "de",
+              "form": "Bestimmter Artikel (bestimmt, de-woord)",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t3",
+              "idx": 3,
+              "surface": "hub",
+              "lemma": "hub",
+              "form": "Substantiv (mannelijk, enkelvoud)",
+              "sense": "Drehscheibe / Knotenpunkt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t4",
+              "idx": 4,
+              "surface": "Domburg,",
+              "lemma": "Domburg",
+              "form": "Eigenname (plaatsnaam)",
+              "sense": "Domburg",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t5",
+              "idx": 5,
+              "surface": "Strandopgang",
+              "lemma": "Strandopgang",
+              "form": "Substantiv (mannelijk, enkelvoud)",
+              "sense": "Strandaufgang / Zugang zum Strand",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t6",
+              "idx": 6,
+              "surface": "Badstraat",
+              "lemma": "Badstraat",
+              "form": "Eigenname (straatnaam)",
+              "sense": "Badstraat",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t7",
+              "idx": 7,
+              "surface": "Op",
+              "lemma": "op",
+              "form": "Präposition",
+              "sense": "auf",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t8",
+              "idx": 8,
+              "surface": "deze",
+              "lemma": "deze",
+              "form": "Demonstrativpronomen (bestemd)",
+              "sense": "diese",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t9",
+              "idx": 9,
+              "surface": "hub",
+              "lemma": "hub",
+              "form": "Substantiv (mannelijk, enkelvoud)",
+              "sense": "Drehscheibe / Knotenpunkt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t10",
+              "idx": 10,
+              "surface": "kunt",
+              "lemma": "kunnen",
+              "form": "Werkwoord (modaal, tegenwoordige tijd, 2e persoon enkelvoud)",
+              "sense": "können",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t11",
+              "idx": 11,
+              "surface": "u",
+              "lemma": "u",
+              "form": "Persoonlijk voornaamwoord (onderwerp, beleefdheidsvorm)",
+              "sense": "Sie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t12",
+              "idx": 12,
+              "surface": "gebruik",
+              "lemma": "gebruik",
+              "form": "Substantiv (onzijdig, enkelvoud)",
+              "sense": "Gebrauch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t13",
+              "idx": 13,
+              "surface": "maken",
+              "lemma": "maken",
+              "form": "Werkwoord (infinitief)",
+              "sense": "machen / nutzen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t14",
+              "idx": 14,
+              "surface": "van",
+              "lemma": "van",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t15",
+              "idx": 15,
+              "surface": "de",
+              "lemma": "de",
+              "form": "Bestimmter Artikel (bestemd, de-woord)",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s1:t16",
+              "idx": 16,
+              "surface": "Flex.",
+              "lemma": "Flex",
+              "form": "Eigenname (productnaam)",
+              "sense": "Flex",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 3,
+              "tokenIds": [
+                "tp_17885199795390000039:s1:t0",
+                "tp_17885199795390000039:s1:t1",
+                "tp_17885199795390000039:s1:t2",
+                "tp_17885199795390000039:s1:t3"
+              ],
+              "lemma": "welkom op de hub",
+              "gloss": "Willkommen auf der Drehscheibe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 13,
+              "tokenIds": [
+                "tp_17885199795390000039:s1:t12",
+                "tp_17885199795390000039:s1:t13"
+              ],
+              "lemma": "gebruik maken van",
+              "gloss": "Gebrauch machen von / nutzen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-04T11:14:43.836Z",
+            "sentenceId": "tp_17885199795390000039:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Welkom op de hub\nDomburg, Strandopgang Badstraat\nOp deze hub kunt u gebruik maken van\nde Flex.",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17885199795390000039:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17885199795390000039:s2:t0",
+              "idx": 0,
+              "surface": "Hoe",
+              "lemma": "hoe",
+              "form": "Adverbialpronomen (interrogativ)",
+              "sense": "auf welche Weise",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t1",
+              "idx": 1,
+              "surface": "het",
+              "lemma": "het",
+              "form": "Personalpronomen (neutrum, nominativ/akkusativ)",
+              "sense": "es (das Thema/die Sache)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t2",
+              "idx": 2,
+              "surface": "werkt:",
+              "lemma": "werken",
+              "form": "Verb (Präsens, 3. Person Singular)",
+              "sense": "funktioniert",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t3",
+              "idx": 3,
+              "surface": "1",
+              "lemma": "1",
+              "form": "Numeral (Ziffer)",
+              "sense": "die Zahl Eins (Aufzählungspunkt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t4",
+              "idx": 4,
+              "surface": "Boek",
+              "lemma": "boeken",
+              "form": "Verb (Imperativ, Plural oder formell Singular)",
+              "sense": "buchen Sie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t5",
+              "idx": 5,
+              "surface": "uw",
+              "lemma": "uw",
+              "form": "Possessivpronomen (2. Person, formell/plural)",
+              "sense": "Ihre",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t6",
+              "idx": 6,
+              "surface": "reis",
+              "lemma": "reis",
+              "form": "Substantiv (Singular)",
+              "sense": "Reise",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t7",
+              "idx": 7,
+              "surface": "via",
+              "lemma": "via",
+              "form": "Präposition",
+              "sense": "über / durch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t8",
+              "idx": 8,
+              "surface": "een",
+              "lemma": "een",
+              "form": "Indefinitartikel (unbestimmt)",
+              "sense": "eine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t9",
+              "idx": 9,
+              "surface": "app",
+              "lemma": "app",
+              "form": "Substantiv (Singular)",
+              "sense": "App",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t10",
+              "idx": 10,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Konjunktion (koordinierend)",
+              "sense": "oder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t11",
+              "idx": 11,
+              "surface": "bel",
+              "lemma": "bellen",
+              "form": "Verb (Imperativ, Plural oder formell Singular)",
+              "sense": "rufen Sie an",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t12",
+              "idx": 12,
+              "surface": "de",
+              "lemma": "de",
+              "form": "Definitartikel (bestimmt)",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t13",
+              "idx": 13,
+              "surface": "Vervoercentrale:",
+              "lemma": "Vervoercentrale",
+              "form": "Substantiv (Singular)",
+              "sense": "Verkehrszentrale",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t14",
+              "idx": 14,
+              "surface": "088",
+              "lemma": "088",
+              "form": "Numeral (Ziffer)",
+              "sense": "die Ziffer Null-Acht-Null",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t15",
+              "idx": 15,
+              "surface": "235",
+              "lemma": "235",
+              "form": "Numeral (Ziffer)",
+              "sense": "die Zahl Zweihundertfünfunddreißig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s2:t16",
+              "idx": 16,
+              "surface": "8070.",
+              "lemma": "8070.",
+              "form": "Numeral (Ziffer mit Satzzeichen)",
+              "sense": "die Zahl Achttausendsiebzig",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 4,
+              "end": 6,
+              "tokenIds": [
+                "tp_17885199795390000039:s2:t4",
+                "tp_17885199795390000039:s2:t5",
+                "tp_17885199795390000039:s2:t6"
+              ],
+              "lemma": "uw reis boeken",
+              "gloss": "Ihre Reise buchen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 13,
+              "end": 16,
+              "tokenIds": [
+                "tp_17885199795390000039:s2:t13",
+                "tp_17885199795390000039:s2:t14",
+                "tp_17885199795390000039:s2:t15",
+                "tp_17885199795390000039:s2:t16"
+              ],
+              "lemma": "Vervoercentrale: 088 235 8070.",
+              "gloss": "Verkehrszentrale: [Telefonnummer]",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-04T11:18:37.988Z",
+            "sentenceId": "tp_17885199795390000039:s2",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Hoe het werkt:\n1 Boek uw reis via een app of bel de\nVervoercentrale: 088 235 8070.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17885199795390000039:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17885199795390000039:s3:t0",
+              "idx": 0,
+              "surface": "2",
+              "lemma": "2",
+              "form": "Kardinalzahl (Numeral)",
+              "sense": "die Nummer zwei / der zweite Punkt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s3:t1",
+              "idx": 1,
+              "surface": "Geef",
+              "lemma": "geven",
+              "form": "Verb, Präsens, Imperativ, Singular",
+              "sense": "geben Sie (angeben)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s3:t2",
+              "idx": 2,
+              "surface": "door",
+              "lemma": "door",
+              "form": "Partikel (Scheidbares Präfix)",
+              "sense": "(gehört zum Verb 'geven door' = angeben/mitteilen)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s3:t3",
+              "idx": 3,
+              "surface": "waar",
+              "lemma": "waar",
+              "form": "Interrogativadverb (Relativadverb)",
+              "sense": "wohin / an welchem Ort",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s3:t4",
+              "idx": 4,
+              "surface": "u",
+              "lemma": "u",
+              "form": "Personalpronomen, Nominativ, Singular, höflich",
+              "sense": "Sie (Subjekt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s3:t5",
+              "idx": 5,
+              "surface": "vertrekt",
+              "lemma": "vertrekken",
+              "form": "Verb, Präsens, Indikativ, Singular",
+              "sense": "abfahren / abreisen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s3:t6",
+              "idx": 6,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion (Koordinierend)",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s3:t7",
+              "idx": 7,
+              "surface": "naartoe",
+              "lemma": "naartoe",
+              "form": "Adverb (Richtungsadverb)",
+              "sense": "dorthin / nach wo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s3:t8",
+              "idx": 8,
+              "surface": "wilt.",
+              "lemma": "willen",
+              "form": "Verb, Präsens, Indikativ, Singular",
+              "sense": "wollen (möchten)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 2,
+              "tokenIds": [
+                "tp_17885199795390000039:s3:t1",
+                "tp_17885199795390000039:s3:t2"
+              ],
+              "lemma": "geven door",
+              "gloss": "angeben / mitteilen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 3,
+              "end": 5,
+              "tokenIds": [
+                "tp_17885199795390000039:s3:t3",
+                "tp_17885199795390000039:s3:t4",
+                "tp_17885199795390000039:s3:t5"
+              ],
+              "lemma": "waar u vertrekt",
+              "gloss": "wohin Sie abfahren",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-04T11:21:23.599Z",
+            "sentenceId": "tp_17885199795390000039:s3",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "2 Geef door waar u vertrekt en\nnaartoe wilt.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17885199795390000039:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17885199795390000039:s4:t0",
+              "idx": 0,
+              "surface": "3",
+              "lemma": "3",
+              "form": "Kardinalzahl (Zahlwort)",
+              "sense": "drei",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s4:t1",
+              "idx": 1,
+              "surface": "Volg",
+              "lemma": "volgen",
+              "form": "Verb, Präsens, Imperativ, Singular",
+              "sense": "folge",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s4:t2",
+              "idx": 2,
+              "surface": "uw",
+              "lemma": "uw",
+              "form": "Possessivpronomen, 2. Person Singular (Höflichkeitsform)",
+              "sense": "Ihr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s4:t3",
+              "idx": 3,
+              "surface": "Flex",
+              "lemma": "Flex",
+              "form": "Eigenname (Substantiv)",
+              "sense": "Flex (Produktname)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s4:t4",
+              "idx": 4,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s4:t5",
+              "idx": 5,
+              "surface": "stap",
+              "lemma": "stappen",
+              "form": "Verb, Präsens, Imperativ, Singular",
+              "sense": "steigen Sie ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s4:t6",
+              "idx": 6,
+              "surface": "in.",
+              "lemma": "in",
+              "form": "Präfix (trennbar)",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 5,
+              "end": 6,
+              "tokenIds": [
+                "tp_17885199795390000039:s4:t5",
+                "tp_17885199795390000039:s4:t6"
+              ],
+              "lemma": "instappen",
+              "gloss": "einsteigen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-04T11:23:33.670Z",
+            "sentenceId": "tp_17885199795390000039:s4",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "3 Volg uw Flex en stap in.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17885199795390000039:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17885199795390000039:s5:t0",
+              "idx": 0,
+              "surface": "4",
+              "lemma": "4",
+              "form": "Kardinalzahl (Numeral)",
+              "sense": "vier (Zählung/Referenz)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t1",
+              "idx": 1,
+              "surface": "Betaal",
+              "lemma": "betalen",
+              "form": "Verb; Imperativ Präsens Aktiv 2. Person Singular",
+              "sense": "bezahlen (Aufforderung)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t2",
+              "idx": 2,
+              "surface": "uw",
+              "lemma": "uw",
+              "form": "Possessivpronomen; 2. Person Singular/Dual Plural Akkusativ/Nominativ",
+              "sense": "Ihr (besitzanzeigend)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t3",
+              "idx": 3,
+              "surface": "rit",
+              "lemma": "rit",
+              "form": "Nomen; Singular Nominativ/Akkusativ",
+              "sense": "Fahrt (Verkehrsmittel)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t4",
+              "idx": 4,
+              "surface": "via",
+              "lemma": "via",
+              "form": "Präposition",
+              "sense": "über/durch (Weg)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t5",
+              "idx": 5,
+              "surface": "een",
+              "lemma": "een",
+              "form": "Indefinitartikel; Singular Nominativ/Akkusativ",
+              "sense": "eine (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t6",
+              "idx": 6,
+              "surface": "app",
+              "lemma": "app",
+              "form": "Nomen; Singular Nominativ/Akkusativ",
+              "sense": "App (Softwareanwendung)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t7",
+              "idx": 7,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Konjunktion",
+              "sense": "oder (Alternative)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t8",
+              "idx": 8,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in (Lage/Ort)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t9",
+              "idx": 9,
+              "surface": "de",
+              "lemma": "de",
+              "form": "Definitartikel; Singular Nominativ/Akkusativ",
+              "sense": "die (bestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s5:t10",
+              "idx": 10,
+              "surface": "Flex.",
+              "lemma": "Flex",
+              "form": "Eigenname (Substantiviert); Singular Nominativ/Akkusativ",
+              "sense": "Flex (Markenname/Produkt)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 3,
+              "tokenIds": [
+                "tp_17885199795390000039:s5:t1",
+                "tp_17885199795390000039:s5:t2",
+                "tp_17885199795390000039:s5:t3"
+              ],
+              "lemma": "uw rit betalen",
+              "gloss": "Ihre Fahrt bezahlen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 6,
+              "tokenIds": [
+                "tp_17885199795390000039:s5:t4",
+                "tp_17885199795390000039:s5:t5",
+                "tp_17885199795390000039:s5:t6"
+              ],
+              "lemma": "via een app",
+              "gloss": "über eine App (Mittel)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-04T11:26:27.125Z",
+            "sentenceId": "tp_17885199795390000039:s5",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "4 Betaal uw rit via een app of in de Flex.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17885199795390000039:s6",
+          "tokens": [
+            {
+              "tokenId": "tp_17885199795390000039:s6:t0",
+              "idx": 0,
+              "surface": "Scan",
+              "lemma": "scannen",
+              "form": "Imperativ Singular",
+              "sense": "lese den Code ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t1",
+              "idx": 1,
+              "surface": "de",
+              "lemma": "de",
+              "form": "bestimmter Artikel, Akkusativ Singular Femininum",
+              "sense": "den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t2",
+              "idx": 2,
+              "surface": "QR-code",
+              "lemma": "QR-code",
+              "form": "Nomen, Akkusativ Singular Maskulinum/Neutrum",
+              "sense": "QR-Code",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t3",
+              "idx": 3,
+              "surface": "om",
+              "lemma": "om",
+              "form": "Konjunktion (Zweck)",
+              "sense": "um ... zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t4",
+              "idx": 4,
+              "surface": "gebruik",
+              "lemma": "gebruik",
+              "form": "Nomen, Akkusativ Singular Maskulinum/Neutrum",
+              "sense": "Gebrauch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t5",
+              "idx": 5,
+              "surface": "te",
+              "lemma": "te",
+              "form": "Partikel (Infinitivmarker)",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t6",
+              "idx": 6,
+              "surface": "maken",
+              "lemma": "maken",
+              "form": "Verb, Infinitiv",
+              "sense": "machen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t7",
+              "idx": 7,
+              "surface": "van",
+              "lemma": "van",
+              "form": "Präposition (Genitiv)",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t8",
+              "idx": 8,
+              "surface": "de",
+              "lemma": "de",
+              "form": "bestimmter Artikel, Akkusativ Singular Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t9",
+              "idx": 9,
+              "surface": "Flex",
+              "lemma": "Flex",
+              "form": "Nomen, Akkusativ Singular Maskulinum/Neutrum",
+              "sense": "Flex (Produktname)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t10",
+              "idx": 10,
+              "surface": "en",
+              "lemma": "en",
+              "form": "Konjunktion (Koordinierend)",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t11",
+              "idx": 11,
+              "surface": "voor",
+              "lemma": "voor",
+              "form": "Präposition",
+              "sense": "für",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t12",
+              "idx": 12,
+              "surface": "meer",
+              "lemma": "meer",
+              "form": "Adjektiv/Adverb (Komparativ)",
+              "sense": "mehr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s6:t13",
+              "idx": 13,
+              "surface": "informatie",
+              "lemma": "informatie",
+              "form": "Nomen, Akkusativ Singular Femininum",
+              "sense": "Informationen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 4,
+              "end": 6,
+              "tokenIds": [
+                "tp_17885199795390000039:s6:t4",
+                "tp_17885199795390000039:s6:t5",
+                "tp_17885199795390000039:s6:t6"
+              ],
+              "lemma": "gebruik maken van",
+              "gloss": "Gebrauch machen von / nutzen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-04T11:29:42.021Z",
+            "sentenceId": "tp_17885199795390000039:s6",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Scan de QR-code om gebruik te maken van\nde Flex en voor meer informatie",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17885199795390000039:s7",
+          "tokens": [
+            {
+              "tokenId": "tp_17885199795390000039:s7:t0",
+              "idx": 0,
+              "surface": "REIZEN",
+              "lemma": "reizen",
+              "form": "Infinitiv",
+              "sense": "reisen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s7:t1",
+              "idx": 1,
+              "surface": "DOOR",
+              "lemma": "door",
+              "form": "Präposition",
+              "sense": "durch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s7:t2",
+              "idx": 2,
+              "surface": "ZEELAND",
+              "lemma": "Zeeland",
+              "form": "Eigennamen (Substantiv)",
+              "sense": "Seeland",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17885199795390000039:s7:t3",
+              "idx": 3,
+              "surface": "www.reizendoorzeeland.nl",
+              "lemma": "www.reizendoorzeeland.nl",
+              "form": "URL (Substantiv)",
+              "sense": "Webadresse",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17885199795390000039:s7:t0",
+                "tp_17885199795390000039:s7:t1",
+                "tp_17885199795390000039:s7:t2"
+              ],
+              "lemma": "reizen door Zeeland",
+              "gloss": "durch Seeland reisen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-04T11:30:49.105Z",
+            "sentenceId": "tp_17885199795390000039:s7",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "REIZEN\nDOOR\nZEELAND\nwww.reizendoorzeeland.nl",
+          "paraBreakBefore": true
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-04T11:30:49.112Z",
+        "chapterId": "tp_17885199795390000039",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "cbdd45567aac",
+      "analyzedAt": "2026-09-04T11:30:49.112Z"
     }
   },
-  "generatedAt": "2026-09-04T10:28:22.968Z",
-  "chapterCount": 14
+  "generatedAt": "2026-09-04T11:30:49.116Z",
+  "chapterCount": 15
 }

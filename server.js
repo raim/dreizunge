@@ -284,7 +284,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_k';
+const APP_VERSION  = 'v89_l';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -360,6 +360,27 @@ let OLLAMA_VISION_MODEL      = process.env.OLLAMA_VISION_MODEL      || 'qwen2.5v
 // OLLAMA_THINK below) — it does not route through server.js's thinkOpts()/OLLAMA_THINK table at all,
 // so no entry is added there for it.
 let OLLAMA_ANALYSIS_MODEL    = process.env.OLLAMA_ANALYSIS_MODEL    || OLLAMA_MODEL;
+// v89_l (user request, after a measurement): the answer re-check ("was my wrong answer also
+// correct?", v89_j) gets its own role. It ran on the LESSON model, and the lesson model is not the
+// right tool: this is a short, single-line judgement, not JSON generation, and it sits in the
+// learner's flow where latency is felt.
+//
+// MEASURED on the user's own box — the real PROMPTS.answerCheck, 5 cases with known answers, THREE
+// of them tempting near-misses (the failure that matters is a FALSE "also acceptable", so a model
+// that says yes to everything scores 2/5, not 5/5):
+//     qwen2.5:7b          3/5, ⚠️ 1 FALSE ACCEPT ("Sie las" for "Sie liest"),  avg 22.6s
+//     translategemma:12b  5/5, 0 false accepts,                               avg 106.0s
+//     qwen2.5:14b         5/5, 0 false accepts,                               avg  25.3s   ← default
+//     qwen3.6:35b-a3b     5/5, 0 false accepts,                               avg  39.1s   (was)
+// So the CHEAPEST model is the one disqualified, and a dense 12B loses badly to a 3B-active MoE.
+// `qwen2.5:14b` is the same accuracy as the old default, ~35% faster, at under half the size.
+// ⚠️ Five cases is an indication, not a verdict, and laptop latencies swing wide (the 35b's own row
+// ranged 6s–50s). Re-measure before treating this default as settled.
+//
+// Same escape hatch OLLAMA_QC_MODEL uses: an explicit OLLAMA_MODEL means "one model for
+// everything", so this follows the lesson model then rather than pulling in a second download.
+let OLLAMA_ANSWERCHECK_MODEL = process.env.OLLAMA_ANSWERCHECK_MODEL
+                               || (process.env.OLLAMA_MODEL ? OLLAMA_LESSON_MODEL : 'qwen2.5:14b');
 // (The request timeout lives in llm.js — runtime-adjustable via setRequestTimeout/getRequestTimeout;
 //  there is no separate server-side copy.)
 // Lesson output format: 'json' (default) or 'table' (markdown table, better for
@@ -412,6 +433,7 @@ function currentModels() {
   return { story: OLLAMA_MODEL, translation: OLLAMA_TRANSLATION_MODEL,
            lessons: OLLAMA_LESSON_MODEL, qc: OLLAMA_QC_MODEL, tutor: OLLAMA_TUTOR_MODEL,
            vision: OLLAMA_VISION_MODEL, analysis: OLLAMA_ANALYSIS_MODEL,
+           answerCheck: OLLAMA_ANSWERCHECK_MODEL,
            lessonFormat: OLLAMA_LESSON_FORMAT, numThread: getNumThread(),
            think: { story: OLLAMA_THINK.story, lessons: OLLAMA_THINK.lessons, tutor: OLLAMA_THINK.tutor },
            timeoutMs: getRequestTimeout() };
@@ -425,7 +447,8 @@ function setRuntimeModels(next) {
   // silently point vision calls at a model with no vision capability.
   const story = pick(next.story) || all, transl = pick(next.translation) || all,
         lessons = pick(next.lessons) || all, qc = pick(next.qc) || all, tutor = pick(next.tutor) || all,
-        vision = pick(next.vision), analysis = pick(next.analysis) || all;
+        vision = pick(next.vision), analysis = pick(next.analysis) || all,
+        answerCheck = pick(next.answerCheck) || all;
   if (story)    OLLAMA_MODEL             = story;
   if (transl)   OLLAMA_TRANSLATION_MODEL = transl;
   if (lessons)  OLLAMA_LESSON_MODEL      = lessons;
@@ -433,6 +456,7 @@ function setRuntimeModels(next) {
   if (tutor)    OLLAMA_TUTOR_MODEL       = tutor;
   if (vision)   OLLAMA_VISION_MODEL      = vision;
   if (analysis) OLLAMA_ANALYSIS_MODEL    = analysis;
+  if (answerCheck) OLLAMA_ANSWERCHECK_MODEL = answerCheck;
   // Per-role reasoning toggles: story, lessons, tutor.
   if (next.think && typeof next.think === 'object') {
     if (typeof next.think.story === 'boolean')   OLLAMA_THINK.story   = next.think.story;
@@ -1983,6 +2007,11 @@ function sanitizeTutorReply(text) {
 
 // Tutor (v61): conversational comprehension tutor. Honors the tutor reasoning toggle (thinkOpts),
 // so a reasoning model gets think:true + bumped budget/timeout when the teacher enables it.
+// v89_l: the answer re-check's own role — see OLLAMA_ANSWERCHECK_MODEL for the measurement behind
+// its default. `think:false` is NOT forced here: the caller passes it, exactly as before.
+function callLLMAnswerCheck(system, userMsg, maxTokens, opts) {
+  return _callLLM(OLLAMA_ANSWERCHECK_MODEL, system, userMsg, maxTokens, opts);
+}
 function callLLMTutor(system, userMsg, maxTokens, opts) {
   const pol = thinkOpts('tutor', maxTokens);
   return _callLLM(OLLAMA_TUTOR_MODEL, system, userMsg, pol.tokens, { stop: _TUTOR_STOP, ...pol, ...opts });
@@ -7622,6 +7651,7 @@ http.createServer(async (req, res) => {
         ollamaTutorModel: OLLAMA_TUTOR_MODEL,
         ollamaVisionModel: OLLAMA_VISION_MODEL,
         ollamaAnalysisModel: OLLAMA_ANALYSIS_MODEL,
+        ollamaAnswerCheckModel: OLLAMA_ANSWERCHECK_MODEL,
         ollamaLessonFormat: OLLAMA_LESSON_FORMAT,
         // v55_r: the client's colour-scheme picker reads this — the names live ONLY here, so the
         // list can never drift out of sync with STORYBOARD_SCHEMES (no duplicated list client-side).
@@ -7700,7 +7730,10 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const requested = [body.model, body.story, body.translation, body.lessons, body.qc, body.tutor, body.vision, body.analysis]
+      // v89_l: `answerCheck` joins the list. It has to be HERE as well as in setRuntimeModels —
+      // this array is what gets validated against the installed models, so a role missing from it is
+      // accepted without ever being checked, and a role missing from BOTH is silently ignored.
+      const requested = [body.model, body.story, body.translation, body.lessons, body.qc, body.tutor, body.vision, body.analysis, body.answerCheck]
         .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
       const hasTimeout = body.timeoutMs != null && Number.isFinite(parseInt(body.timeoutMs, 10));
       // v71_q: numThread — CPU threads Ollama may use. 0/empty means "leave it to Ollama", which is
@@ -7710,7 +7743,7 @@ http.createServer(async (req, res) => {
         (typeof body.think.story === 'boolean' || typeof body.think.lessons === 'boolean'
          || typeof body.think.tutor === 'boolean');
       if (!requested.length && !hasTimeout && !hasThink && !hasThreads)
-        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, qc, tutor, vision, analysis, model, timeoutMs, think, or numThread.' });
+        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, qc, tutor, vision, analysis, answerCheck, model, timeoutMs, think, or numThread.' });
       if (requested.length) {
         const available = await listOllamaModels();
         if (available.length) {
@@ -9921,10 +9954,10 @@ http.createServer(async (req, res) => {
       // exercise flow, so it needs the cancel the shape gives it: the learner can press Continue
       // while it is still thinking.
       return runAsJob(res, { label: 'Re-checking your answer' }, async () => {
-        // callLLMLesson, for the same reason writing-feedback gives: this is a pedagogical
-        // JUDGEMENT, not a translation check, and the QC-role model was measured there to ignore a
-        // requested output format outright.
-        const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 200);
+        // v89_l: its OWN role, not the lesson model. This is a short single-line judgement, not
+        // JSON generation, and it sits in the learner's flow where latency is felt — see
+        // OLLAMA_ANSWERCHECK_MODEL for the five-case measurement that picked the default.
+        const { text: raw, promptTokens, completionTokens } = await callLLMAnswerCheck(sys, userMsg, 200);
         const { verdict, note } = parseAnswerCheck(stripRaw(String(raw || '')));
         console.log(`  Answer check (${lang}\u2190${srcLang}): "${picked}" vs "${correct}" -> ${verdict}`);
         return { verdict, note, promptTokens, completionTokens };
@@ -10428,8 +10461,13 @@ async function shutdown(signal) {
 // Reads the CURRENT values, not the boot-time ones: /api/models can change them at runtime (see
 // the setters around line 336), and it is the models actually loaded that need freeing.
 function configuredModels() {
+  // ⚠️ v89_l adds the answer-check role here because its DEFAULT is a model NO other role names
+  // (`qwen2.5:14b`), so without this line it is the one model this server can load and never free.
+  // NOTE, not fixed here: OLLAMA_TUTOR_MODEL and OLLAMA_ANALYSIS_MODEL are ALSO absent from this
+  // list and have the same exposure whenever they are set to something the others do not cover.
+  // Pre-existing, recorded in the open list rather than folded into an unrelated release.
   return [...new Set([OLLAMA_MODEL, OLLAMA_TRANSLATION_MODEL, OLLAMA_LESSON_MODEL,
-                      OLLAMA_QC_MODEL, OLLAMA_VISION_MODEL].filter(Boolean))];
+                      OLLAMA_QC_MODEL, OLLAMA_VISION_MODEL, OLLAMA_ANSWERCHECK_MODEL].filter(Boolean))];
 }
 // ── item AU, idle release (v88_l) ─────────────────────────────────────
 // User's ruling: release after 30 minutes idle, accepting that the next generation then pays a full

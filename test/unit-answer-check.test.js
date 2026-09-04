@@ -70,7 +70,9 @@ console.log('  parser: only an explicit "also acceptable" counts; every other re
       `the answer-check route must not mention \`${forbidden}\` — it is a second opinion, not a grader`);
   }
   assert.ok(/runAsJob\(/.test(body), 'it is a listed, cancellable job like every model-backed route since v88_al');
-  assert.ok(/callLLMLesson\(/.test(body), 'and uses the lesson model, for the reason writing-feedback records');
+  // ⚠️ RE-SCOPED at v89_l, not deleted: this pinned `callLLMLesson`, which was v89_j's choice and
+  // is exactly what v89_l replaced after measuring four models. §7 below owns the new claim.
+  assert.ok(/callLLMAnswerCheck\(/.test(body), 'and uses its OWN model role (v89_l), no longer the lesson model');
 }
 console.log('  the route touches no progress-writing name, and is a cancellable job: OK');
 
@@ -201,5 +203,31 @@ console.log('  a verdict that arrives after the learner moved on is dropped, and
     'the client uses all three and no fourth: ' + JSON.stringify(used));
 }
 console.log('  exactly the three granted ui.json keys, en only, all three used: OK');
+
+// ── 7. v89_l: the re-check has its OWN model role, and the role is RELEASABLE ─────────────────
+// The role's independence is exercised end-to-end in e2e-models.test.js §6d. What that cannot see
+// is `configuredModels()` — the list the idle-release and shutdown-release sweeps free. ⚠️ This role
+// is the ONLY one whose default names a model no other role names, so omitting it from that list
+// would leave exactly one model this server can load and never free, on a laptop where that matters.
+{
+  const src = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
+  const at = src.indexOf('function configuredModels()');
+  assert.ok(at > -1, 'server.js defines configuredModels');
+  const body = src.slice(at, src.indexOf('}', src.indexOf('return', at)));
+  assert.ok(/OLLAMA_ANSWERCHECK_MODEL/.test(body),
+    'the answer-check model is in the release list — otherwise it is loaded and never freed');
+  // The default itself, and the escape hatch that keeps a one-model setup from pulling in a second
+  // download. Both are decisions, not incidentals.
+  assert.ok(/OLLAMA_ANSWERCHECK_MODEL\s*=\s*process\.env\.OLLAMA_ANSWERCHECK_MODEL/.test(src),
+    'the role reads its own env var');
+  assert.ok(/process\.env\.OLLAMA_MODEL \? OLLAMA_LESSON_MODEL : 'qwen2\.5:14b'/.test(src),
+    "an explicit OLLAMA_MODEL means one-model-for-everything; otherwise the measured default");
+  // And the route actually uses the role rather than the lesson model it used to.
+  const route = src.slice(src.indexOf("url.pathname === '/api/answer-check'"),
+                          src.indexOf("url.pathname === '/api/writing-feedback'", src.indexOf("url.pathname === '/api/answer-check'")));
+  assert.ok(/callLLMAnswerCheck\(/.test(route), 'the route calls the answer-check role');
+  assert.ok(!/callLLMLesson\(/.test(route), 'and no longer the lesson model');
+}
+console.log('  the re-check has its own releasable model role, with the measured default: OK');
 
 console.log('unit-answer-check: ALL PASSED');

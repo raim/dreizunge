@@ -129,6 +129,14 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   exists only on the generation screen, which is why a backend outage reads as broken buttons.
   Offered at `v87_p` and not taken up; small, and would have saved two user reports.
 
+**Raised by `v89_l`:**
+- **⚠️ `OLLAMA_TUTOR_MODEL` and `OLLAMA_ANALYSIS_MODEL` are missing from `configuredModels()`** — the
+  list the idle-release and shutdown sweeps free. Whenever either is pointed at a model no listed
+  role covers, that model is loaded and **never released**, which on a laptop is the whole thing the
+  idle release exists to prevent. `v89_l` added `answerCheck` (it had to — its default names a model
+  no other role does) and deliberately did not widen further inside an unrelated release. One line,
+  plus a guard in `unit-answer-check` §7's shape.
+
 **Raised by `v89_c`/`v89_d`'s own measurements — the label pass is SHIPPED, these two are what it left:**
 - ~~A backfill over the existing inflections lessons~~ — **SHIPPED at `v89_f`**: 15 lessons, 28 of
   60 items rewritten. What it LEFT open: **terminology is consistent within a lesson but not across
@@ -280,12 +288,24 @@ section below) the comic feature never implemented. Full scoping in `roadmap_v85
 entry, item 4. **The migration of existing topics needs the user's own go-ahead before touching
 them.**
 
-### B. A vision-role model picker, restricted to capable models (from `v85_u`)
+### B. Model-picker rows for the roles it does not yet show (from `v85_u`, widened at `v89_l`)
 
-Still unactioned. Most server plumbing exists (`/api/models` already accepts a `vision` field); the
-new part is capability filtering (Ollama's `/api/show` capabilities field vs. a family-name
-allowlist) — needs a short design choice before building. Full scoping in `roadmap_v85.md`'s `v85_u`
-entry, item 5.
+Still unactioned. `renderModelPicker` lists FIVE roles — story, lessons, translation, qc, tutor —
+and the server has **three more** it never offers:
+
+- **`vision`** (the image/comic text extractor) — the original item. Its extra work is capability
+  FILTERING (Ollama's `/api/show` capabilities field vs. a family-name allowlist), because the
+  general text models in the list cannot see images at all. Needs a short design choice first. Full
+  scoping in `roadmap_v85.md`'s `v85_u` entry, item 5.
+- **`analysis`** (CP2 sentence analysis) — plain text role, no filtering needed.
+- **`answerCheck`** (`v89_l`) — plain text role, no filtering needed. ⚠️ It is the one role whose
+  DEFAULT names a model no other role does (`qwen2.5:14b`, measured), so a user who does not have it
+  installed has no in-app way to point it elsewhere. That makes this the most user-visible of the
+  three.
+
+⚠️ **Each row costs a `ui.json` key** (`models.vision`, `models.analysis`, `models.answer_check`) and
+the user translates those by hand — **ask for a budget before starting**. All three are already
+settable by env and by `POST /api/models`; this is about the in-app menu only.
 
 ### C. Comic/PDF upload-card UX reorganisation (from `v85_u`)
 
@@ -2248,6 +2268,73 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_l — the answer re-check gets its own model role, and the default was measured
+
+User: *"which model is used for re-checking an answer. could this be done by an especially cheap and
+fast model?"* → *"add an OLLAMA_ANSWERCHECK_MODEL role and use the winner as a default."*
+**ZERO `ui.json` keys.**
+
+### The measurement, because the answer is not "the cheapest"
+
+The real `PROMPTS.answerCheck`, five cases with known answers, against four installed models on the
+user's own box. **Three of the five are tempting near-misses on purpose**: the failure that matters
+is a FALSE "also acceptable", so a model that says yes to everything scores 2/5 here, not 5/5.
+
+| model | size | correct | **false accepts** | avg |
+|---|---|---|---|---|
+| `qwen2.5:7b` | 4.7 GB | 3/5 | **1** | 22.6s |
+| `translategemma:12b` (the QC role) | 8.1 GB | 5/5 | 0 | 106.0s |
+| **`qwen2.5:14b`** ← **new default** | 9.0 GB | 5/5 | 0 | **25.3s** |
+| `qwen3.6:35b-a3b` (the old lesson-model default) | 23.9 GB | 5/5 | 0 | 39.1s |
+
+Two findings worth keeping:
+
+1. **The cheapest model is the disqualified one.** `qwen2.5:7b` approved *"Sie las ein Buch"* for
+   *"Sie liest ein Buch"* — a tense error — and was not meaningfully faster anyway.
+2. **A dense 12B loses badly to a 3B-active MoE.** `translategemma:12b` is accurate and **4× slower**
+   than the 35b-a3b it is a third the size of. Parameter count is not the axis that predicts latency
+   here; active parameters are.
+
+`qwen2.5:14b` matches the old default's accuracy at **~35% less latency and under half the size**.
+
+⚠️ **Five cases is an indication, not a verdict**, and laptop latencies swing wide — the 35b's own
+row ranged 6s to 50s in a single run. Re-measure before treating the default as settled.
+
+### The role
+
+| what | where |
+|---|---|
+| the role | `OLLAMA_ANSWERCHECK_MODEL` (server.js), beside the other seven. Runtime-mutable via `/api/models`, read live at the call site |
+| the default | `qwen2.5:14b` — **unless `OLLAMA_MODEL` is set explicitly**, in which case it follows the LESSON model. That is `OLLAMA_QC_MODEL`'s own escape hatch, reused: a deliberate "one model for everything" setup must not be made to pull in a second download |
+| the caller | `callLLMAnswerCheck`; `/api/answer-check` uses it instead of `callLLMLesson` |
+| ⚠️ **`configuredModels()`** | it had to join the idle/shutdown RELEASE list. **This is the only role whose default names a model no other role names**, so omitting it would leave exactly one model this server can load and never free — on a laptop, where that is the whole point of the idle release |
+| ⚠️ **`/api/models`'s `requested` array too** | that array is what gets validated against the installed models. A role missing from it is accepted without ever being checked; missing from both it and `setRuntimeModels`, it is silently ignored. Found by `e2e-models` §6d failing on the first run |
+
+### ⚠️ Recorded, NOT fixed: two other roles are missing from the release list
+
+`OLLAMA_TUTOR_MODEL` and `OLLAMA_ANALYSIS_MODEL` are also absent from `configuredModels()`, with the
+same exposure whenever they are pointed at something the listed roles do not cover. Pre-existing, and
+noted in place rather than folded into an unrelated release. It is in the open list.
+
+### Not built, deliberately: the picker row
+
+The client model picker (`renderModelPicker`) lists five roles — story, lessons, translation, qc,
+tutor. `vision`, `analysis` and now `answerCheck` are all absent, which is exactly the scope of
+**open item B**. Adding a row costs a `ui.json` key and the granted budget was three, all spent. Item
+B's entry now names all three roles instead of only vision. Settable via env and `/api/models`
+meanwhile.
+
+### Guards
+
+- **`e2e-models.test.js` §6d** — the role switches independently, leaves `analysis` and `lessons`
+  untouched, does not flip the lesson format, is exposed on `/api/info`, is reset by the `{model}`
+  convenience, and rejects an uninstalled name with 400. Under `boot()` every role is env-set to
+  `fake`, so what this pins is the role's INDEPENDENCE, not the measured default.
+- **`unit-answer-check.test.js` §7** — the part no e2e can see: membership of `configuredModels()`,
+  the default expression including its escape hatch, and that the route calls the new role.
+  ⚠️ **§2 was RE-SCOPED, not deleted** — it pinned `callLLMLesson`, which is precisely what this cut
+  replaced.
 
 ## ✅ v89_k — a live selection owns the finger (the regression `v89_e` shipped)
 

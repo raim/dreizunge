@@ -2231,6 +2231,19 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_l` — the answer re-check gets its own model role, and the default was MEASURED** (user
+question, then request)
+
+| what | where |
+|---|---|
+| the role | `OLLAMA_ANSWERCHECK_MODEL` (server.js), `callLLMAnswerCheck`, exposed as `active.answerCheck` / `ollamaAnswerCheckModel`, settable by env and `POST /api/models` |
+| the default, and why | **`qwen2.5:14b`**, from a 5-case measurement of the REAL prompt against four installed models. ⚠️ **The cheapest model is the disqualified one**: `qwen2.5:7b` scored 3/5 with a **FALSE ACCEPT** (approved *"Sie las"* for *"Sie liest"*) and was not much faster. ⚠️ **A dense 12B loses badly to a 3B-active MoE**: `translategemma:12b` was accurate and **4× slower** than the 23.9 GB `qwen3.6:35b-a3b`. Active parameters, not parameter count, predicted latency |
+| the numbers | 7b 3/5 · 1 false accept · 22.6s — translategemma:12b 5/5 · 0 · 106.0s — **14b 5/5 · 0 · 25.3s** — 35b-a3b 5/5 · 0 · 39.1s. ⚠️ Five cases is an INDICATION; laptop latencies swung 6s–50s within one row. Re-measure before treating it as settled |
+| the escape hatch | an explicit `OLLAMA_MODEL` makes it follow the LESSON model — `OLLAMA_QC_MODEL`'s own pattern, so a deliberate one-model setup is never made to pull in a second download |
+| ⚠️ **two lists a new role must join, or it fails SILENTLY** | `configuredModels()` — the idle/shutdown RELEASE sweep. This role's default names a model **no other role names**, so omitting it leaves one model loaded and never freed. And `/api/models`'s own `requested` array — that is what gets validated against the installed models, so a role missing from it is accepted unchecked, and missing from both it and `setRuntimeModels` it is silently ignored. `e2e-models` §6d caught the second on its first run |
+| ⚠️ recorded, not fixed | `OLLAMA_TUTOR_MODEL` and `OLLAMA_ANALYSIS_MODEL` are ALSO absent from `configuredModels()`, with the same never-released exposure. Pre-existing; in the open list |
+| the acceptance tests | `e2e-models.test.js` §6d (independence, `/api/info`, `{model}` reset, 400 on an uninstalled name) + `unit-answer-check.test.js` §7 (the release-list membership and the default expression, which no e2e can observe). ⚠️ §2 was RE-SCOPED — it pinned `callLLMLesson`, exactly what this cut replaced |
+
 **`v89_k` — a live selection owns the finger** (the regression `v89_e` shipped; user report after
 `v89_i`: *"i still don't see the grammar/meaning popover on the phone"*)
 

@@ -137,6 +137,22 @@ const findTopic = (env, ut) => env.readStore().topics.find(t => t.userTopic === 
     const anBad = await post(sport, '/api/models', { analysis: 'definitely-not-installed' });
     assert(anBad.status === 400, 'uninstalled analysis model rejected with 400');
 
+    // ── 6d) answerCheck (v89_l) is ALSO an independent role ─────────────────────────────
+    // ⚠️ It is the one role whose DEFAULT names a model no other role does (`qwen2.5:14b`, picked by
+    // a five-case measurement — see OLLAMA_ANSWERCHECK_MODEL). Under `boot()` every role is env-set
+    // to 'fake', so what this section pins is the ROLE's independence, not that default.
+    const acOnly = await post(sport, '/api/models', { answerCheck: 'fake-translategemma' });
+    assert(acOnly.status === 200 && acOnly.body.active.answerCheck === 'fake-translategemma', 'answerCheck role switched');
+    assert(acOnly.body.active.analysis === 'fake', 'switching answerCheck left analysis untouched');
+    assert(acOnly.body.active.lessons === 'fake', 'and left the lesson model untouched — it no longer rides on it');
+    assert(acOnly.body.active.lessonFormat === 'json', 'answerCheck=translategemma does NOT flip lesson format (only lessons does)');
+    const infoAc = await get(sport, '/api/info');
+    assert(infoAc.body.ollamaAnswerCheckModel === 'fake-translategemma', '/api/info exposes the active answerCheck model');
+    const acAll = await post(sport, '/api/models', { model: 'fake' });
+    assert(acAll.body.active.answerCheck === 'fake', '{model} convenience also resets the answerCheck role');
+    const acBad = await post(sport, '/api/models', { answerCheck: 'definitely-not-installed' });
+    assert(acBad.status === 400, 'uninstalled answerCheck model rejected with 400');
+
     // ── 7) Runtime request timeout: settable (standalone) + reflected + clamped ──────────
     const m1 = await get(sport, '/api/models');
     assert(typeof m1.body.active.timeoutMs === 'number', '/api/models exposes the active timeoutMs');
