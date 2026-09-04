@@ -165,6 +165,7 @@ run('unit: language picker sync, generation screen <-> library (PLAN §C5)', 'no
 run('unit: static build hides library "Generate new" button (v81_x)', 'node', [path.join(__dirname, 'unit-static-gen-btn-hidden.test.js')]);
 run('unit: static build wires tap-to-advance on story text (v86_h)', 'node', [path.join(__dirname, 'unit-static-story-tap-parity.test.js')]);
 run('unit: static build actually loads its baked scripts table (v89_q)', 'node', [path.join(__dirname, 'unit-static-scripts-data.test.js')]);
+run('unit: every model role is released and validated (v89_r)', 'node', [path.join(__dirname, 'unit-model-roles.test.js')]);
 run('unit: showToast() null-guard checks the right variable (v86_i)', 'node', [path.join(__dirname, 'unit-show-toast-guard.test.js')]);
 run('unit: Settings Card shell (PLAN §C4 stage 1)', 'node', [path.join(__dirname, 'unit-settings-card.test.js')]);
 run('unit: global mute-pill consolidation (PLAN §C4 "keep going")', 'node', [path.join(__dirname, 'unit-mute-consolidation.test.js')]);

@@ -284,7 +284,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_q';
+const APP_VERSION  = 'v89_r';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -10490,13 +10490,19 @@ async function shutdown(signal) {
 // Reads the CURRENT values, not the boot-time ones: /api/models can change them at runtime (see
 // the setters around line 336), and it is the models actually loaded that need freeing.
 function configuredModels() {
-  // ⚠️ v89_l adds the answer-check role here because its DEFAULT is a model NO other role names
-  // (`qwen2.5:14b`), so without this line it is the one model this server can load and never free.
-  // NOTE, not fixed here: OLLAMA_TUTOR_MODEL and OLLAMA_ANALYSIS_MODEL are ALSO absent from this
-  // list and have the same exposure whenever they are set to something the others do not cover.
-  // Pre-existing, recorded in the open list rather than folded into an unrelated release.
+  // ⚠️ EVERY role belongs here. A role that is missing is a model this server can LOAD and never
+  // FREE — which defeats the whole point of the idle release on a machine where RAM is the
+  // constraint. `v89_l` added `answerCheck` (its default names a model no other role does, so it was
+  // the most exposed); `v89_r` added `tutor` and `analysis`, which had been missing since they were
+  // introduced and are exposed the moment either is pointed somewhere the listed roles do not cover.
+  //
+  // ⚠️ The list is now GUARDED STRUCTURALLY, not per-role: `unit-model-roles.test.js` enumerates
+  // every `let OLLAMA_*_MODEL` declared in this file and requires each to appear below. **Adding a
+  // role and forgetting this line now fails the suite** — which is the only reason three roles could
+  // go missing here in the first place.
   return [...new Set([OLLAMA_MODEL, OLLAMA_TRANSLATION_MODEL, OLLAMA_LESSON_MODEL,
-                      OLLAMA_QC_MODEL, OLLAMA_VISION_MODEL, OLLAMA_ANSWERCHECK_MODEL].filter(Boolean))];
+                      OLLAMA_QC_MODEL, OLLAMA_TUTOR_MODEL, OLLAMA_VISION_MODEL,
+                      OLLAMA_ANALYSIS_MODEL, OLLAMA_ANSWERCHECK_MODEL].filter(Boolean))];
 }
 // ── item AU, idle release (v88_l) ─────────────────────────────────────
 // User's ruling: release after 30 minutes idle, accepting that the next generation then pays a full

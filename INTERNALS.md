@@ -2233,6 +2233,17 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_r` — every model role is released, and the list guards itself** (user request)
+
+| what | where |
+|---|---|
+| the fix | `OLLAMA_TUTOR_MODEL` and `OLLAMA_ANALYSIS_MODEL` added to `configuredModels()` — missing since they were introduced |
+| ⚠️ what a miss costs | `configuredModels()` is what the idle release (`v88_l`) and shutdown sweep FREE. A role absent from it is a model this server can LOAD and never FREE, silently — nothing throws, it just sits in RAM |
+| ⚠️ **the real fix: a STRUCTURAL guard** | `unit-model-roles.test.js` enumerates every `let OLLAMA_*_MODEL` **from the source** and requires each to appear in BOTH lists a role must join: `configuredModels()` and `/api/models`'s validated `requested` array. **A guard that must be edited when a role is added is a guard that will be forgotten exactly when it matters** — three of eight roles had gone missing, and only one was caught by a test |
+| the second list | `/api/models`'s `requested` array is what gets validated against the installed models; a role missing from it is accepted UNVALIDATED, and missing from `setRuntimeModels` too, silently ignored (`v89_l` found this the hard way) |
+| non-vacuity built in | the extraction asserts ≥ 8 roles and both ends of the list by name, so a change to the declaration shape fails loudly instead of quietly matching nothing |
+| ⚠️ a mutation REJECTED rather than counted | renaming a declaration to `OLLAMA_TUTOR_MODEL2` left the guard green — but only because `[A-Z_]*MODEL\b` cannot match a name ending in a digit, and no real role is named that way. **A mutation that stays green because it is not a thing anyone would write is not evidence of a weak guard.** The realistic version (a plausible new `OLLAMA_GRADER_MODEL`, wired nowhere) is red |
+
 **`v89_q` — the static build now loads its own baked scripts table** (user request, from the
 `v89_m` audit)
 

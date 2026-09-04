@@ -216,6 +216,10 @@ console.log('  exactly the three granted ui.json keys, en only, all three used: 
   const body = src.slice(at, src.indexOf('}', src.indexOf('return', at)));
   assert.ok(/OLLAMA_ANSWERCHECK_MODEL/.test(body),
     'the answer-check model is in the release list — otherwise it is loaded and never freed');
+  // v89_r: this per-role check is now the WEAKER half. `unit-model-roles.test.js` enumerates every
+  // `let OLLAMA_*_MODEL` in server.js and requires each to appear here, which is what finally makes
+  // "a role was added and this line forgotten" a test failure. Kept because this file's subject is
+  // the answer-check specifically, and a failure here names it directly.
   // The default itself, and the escape hatch that keeps a one-model setup from pulling in a second
   // download. Both are decisions, not incidentals.
   assert.ok(/OLLAMA_ANSWERCHECK_MODEL\s*=\s*process\.env\.OLLAMA_ANSWERCHECK_MODEL/.test(src),

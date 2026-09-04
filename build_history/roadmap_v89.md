@@ -205,12 +205,10 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   generation form — and correctly absent.)*
 
 **Raised by `v89_l`:**
-- **⚠️ `OLLAMA_TUTOR_MODEL` and `OLLAMA_ANALYSIS_MODEL` are missing from `configuredModels()`** — the
-  list the idle-release and shutdown sweeps free. Whenever either is pointed at a model no listed
-  role covers, that model is loaded and **never released**, which on a laptop is the whole thing the
-  idle release exists to prevent. `v89_l` added `answerCheck` (it had to — its default names a model
-  no other role does) and deliberately did not widen further inside an unrelated release. One line,
-  plus a guard in `unit-answer-check` §7's shape.
+- ~~`OLLAMA_TUTOR_MODEL` and `OLLAMA_ANALYSIS_MODEL` are missing from `configuredModels()`~~ —
+  **FIXED at `v89_r`**, and the list now guards itself: `unit-model-roles.test.js` enumerates every
+  `let OLLAMA_*_MODEL` in server.js and requires each to appear in `configuredModels()` AND in
+  `/api/models`'s validated `requested` array, so a future role cannot be added and forgotten.
 
 **Raised by `v89_c`/`v89_d`'s own measurements — the label pass is SHIPPED, these two are what it left:**
 - ~~A backfill over the existing inflections lessons~~ — **SHIPPED at `v89_f`**: 15 lessons, 28 of
@@ -2617,6 +2615,53 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_r — every model role is now released, and the list guards itself
+
+User: *"now fix the tutor and analysis models in configuredModels."* **ZERO `ui.json` keys.**
+
+`OLLAMA_TUTOR_MODEL` and `OLLAMA_ANALYSIS_MODEL` join `configuredModels()` — the list the idle
+release (`v88_l`) and the shutdown sweep free. **A role missing from it is a model this server can
+LOAD and never FREE**, which defeats the whole point of the idle release on a machine where RAM is
+the constraint, and it fails silently: nothing throws, the model just sits there.
+
+Both had been missing since they were introduced.
+
+### ⚠️ The real fix is that the list now guards ITSELF
+
+Three of eight roles were missing. `answerCheck` was caught at `v89_l` only because its default
+names a model no other role does; `tutor` and `analysis` were found by an audit, not by a test.
+
+> **A guard that has to be edited when a role is added is a guard that will be forgotten exactly
+> when it matters.**
+
+So `unit-model-roles.test.js` (new) **enumerates the roles from the source** — every
+`let OLLAMA_*_MODEL` declaration — and requires each to appear in **both** lists a role must join:
+
+| list | what a miss costs |
+|---|---|
+| `configuredModels()` | the model is loaded and never freed |
+| `/api/models`'s `requested` array | the role is accepted **without being validated** against the installed models — and if it is missing from `setRuntimeModels` too, silently ignored (`v89_l` found this the hard way) |
+
+**Adding a role and forgetting either now fails the suite.** The extraction asserts its own
+non-vacuity (≥ 8 roles found, and both ends of the list present by name), so a change to the
+declaration shape fails loudly rather than quietly matching nothing.
+
+`unit-answer-check` §7's per-role membership check is kept — this file's subject is the answer-check
+specifically, and a failure there names it directly — with a note that it is now the weaker half.
+
+### Mutations
+
+Five, all red: dropping `tutor`, dropping `analysis`, dropping the story model, dropping `analysis`
+from the `/api/models` validation, and — the one that matters most — **adding a plausible new role
+(`OLLAMA_GRADER_MODEL`) and wiring it nowhere**. The guard enumerates nine and fails.
+
+⚠️ One mutation was rejected as ARTIFICIAL rather than counted: renaming a declaration to
+`OLLAMA_TUTOR_MODEL2` left the guard green, but only because `[A-Z_]*MODEL\b` cannot match a name
+ending in a digit — and no real role is named that way. **A mutation that stays green because it is
+not a thing anyone would write is not evidence of a weak guard**; the realistic version was written
+instead, and it is red.
+
 
 ## ✅ v89_q — the static build now loads its own baked scripts table
 
