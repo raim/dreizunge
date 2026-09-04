@@ -333,6 +333,21 @@ async function init() {
   const _allBakedTags = new Set((Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[]).flatMap(sl=>sl.tags||[]));
   APP.libTagFilter = _allBakedTags.has('manually curated') ? 'manually curated' : '';
   await loadLanguages();
+  // v89_q (user-reported gap, found by the v89_m static audit): scripts.json IS baked into this
+  // bundle as window.SCRIPTS_DATA, and loadScripts() exists precisely to pick it up — its very
+  // first line short-circuits on window.SCRIPTS_DATA. This init never called it, so the module-level
+  // SCRIPTS_DATA stayed empty and every reader saw an empty table: scriptsForLang() returned [], so
+  // scriptsUsedInLessonSet() offered nothing and the LLM-free ALPHABET COURSE could not be reached
+  // in a published build at all — despite needing no backend and despite the data being shipped.
+  //
+  // Exactly the shape v86_h found for _storyTapInit: a pure client-side feature, present and
+  // correct, with the one wire-up missing. Sits beside loadLanguages() because it is its sibling —
+  // loadScripts's own comment calls itself a mirror of it — and the fetch fallback never fires here.
+  //
+  // NOTE, no backticks anywhere above: this whole init lives inside a template literal, and a
+  // backtick in a comment terminates it. That is the standing harness trap in INTERNALS, and the
+  // first version of this comment hit it.
+  await loadScripts();
   const _ss=document.getElementById('src-lang-select'); if(_ss) _ss.value='all';
   const _ts=document.getElementById('lang-select'); if(_ts) _ts.value='all';
   // Static default: show all languages (globe), don't filter by APP.lang

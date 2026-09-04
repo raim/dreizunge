@@ -55,6 +55,15 @@ console.log('  the static build\'s own init() wires _cardSwipeInit(): OK');
 }
 console.log('  mutation check: removing the _cardSwipeInit() call makes that guard fail: OK');
 
+// v89_q: the THIRD wire-up this file guards. `loadScripts()` picks up the baked window.SCRIPTS_DATA;
+// without the call the static build's alphabet course cannot be offered at all. Its BEHAVIOUR is
+// covered in unit-static-scripts-data.test.js — this is the wire, kept beside its two siblings so
+// "what the static init must call" is answerable in one place.
+assert.ok(/await loadScripts\(\);/.test(body),
+  "the static build's own init() must await loadScripts() — the scripts table is baked in and inert " +
+  'without it, so scriptsForLang() returns [] and no script course is ever offered');
+console.log('  the static build\'s own init() wires loadScripts(): OK');
+
 // _storySelInit (select text -> ASK THE TUTOR, PLAN §12) is correctly STILL absent from the static
 // init — that feature genuinely needs a live backend, unlike tap-to-advance, which is pure
 // client-side navigation. Asserted explicitly so a future "just add everything" fix doesn't

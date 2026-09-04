@@ -2233,6 +2233,18 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_q` — the static build now loads its own baked scripts table** (user request, from the
+`v89_m` audit)
+
+| what | where |
+|---|---|
+| the fix | `await loadScripts();` in `build-static.js`'s own `init()`, beside `loadLanguages()` |
+| what was broken | `scripts.json` IS baked as `window.SCRIPTS_DATA` and `loadScripts()` exists to pick it up — the static init never called it, so `SCRIPTS_DATA` stayed empty, `scriptsForLang()` returned `[]`, `scriptsUsedInLessonSet()` offered nothing, and **the LLM-free alphabet course was unreachable in every published build**. Same shape as `v86_h`'s `_storyTapInit` gap |
+| ⚠️ **why the guard is BEHAVIOURAL** | `unit-static-scripts-data.test.js` loads the BUILT `docs/index.html` under the harness (`loadClient({ file })`). A source check could not have caught this: **both halves were individually correct** — data baked, loader written — and only the COMPOSITION was broken. §2 asserts the user-visible consequence (`scriptsUsedInLessonSet` on a ja→en set returns `[]` before, real scripts after) |
+| ⚠️ trap 1, hit | **a backtick in a comment inside a template literal.** The static init lives in one; backticks around `window.SCRIPTS_DATA` in the new comment terminated it and broke the build (`SyntaxError: Unexpected identifier 'window'`). The comment now says why it has none |
+| ⚠️ trap 2, hit | **a comment that spells the pattern being scanned.** The mutation check stayed GREEN with the call deleted, because `/loadScripts\(\)/` matched the new COMMENT. Matched on the delimited `await loadScripts();` now. Found by the mutation, not by review |
+| also | `unit-static-story-tap-parity.test.js` gains this as its THIRD wire-up assertion, so "what the static init must call" stays answerable in one place. `hasScriptChoice` is deliberately NOT probed — it is absent from the static bundle (checked, not assumed) |
+
 **`v89_p` — a one-chapter book now honours every ticked lesson type** (user ruling, after `v89_o`
 diagnosed it from their server log)
 

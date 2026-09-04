@@ -188,7 +188,10 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   placeholder as its title. Visible in the log, invisible in the app. Separate defect, recorded here
   because it came from the same evidence.
 
-- **⚠️ The static build cannot offer the LLM-free alphabet course.** `build-static.js` BAKES
+- ~~The static build cannot offer the LLM-free alphabet course~~ — **FIXED at `v89_q`**
+  (the static `init()` now awaits `loadScripts()`; guarded behaviourally against the built
+  `docs/index.html`, since both halves were individually correct and only the composition was
+  broken). The original diagnosis follows, because the hosting plan's Tier 2.4 points at it:
   `window.SCRIPTS_DATA` into `docs/index.html`, and `loadScripts()` exists precisely to pick it up
   (`if (window.SCRIPTS_DATA) { … }`) — but **the static `init()` never calls it**, so the module-level
   `SCRIPTS_DATA` stays `{}`. `scriptsUsedInLessonSet` then offers nothing and
@@ -2614,6 +2617,62 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_q — the static build now loads its own baked scripts table
+
+User: *"now fix the loadScripts gap in the static build."* **ZERO `ui.json` keys.**
+
+### One missing call, and a whole feature unreachable
+
+`build-static.js` bakes `scripts.json` into `docs/index.html` as `window.SCRIPTS_DATA`, and
+`loadScripts()` exists precisely to pick it up — its first line short-circuits on exactly that. **The
+static `init()` never called it.** So the module-level `SCRIPTS_DATA` stayed `{}` in every published
+build, and:
+
+- `scriptsForLang()` returned `[]` for every language,
+- `scriptsUsedInLessonSet()` therefore offered nothing,
+- **the LLM-free ALPHABET COURSE could not be reached in a published build at all** — despite needing
+  no backend and despite the data being shipped in the file.
+
+Exactly the shape `v86_h` found for `_storyTapInit`: a pure client-side feature, present and correct,
+with the one wire-up missing. One line, beside `loadLanguages()` — its sibling, and the function
+`loadScripts`'s own comment already calls itself a mirror of.
+
+### ⚠️ Guarded BEHAVIOURALLY, because a source check could not have seen this
+
+`unit-static-scripts-data.test.js` (new) loads the **built** `docs/index.html` under the DOM harness
+and asserts what a published page actually does:
+
+| § | claim |
+|---|---|
+| 1 | the baked table has data, the loader is present, and **the module-level table is EMPTY until the loader runs** — the state every published build shipped in |
+| 2 | ⚠️ the user-visible consequence: `scriptsUsedInLessonSet()` on a `ja→en` set returns **`[]`** on an empty table and the real scripts once loaded |
+| 3 | the built `init()` awaits the call, after `loadLanguages()` |
+
+**§1 and §2 are the point.** The bug was invisible to every source-level check in the suite because
+**both halves were individually correct** — the data was baked, the loader was written. Only the
+composition was broken, and only a behavioural probe of the built artifact can see a composition.
+
+`unit-static-story-tap-parity.test.js` gains the wire-up assertion as its **third**, so "what the
+static init must call" stays answerable in one place.
+
+### ⚠️ Two standing traps, both hit, both already documented
+
+1. **A backtick in a comment inside a template literal.** The static `init()` lives inside one in
+   `build-static.js`, and the first version of the explanatory comment used backticks around
+   `window.SCRIPTS_DATA` / `loadScripts()`. It **terminated the literal and broke the build outright**
+   (`SyntaxError: Unexpected identifier 'window'`). INTERNALS' harness-traps note says exactly this.
+   The comment now carries a line saying why it has no backticks.
+2. **A comment that spells the pattern being scanned.** §3's mutation check stayed GREEN with the
+   call deleted, because the bare-name regex `/loadScripts\(\)/` matched the new COMMENT. Now matched
+   on the delimited **`await loadScripts();`**. That is this repo's rule-1 ("assert on the delimited
+   value") and its comment-near-a-scanned-pattern rule, both in one miss — **found by the mutation,
+   not by review.**
+
+### Mutation
+
+Removing `await loadScripts();` from `build-static.js` and rebuilding turns the new file red.
+
 
 ## ✅ v89_p — a one-chapter book now honours every ticked lesson type
 

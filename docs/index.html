@@ -165992,12 +165992,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v89_p', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v89_q', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"3433490ccd83","lessons.json":"e1d4265f982c","ui.json":"2affd3acf293","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"847debd00ea3","analysis-corrections.json":"missing","build-static.js":"e464fdfb9bd3"};
+  APP.buildSources = {"index.html":"3433490ccd83","lessons.json":"e1d4265f982c","ui.json":"2affd3acf293","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"847debd00ea3","analysis-corrections.json":"missing","build-static.js":"811abf3b5152"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -166006,6 +166006,21 @@ async function init() {
   const _allBakedTags = new Set((Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[]).flatMap(sl=>sl.tags||[]));
   APP.libTagFilter = _allBakedTags.has('manually curated') ? 'manually curated' : '';
   await loadLanguages();
+  // v89_q (user-reported gap, found by the v89_m static audit): scripts.json IS baked into this
+  // bundle as window.SCRIPTS_DATA, and loadScripts() exists precisely to pick it up — its very
+  // first line short-circuits on window.SCRIPTS_DATA. This init never called it, so the module-level
+  // SCRIPTS_DATA stayed empty and every reader saw an empty table: scriptsForLang() returned [], so
+  // scriptsUsedInLessonSet() offered nothing and the LLM-free ALPHABET COURSE could not be reached
+  // in a published build at all — despite needing no backend and despite the data being shipped.
+  //
+  // Exactly the shape v86_h found for _storyTapInit: a pure client-side feature, present and
+  // correct, with the one wire-up missing. Sits beside loadLanguages() because it is its sibling —
+  // loadScripts's own comment calls itself a mirror of it — and the fetch fallback never fires here.
+  //
+  // NOTE, no backticks anywhere above: this whole init lives inside a template literal, and a
+  // backtick in a comment terminates it. That is the standing harness trap in INTERNALS, and the
+  // first version of this comment hit it.
+  await loadScripts();
   const _ss=document.getElementById('src-lang-select'); if(_ss) _ss.value='all';
   const _ts=document.getElementById('lang-select'); if(_ts) _ts.value='all';
   // Static default: show all languages (globe), don't filter by APP.lang
