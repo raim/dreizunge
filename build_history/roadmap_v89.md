@@ -140,25 +140,42 @@ in the carried sections further down and, where noted, in the older roadmaps.*
     `continuedFromId` and no `continuedFrom`**, and landed in a NEW one-chapter storyline.
   - **Every other user-pasted chapter in the corpus has one** and joined `sl_143869450` (8 of 8
     checked). So the path DOES normally work — this is a specific failure, not a dead feature.
-  - The lesson half was a **RACE, not a loss**: the chapter read `lessons: []` when first inspected
-    and had entries minutes later, with `Adding … lesson` jobs still running. ⚠️ Its translation took
-    **65 s** (typical for this corpus is 12–16 s), i.e. the box was heavily loaded — an agent
-    benchmark was running at the time. **Re-confirm the lesson-type half on an idle machine before
-    treating it as a bug at all.**
+  - ⚠️ **The lesson half was ALSO a real loss.** An earlier version of this entry called it a race —
+    the chapter read `lessons: []` and had entries minutes later — and **that was wrong**. The user
+    corrected it: *"i restarted those manually."* The entries that appeared were their own re-adds,
+    and the job labels said so at the time (`Adding word_forms lesson` is `/api/lessons/add-lesson`,
+    NOT the book job). **The evidence was in hand and read the wrong way round.** The original
+    generation produced **zero** lessons. (The 65 s translation, against a 12–16 s norm, remains
+    true and still indicates a loaded box — but it explains slowness, not emptiness.)
 
-  **Two hypotheses remain, and the source rules out neither:**
-  1. `#continue-select` was empty at send time — `comicCreateChapter` sends
-     `document.getElementById('continue-select')?.value || null`, so an unrendered or reset picker
-     sends `null` silently. ⚠️ Item `AL` fixed *exactly this class of bug once* (the body never sent
-     `continuedFrom` at all), which makes a second, narrower path failure plausible.
-  2. The wizard reset the selection between card 1 (where item `AL` moved the control) and the comic
-     panel's create action.
+  **RULED OUT by reading the source (so nobody re-checks these):**
+  - *"The type list was never rendered for a one-panel comic."* No. `_applyLessonCardUI` renders it
+    under `!skip && _genArcApplicable()`, and `_genArcApplicable()` returns **`n >= 1` for non-LLM
+    modes** — true for a single panel. The `APP.numChapters > 1` gate is on `onNumChaptersSlider`'s
+    call site only, which the comic path does not use. The user could and did see the list.
+  - *"`comicCreateChapter` never sends these fields."* No — it sends `continuedFrom`, `skipLessons`,
+    and `arc`/`arcTypes`. Item `AL` fixed the missing-`continuedFrom` bug already.
 
-  **The decisive next step is the server log for that job** — `generate()` logs
-  `Continuing from: "…"` when it receives one. Its absence would settle hypothesis 1 immediately.
-  ⚠️ The client-side lesson-type gate is worth reading at the same time: `renderArcTypeChecks` is
-  called under `if (APP.numChapters > 1)` at one of its two call sites, and a single photographed
-  panel is one chapter.
+  **What is left, and why none of it is conclusive from the source alone:**
+  1. **`skipLessons` was true.** It is the only mechanism found that yields *exactly zero* lessons,
+     and the route forces `arc:false` when it is set — which would discard the selected types too,
+     explaining BOTH symptoms with one cause. ⚠️ **But it does not explain the lost lineage**
+     (`continuedFrom` is sent regardless), and `_applyLessonCardUI` HIDES the arc row when skip is
+     checked, so the user could not have picked types while it was on — unless they picked first and
+     ticked skip after.
+  2. **Two independent losses**, both from card-3/card-1 controls not being in the state the send
+     path reads. ⚠️ `comicOpenReview`'s own comment records the *inverse* failure already
+     (`v86_v`: the card auto-opening meant `#gen-skip-lessons-cb` "is still at its default and
+     comicCreateChapter() read it as generate everything"), which establishes that **this send path
+     reading card 3's controls when the learner's journey did not go through card 3 is a KNOWN
+     hazard shape here** — just previously seen in the other direction.
+  3. The book job errored mid-way after the early `lessons: []` save (`v69_q`'s crash-recovery
+     save). The 65 s translation says the box was loaded, so a timeout is plausible.
+
+  **The decisive artifact is the server log for that job**, and it separates all three in one read:
+  `generate()` logs `Continuing from: "…"` on receipt, the route logs the resolved lesson plan, and a
+  failure logs itself. ⚠️ **Do not attempt a fix before reading it** — three live hypotheses and a
+  silent send path is exactly the shape that produces a confident wrong patch.
 
 - **⚠️ The static build cannot offer the LLM-free alphabet course.** `build-static.js` BAKES
   `window.SCRIPTS_DATA` into `docs/index.html`, and `loadScripts()` exists precisely to pick it up
@@ -2532,6 +2549,56 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_n — a correction: the missing lessons were a LOSS, not a race
+
+User, correcting `v89_m`: *"i restarted those manually."* **Documentation only. ZERO `ui.json` keys.**
+
+### The mistake, and how it was available to be avoided
+
+`v89_m` recorded the comic chapter's missing lessons as *"a RACE, not a loss"*, on the grounds that
+the chapter read `lessons: []` and had entries minutes later. **The entries were the user's own
+manual re-adds.**
+
+⚠️ **The evidence was in hand and read the wrong way round.** The running jobs were labelled
+`Adding word_forms lesson` / `Adding standard lesson` — and `Adding …` is
+**`/api/lessons/add-lesson`**, the manual per-chapter route, *not* the book job that created the
+chapter. That label was quoted in the investigation and then reasoned past. **A chapter filling up is
+not evidence of what filled it.**
+
+**Both halves of the original report are real losses.** The original generation produced zero
+lessons, and the lineage was dropped.
+
+### What `v89_n` RULED OUT, by reading the source
+
+Recorded so nobody re-checks them:
+
+- ❌ *"The lesson-type list is never rendered for a one-panel comic."* `_applyLessonCardUI` renders it
+  under `!skip && _genArcApplicable()`, and **`_genArcApplicable()` returns `n >= 1` for non-LLM
+  modes** — true for a single panel. The `APP.numChapters > 1` gate sits on `onNumChaptersSlider`'s
+  call site only, which the comic path never uses. The user could and did see the list.
+- ❌ *"`comicCreateChapter` never sends these fields."* It sends `continuedFrom`, `skipLessons` and
+  `arc`/`arcTypes`. Item `AL` already fixed the missing-`continuedFrom` bug once.
+
+### What remains, and why the source cannot settle it
+
+1. **`skipLessons` was true** — the only mechanism found that yields *exactly zero* lessons, and the
+   route forces `arc:false` when it is set, which would discard the types too. **One cause, both
+   symptoms.** ⚠️ But it does not explain the lost lineage, and `_applyLessonCardUI` HIDES the arc row
+   when skip is on, so the types could not have been picked while it was.
+2. **Two independent losses** from card-3/card-1 controls not being in the state the send path reads.
+   ⚠️ `comicOpenReview`'s own comment already records the **inverse** of this (`v86_v`: the card
+   auto-opening meant `#gen-skip-lessons-cb` "is still at its default and comicCreateChapter() read
+   it as generate everything"), which establishes that **this send path reading card 3's controls
+   when the learner's journey did not pass through card 3 is a known hazard shape here** — previously
+   seen in the other direction.
+3. **The book job errored** after `v69_q`'s early `lessons: []` crash-recovery save.
+
+### ⚠️ Do not attempt a fix before reading the server log
+
+Three live hypotheses and a send path that fails silently is exactly the shape that produces a
+confident wrong patch. The log separates all three in one read: `generate()` logs
+`Continuing from: "…"` on receipt, the route logs its resolved lesson plan, and a failure logs itself.
+
 ## ✅ v89_m — the wind-down: two planning documents, two new open items, one audit
 
 User, wrapping up: *"provide a coarse estimate how much faster our most limiting functions (tutor,
@@ -2575,11 +2642,14 @@ already**, since `build-static.js` is exactly the read-only artifact a "publish"
 
 - **⚠️ A comic-sourced chapter lost its "continued from"** — user report, **confirmed from the data**:
   `tp_17885199795390000039` has no lineage and landed in its own storyline, while **8 of 8** other
-  user-pasted chapters have one. The lesson-type half of the same report was a **RACE, not a loss**
-  (the chapter read `lessons: []`, then filled in; its translation took 65 s against a 12–16 s norm,
-  i.e. the box was loaded by an agent benchmark at the time). Two hypotheses recorded, neither ruled
-  out by the source, plus the decisive next step: `generate()` logs `Continuing from: "…"` on receipt,
-  so the server log for that job settles it in one line.
+  user-pasted chapters have one. ⚠️ **This entry originally called the lesson-type half a "RACE, not
+  a loss", and that was WRONG** — corrected at `v89_n` after the user said *"i restarted those
+  manually."* The lessons that appeared were their own re-adds, and the job labels said so at the
+  time (`Adding … lesson` is `/api/lessons/add-lesson`, not the book job). **Both halves of the
+  report are real losses.** The 65 s translation, against a 12–16 s norm, is still true and still
+  says the box was loaded — but it explains slowness, not emptiness. See the open item for the
+  corrected hypothesis space and the decisive next step: `generate()` logs `Continuing from: "…"` on
+  receipt, so the server log for that job settles it in one read.
 - **⚠️ The static build cannot offer the LLM-free alphabet course** — `window.SCRIPTS_DATA` is baked
   into `docs/index.html` and `loadScripts()` exists to pick it up, but the static `init()` never calls
   it, so `SCRIPTS_DATA` stays `{}`. Same shape as the `_storyTapInit` gap `v86_h` found. Flagged to be
