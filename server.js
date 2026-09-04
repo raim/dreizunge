@@ -284,7 +284,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_i';
+const APP_VERSION  = 'v89_j';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -5368,6 +5368,30 @@ async function generateWriting(topic, lang, srcLang, difficulty, jobId, opts) {
 // two must never contaminate each other (the prompt says so explicitly): a language mistake in an
 // otherwise-correct answer should not lower the verdict, and a correct-but-clumsy answer should
 // still surface its typos.
+// v89_j: the one line PROMPTS.answerCheck asks for — `VERDICT: <also acceptable|wrong> — <note>`.
+//
+// ⚠️ EVERYTHING THAT IS NOT AN EXPLICIT "also acceptable" IS TREATED AS NOT-ALSO-ACCEPTABLE. A reply
+// in the wrong shape, an empty reply, a verdict word this parser does not know — all of them come
+// back as something the client will not show. That asymmetry is deliberate and is the whole safety
+// property of this feature: failing to spot a synonym costs a learner nothing, while telling them a
+// genuine mistake was fine teaches them the mistake, and they cannot tell the difference.
+function parseAnswerCheck(raw) {
+  const line = String(raw || '').split('\n').map(x => x.trim()).filter(Boolean)
+    .find(l => /^VERDICT\s*:/i.test(l));
+  if (!line) return { verdict: 'unknown', note: '' };
+  // Non-greedy up to the FIRST dash (em or hyphen): the verdict words contain none, the note may.
+  const m = /^VERDICT\s*:\s*([^\u2014-]*?)\s*(?:[\u2014-]\s*([\s\S]*))?$/i.exec(line);
+  if (!m) return { verdict: 'unknown', note: '' };
+  const v = String(m[1] || '').trim().toLowerCase().replace(/[."']+$/, '');
+  const note = String(m[2] || '').trim();
+  // ⚠️ ANCHORED, not a substring test. `VERDICT: probably also acceptable-ish` CONTAINS the words
+  // and is a hedge — an unanchored match read it as approval, which is precisely the direction this
+  // parser must never fail in. Found by the guard, not in review.
+  if (/^also\s+acceptable$/.test(v)) return { verdict: 'also_acceptable', note };
+  if (/^wrong$/.test(v)) return { verdict: 'wrong', note };
+  return { verdict: 'unknown', note };
+}
+
 function parseWritingFeedback(text) {
   const reply = String(text || '').trim();
   const lines = reply.split('\n').map(l => l.trim()).filter(Boolean);
@@ -9859,6 +9883,53 @@ http.createServer(async (req, res) => {
     // only — see PROMPTS.writing), and grading judges CONTENT correctness against the story as well
     // as typos/grammar — the judge needs the question AND the story to do that, unlike phase 1's
     // typo-only check which needed neither.
+    // v89_j (user request): "sometimes the wrong answer is actually also correct". Asked ONLY when
+    // the learner already got it wrong and only when they have switched the setting on, so the cost
+    // is paid on the rare path and never on a correct answer.
+    //
+    // ⚠️ It REPORTS, it does not GRADE. Nothing here touches progress: the roadmap note this was
+    // built from says so explicitly, and the reason is that a model deciding the learner was right
+    // after all would write markSolved/BKT state, so a wrong verdict would corrupt progress rather
+    // than one question. The client shows the verdict and leaves the answer wrong.
+    if (M === 'POST' && url.pathname === '/api/answer-check') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend for the answer check.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+      const lang = clip(body.lang, 8), srcLang = clip(body.srcLang || 'en', 8);
+      // The item the learner was shown can be a whole sentence (read_translate), the two answers
+      // never are — hence the different caps.
+      const prompt = clip(body.prompt, 1000).trim();
+      const correct = clip(body.correct, 300).trim();
+      const picked = clip(body.picked, 300).trim();
+      // Which direction the question ran. Sent by the client rather than re-derived from the type
+      // here, so the ONE place that knows the four types' shapes stays the client's own table.
+      const promptLang = clip(body.promptLang, 8) || lang;
+      const answerLang = clip(body.answerLang, 8) || srcLang;
+      if (!lang) return json(res, 400, { error: 'Missing lang' });
+      if (!prompt) return json(res, 400, { error: 'Missing prompt' });
+      if (!correct || !picked) return json(res, 400, { error: 'Missing correct/picked' });
+      // Nothing to judge: the two answers are the same string. A real client cannot send this (it
+      // only asks after a WRONG answer), so it is a contract check, not a code path.
+      if (correct.toLowerCase() === picked.toLowerCase()) return json(res, 400, { error: 'correct and picked are identical' });
+      const L = langName(lang), S = langName(srcLang);
+      const vars = { L, S, PL: langName(promptLang), AL: langName(answerLang), prompt, correct, picked };
+      const sys = fillPrompt(PROMPTS.answerCheck.system, vars);
+      const userMsg = fillPrompt(PROMPTS.answerCheck.user, vars);
+      // A job, like every other model-backed route since v88_al — and this one sits in the learner's
+      // exercise flow, so it needs the cancel the shape gives it: the learner can press Continue
+      // while it is still thinking.
+      return runAsJob(res, { label: 'Re-checking your answer' }, async () => {
+        // callLLMLesson, for the same reason writing-feedback gives: this is a pedagogical
+        // JUDGEMENT, not a translation check, and the QC-role model was measured there to ignore a
+        // requested output format outright.
+        const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 200);
+        const { verdict, note } = parseAnswerCheck(stripRaw(String(raw || '')));
+        console.log(`  Answer check (${lang}\u2190${srcLang}): "${picked}" vs "${correct}" -> ${verdict}`);
+        return { verdict, note, promptTokens, completionTokens };
+      });
+    }
     if (M === 'POST' && url.pathname === '/api/writing-feedback') {
       if (active === 'none') return json(res, 503, { error: 'No LLM backend for writing feedback.' });
       let body;

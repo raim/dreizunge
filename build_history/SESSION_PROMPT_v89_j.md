@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_i` cut
+# Session prompt — written at the `v89_j` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_i`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_j`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -130,6 +130,16 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   bottom band**, and identical for a completely different selection rect. ⚠️ **The Google bar itself
   is NOT suppressed and cannot be** from a page — moving the popover out of its way is the whole
   remedy available.
+- **`v89_j`** — the answer-time **"was my wrong answer also correct?"** re-check. ⚠️ **It REPORTS,
+  it does not GRADE**: nothing touches `markSolved`, the ledger, hearts or BKT, because a model
+  deciding the learner was right after all would write PROGRESS state and a bad verdict would
+  corrupt their history. **Default OFF** (user ruling — live-only and slow), settings row hidden
+  without a backend. Scope: the four MEANING-based MCQ types only. ⚠️ **The parser's asymmetry is
+  the safety property**: ONLY an explicit, ANCHORED `also acceptable` counts — a hedge
+  (`probably also acceptable-ish`) read as approval until the guard caught it. **Live-measured on
+  the user's own model: ~31s per check**, which is exactly why it is opt-in. **The first `ui.json`
+  keys of the whole `v89` line — 3, granted explicitly** (`settings.answer_check`,
+  `settings.answer_check_title`, `check.also_correct`).
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -166,8 +176,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 339 checks
-node test/run.js --quick                  → expect 278
+node test/run.js                          → expect 340 checks
+node test/run.js --quick                  → expect 279
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -199,8 +209,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **343 topics, 97 storylines, 33 languages, 755 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_i'`.
+Corpus at this cut: **343 topics, 97 storylines, 33 languages, 758 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_j'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

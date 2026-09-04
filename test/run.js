@@ -281,6 +281,7 @@ run('unit: the arrows browse chapters, \u25b6 plays; no chapter-wise lock (v88_r
 run('unit: swipe the progress card left/right = its \u2190/\u2192 arrows (v89_b)', 'node', [path.join(__dirname, 'unit-card-swipe-nav.test.js')]);
 run('unit: inflection form-label normalisation \u2014 the failure modes (v89_d)', 'node', [path.join(__dirname, 'unit-inflection-label-normalise.test.js')]);
 run('unit: inflection form-label BACKFILL \u2014 scope and a concurrency-safe write-back (v89_f)', 'node', [path.join(__dirname, 'unit-inflection-label-backfill.test.js')]);
+run('unit: a "wrong" answer that is also correct \u2014 the answer-time re-check (v89_j)', 'node', [path.join(__dirname, 'unit-answer-check.test.js')]);
 run('unit: per-job cancel button in the jobs popover (item AU cancel, v88_k)', 'node', [path.join(__dirname, 'unit-jobs-cancel-button.test.js')]);
 run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
 run('unit: post-gen analysis opt-in, client side, mirrors postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'unit-postgen-analysis-optin.test.js')]);

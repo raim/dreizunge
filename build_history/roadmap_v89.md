@@ -144,7 +144,12 @@ in the carried sections further down and, where noted, in the older roadmaps.*
 
 **🆕 Raised by the user at the `v89_h` cut:**
 
-- **⭐ A "wrong" answer is sometimes ALSO CORRECT — a general defect across every MCQ type.** User
+- **⭐ A "wrong" answer is sometimes ALSO CORRECT** — **strategy 2 (answer-time) SHIPPED at `v89_j`**
+  for the four meaning-based MCQ types, opt-in and report-only. **What is still open**: strategy 1
+  (harden the generation prompt so distractors must be wrong for THIS item), `inflection_form` in
+  scope, and one thing the user's own screenshot showed that is a DIFFERENT defect — a distractor in
+  ENGLISH in a German-source lesson. The original note is kept below because its reasoning is what
+  the next step needs. User
   request: *"Note in the roadmap on a general problem: sometimes the wrong answer is actually also
   correct. We should find strategies to either solve this or minimize its occurrence."*
 
@@ -2243,6 +2248,83 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_j — "was my wrong answer actually also correct?", asked at answer time
+
+User request, from the instance they sent: a nl→de `read_translate` marked **KOSTENLOS** wrong in
+favour of **UMSONST** — and `kostenlos` is a perfectly good German rendering of `kosteloos`.
+**Three `ui.json` keys, granted explicitly** — the first of the whole `v89` line.
+
+### ⚠️ It REPORTS, it does not GRADE
+
+Nothing in this cut touches `markSolved`, the ledger, hearts or BKT. The answer stays wrong; the
+learner is simply told their choice was also acceptable. That is the roadmap note's own warning
+made real: a model deciding the learner was right after all would write **progress state**, so a bad
+verdict would corrupt their history rather than one feedback panel. `unit-answer-check` §2 asserts
+the route's body mentions none of `saveStore`/`markSolved`/`store.topics`/`progress`.
+
+### Off by default, and every reason it stays shut
+
+User ruling: *"add a settings button to activate/de-activate this function (default NOT active) since
+this works only on live and likely will be slow."* Measured on their own model: **~31s per check** —
+so the default matters.
+
+| gate | why |
+|---|---|
+| `APP.answerCheck` | the setting. `loadAnswerCheck` reads `=== '1'`, never `!== '0'` — absent means OFF |
+| `APP.info.canGenerate` | no live backend, nothing could answer. The settings ROW is hidden too — which also makes it correctly absent from the static build |
+| type ∈ `_ANSWER_CHECK_TYPES` | `mcq_target_source`, `mcq_source_target`, `read_translate`, `listen_mcq` |
+| a wrong answer only | it is called from `check()`'s wrong branch, never on a correct one and never on a replay |
+| `correct !== picked` | case-normalised; not a disagreement to judge |
+
+**Scope is a ruling, not an oversight.** The grammar types (article, plural, conjugation) are OUT: a
+second correct answer *there* means the lesson is broken in a different way, and that is worth
+SEEING rather than smoothing over. `inflection_form` — where `Präteritum` and `Vergangenheit` really
+are both right — was offered and not taken up this cut.
+
+### ⚠️ The parser's asymmetry is the safety property
+
+`parseAnswerCheck` (server.js) accepts **only** an explicit, **anchored** `also acceptable`.
+Everything else — a shapeless reply, an empty one, an unknown verdict word — comes back as something
+the client will not show.
+
+> Failing to spot a synonym costs a learner nothing. Telling them a genuine mistake was fine teaches
+> them the mistake, **and they cannot tell that the model was guessing.**
+
+The prompt carries the same instruction (*"WHEN YOU ARE UNSURE, ANSWER wrong"*), but per this line's
+own repeated finding, an instruction is not a mechanism — the parser is the mechanism.
+
+**This was not theoretical.** The first parser used an UNANCHORED `/also\s+acceptable/`, so
+`VERDICT: probably also acceptable-ish` — a hedge — read as **approval**. The guard caught it before
+it ever ran. That is the one direction this feature must never fail in, and it failed there first.
+
+### Verified live, end to end
+
+Against a **separate server instance on port 3457 with its own copy of the corpus** (a `server.js`
+edit is not live in the user's process, and their data must not be touched):
+
+| case | verdict | note the learner sees |
+|---|---|---|
+| `KOSTENLOS` vs `UMSONST` (the report) | **also_acceptable** | *"„Kostenlos" ist ein direktes Synonym zu „umsonst" und in diesem Kontext ebenfalls korrekt."* |
+| *"Die Katze schläft…"* vs *"Der Hund läuft…"* | **wrong** | *"Die Antwort beschreibt ein völlig anderes Subjekt und eine andere Handlung…"* |
+
+~31s each. Contract checks answered `400` as designed (identical answers, missing prompt). The
+instance was killed by the PID holding port 3457, never by `pkill -f "node server.js"`, which would
+have taken the user's own server with it.
+
+### Guards
+
+`unit-answer-check.test.js` (new, 6 sections) — the parser's asymmetry, the route touching no
+progress name, every gate one at a time so a failure names which one broke, the per-type question
+DIRECTION (⚠️ `mcq_source_target` runs the other way and is the one that would be silently wrong if
+the direction were assumed), the late-verdict drop, and that exactly the three granted keys exist,
+`en` only, all three used.
+
+**Ten mutations, all red — after a fix.** The stale-index mutation stayed GREEN at first: the test
+called `_answerCheckShow(…, 4)` with `APP.cur.cur` already `4`, so the indices MATCHED and the
+DEDUPE was doing the rejecting, not the guard under test. Rewritten to the real case — a verdict for
+question 3 arriving into the fresh panel question 4 rendered — plus a non-vacuity showing the same
+panel still accepts a verdict for the question actually on screen.
 
 ## ✅ v89_i — the phone select-text→tutor popover, out from under the browser's chrome
 

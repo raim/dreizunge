@@ -892,6 +892,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <input type="checkbox" id="overrule-sl-lang-cb" onchange="toggleOverruleStorylineLang()">
         <span id="overrule-sl-lang-lbl">Fix</span>
       </label>
+      <!-- v89_j (user request): "add a settings button to activate/de-activate this function
+           (default NOT active) since this works only on live and likely will be slow". Hidden
+           entirely without a backend — the row promises a model call, and offering it where none
+           can run is the dishonest half of every gate in this file. That also makes it correctly
+           absent from the static build, which has no backend by construction. -->
+      <label id="answer-check-row" style="display:none;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--gray-dark);cursor:pointer">
+        <input type="checkbox" id="answer-check-cb" onchange="toggleAnswerCheck()">
+        <span id="answer-check-lbl"></span>
+      </label>
     </div>
     <div id="ui-translate-row" style="display:none;margin-bottom:12px;align-items:center;gap:8px;flex-wrap:wrap">
       <span id="ui-translate-info" style="font-size:11px;font-weight:700;color:var(--gray-dark)"></span>
@@ -2929,6 +2938,8 @@ var APP = {
   // stories in other source languages.
   uiLang: loadUiLang(),
   overruleStorylineLang: loadOverruleStorylineLang(),
+  // v89_j: the answer re-check. DEFAULT OFF, by user ruling — it is live-only and slow.
+  answerCheck: loadAnswerCheck(),
   difficulty: loadDifficulty(),
   storyLen: loadStoryLen(),
   numChapters: loadNumChapters(),
@@ -3539,6 +3550,14 @@ function openSettings(){
   // The overrule checkbox reflects APP state (not markup) — sync on every open rather than only
   // on init/toggle, so it can never drift from the actual persisted value.
   const cb = document.getElementById('overrule-sl-lang-cb'); if (cb) cb.checked = !!APP.overruleStorylineLang;
+  // v89_j: the re-check row shows ONLY where a model can actually answer.
+  { const _acRow = document.getElementById('answer-check-row');
+    const _acCb  = document.getElementById('answer-check-cb');
+    const _acLbl = document.getElementById('answer-check-lbl');
+    const _acOk  = !!APP.info?.canGenerate;
+    if (_acRow) { _acRow.style.display = _acOk ? 'flex' : 'none'; _acRow.title = t('settings.answer_check_title'); }
+    if (_acLbl) _acLbl.textContent = t('settings.answer_check');
+    if (_acCb) _acCb.checked = !!APP.answerCheck; }
   try { updateSpeechMismatchPill(); } catch(_) {}
 }
 function closeSettings(){ const m=document.getElementById('settings-modal'); if(m) m.style.display='none'; }
@@ -3625,7 +3644,10 @@ function saveSrcLang(){ localStorage.setItem('imp3_srclang',APP.formSrcLang); }
 function loadUiLang(){ try { return localStorage.getItem('imp3_uilang') || loadSrcLang(); } catch(_) { return 'en'; } }
 function saveUiLang(){ try { localStorage.setItem('imp3_uilang', APP.uiLang); } catch(_) {} }
 function loadOverruleStorylineLang(){ try { return localStorage.getItem('imp3_overrule_sl') === '1'; } catch(_) { return false; } }
+// v89_j: absent reads as OFF — `=== '1'`, never `!== '0'`. Default-not-active is the ruling.
+function loadAnswerCheck(){ try { return localStorage.getItem('imp3_answer_check') === '1'; } catch(_) { return false; } }
 function saveOverruleStorylineLang(){ try { localStorage.setItem('imp3_overrule_sl', APP.overruleStorylineLang ? '1' : '0'); } catch(_) {} }
+function saveAnswerCheck(){ try { localStorage.setItem('imp3_answer_check', APP.answerCheck ? '1' : '0'); } catch(_) {} }
 
 // ── Toast + share — pure DOM, no server dependency ────────────────────
 function showToast(msg){
@@ -5617,6 +5639,12 @@ async function selectUiLang(code){
 // The "overrule storyline source language" checkbox. Default (unchecked) preserves the pre-
 // existing auto-follow-on-open behaviour for storylines; checked pins APP.uiLang regardless of
 // which storyline is opened — openStorylineScreen() reads this flag, not this function.
+function toggleAnswerCheck(){
+  APP.answerCheck = !APP.answerCheck;
+  saveAnswerCheck();
+  const cb = document.getElementById('answer-check-cb');
+  if (cb) cb.checked = APP.answerCheck;
+}
 function toggleOverruleStorylineLang(){
   APP.overruleStorylineLang = !APP.overruleStorylineLang;
   saveOverruleStorylineLang();
@@ -21387,6 +21415,8 @@ function check(replay){
     if((ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') && !_glyphOrderActive(ex)) document.getElementById('type-in').classList.add('bad');
     const a=document.getElementById('ex-area'); a.classList.remove('rise-up'); a.classList.add('fall-down'); setTimeout(()=>a.classList.remove('fall-down'),520);
     renderHearts();
+    // v89_j: only after a WRONG answer, only when the learner switched it on, and never on a replay.
+    if(!replay) _answerCheckMaybe(ex, C.sel, C.cur);
   }
 
   // v80_v: REPAINT THE STORY PANEL after answering. `markSolved` has just run, so the word the
@@ -24757,6 +24787,92 @@ function _cardSwipeSwallowClick(e){
   APP._swipeAt = 0;
   try { e.stopPropagation(); } catch(_) {}
   try { e.preventDefault(); } catch(_) {}
+}
+
+
+// ── v89_j: "was my wrong answer actually also correct?" ────────────────────────────────────────
+//
+// User request, from a real instance they sent: a Dutch→German `read_translate` marked KOSTENLOS
+// wrong in favour of UMSONST — and `kostenlos` is a perfectly good German rendering of `kosteloos`.
+// The roadmap note this was built from names two strategies; this is the ANSWER-TIME one, chosen
+// because it costs nothing on a correct answer and because "your answer is also acceptable" is more
+// useful to a learner than a lesson silently patched behind their back.
+//
+// ⚠️ IT REPORTS, IT DOES NOT GRADE. Nothing here touches `markSolved`, the ledger, hearts or BKT.
+// The answer stays wrong. That is the roadmap note's own explicit warning: a model deciding the
+// learner was right after all would write PROGRESS state, so a bad verdict would corrupt a
+// learner's history rather than one question's feedback panel.
+//
+// SCOPE (user ruling): the four MEANING-based single-choice types, where a distractor can be
+// accidentally valid because two words mean the same thing. The grammar types (article, plural,
+// conjugation) are deliberately OUT: a second correct answer there means the lesson is broken in a
+// different way, and that is worth SEEING rather than smoothing over.
+const _ANSWER_CHECK_TYPES = new Set(['mcq_target_source', 'mcq_source_target', 'read_translate', 'listen_mcq']);
+// Which way round the question ran. The client owns this table because it is the client that knows
+// the four types' field shapes; the server is told the two languages and judges generically.
+function _answerCheckDirection(ex, lang, srcLang){
+  return ex.type === 'mcq_source_target'
+    ? { prompt: ex.source, promptLang: srcLang, answerLang: lang }    // {S} item, {L} answer
+    : { prompt: ex.target, promptLang: lang,    answerLang: srcLang };  // {L} item, {S} answer
+}
+// Everything that must be true before a model call is worth making. Pure, so the gate can be
+// tested without a network: the guards are the whole point of the feature being off by default.
+function _answerCheckEligible(ex, picked){
+  if (!APP.answerCheck) return false;              // the user ruling: default OFF, opt in
+  if (!APP.info?.canGenerate) return false;        // no live backend — nothing could answer
+  if (!ex || !_ANSWER_CHECK_TYPES.has(ex.type)) return false;
+  const correct = Array.isArray(ex.correct) ? '' : String(ex.correct == null ? '' : ex.correct).trim();
+  const chose = String(picked == null ? '' : picked).trim();
+  if (!correct || !chose) return false;
+  // Identical strings are not a disagreement to judge. Cannot happen from `check()`'s wrong branch,
+  // but this function is the gate and the gate states its own contract.
+  if (correct.toLowerCase() === chose.toLowerCase()) return false;
+  return true;
+}
+async function _answerCheckMaybe(ex, picked, atIndex){
+  if (!_answerCheckEligible(ex, picked)) return;
+  const lang = APP.lessonData?.lang || APP.lang;
+  const srcLang = APP.lessonData?.srcLang || APP.srcLang || 'en';
+  const dir = _answerCheckDirection(ex, lang, srcLang);
+  if (!dir.prompt) return;
+  let data;
+  try {
+    data = await _jobAwait(await fetch('/api/answer-check', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lang, srcLang, prompt: stripFuri(dir.prompt),
+        promptLang: dir.promptLang, answerLang: dir.answerLang,
+        correct: stripFuri(String(ex.correct)), picked: String(picked) }),
+    }));
+  } catch(e) {
+    // Silent. This is an optional second opinion on a question the learner has already been told
+    // they got wrong — an error toast here would be noise about a thing they did not ask for.
+    console.warn('answer check failed:', e && e.message);
+    return;
+  }
+  if (!data || data.verdict !== 'also_acceptable') return;   // see parseAnswerCheck: anything else is a no
+  _answerCheckShow(data.note, atIndex);
+}
+// ⚠️ The learner may have pressed Continue while the model was thinking. Rendering into the panel
+// then would attach a verdict about the PREVIOUS question to the one now on screen — the same class
+// of bug as a stale async render anywhere else, and worse here because the text is about an answer.
+// The question index is captured at call time and re-checked at render time.
+function _answerCheckShow(note, atIndex){
+  if (!APP.cur || APP.cur.cur !== atIndex) return;
+  const fb = document.getElementById('fb');   // the id is `fb`, not `feedback` — checked, not assumed
+  if (!fb) return;
+  const body = fb.querySelector('.fb-body');
+  if (!body) return;
+  // Scanning `children` rather than `querySelector`: we only ever append at this level, so it is
+  // exact — and it is also the one form the DOM harness can observe, which is what keeps "never
+  // twice" a testable claim instead of a comment. (The harness tracks appended children but its
+  // selector engine only sees nodes that came from the innerHTML it parsed.)
+  for (const kid of body.children) if (kid && kid.className === 'answer-also-ok') return;   // never twice
+  const div = document.createElement('div');
+  div.className = 'answer-also-ok';
+  div.style.cssText = 'margin-top:6px;font-size:12px;font-weight:700;opacity:.9';
+  div.innerHTML = '💡 <strong>' + escHtml(t('check.also_correct')) + '</strong>'
+                + (note ? ' ' + escHtml(String(note)) : '');
+  body.appendChild(div);
 }
 
 // Show the per-question 🦉 only when a backend exists and we're inside an exercise.

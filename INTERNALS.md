@@ -2231,6 +2231,21 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_j` — "was my wrong answer actually also correct?", asked at answer time** (user request, from
+a real instance: `KOSTENLOS` marked wrong for Dutch `kosteloos` in favour of `UMSONST`)
+
+| what | where |
+|---|---|
+| ⚠️ **it REPORTS, it does not GRADE** | nothing touches `markSolved`, the ledger, hearts or BKT — a model deciding the learner was right after all would write PROGRESS state, so a bad verdict would corrupt their history rather than one panel. `unit-answer-check` §2 asserts the route's body mentions no progress-writing name |
+| the route | `POST /api/answer-check` (server.js), a `runAsJob` like every model-backed route since `v88_al`, `callLLMLesson` for the reason writing-feedback records |
+| ⚠️ **the parser is the safety mechanism** | `parseAnswerCheck` accepts ONLY an explicit, **ANCHORED** `also acceptable`; a shapeless reply, an empty one, an unknown verdict word all come back as something the client will not show. Missing a synonym costs a learner nothing; approving a genuine mistake teaches it, and they cannot tell the model was guessing. **The first version used an UNANCHORED match and read `probably also acceptable-ish` as approval** — the one direction this must never fail in, and it failed there first |
+| the client | `_ANSWER_CHECK_TYPES` (four MEANING-based MCQ types), `_answerCheckEligible` (pure — the gate is testable without a network), `_answerCheckDirection` (⚠️ `mcq_source_target` runs {S}→{L}, the other three {L}→{S}), `_answerCheckMaybe`, `_answerCheckShow` |
+| the setting | `APP.answerCheck`, `imp3_answer_check`, **DEFAULT OFF** by user ruling. `loadAnswerCheck` reads `=== '1'`, never `!== '0'`. The settings ROW hides without `canGenerate`, which also keeps it correctly absent from the static build |
+| scope is a RULING | grammar types (article/plural/conjugation) are OUT: a second correct answer there means the lesson is broken differently, and that is worth SEEING. `inflection_form` was offered and not taken up |
+| ⚠️ a late verdict | `_answerCheckShow` re-checks the question index at RENDER time — the model takes ~31s, so the learner can be two questions on. Its dedupe scans `body.children` rather than `querySelector`, which is both exact (we only append at that level) and the one form the DOM harness can observe |
+| live-measured | ~31s per check on the user's own model, against a SEPARATE instance on port 3457 with its own corpus copy (a `server.js` edit is not live in their process). Reported instance → `also_acceptable`; a genuinely wrong pick → `wrong` |
+| ui.json | **3 keys, granted explicitly** — the first of the whole `v89` line |
+
 **`v89_i` — the phone select-text→tutor popover, out from under the browser's chrome** (user report,
 the SECOND for this same bug)
 
