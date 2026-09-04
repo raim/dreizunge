@@ -174,14 +174,11 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   latter. **Whichever it is, silently discarding an explicit selection is the bug** — at minimum the
   server should LOG the discard instead of echoing the types back.
 
-- **⚠️ "Continued from" was lost CLIENT-SIDE — the server never received it.** Same log line:
-  **`continuedFrom=-`**. `comicCreateChapter` sends
-  `document.getElementById('continue-select')?.value || null`, so an empty or unrendered picker sends
-  `null` silently. **The server is exonerated.** ⚠️ This send path reading card-1/card-3 controls
-  that the learner's route may never have populated is now a **THREE-TIME hazard**: item `AL` (the
-  field was never sent at all), `v86_v` (the same shape inverted — an auto-opened card meant
-  `#gen-skip-lessons-cb` was read at its default), and now this. **Worth fixing as a class**: have
-  the send path ASSERT its inputs rather than `?.value || null` them away.
+- ~~"Continued from" was lost CLIENT-SIDE~~ — **FIXED at `v89_s`**. The send paths now read
+  `APP.contPin` (the durable record) when the picker is blank, via one shared `_continueFromRef()`
+  used by all eight sites. ⚠️ Measured then: a real `<select>` clears its value on ANY `innerHTML`
+  rebuild, so the picker resetting under the learner needs no language change — only a rebuild
+  against an empty or stale `APP.savedList`.
 
 - **⚠️ The chapter-title post-pass failed silently in the same run.** `Chapter-title post-pass failed:
   no usable titles after 3 attempts` — which is why the chapter kept the raw first-40-characters
@@ -2615,6 +2612,76 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_s — the continue-from send paths read the RECORD, not the view
+
+User: *"now fix the continuedFrom send path."* **ZERO `ui.json` keys.**
+
+### The view/record split
+
+`#continue-select` is a **view**. ⚠️ **Measured in a real browser rather than assumed: a `<select>`
+clears its `value` on ANY `innerHTML` rebuild — even when the matching option survives it.** So
+`repopulateContinueSelect()` depends entirely on its own restore line:
+
+```js
+const _want = _pin || prev;
+if (_want && [...contSel.options].some(o => o.value === _want)) contSel.value = _want;
+```
+
+…which fails whenever the wanted chapter is **not among the freshly built options** — and the
+pin-survival branch that would re-offer it looks the chapter up in `APP.savedList`. So a rebuild
+while that list is **empty or stale** leaves the picker blank, with the learner never having touched
+it. Every send path then read that blank and sent `null`.
+
+That is what `v89_o` saw in the user's log: **`continuedFrom=-`**, on a comic chapter meant to extend
+a nine-chapter storyline.
+
+### `APP.contPin` was already the record — nothing needed inventing
+
+It has every property this needs, and had all along:
+
+| property | why it matters here |
+|---|---|
+| set by the picker's own `onchange` | it captures the learner's *explicit* act, not a derived state |
+| persisted to `localStorage`, restored at APP init | survives a reload |
+| **CLEARED when the learner picks "— new story —"** | ⚠️ the fallback **cannot resurrect a cancelled choice** — the property that makes this safe rather than merely sticky |
+
+`_continueFromRef()` is now the one resolver: the shown value if there is one, else the pin, else
+null. **All eight send sites use it** — the two `doGenerate` bodies, `pdfGenerateAll`'s two,
+`comicCreateChapter`, `/api/comic-extract`'s context call, and the continue-language helper.
+
+⚠️ **A pin whose chapter no longer exists is dropped, not sent.** A dangling ref resolves server-side
+to no parent and produces the same orphan this fix exists to prevent, only harder to see. Checked
+against `APP.savedList`, the same projection the picker is built from.
+
+⚠️ The fallback **logs when it fires** (`console.warn`). If the picker is ever reset under a learner
+again, there is now a record of it — which is exactly what `v89_o` had none of.
+
+### ⚠️ The harness cannot reproduce the reset, and the test says so
+
+The DOM stub keeps `select.value` as a plain property that `innerHTML` never touches, and exposes no
+`options` collection at all. **A test that drove the real rebuild and expected the browser's reset
+would pass on the stub without reproducing anything** — which is what the first draft of §5 did, and
+why it was rewritten. The reset is now applied *explicitly*, labelled as standing in for browser
+behaviour the stub lacks, with the browser measurement cited. Recorded in INTERNALS §5, along with
+the one-line `options` getter that shims the rest.
+
+⚠️ **My first hypothesis was wrong and is worth recording**: I assumed a *language change* lost the
+selection. It does not — the pin-survival branch carries it through precisely that case. Only a
+rebuild against an empty/stale `savedList` defeats it.
+
+### Guards
+
+`unit-continue-from.test.js` (new, 6 sections): the shown value wins; an empty picker falls back;
+a cancelled choice stays cancelled; a deleted chapter is dropped; the loss sequence with the fix
+holding through it; and — structurally — **no line that sends `continuedFrom` may read
+`#continue-select` directly**. That last one matters because the defect was *eight call sites each
+doing the same wrong thing independently*: fixing seven of eight would look identical from any
+single behavioural test.
+
+Four mutations, all red: removing the fallback, sending a deleted pin, ignoring the visible
+selection, and putting `comicCreateChapter` back on the raw select.
+
 
 ## ✅ v89_r — every model role is now released, and the list guards itself
 

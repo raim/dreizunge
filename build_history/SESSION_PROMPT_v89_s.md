@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_r` cut
+# Session prompt — written at the `v89_s` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_r`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_s`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -210,6 +210,16 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   role and forgetting either now fails the suite**, which is the only reason three of eight could go
   missing. A guard that must be edited when a role is added is a guard that will be forgotten
   exactly when it matters.
+- **`v89_s`** — the **continue-from send paths read the RECORD, not the view**. `#continue-select` is
+  a view: ⚠️ **measured in a real browser — a `<select>` clears its value on ANY `innerHTML` rebuild**,
+  even when the matching option survives, so `repopulateContinueSelect()` relies entirely on its own
+  restore line, which fails when the wanted chapter is not among the freshly built options (an empty
+  or stale `APP.savedList` at rebuild time). `APP.contPin` already had every property needed — set by
+  the picker's onchange, persisted, restored at boot, **cleared when the learner picks "— new
+  story —"**, so the fallback cannot resurrect a cancelled choice. `_continueFromRef()` is now the
+  ONE resolver and all **eight** send sites use it; a pin whose chapter no longer exists is dropped
+  rather than sent as a dangling ref. ⚠️ The harness **cannot** reproduce the reset (its stub
+  `select.value` is independent of its options) — recorded in INTERNALS §5.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -246,8 +256,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 342 checks
-node test/run.js --quick                  → expect 281
+node test/run.js                          → expect 343 checks
+node test/run.js --quick                  → expect 282
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -280,7 +290,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 98 storylines, 33 languages, 758 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_r'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_s'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

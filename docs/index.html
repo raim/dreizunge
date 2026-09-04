@@ -2674,7 +2674,7 @@ function _renderScriptPicker(which) {
 // What the chapter being continued was written in. The `continue-select` names the parent chapter,
 // which is exactly the "previous chapter" the inheritance rule means.
 function _inheritedScript(which) {
-  const ref = document.getElementById('continue-select')?.value;
+  const ref = _continueFromRef();   // v89_s: the durable choice, not the select's transient value
   if (!ref) return null;                       // a brand-new story inherits nothing — explicit pick
   const src = (APP.savedList || []).find(s => s.id === ref || s.topic === ref);
   if (!src) return null;
@@ -4717,7 +4717,7 @@ async function comicExtractPanels(){
       // the "open →" button it never had.
       body:JSON.stringify({images, lang:APP.lang, extract:wantExtract, describe:wantDescribe,
         draftId: _comicDraftId || null,
-        continuedFrom: document.getElementById('continue-select')?.value || null})});
+        continuedFrom: _continueFromRef()})});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(status) status.textContent=''; showToast(t('form.image_extract_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
     _startComicExtractJob(data.jobId);
@@ -5165,7 +5165,7 @@ async function comicCreateChapter(){
       // the learner could set it, and the value was simply dropped on the floor. Fixed here rather
       // than separately because continue-from only became genuinely universal when item AL moved it
       // to card 1, where all three modes read the same one control.
-      continuedFrom: document.getElementById('continue-select')?.value || null,
+      continuedFrom: _continueFromRef(),
       chunks, skipLessons,
       ...(arcOn ? { arc:true, arcTypes, arcScript:_readArcScript(), script: APP.script||null, srcScript: APP.srcScript||null } : {}),
       postGenStoryboard, postGenAnalysis,
@@ -7186,7 +7186,7 @@ async function _draftSaveNow(){
       lessonFormat: APP.lessonFormat||'standard',
       storyStyle: (APP.storyStyle && APP.storyStyle!=='creative') ? APP.storyStyle : null,
       sourceFile: _uploadFileName||null,
-      continuedFrom: document.getElementById('continue-select')?.value||null,
+      continuedFrom: _continueFromRef(),
       script: APP.script||null, srcScript: APP.srcScript||null,
       arc: !!document.getElementById('gen-arc-cb')?.checked,
       arcTypes: document.getElementById('gen-arc-cb')?.checked ? readArcTypeChecks('gen-arc-types') : null,
@@ -8379,7 +8379,7 @@ async function pdfGenerateAll() {
     srcLang: APP.srcLang || 'en',
     difficulty: APP.difficulty || 2,
     lessonFormat: APP.lessonFormat || 'standard',
-    continuedFrom: document.getElementById('continue-select')?.value || null,
+    continuedFrom: _continueFromRef(),
     storyStyle: APP.storyStyle && APP.storyStyle !== 'creative' ? APP.storyStyle : null,
     sourceFile: _uploadFileName || null,
     chunks: _pdfChunks.map(c => ({ title: c.title, text: c.text, wordCount: c.wordCount })),
@@ -165992,12 +165992,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v89_r', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v89_s', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"3433490ccd83","lessons.json":"e1d4265f982c","ui.json":"2affd3acf293","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"847debd00ea3","analysis-corrections.json":"missing","build-static.js":"811abf3b5152"};
+  APP.buildSources = {"index.html":"ccc77fdfd15e","lessons.json":"e1d4265f982c","ui.json":"2affd3acf293","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"847debd00ea3","analysis-corrections.json":"missing","build-static.js":"811abf3b5152"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

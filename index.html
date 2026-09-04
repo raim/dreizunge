@@ -2669,7 +2669,7 @@ function _renderScriptPicker(which) {
 // What the chapter being continued was written in. The `continue-select` names the parent chapter,
 // which is exactly the "previous chapter" the inheritance rule means.
 function _inheritedScript(which) {
-  const ref = document.getElementById('continue-select')?.value;
+  const ref = _continueFromRef();   // v89_s: the durable choice, not the select's transient value
   if (!ref) return null;                       // a brand-new story inherits nothing — explicit pick
   const src = (APP.savedList || []).find(s => s.id === ref || s.topic === ref);
   if (!src) return null;
@@ -4712,7 +4712,7 @@ async function comicExtractPanels(){
       // the "open →" button it never had.
       body:JSON.stringify({images, lang:APP.lang, extract:wantExtract, describe:wantDescribe,
         draftId: _comicDraftId || null,
-        continuedFrom: document.getElementById('continue-select')?.value || null})});
+        continuedFrom: _continueFromRef()})});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(status) status.textContent=''; showToast(t('form.image_extract_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
     _startComicExtractJob(data.jobId);
@@ -5160,7 +5160,7 @@ async function comicCreateChapter(){
       // the learner could set it, and the value was simply dropped on the floor. Fixed here rather
       // than separately because continue-from only became genuinely universal when item AL moved it
       // to card 1, where all three modes read the same one control.
-      continuedFrom: document.getElementById('continue-select')?.value || null,
+      continuedFrom: _continueFromRef(),
       chunks, skipLessons,
       ...(arcOn ? { arc:true, arcTypes, arcScript:_readArcScript(), script: APP.script||null, srcScript: APP.srcScript||null } : {}),
       postGenStoryboard, postGenAnalysis,
@@ -7181,7 +7181,7 @@ async function _draftSaveNow(){
       lessonFormat: APP.lessonFormat||'standard',
       storyStyle: (APP.storyStyle && APP.storyStyle!=='creative') ? APP.storyStyle : null,
       sourceFile: _uploadFileName||null,
-      continuedFrom: document.getElementById('continue-select')?.value||null,
+      continuedFrom: _continueFromRef(),
       script: APP.script||null, srcScript: APP.srcScript||null,
       arc: !!document.getElementById('gen-arc-cb')?.checked,
       arcTypes: document.getElementById('gen-arc-cb')?.checked ? readArcTypeChecks('gen-arc-types') : null,
@@ -8374,7 +8374,7 @@ async function pdfGenerateAll() {
     srcLang: APP.srcLang || 'en',
     difficulty: APP.difficulty || 2,
     lessonFormat: APP.lessonFormat || 'standard',
-    continuedFrom: document.getElementById('continue-select')?.value || null,
+    continuedFrom: _continueFromRef(),
     storyStyle: APP.storyStyle && APP.storyStyle !== 'creative' ? APP.storyStyle : null,
     sourceFile: _uploadFileName || null,
     chunks: _pdfChunks.map(c => ({ title: c.title, text: c.text, wordCount: c.wordCount })),
@@ -9411,6 +9411,39 @@ function clearContinuePin(){ setContinuePin(null); }
 // The select's own onchange. Kept separate from _updateReinforcePriorVisibility, which is also
 // called PROGRAMMATICALLY at the end of every repopulate — clearing the pin from there would let a
 // rebuild cancel the pin it is meant to restore.
+// ── v89_s: the ONE answer to "which chapter is this continuing from?" ─────────────────────────
+//
+// ⚠️ Every send path used to read `#continue-select`'s value directly, and that value is a VIEW,
+// not the record. `repopulateContinueSelect()` rebuilds the whole option list — filtered to the
+// CURRENT language pair unless "show other languages" is ticked — and restores the selection only
+// if the chosen option survived the rebuild. A language change, a refreshed `APP.savedList`, or a
+// rebuild while that list was momentarily empty therefore resets the select to `""` **in silence**,
+// and `?.value || null` then sent `null` without anyone noticing.
+//
+// Found from a user's server log at `v89_o`: `continuedFrom=-` on a comic chapter that was meant to
+// extend a nine-chapter storyline. The server never received it; the loss was entirely here.
+//
+// `APP.contPin` is the RECORD and already had every property needed: the picker's own `onchange`
+// sets it, `setContinuePin` persists it to localStorage, APP init restores it, and it is CLEARED
+// when the learner picks "— new story —". So falling back to it **cannot resurrect a cancelled
+// choice** — which is the property that makes this safe rather than merely sticky.
+//
+// ⚠️ A pin whose chapter no longer exists is NOT used: it would send a dangling reference the server
+// resolves to no parent, producing the same orphan this function exists to prevent, only harder to
+// see. Checked against `APP.savedList`, the same projection the picker itself is built from.
+function _continueFromRef(){
+  const el = document.getElementById('continue-select');
+  const shown = el ? String(el.value || '') : '';
+  if (shown) return shown;
+  const pin = APP.contPin || null;
+  if (!pin) return null;
+  const known = (APP.savedList || []).some(sv => sv && (sv.id === pin || sv.topic === pin));
+  if (!known) return null;   // deleted since it was pinned — sending it would orphan the chapter
+  // Deliberately noisy: if this fires, the select was reset under the learner and the pin saved the
+  // run. That is exactly the event `v89_o` had no record of.
+  console.warn('continue-from: the picker was empty; using the pinned choice instead:', pin);
+  return pin;
+}
 function onContinueSelectChange(){
   const v = document.getElementById('continue-select')?.value || '';
   if (!v) { clearContinuePin(); return; }        // "— new story —" cancels the pin
@@ -9932,7 +9965,7 @@ async function doGenerate(forceRegen){
     comicCreateChapter(); return;
   }
   const topic=document.getElementById('topic-input').value.trim();
-  const contVal=document.getElementById('continue-select')?.value||'';
+  const contVal=_continueFromRef()||'';
   // "my story" (__my__): generate from the learner's cumulated vocabulary instead of a topic or
   // a previous story. Build the ledger slice (wrong words first); the story reuses those words
   // and the lessons reinforce them (server-side). A synthesized topic is used server-side.
@@ -9985,7 +10018,7 @@ async function doGenerate(forceRegen){
       nChapters:nCh, chapterLen:APP.storyLen||300,
       lang:APP.lang, srcLang:APP.srcLang, difficulty:APP.difficulty,
       lessonFormat:APP.lessonFormat||'standard',
-      continuedFrom:(document.getElementById('continue-select')?.value||null) };
+      continuedFrom:_continueFromRef() };
     // v78_p (user-reported): the CHOSEN scripts must travel with a multi-chapter job. Without them
     // the server has no script, so `sysStory` omits the `scriptNote` and the model writes `sr` in
     // its default Latin — and then the script primer finds no Cyrillic letters IN THE TEXT and
@@ -10049,7 +10082,7 @@ async function doGenerate(forceRegen){
   }
 
   try{
-    const _contSelVal=document.getElementById('continue-select')?.value||null;
+    const _contSelVal=_continueFromRef();
     const body={topic: myStory ? '' : topic,lang:APP.lang,srcLang:APP.srcLang,difficulty:APP.difficulty,
       lessonFormat:APP.lessonFormat||'standard',
       storyLen:APP.storyLen||300,

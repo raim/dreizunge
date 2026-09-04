@@ -647,6 +647,14 @@ German.
 
 ## 5. Test harness limits
 
+
+**⚠️ A stub `<select>`'s `value` is independent of its `<option>`s; a real one is not (`v89_s`).**
+Measured in a browser: a real `<select>` CLEARS `value` on **any** `innerHTML` rebuild — even when
+the matching option survives it. The harness's stub keeps `value` as a plain property that
+`innerHTML` never touches, and exposes no `options` collection at all (its parsed `<option>` children
+and their `.value` ARE correct, so a one-line getter over `children` is enough to shim it).
+**A test that drives a real rebuild and expects the browser's reset will silently pass on the stub
+without ever reproducing anything** — apply the reset explicitly and say that is what you are doing.
 **`lib-dom`'s `querySelectorAll` matches TAG names only**, over the tree parsed from `index.html`.
 It does **not** parse `innerHTML` assigned at runtime. So anything rendered by setting `innerHTML`
 — including every tick-list built by `renderLessonTypeChecks` — cannot be read back headlessly.
@@ -2232,6 +2240,19 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | wired from BOTH inits | `index.html`'s `init()` and `build-static.js`'s own replacement one — the gap `v86_h` found for `_storyTapInit`, guarded the same way in `unit-static-story-tap-parity.test.js` |
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
+
+**`v89_s` — the continue-from send paths read the RECORD, not the view** (user request; the
+client-side half of `v89_o`'s log finding)
+
+| what | where |
+|---|---|
+| the resolver | `_continueFromRef()` (index.html, beside `onContinueSelectChange`) — the shown value, else `APP.contPin`, else null. **All EIGHT send sites use it**: both `doGenerate` bodies, `pdfGenerateAll`'s two, `comicCreateChapter`, `/api/comic-extract`'s context call, and the continue-language helper |
+| ⚠️ **why the view is untrustworthy — MEASURED, not assumed** | a real `<select>` **clears its `value` on ANY `innerHTML` rebuild**, even when the matching option survives. So `repopulateContinueSelect()` depends entirely on its own restore line, which fails when the wanted chapter is not among the freshly built options — i.e. when `APP.savedList` is empty or stale at rebuild time, since the pin-survival branch looks it up there |
+| why `APP.contPin` is the right record | set by the picker's own onchange, persisted, restored at APP init, and **CLEARED when the learner picks "— new story —"** — so the fallback cannot resurrect a cancelled choice. Nothing needed inventing |
+| ⚠️ a stale pin is DROPPED | a pin whose chapter is no longer in `APP.savedList` is not sent: a dangling ref resolves server-side to no parent and produces the same orphan, only harder to see |
+| it logs when it fires | `console.warn` on the fallback path — if a picker is ever reset under a learner again, there is a record. `v89_o` had none |
+| ⚠️ a hypothesis that was WRONG | a *language change* does NOT lose the selection — the pin-survival branch carries it through exactly that case. Only a rebuild against an empty/stale `savedList` defeats it |
+| the acceptance tests | `unit-continue-from.test.js` (6 sections). ⚠️ The harness CANNOT reproduce the reset (see §5's harness-limits note), so §5 applies it explicitly and says so. §6 is structural — no line that sends `continuedFrom` may read the select directly — because the defect was eight call sites each doing the same wrong thing, and fixing seven would look identical from any behavioural test |
 
 **`v89_r` — every model role is released, and the list guards itself** (user request)
 
