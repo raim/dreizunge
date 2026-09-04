@@ -2213,6 +2213,23 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_d` — the inflections form labels are NORMALISED into `{S}`, not merely asked for**
+(user request, after `v89_c` measured the prompt hardening at 1 of 3 runs)
+
+| what | where |
+|---|---|
+| the pass | `normaliseInflectionLabels(items, srcLang, jobId)` (server.js), directly above `generateInflections` |
+| the prompt | `PROMPTS.inflectionLabels.system` (prompts.json) — "already in `{S}` → return UNCHANGED", same dimensions, values that differed stay different, never add/drop/reorder keys |
+| ⚠️ **where it runs, and why there** | inside `generateInflections`, **AFTER `validateInflectionsItems`**. The pass depends on `formCorrectIndex` already pointing at `formLabel` inside `formChoices` — which is precisely what the validator has just established. Running it earlier would have to re-derive that itself |
+| **nothing new was invented** | the META pass a few hundred lines below already does exactly this for `topic`, and its own comment says why: *"a cheap targeted call that's more reliable than hoping the meta model follows language instructions"*. Same `metaTranslation` "same keys" contract, same `srcLang !== 'en'` gate (justified by `roadmap_v86.md`'s item AJ AND by `v89_c`'s corpus measurement — every de/en and it/en chapter complied, every it/nl one drifted), same keep-the-original-on-failure posture |
+| the model | `callLLMTranslation` + `think:false` — it IS a translation, the role exists, and it falls back to the main model when unset |
+| batching | ONE request per LESSON: a flat `{"0":…}` map over every item's `formChoices`, with `keysByItem[i][j]` built on the way OUT so the way back is a direct lookup, never a search that could re-derive the pairing differently |
+| ⚠️ **the invariant** | `formLabel` is DERIVED as `next[formCorrectIndex]`, never translated separately. That keeps the validator's own rule true by construction instead of hoping two independent translations of one string come back identical |
+| failure posture | **PER ITEM**, always toward the original: a short/empty/non-string reply, or one that **collapses two of an item's options onto the same phrase** (`formChoices` IS the multiple-choice list — two identical options make the question unanswerable), leaves that item alone. A wrong-shaped reply keeps everything and STILL reports its tokens, so a failed pass cannot hide from `_genMeta`. `CANCELLED` is re-thrown (item AU, `v88_z`) |
+| ⚠️ **what it does NOT fix** | only NEW lessons — the mixed corpus stays mixed until something backfills it (offered, not built). And `explanation`/`title`/`desc` drift the SAME way (measured) but are OUT of scope: `explanation` quotes target-language word forms inside itself, so translating it can corrupt the forms the exercise teaches |
+| the acceptance tests | `e2e-inflection-label-lang.test.js` (real server, both gate halves from ONE boot, positional mapping, a NON-ZERO `formCorrectIndex`, and `FAKE_LOG` proving one call for two lessons) + `unit-inflection-label-normalise.test.js` (the failure modes, scripted model). ⚠️ The unit file needs `extractAsync`, not `unit-inflections.test.js`'s `extract` — slicing from `function` instead of `async function` strips the keyword and every `await` becomes a construction-time syntax error |
+| ⚠️ **the mutation that stayed GREEN, and what it taught** | removing `Array.isArray` from the shape check. Indexing an array by `"0"`,`"1"`,… yields NUMBERS, every value failed the string check, every item fell back anyway — identical outcome, so the guard was not distinguishable by the cases written. The reply that DOES distinguish it is **an array of the right strings**; that case is now in the file and the mutation is red. Ten mutations, all red, only after that fix |
+
 **`v89_c` — the inflections lemma is read aloud again; the form label stays source-language**
 (user report, two halves; SUPERSEDES `v86_ae`'s silence ruling above)
 

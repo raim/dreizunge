@@ -282,7 +282,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_c';
+const APP_VERSION  = 'v89_d';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -4748,6 +4748,101 @@ function validateInflectionsItems(items, story) {
   return { valid, rejected };
 }
 
+// ── v89_d: normalise inflection form labels into the SOURCE language ──────────────────────────
+//
+// User ruling at `v89_c`: `formLabel`/`formChoices` are an explanation for the learner and belong in
+// {S}. `PROMPTS.inflections` has always said so; the model complies only sometimes. `v89_c` hardened
+// that prompt and MEASURED it against the live model — 0 of 3 runs compliant before, 1 of 3 after.
+// An instruction the model may ignore is the wrong shape for this. A TRANSFORMATION it cannot skip
+// is the right one, and this file already settled that shape once: the meta pass a few hundred lines
+// below does exactly this for `topic`, with its own comment saying why — "a cheap targeted call
+// that's more reliable than hoping the meta model follows language instructions".
+//
+// ⚠️ Scope, deliberately: the FORM LABELS only. `explanation`, `title` and `desc` drift the same way
+// (measured on the same nl/de chapters — Dutch explanations against a German {S}), and they are NOT
+// touched here. They are a different risk: `explanation` quotes target-language word forms inside
+// itself ("De werkwoordsvorm 'geeft' is …"), so a translation pass over it can corrupt the very
+// forms the exercise is teaching, where a form label is pure metalanguage with nothing to lose.
+// Recorded as its own item rather than folded in.
+//
+// Same gate the meta pass uses: `srcLang !== 'en'`. That is not arbitrary — `roadmap_v86.md`'s item
+// AJ is precisely that {S}-designated fields comply reliably when {S} is English, and `v89_c`'s
+// corpus measurement agreed (every de/en and it/en chapter complied, every it/nl one drifted). It
+// also means an already-correct English label is never handed to a model that could reword it.
+//
+// Returns the items to USE (the same array when the pass is skipped or fails) plus its own token
+// counts, so the caller's `_genMeta` accounts for the extra call.
+async function normaliseInflectionLabels(items, srcLang, jobId) {
+  const none = { items, tokens: { promptTokens: 0, completionTokens: 0 }, normalised: 0, ran: false };
+  if (!srcLang || srcLang === 'en') return none;
+  if (!Array.isArray(items) || !items.length) return none;
+
+  // One flat map, all items together — the `metaTranslation` contract ("the same keys"), reused
+  // rather than a second JSON shape invented. Flat rather than nested so a missing or extra key is
+  // a one-line check instead of a tree walk, and so the model sees every label of the lesson at
+  // once, which is what lets it keep near-identical options apart.
+  const map = {}; let nKeys = 0;
+  // keysByItem[i][j] is the key that item i's choice j was sent under — built on the way OUT so the
+  // way BACK is a direct lookup, never a search that could re-derive the pairing differently.
+  const keysByItem = items.map(it => (it.formChoices || []).map(c => {
+    const k = String(nKeys++); map[k] = c; return k;
+  }));
+  if (!nKeys) return none;
+
+  const S = langName(srcLang);
+  const payload = JSON.stringify(map);
+  jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Normalising ${nKeys} form label(s) to ${S}…`);
+  let parsed;
+  try {
+    // The TRANSLATION role: this is a translation, the role exists for it, and it falls back to the
+    // main model when unset, so it adds no configuration burden. `think:false` for the same reason
+    // the story-translation call site gives — the work is mechanical, reasoning only burns budget.
+    const t0 = Date.now();
+    const { text, promptTokens, completionTokens } = await callLLMTranslation(
+      fillPrompt(PROMPTS.inflectionLabels.system, { S }), payload,
+      Math.min(2048, Math.max(256, Math.ceil(payload.length * 1.5))), { think: false });
+    none.tokens = { promptTokens, completionTokens };
+    const cleaned = String(text || '').replace(/```json|```/g, '').trim();
+    try { parsed = JSON.parse(cleaned); } catch(_) { parsed = extractJSON(text); }
+    console.log(`    [${OLLAMA_TRANSLATION_MODEL}] Form labels → ${S}: ${Date.now()-t0}ms`);
+  } catch(e) {
+    if (String(e && e.message) === CANCELLED) throw e;   // item AU cancel (v88_z)
+    console.warn(`  Form-label normalisation to ${S} failed, keeping the model's own labels:`, e.message);
+    return none;
+  }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    console.warn(`  Form-label normalisation returned no object, keeping the model's own labels`);
+    return none;
+  }
+
+  // PER ITEM, not all-or-nothing. An item whose reply is short, empty, or collapses two of its own
+  // options keeps its ORIGINAL labels — a lesson with three normalised items and two untouched ones
+  // is strictly better than five untouched ones, and each item's options are only ever compared with
+  // each other. The distinctness check is the one that matters: `formChoices` IS the multiple-choice
+  // list, and two options that translate to the same {S} phrase make the question unanswerable.
+  let normalised = 0;
+  const out = items.map((it, i) => {
+    const src = it.formChoices || [];
+    const next = src.map((_, j) => {
+      const v = parsed[keysByItem[i][j]];
+      return (typeof v === 'string') ? v.trim() : '';
+    });
+    if (next.length !== src.length || next.some(v => !v)) return it;
+    if (new Set(next.map(v => v.toLowerCase())).size !== next.length) {
+      console.warn(`    Form labels for "${String(it.surfaceForm || '').slice(0, 30)}" collapsed to duplicates — keeping the originals`);
+      return it;
+    }
+    normalised++;
+    // formLabel is DERIVED from the normalised list at the index the validator already resolved,
+    // never translated separately: that is what keeps `validateInflectionsItems`'s own invariant
+    // (formLabel is one of formChoices, at formCorrectIndex) true by construction rather than by
+    // hoping two independent translations of the same string come back identical.
+    return { ...it, formChoices: next, formLabel: next[it.formCorrectIndex] };
+  });
+  console.log(`    Form labels normalised to ${S}: ${normalised}/${items.length} item(s)`);
+  return { items: out, tokens: none.tokens, normalised, ran: true };
+}
+
 async function generateInflections(topic, lang, srcLang, difficulty, jobId, opts) {
   const _t0 = Date.now();
   opts = opts || {};
@@ -4786,13 +4881,19 @@ async function generateInflections(topic, lang, srcLang, difficulty, jobId, opts
     }
     if (valid.length < 1) { lastError = `No valid items after filtering (${rejected.length} rejected)`; continue; }
     console.log(`    Inflections: ${valid.length} valid item(s) (${rejected.length} rejected)`);
+    // v89_d: AFTER validation, never before — the pass relies on `formCorrectIndex` already pointing
+    // at `formLabel` inside `formChoices`, which is exactly what the validator has just established.
+    // It cannot reject an item or change their number; the worst case is that every item keeps the
+    // labels the model wrote, which is the pre-v89_d behaviour.
+    const _norm = await normaliseInflectionLabels(valid, srcLang, jobId);
+    totalPromptTokens += _norm.tokens.promptTokens; totalCompletionTokens += _norm.tokens.completionTokens;
     return {
       lesson: {
         id: 7, type: 'inflections',
         title: parsed.title || 'Inflections',
         desc:  parsed.desc  || 'Word forms and their dictionary form',
         icon:  parsed.icon  || '🧬',
-        items: valid,
+        items: _norm.items,
         _genMeta: buildGenMeta({ type: 'inflections', model: OLLAMA_LESSON_MODEL, t0: _t0, attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons: genReasonHist(rejected), promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens }),
       },
       tokens: { promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens },

@@ -279,6 +279,7 @@ run('unit: library sort — edited / generated / token usage (item AR, v88_j)', 
 run('unit: teacher walkthrough of a storyline\'s progress cards (v88_o)', 'node', [path.join(__dirname, 'unit-teacher-walk.test.js')]);
 run('unit: the arrows browse chapters, \u25b6 plays; no chapter-wise lock (v88_r)', 'node', [path.join(__dirname, 'unit-browse-mode.test.js')]);
 run('unit: swipe the progress card left/right = its \u2190/\u2192 arrows (v89_b)', 'node', [path.join(__dirname, 'unit-card-swipe-nav.test.js')]);
+run('unit: inflection form-label normalisation \u2014 the failure modes (v89_d)', 'node', [path.join(__dirname, 'unit-inflection-label-normalise.test.js')]);
 run('unit: per-job cancel button in the jobs popover (item AU cancel, v88_k)', 'node', [path.join(__dirname, 'unit-jobs-cancel-button.test.js')]);
 run('unit: post-gen storyboard opt-in fix, client side (v85_p)', 'node', [path.join(__dirname, 'unit-postgen-storyboard-optin.test.js')]);
 run('unit: post-gen analysis opt-in, client side, mirrors postGenStoryboard (item W follow-up, v86_o)', 'node', [path.join(__dirname, 'unit-postgen-analysis-optin.test.js')]);
@@ -350,6 +351,7 @@ if (!quick) {
   run('e2e: ui.json hot-reload', 'node', [path.join(__dirname, 'e2e-ui-reload.test.js')]);
   run('e2e: upload filename stored on storyline', 'node', [path.join(__dirname, 'e2e-bookfile.test.js')]);
   run('e2e: word_forms lesson generation', 'node', [path.join(__dirname, 'e2e-word-forms.test.js')]);
+  run('e2e: inflection form labels normalised into the source language (v89_d)', 'node', [path.join(__dirname, 'e2e-inflection-label-lang.test.js')]);
   run('e2e: writing lesson type (PLAN §D4)', 'node', [path.join(__dirname, 'e2e-writing.test.js')]);
   run('e2e: script choice reaches the model (v76_h)', 'node', [path.join(__dirname, 'e2e-script-choice.test.js')]);
   run('e2e: synonyms context sentences', 'node', [path.join(__dirname, 'e2e-synonyms.test.js')]);

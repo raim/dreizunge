@@ -129,14 +129,19 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   exists only on the generation screen, which is why a backend outage reads as broken buttons.
   Offered at `v87_p` and not taken up; small, and would have saved two user reports.
 
-**Buildable, raised by `v89_c`'s own measurement:**
-- **Normalise `formLabel`/`formChoices` into `{S}` after parsing, in `generateInflections`.**
-  `v89_c` hardened `PROMPTS.inflections` and MEASURED it against the live model: OLD 0 of 3 runs
-  compliant, NEW 1 of 3. It helps and it does not fix the drift, and the drift is **per-RUN and
-  all-or-nothing** — the model picks one language for the whole item set. Sending those two fields
-  through the existing translation route after the parse turns an instruction the model may ignore
-  into a transformation it cannot skip: one extra call per lesson, not per item. ⚠️ It would only
-  fix NEW lessons — the mixed corpus `v89_c` measured stays mixed unless something backfills it.
+**Raised by `v89_c`/`v89_d`'s own measurements — the label pass is SHIPPED, these two are what it left:**
+- **A BACKFILL over the existing inflections lessons.** `v89_d` normalises labels at GENERATION
+  time only, so the mixed corpus `v89_c` measured is still mixed — the user still hears a Dutch
+  label in a German voice on every chapter generated before `v89_d`. Offered and not taken up yet:
+  it rewrites `lessons.json` with a model call per lesson, which is the user's call. The shape is
+  settled — `normaliseInflectionLabels` is already a pure function over validated items, so a
+  `backfill-*.js` script (the precedent this repo already has four of) can call it directly.
+- **⚠️ `explanation`, `title` and `desc` drift the same way as `formLabel` did** — measured on the
+  same nl/de chapters (*"De werkwoordsvorm 'geeft' is de tegenwoordige tijd…"* against a German
+  `{S}`). Deliberately NOT folded into `v89_d`: `explanation` **quotes target-language word forms
+  inside itself**, so a translation pass over it can corrupt the very forms the exercise teaches,
+  where a form label is pure metalanguage with nothing to lose. Wants its own design pass — most
+  likely a prompt that is told to leave quoted material alone, then a measurement like `v89_c`'s.
 
 **⚠️ Blocked on a user decision — do NOT start without one:**
 - **Card 2's green "✨ Generate" button is mislabelled** (`#comic-generate-btn` runs the TEXT
@@ -2186,6 +2191,78 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_d — the form labels are NORMALISED into the source language, not merely asked for
+
+User request, following `v89_c`'s measurement: *"yes, do the normalisation pass"*.
+**ZERO `ui.json` keys** (one new `prompts.json` entry, which is not user-translated).
+
+### Why a transformation and not a better instruction
+
+`PROMPTS.inflections` has asked for `{S}` form labels since the type shipped. `v89_c` hardened that
+instruction and MEASURED the result against the live model: **0 of 3 runs compliant before, 1 of 3
+after.** An instruction the model may ignore is the wrong shape for a field the readout depends on.
+
+This file had already settled the right shape once. A few hundred lines below, the META pass does
+exactly this for `topic`, with its own comment saying why — *"a cheap targeted call that's more
+reliable than hoping the meta model follows language instructions"*. `v89_d` is that pass, applied
+to the labels. **Nothing new was invented**: the same `metaTranslation` "return the same keys"
+contract, the same `srcLang !== 'en'` gate, the same keep-the-original-on-failure posture.
+
+| what | where |
+|---|---|
+| the pass | `normaliseInflectionLabels(items, srcLang, jobId)` (server.js), immediately above `generateInflections` |
+| the prompt | `PROMPTS.inflectionLabels.system` (prompts.json) — "already in `{S}` → return it UNCHANGED", keep the same dimensions, keep values that differed different, never add/drop/reorder keys |
+| where it runs | `generateInflections`, **AFTER `validateInflectionsItems`** — the pass relies on `formCorrectIndex` already pointing at `formLabel` inside `formChoices`, which is exactly what the validator has just established |
+| the model | `callLLMTranslation` — it *is* a translation, the role exists, and it falls back to the main model when unset, so it adds no configuration burden. `think:false`, for the reason the story-translation call site already gives |
+| batching | ONE request per LESSON. A flat `{"0":"…","1":"…"}` map across every item, `keysByItem[i][j]` built on the way OUT so the way BACK is a direct lookup, never a search that could re-derive the pairing differently |
+| the invariant | `formLabel` is **derived** as `next[formCorrectIndex]`, never translated separately — that keeps `validateInflectionsItems`'s own rule (formLabel is one of formChoices, at formCorrectIndex) true by construction rather than by hoping two independent translations of one string come back identical |
+
+### The failure posture: per ITEM, and always toward the original
+
+An item keeps its own labels untouched when its reply is short, empty, non-string, or **collapses two
+of its options onto one phrase**. That last one is the case that matters: `formChoices` IS the
+multiple-choice list, and two options that translate to the same `{S}` phrase make the question
+unanswerable — strictly worse than leaving it in the wrong language. A wrong-shaped reply (array,
+bare string, null, unparsable) keeps everything and **still reports its token cost**, so a failed
+pass cannot hide from `_genMeta`. A `CANCELLED` is re-thrown, not swallowed (item AU, `v88_z`).
+
+Per item rather than per lesson because a lesson with one repaired item and one untouched is
+strictly better than two untouched ones, and an item's options are only ever compared with each
+other.
+
+### ⚠️ Two limits, stated rather than buried
+
+1. **It only fixes NEW lessons.** The mixed corpus `v89_c` measured stays mixed. A backfill over the
+   existing inflections lessons was OFFERED and not built — it rewrites `lessons.json` with a model
+   call per lesson, which is the user's call, not a bug fix's.
+2. **`explanation`, `title` and `desc` drift the SAME way and are deliberately out of scope.**
+   Measured on the same nl/de chapters: Dutch explanations against a German `{S}`
+   (*"De werkwoordsvorm 'geeft' is de tegenwoordige tijd…"*). They are not folded in because
+   `explanation` **quotes target-language word forms inside itself**, so a translation pass over it
+   can corrupt the very forms the exercise is teaching. A form label is pure metalanguage with
+   nothing to lose; an explanation is not. Recorded as its own item.
+
+### Guards
+
+- **`e2e-inflection-label-lang.test.js`** (new) — the real server, through `/api/lessons/add-lesson`,
+  both halves of the gate from ONE boot: `t_nl` normalised, `t_en` untouched. It asserts the
+  substitution is **positional** (each key landed on the choice it was sent for), that the second
+  fixture item's **non-zero** `formCorrectIndex` still drives `formLabel` (index 0 would let a bug
+  that always reads `choices[0]` pass by accident), that `lemmaChoices`/`explanation`/`translation`
+  are untouched, and — via `FAKE_LOG` — that exactly **one** normalisation call was made for **two**
+  inflections lessons. The fake returns Dutch-looking labels ON PURPOSE: a fixture already in the
+  right language could not tell a working pass from a missing one.
+- **`unit-inflection-label-normalise.test.js`** (new) — the failure modes, with a scripted model.
+  ⚠️ `extractAsync`, not `extract`: this function is `async`, and slicing from `function` instead of
+  `async function` silently strips the keyword, turning every `await` into a construction-time
+  syntax error.
+- **Ten mutations, all red** — after a fix. The first run left ONE green: removing `Array.isArray`
+  from the shape check. That was the finding, exactly as the standing rule says. Indexing an array
+  by `"0"`,`"1"`,… yields NUMBERS, every value failed the string check, every item fell back anyway,
+  and the outcome was identical. The case that distinguishes the two is **an array of the right
+  strings** — without the guard it would be applied as though the "same keys" contract had been met.
+  That case is now in the file, and the mutation goes red.
 
 ## ✅ v89_c — the inflections lemma is read aloud again; the form label stays source-language by ruling
 

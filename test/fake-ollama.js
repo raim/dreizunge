@@ -213,6 +213,43 @@ const srv = http.createServer(async (req, res) => {
           { base: 'gleich', gloss: 'same', sentence: 'Die Katze und das Haus blieben gleich.', synonyms: [], antonyms: [{ w: 'anders', g: 'different' }], homophones: [] },
         ],
       });
+    } else if (/"inflections" exercise generator/i.test(sys)) {
+      // v89_d: the inflections type. surfaceForm must be a whole word of the fake story below, and
+      // must DIFFER from its own lemma, or validateInflectionsItems rejects the item.
+      //
+      // ⚠️ The form labels come back in the WRONG language on purpose — Dutch-looking metalanguage
+      // for a German-source lesson — because that is the defect v89_d's normalisation pass exists to
+      // repair, and a fixture already in the right language could not tell a working pass from a
+      // missing one.
+      kind = 'inflections';
+      content = JSON.stringify({
+        title: 'Inflections', desc: 'Word forms and their dictionary form', icon: '🧬',
+        items: [
+          { sentence: 'Die Katze und das Haus blieben gleich.', surfaceForm: 'blieben', lemma: 'bleiben',
+            lemmaChoices: ['bleiben', 'bleibt', 'geblieben'], lemmaCorrectIndex: 0,
+            formLabel: 'Verleden tijd, meervoud',
+            formChoices: ['Verleden tijd, meervoud', 'Tegenwoordige tijd, meervoud', 'Infinitief'],
+            formCorrectIndex: 0,
+            translation: 'The cat and the house stayed the same.', explanation: 'Verleden tijd van bleiben.' },
+          { sentence: 'Es war einmal ein Test.', surfaceForm: 'war', lemma: 'sein',
+            lemmaChoices: ['sein', 'ist', 'gewesen'], lemmaCorrectIndex: 0,
+            formLabel: 'Verleden tijd, 3e persoon enkelvoud',
+            formChoices: ['Tegenwoordige tijd, 3e persoon enkelvoud', 'Verleden tijd, 3e persoon enkelvoud'],
+            formCorrectIndex: 1,
+            translation: 'Once upon a time there was a test.', explanation: 'Verleden tijd van sein.' },
+        ],
+      });
+    } else if (/normalise the LANGUAGE of grammatical-form labels/i.test(sys)) {
+      // v89_d: the form-label normalisation pass. Echoes every key back with a marker prefix — the
+      // same technique the ui_translate branch above uses — so a test can prove the substitution
+      // happened, happened POSITIONALLY (key n lands on the choice it was sent for), and that
+      // formLabel was re-derived from the normalised list rather than translated separately.
+      kind = 'inflection_labels';
+      let _lin = {};
+      try { _lin = JSON.parse(usr); } catch (_) { _lin = {}; }
+      const _lout = {};
+      for (const k of Object.keys(_lin)) _lout[k] = 'DE ' + String(_lin[k]);
+      content = JSON.stringify(_lout);
     } else if (/word.?forms.*exercise generator|"correctIndex"/i.test(sys)) {
       // word_forms: items must be derived from the fake story text below.
       kind = 'word_forms';
