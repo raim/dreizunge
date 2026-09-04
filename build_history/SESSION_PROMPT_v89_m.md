@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_l` cut
+# Session prompt — written at the `v89_m` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_l`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_m`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -158,6 +158,14 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   ⚠️ Five cases is an indication, not a verdict — re-measure before treating the default as settled.
   It is the ONLY role whose default names a model no other role does, which is why it also had to
   join `configuredModels()` (the idle/shutdown release list).
+- **`v89_m`** — documentation only, at the user's request as the line wound down. Two new roadmap
+  sections: **🖥️ what a real GPU server would buy** (⚠️ **measured**: `vram=0.0GB`, everything runs
+  on a 15 W laptop CPU at **13.9 tok/s prefill / 5.5 tok/s decode** — tutor ≈ **40×** faster on a
+  GPU, whole-chapter CP2 analysis **50–150×**) and **🌐 putting this on the internet, multi-user**
+  (⚠️ Tier 0.1 is the wholesale `lessons.json` write — the same mechanism that ate `v89_f`; nothing
+  else on that list matters until it is fixed). Plus two new open items: the **comic-chapter
+  "continued from" loss** (confirmed from the data, cause not found, two hypotheses and the decisive
+  next step recorded) and the **static build's missing `loadScripts()`**.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -228,7 +236,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 98 storylines, 33 languages, 758 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_l'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_m'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

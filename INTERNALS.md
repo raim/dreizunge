@@ -77,7 +77,7 @@ reload. Not measured (no live Ollama in the dev container). If comprehension gen
 The dangerous class: things that produce a plausible result while doing the wrong thing. Nothing
 throws, no test necessarily fails, and the output looks fine.
 
-**⚠️ A RUNNING SERVER SILENTLY REVERTS EVERY OFFLINE EDIT TO `lessons.json` (`v89_g`).** `server.js`
+**⚠️ A RUNNING SERVER SILENTLY REVERTS EVERY OFFLINE EDIT TO `lessons.json`** (found at `v89_g`, guarded at `v89_h`). `server.js`
 reads the file ONCE, at boot — `let store = loadStore()`, one call site — and `saveStore` writes its
 **whole in-memory copy**. So a server that was already running holds a snapshot from before any
 offline edit, and the next time anything saves (a learner answering ONE question is enough) it
@@ -90,7 +90,9 @@ minutes and found only by diffing the worktree against the commit.
 
 - **Before an offline edit: stop or restart the server.** After one: restart it, so it reloads.
 - `backfill-inflection-labels.js` REFUSES to write while a server answers on the configured port
-  (`serverIsAnswering`, `--force` overrides) — the pattern to copy, not to reinvent.
+  (`serverIsAnswering`, `--force` overrides — `v89_h`) — **the pattern to copy, not to reinvent**.
+  Its guard is `unit-inflection-label-backfill` §9; the CLI wiring is verified by hand, not by that
+  test, and the entry says so.
 - **Recovering a clobbered edit: do NOT `git checkout` the file.** The clobbering write also carries
   the user's own genuine work from the same window. Re-apply the edit onto the CURRENT file,
   content-keyed (see `applyPlan`), and verify the other writer's changes survived.

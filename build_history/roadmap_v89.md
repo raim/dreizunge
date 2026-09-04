@@ -129,6 +129,50 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   exists only on the generation screen, which is why a backend outage reads as broken buttons.
   Offered at `v87_p` and not taken up; small, and would have saved two user reports.
 
+**🆕 Raised by the user at the `v89_m` cut:**
+
+- **⚠️ A comic-sourced chapter lost its "continued from" — CONFIRMED from the data, cause NOT yet
+  found.** User report: for `sl_1758031306` they had selected several lesson types AND
+  "continued from" to extend `sl_143869450`; both looked lost.
+
+  **Measured, not guessed:**
+  - `tp_17885199795390000039` ("Hub Domburg", user-pasted photo of a sign) has **no
+    `continuedFromId` and no `continuedFrom`**, and landed in a NEW one-chapter storyline.
+  - **Every other user-pasted chapter in the corpus has one** and joined `sl_143869450` (8 of 8
+    checked). So the path DOES normally work — this is a specific failure, not a dead feature.
+  - The lesson half was a **RACE, not a loss**: the chapter read `lessons: []` when first inspected
+    and had entries minutes later, with `Adding … lesson` jobs still running. ⚠️ Its translation took
+    **65 s** (typical for this corpus is 12–16 s), i.e. the box was heavily loaded — an agent
+    benchmark was running at the time. **Re-confirm the lesson-type half on an idle machine before
+    treating it as a bug at all.**
+
+  **Two hypotheses remain, and the source rules out neither:**
+  1. `#continue-select` was empty at send time — `comicCreateChapter` sends
+     `document.getElementById('continue-select')?.value || null`, so an unrendered or reset picker
+     sends `null` silently. ⚠️ Item `AL` fixed *exactly this class of bug once* (the body never sent
+     `continuedFrom` at all), which makes a second, narrower path failure plausible.
+  2. The wizard reset the selection between card 1 (where item `AL` moved the control) and the comic
+     panel's create action.
+
+  **The decisive next step is the server log for that job** — `generate()` logs
+  `Continuing from: "…"` when it receives one. Its absence would settle hypothesis 1 immediately.
+  ⚠️ The client-side lesson-type gate is worth reading at the same time: `renderArcTypeChecks` is
+  called under `if (APP.numChapters > 1)` at one of its two call sites, and a single photographed
+  panel is one chapter.
+
+- **⚠️ The static build cannot offer the LLM-free alphabet course.** `build-static.js` BAKES
+  `window.SCRIPTS_DATA` into `docs/index.html`, and `loadScripts()` exists precisely to pick it up
+  (`if (window.SCRIPTS_DATA) { … }`) — but **the static `init()` never calls it**, so the module-level
+  `SCRIPTS_DATA` stays `{}`. `scriptsUsedInLessonSet` then offers nothing and
+  `introScriptExercisesFrom` loses its distractor pool. **Same shape as the `_storyTapInit` gap
+  `v86_h` found**: pure client-side, no backend needed, data already shipped, one missing call.
+  One line in `build-static.js` plus a guard in `unit-static-story-tap-parity`'s shape.
+  ⚠️ **Do this before any publishing work** — see the hosting section, Tier 2.4.
+
+  *(The full `init()` audit is recorded there too: the other 17 functions the live `init()` calls and
+  the static one does not are all genuinely backend-dependent — tutor, jobs, learner accounts, the
+  generation form — and correctly absent.)*
+
 **Raised by `v89_l`:**
 - **⚠️ `OLLAMA_TUTOR_MODEL` and `OLLAMA_ANALYSIS_MODEL` are missing from `configuredModels()`** — the
   list the idle-release and shutdown sweeps free. Whenever either is pointed at a model no listed
@@ -541,6 +585,225 @@ where to look next.
   session; the plan does not cover it.
 
 
+
+# 🖥️ WHAT A REAL GPU SERVER WOULD BUY (measured at the `v89_m` cut)
+
+User request: *"a coarse estimate how much faster our most limiting functions (tutor, text analysis)
+would run on a proper server with unlimited GPU and VRAM resources."*
+
+**Coarse, but derived from measurements on the actual box rather than from feel.** Re-measure before
+spending money on it.
+
+## The finding that decides everything: there is no GPU at all
+
+```
+nvidia-smi                    -> not present
+/api/ps  qwen3.6:35b-a3b      -> size 23.1 GB, vram 0.0 GB      ← 100% CPU
+lscpu                         -> Intel Core Ultra 7 165U (14 threads, 15 W laptop class)
+free -g                       -> 62 GB RAM
+```
+
+Every model runs **entirely on a low-power laptop CPU**. That is the single fact behind every
+"this is slow" report in this line.
+
+## The throughput anchor
+
+One real `/api/chat` against `qwen3.6:35b-a3b` (the tutor's and the analysis role's default):
+
+| phase | measured |
+|---|---|
+| **prefill** (reading the prompt) | **13.9 tok/s** |
+| **decode** (writing the answer) | **5.5 tok/s** |
+| model **load** (cold, from disk) | **~70 s** |
+
+⚠️ **Prefill at 13.9 tok/s is the part that hurts most**, and it is invisible in a "how fast does it
+type" intuition. Every long-context task — the tutor (a whole story in its system prompt), CP2
+analysis, lesson generation — pays it before producing a single token.
+
+**Sanity check of the model of the system:** inflections generation was measured at 300–440 s per
+lesson (`v89_c`'s spike). Predicted from the two rates: ~2,100 prompt tokens ÷ 13.9 = 151 s, plus
+~600 output ÷ 5.5 = 109 s → **~260 s**. Same ballpark, so the two rates do explain the observed
+latencies.
+
+## Reference figures for a proper server
+
+`qwen3.6:35b-a3b` is a 35 B **MoE with ~3 B active** parameters, ~24 GB at Q4 — it fits one A100/H100
+comfortably and one 24 GB consumer card just barely. Single-stream, for a 3 B-active MoE:
+
+| phase | laptop CPU (measured) | one datacentre GPU (typical) | factor |
+|---|---|---|---|
+| prefill | 13.9 tok/s | 2,000–10,000 tok/s | **~150–700×** |
+| decode | 5.5 tok/s | 80–200 tok/s | **~15–35×** |
+| model load | ~70 s | 2–5 s, and **kept resident** | effectively removed |
+
+## The two functions the user named
+
+**Tutor** — story context (capped at 4,000 chars ≈ 1,200 tokens) plus history in, ~250 tokens out:
+
+| | prefill | decode | total |
+|---|---|---|---|
+| now | 1,200 ÷ 13.9 ≈ **86 s** | 250 ÷ 5.5 ≈ **45 s** | **~130 s** (+70 s on a cold model) |
+| GPU | ≈ 0.4 s | ≈ 2.5 s | **~3 s** |
+
+### **≈ 40× faster — and up to ~60× when the current cold-load penalty is included.**
+
+**Text analysis (CP2)** — `analyzeChapter` runs **per sentence**; ~15 sentences in a typical chapter,
+each roughly 800 prompt + 300 output tokens:
+
+| | per sentence | whole chapter (15) |
+|---|---|---|
+| now | ≈ 58 s prefill + 55 s decode ≈ **113 s** | **~28 minutes** |
+| GPU, serial | ≈ 0.3 s + 3 s ≈ **3.3 s** | **~50 seconds** |
+
+### **≈ 34× faster serially — and realistically 50–150× for a whole chapter**, because the sentences are independent and a GPU serves them with continuous batching. The laptop cannot overlap them at all.
+
+## Three things the raw multiplier understates
+
+1. **Concurrency is the bigger win for multiple users.** Single-request latency improves ~20–40×;
+   *throughput* with continuous batching improves far more, because the laptop serialises everything
+   onto one busy CPU. This matters more than latency for the multi-user plan below.
+2. **The idle-release trade-off disappears.** `v88_l`'s 60-minute release exists because a 24 GB model
+   parked in RAM on a laptop is expensive. With enough VRAM you keep every role resident and the
+   ~70 s cold-load penalty — currently paid on the first request after any quiet hour — is gone.
+3. **The model choices get re-opened.** `v89_l` picked `qwen2.5:14b` over `qwen3.6:35b-a3b` because a
+   dense 12 B was **4× slower** than a 3 B-active MoE *on CPU*. On a GPU that ordering can invert:
+   dense models parallelise better, and VRAM stops being the binding constraint. **⚠️ Every
+   model-role default in this repo was measured on CPU and should be re-measured on the target
+   hardware.** `v89_l`'s own five-case bench is the harness to re-run.
+
+## What would NOT get faster
+
+Nothing in the app's own hot paths is CPU-bound outside the model: `lessons.json` is read once at
+boot, `buildExercises` is milliseconds, the static build is seconds. **A GPU buys model time and
+nothing else** — which, given the numbers above, is essentially all of the wall-clock anyway.
+
+# 🌐 PUTTING THIS ON THE INTERNET, MULTI-USER — a rough prioritisation (`v89_m`)
+
+User request: *"a rough prioritization list for making this app available on a live server,
+accessible from the internet, with multiple users, where users can generate and optionally publish
+lesson sets."*
+
+**Ordered by what breaks first, not by what is most interesting.** Everything below is grounded in
+what the code actually does today; the ⚠️ items are ones this line already has evidence for.
+
+---
+
+## TIER 0 — Do not expose the current server to the internet at all
+
+These are not "nice to have first". Each one is a way the app as it stands loses data or gives a
+stranger the keys.
+
+### 0.1 ⚠️ `lessons.json` is a single global file, read ONCE at boot and written WHOLESALE
+
+`let store = loadStore()` runs at line ~756, one call site; `saveStore` writes the whole in-memory
+object. **This is already a proven data-loss mechanism, not a theoretical one** — it silently reverted
+`v89_f`'s 28 backfilled items within minutes (`v89_g`, and INTERNALS' silent-failure-modes section).
+
+With two users it is worse than a backfill clobber: **every save by user A overwrites every change
+user B made since A's process last read the file.** With two *server processes* it is unbounded.
+
+> **Nothing else on this list matters until this is fixed.** It is the difference between a
+> single-user toy and a service.
+
+The shape of the fix is a real decision (a database; or per-user stores plus a shared read-only
+corpus; or an append-only log). **It is the one architectural choice the rest of the plan hangs off,
+so make it first and deliberately.**
+
+### 0.2 There is no authentication, and every write is `admin`
+
+`DEFAULT_USER = 'admin'` — literally every generated object is stamped with it. `learners.json` holds
+one learner. There is no login, no session, no ownership field that means anything. Anyone who
+reaches the port is the administrator.
+
+### 0.3 Unbounded, unauthenticated LLM spend
+
+`/api/generate`, `/api/generate-book`, `/api/tutor`, `/api/answer-check` and the rest will run a model
+for anyone who posts to them. On a metered GPU that is a bill; on a shared one it is a denial of
+service against your own users. **Needs auth (0.2) plus per-user quotas and a queue before it is
+reachable from outside.**
+
+### 0.4 Jobs are global and unscoped
+
+`/api/jobs` lists everybody's jobs with their labels — which contain chapter titles and user text.
+`/api/job/:id` and `POST /api/jobs/cancel` have no ownership check, so any user can read or cancel any
+other user's work. **Small to fix once 0.2 exists; unfixable before it.**
+
+### 0.5 Transport
+
+`v70_b` already warns about plain HTTP (`e2e-tls-warning`). On the internet this is TLS + a reverse
+proxy, non-negotiable, and cheap — put it in Tier 0 because it costs an afternoon, not because it is
+hard.
+
+---
+
+## TIER 1 — What makes it genuinely multi-user
+
+### 1.1 A real user model, and what "mine" means
+Ownership on topics, storylines and learner progress; `createdBy` becoming meaningful rather than a
+constant. ⚠️ **`backfill-createdby.js` already exists** and stamped the corpus — that groundwork is
+done, the semantics are not.
+
+### 1.2 Per-user learner state
+`learners.json` is one learner today, and the standing rule *"one learner; progress impact is not a
+blocker on shipping"* is a **single-user rule that must be retired deliberately** the moment there are
+two. Grep for it before starting: several tests lean on it.
+
+### 1.3 One model backend, many users → a queue
+Today generation is effectively serialised by the hardware and nobody notices. With N users you need
+an explicit queue with fairness, plus per-user concurrency caps. ⚠️ The `runAsJob` + `_jobAwait` shape
+(`v88_al`) is already the right primitive — every long route is a listed, cancellable job. **The
+scheduler is the missing half, not the plumbing.**
+
+### 1.4 Abuse surface on user-supplied text
+Stories are pasted or photographed by users and go straight into prompts. Prompt injection here does
+not reach other users' data, but it does reach your model spend and your output. Worth a bounded
+review, not a rewrite.
+
+---
+
+## TIER 2 — Publishing, which is half-built already
+
+### 2.1 ⚠️ The static build is the publishing mechanism, and it exists
+`build-static.js` already produces a self-contained read-only `docs/index.html` with the corpus baked
+in. **"Publish a lesson set" is much closer than it looks** — the missing parts are per-set (rather
+than whole-corpus) export, and a share URL.
+
+### 2.2 What "publish" means for the corpus
+A published set must be a **snapshot**, not a live pointer into a mutable global store — otherwise a
+later edit silently rewrites what somebody else linked to. This is 0.1's decision showing up again;
+resolve it there and this follows.
+
+### 2.3 Moderation and licence
+Published content is user-generated and often photographed from the world (`ATTRIBUTIONS.md` and the
+provenance fields already track some of this). Decide the policy before the first publish button, not
+after.
+
+### 2.4 ⚠️ Fix the static build's own gaps first
+`v89_m`'s audit found `loadScripts()` is never called by the static `init()`, so `SCRIPTS_DATA` stays
+`{}` and the **LLM-free alphabet course cannot be offered** in a published build even though it needs
+no backend. Publishing a broken artifact is worse than not publishing. See the open list.
+
+---
+
+## TIER 3 — Operational, once it is actually serving people
+
+- **Backups of whatever replaces `lessons.json`.** The `.bak` convention the backfills use is a
+  single-user habit and does not survive contact with a service.
+- **Observability**: the `_genMeta`/`generationStats` provenance already recorded per lesson is a
+  good start; per-user cost accounting is not there.
+- **Idle release vs. residency** (`v88_l`): a laptop-shaped trade-off. On a server, keep models
+  resident — see the GPU section above.
+- **⚠️ Re-measure every model-role default on the target hardware.** All of them, including
+  `v89_l`'s, were chosen on CPU, and `v89_l` showed the CPU ordering can be the reverse of the GPU
+  one.
+
+---
+
+## The one-line version
+
+> **Fix the store (0.1), add identity (0.2), then rate-limit and scope the jobs. Publishing is the
+> easy part and is half-built; the store decision is the hard part and everything else depends on
+> it.**
 
 # 0. THE PROGRESS-CARD REWORK (user, at the v76 cut)
 
@@ -2268,6 +2531,67 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_m — the wind-down: two planning documents, two new open items, one audit
+
+User, wrapping up: *"provide a coarse estimate how much faster our most limiting functions (tutor,
+text analysis) would run on a proper server"*, *"add a rough prioritization list for making this app
+available on a live server… with multiple users"*, and *"make sure roadmap, internals etc. are all up
+to date, and/or suggest loose ends"*. **Documentation only — no product code changed.**
+**ZERO `ui.json` keys.**
+
+### 🖥️ The GPU estimate — measured, not felt
+
+New roadmap section. **The finding that decides it: there is no GPU at all.** `/api/ps` reports
+`vram=0.0GB` for a 23.1 GB model, `nvidia-smi` is absent, and the CPU is an Intel Core Ultra 7 165U
+— a 15 W laptop part. Everything runs on it.
+
+The anchor, from one real `/api/chat`: **prefill 13.9 tok/s, decode 5.5 tok/s, cold model load ~70 s.**
+⚠️ **Prefill is the part that hurts and the part intuition misses** — every long-context task pays it
+before emitting a token. Cross-checked against a known measurement: the two rates predict ~260 s for
+an inflections lesson; `v89_c` measured 300–440 s. The model of the system holds.
+
+**Tutor ≈ 40× faster** (~130 s → ~3 s), **whole-chapter CP2 analysis ≈ 34× serially and 50–150× in
+practice** (~28 min → ~50 s), because its per-sentence calls are independent and a GPU batches them
+where a laptop cannot overlap them at all. Three things the multiplier understates are recorded
+there, the sharpest being: ⚠️ **every model-role default in this repo was chosen on CPU, and `v89_l`
+showed the CPU ordering can be the reverse of the GPU one** — a dense 12 B was 4× slower than a
+3 B-active MoE here, which need not hold on a GPU.
+
+### 🌐 The multi-user plan — ordered by what breaks first
+
+New roadmap section, four tiers. **Tier 0.1 is `lessons.json` itself**: read once at boot, written
+wholesale, and **already a proven data-loss mechanism** — it is the same write that ate `v89_f`'s
+backfill (`v89_g`/`v89_h`). With two users, every save by one overwrites everything the other did
+since. The section says plainly that nothing else on the list matters until that is decided, and
+that the decision is architectural and should be made first and deliberately.
+
+The rest: no auth at all (`DEFAULT_USER = 'admin'` on every write), unbounded unauthenticated LLM
+spend, unscoped jobs (`/api/jobs` leaks other users' labels; cancel has no ownership check), TLS.
+Then per-user state, a queue in front of the single backend, and publishing — which is **half-built
+already**, since `build-static.js` is exactly the read-only artifact a "publish" button would emit.
+
+### Two new open items
+
+- **⚠️ A comic-sourced chapter lost its "continued from"** — user report, **confirmed from the data**:
+  `tp_17885199795390000039` has no lineage and landed in its own storyline, while **8 of 8** other
+  user-pasted chapters have one. The lesson-type half of the same report was a **RACE, not a loss**
+  (the chapter read `lessons: []`, then filled in; its translation took 65 s against a 12–16 s norm,
+  i.e. the box was loaded by an agent benchmark at the time). Two hypotheses recorded, neither ruled
+  out by the source, plus the decisive next step: `generate()` logs `Continuing from: "…"` on receipt,
+  so the server log for that job settles it in one line.
+- **⚠️ The static build cannot offer the LLM-free alphabet course** — `window.SCRIPTS_DATA` is baked
+  into `docs/index.html` and `loadScripts()` exists to pick it up, but the static `init()` never calls
+  it, so `SCRIPTS_DATA` stays `{}`. Same shape as the `_storyTapInit` gap `v86_h` found. Flagged to be
+  done **before** any publishing work.
+
+### The audit
+
+Every one of the line's eleven releases (`v89_b`…`v89_l`) has a roadmap entry and an INTERNALS
+record. ⚠️ One imprecision fixed: INTERNALS' silent-failure-modes note credited the
+running-server clobber to `v89_g`, the release that **found** it, with no pointer to `v89_h`, the one
+that **guarded** it — a future reader looking for the guard had the wrong tag. Now reads *"found at
+`v89_g`, guarded at `v89_h`"*, and names the guard and the honest limit of its coverage.
 
 ## ✅ v89_l — the answer re-check gets its own model role, and the default was measured
 
