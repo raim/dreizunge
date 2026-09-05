@@ -225,13 +225,24 @@ in the carried sections further down and, where noted, in the older roadmaps.*
 **🆕 Raised by the user at the `v89_h` cut:**
 
 - **⭐ A "wrong" answer is sometimes ALSO CORRECT** — **strategy 2 (answer-time) SHIPPED at `v89_j`**
-  for the four meaning-based MCQ types, opt-in and report-only. **What is still open**: strategy 1
-  (harden the generation prompt so distractors must be wrong for THIS item), `inflection_form` in
-  scope, and one thing the user's own screenshot showed that is a DIFFERENT defect — a distractor in
-  ENGLISH in a German-source lesson. The original note is kept below because its reasoning is what
-  the next step needs. User
-  request: *"Note in the roadmap on a general problem: sometimes the wrong answer is actually also
-  correct. We should find strategies to either solve this or minimize its occurrence."*
+  for the four meaning-based MCQ types, opt-in and report-only. ⚠️ **Strategy 1 was tried at `v89_u`
+  and MEASURED AS INEFFECTIVE — do not retry it as written.** Two reasons, both recorded there:
+  the note below says "harden the prompt so DISTRACTORS must be wrong for this item", but the model
+  never picks those distractors (`wS`/`wV` sample sibling glosses CLIENT-side); and the nearest real
+  lever — forbidding interchangeable ITEMS in one lesson — measured **3/3 defective before, 3/3
+  after** on the reported text, because that text itself says "gratis en kosteloos" and "teach this
+  text" beats "avoid synonyms". The rule was kept as free-and-correct, not as a fix.
+
+  **The remaining candidate is a GENERATION-TIME QC pass over the built options** — ask a model
+  whether any distractor is also valid, resample if so. It operates where the distractors are
+  actually chosen, and both halves exist (`PROMPTS.answerCheck`/`parseAnswerCheck` for the
+  judgement, `callLLMQC` for the generation-time shape). Costs one call per option set, so it wants
+  a ruling. **Still open besides that**: `inflection_form` in scope for the answer-time check, and
+  the ENGLISH distractor in a German-source lesson, which is a different defect. The original note
+  is kept below because its reasoning is what the next step needs.
+  **The user's original request**: *"Note in the roadmap on a general problem: sometimes the wrong
+  answer is actually also correct. We should find strategies to either solve this or minimize its
+  occurrence."*
 
   **The instance they sent** (`Gratis und Kostenlos`, nl→de, `read_translate`): target `KOSTELOOS`,
   options `This is incorrect.` / `KOSTENLOS` / `UMSONST` / `(das Bord stehen lassen)`, correct
@@ -2614,6 +2625,84 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_u — strategy 1 measured: the prompt does NOT fix the "wrong answer is also correct" defect
+
+User: *"now do the wrong-answer generation prompt."* **ZERO `ui.json` keys.**
+**Two findings, and the second one is a negative result that is worth more than the change itself.**
+
+### ⚠️ Finding 1: the roadmap's framing aimed at a lever that does not exist
+
+Strategy 1 was written as *"harden the generation prompt so **distractors** must be wrong for THIS
+item."* **The model never chooses those distractors.** For the four meaning-based MCQ types they are
+picked **client-side**, at build time:
+
+```js
+function wS(c,p,n){ return shuffle(p.filter(s => s.source !== c.source)).slice(0,n).map(s => s.source); }
+```
+
+Sibling items' glosses, sampled at random, filtered only by **exact string inequality**. Same shape
+in `wV` for the vocab MCQs. No prompt anywhere controls them — so hardening a "distractor"
+instruction would have been pure theatre, and would have looked like a fix.
+
+**What the model DOES control is which items share a lesson.** That is the only place a prompt can
+touch this defect, so that is where the rule went: `PROMPTS.vocab` and `PROMPTS.vocabFromText` now
+say no two items in one lesson may be interchangeable, **and explain the mechanism** — that the app
+builds each question by taking one item as the answer and the others as wrong options, so two
+interchangeable entries produce a question with two right answers. (This repo has its own evidence
+that a model told WHY follows more reliably: the synonyms prompt's own "marked WRONG" clause.)
+
+### ⚠️ Finding 2: it was measured, and it changed nothing
+
+Same protocol as `v89_c`: the real prompt, the live model, the **exact sign text that produced the
+user's bug** (`GRATIS / KOSTELOOS / …gratis en kosteloos…`), three runs each.
+
+| | runs with two interchangeable glosses |
+|---|---|
+| **OLD prompt** | **3 of 3** — `GEBÜHRENFREI`+`KOSTENLOS`; `gratis`+`kostenlos`; `gratis`+`kostenlos` |
+| **NEW prompt** | **3 of 3** — `kostenlos`+`gratis`; `gratis`+`kostenlos`; `gratis`+`kostenlos` |
+
+**No improvement whatsoever.** Worse than `v89_c`'s precedent, where hardening at least moved 0/3
+to 1/3.
+
+**The reason is structural, not a wording problem.** The source text *says* "gratis en kosteloos" —
+both words are in the sign. So "teach the vocabulary of this text" and "do not include two
+interchangeable items" are in **direct conflict**, and the text wins every time. No phrasing resolves
+that, because the model is being faithful to its actual instruction.
+
+⚠️ One run (NEW 1) arguably came out *worse*: it swapped the glosses to `gratis`→`kostenlos` and
+`kosteloos`→`gratis`, cross-linking the pair. n=1, so noise — but not evidence of improvement either.
+
+### The rule is KEPT, and must not be believed
+
+Kept because it is free, it is correct advice, and it may help the many texts that do **not** force a
+synonym pair — none of which this measurement can speak to. **Not** kept as a fix: the entry above
+and the guard's own comment both say the measurement showed no effect on the reported case.
+
+> **The only thing measured to handle this defect is `v89_j`'s answer-time re-check** — which, in the
+> user's own session log, returned `"umsonst" vs "kostenlos" -> also_acceptable`. It is opt-in and
+> off by default.
+
+### The recommended next step, now that the lever is understood
+
+A **generation-time QC pass over the built options** — for each MCQ, ask a model whether any
+distractor is also a valid answer, and if so resample or drop the item. That is strategy 2a from the
+original note, and it is now the only remaining candidate that could work, because it operates where
+the distractors are actually chosen. ⚠️ Both halves already exist: `PROMPTS.answerCheck` +
+`parseAnswerCheck` (`v89_j`) are exactly the judgement needed, and `callLLMQC`/`qcCheckPair` are the
+generation-time shape. The cost is one model call per option set, which is why it wants its own
+ruling rather than being assumed.
+
+### Guards
+
+`unit-prompt-strictness.test.js` gains a vocab section: the rule is present in **both** prompts, and
+so are its **mechanism** and its **consequence** — a bare instruction stripped of its reason reads as
+style, which is the difference this repo has measured before. Five mutations red, including
+weakening it in `vocabFromText` only.
+
+⚠️ The guard's own comment states plainly that prompt text is not behaviour and points at this
+entry's measurement, so no future session reads a green test as evidence the defect is handled.
+
 
 ## ✅ v89_t — the chapter-title parser reads an array of bare strings
 

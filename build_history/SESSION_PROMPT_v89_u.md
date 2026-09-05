@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_t` cut
+# Session prompt — written at the `v89_u` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_t`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_u`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -228,6 +228,18 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   **a parse that succeeds into the wrong shape is worse than one that fails.** A bare OBJECT is now
   accepted too, but **only when `n === 1`**, where it is unambiguous — for `n > 1` it must still fail
   so the retry can get a real answer.
+- **`v89_u`** — ⚠️ **strategy 1 does NOT work, and the measurement says so.** Two findings.
+  **(1)** The roadmap's framing — *"harden the prompt so DISTRACTORS must be wrong for this item"* —
+  aimed at a lever that **does not exist**: distractors for the meaning-based MCQ types are chosen
+  **CLIENT-side** by `wS`/`wV` sampling sibling glosses, filtered only by exact string inequality.
+  The model never picks them. **(2)** The nearest real lever — a rule in `PROMPTS.vocab`/
+  `vocabFromText` that no two items in one lesson may be interchangeable — was added AND measured
+  against the live model on the exact sign that produced the bug: **3 of 3 runs defective before,
+  3 of 3 after.** No improvement at all. The reason is structural: the source text itself says
+  *"gratis en kosteloos"*, so "teach the words in this text" and "don't include interchangeable
+  items" are in direct conflict, and the text wins. The rule is KEPT (free, correct, may help texts
+  that do not force a synonym pair) but **must not be believed** — `v89_j`'s answer-time re-check is
+  the only thing measured to handle this case.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -298,7 +310,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 98 storylines, 33 languages, 758 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_t'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_u'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

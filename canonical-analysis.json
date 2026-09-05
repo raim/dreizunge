@@ -7445,8 +7445,1283 @@
       },
       "sourceTextHash": "cbdd45567aac",
       "analyzedAt": "2026-09-04T11:30:49.112Z"
+    },
+    "tp_17851390198240000157": {
+      "chapterId": "tp_17851390198240000157",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 5,
+      "tokenCount": 110,
+      "sentences": [
+        {
+          "sentenceId": "tp_17851390198240000157:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17851390198240000157:s0:t0",
+              "idx": 0,
+              "surface": "Tutti",
+              "lemma": "tutto",
+              "form": "Adjektiv: Nominativ Plural Maskulinum",
+              "sense": "alle",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t1",
+              "idx": 1,
+              "surface": "gli",
+              "lemma": "il",
+              "form": "Bestimmter Artikel: Akkusativ/Genitiv/Dativ Plural Maskulinum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t2",
+              "idx": 2,
+              "surface": "esseri",
+              "lemma": "essere",
+              "form": "Substantiv: Nominativ Plural Maskulinum",
+              "sense": "Wesen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t3",
+              "idx": 3,
+              "surface": "viventi",
+              "lemma": "vivente",
+              "form": "Adjektiv: Nominativ Plural Maskulinum",
+              "sense": "lebende",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t4",
+              "idx": 4,
+              "surface": "sono",
+              "lemma": "essere",
+              "form": "Verb: Indikativ Präsens 3. Person Plural",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t5",
+              "idx": 5,
+              "surface": "imparentati",
+              "lemma": "imparentare",
+              "form": "Partizip Perfekt: Nominativ Plural Maskulinum",
+              "sense": "verwandt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t6",
+              "idx": 6,
+              "surface": "fra",
+              "lemma": "fra",
+              "form": "Präposition",
+              "sense": "untereinander",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t7",
+              "idx": 7,
+              "surface": "loro",
+              "lemma": "loro",
+              "form": "Personalpronomen: Dativ/Genitiv Plural",
+              "sense": "untereinander",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t8",
+              "idx": 8,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t9",
+              "idx": 9,
+              "surface": "sono",
+              "lemma": "essere",
+              "form": "Verb: Indikativ Präsens 3. Person Plural",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t10",
+              "idx": 10,
+              "surface": "connessi",
+              "lemma": "connettere",
+              "form": "Partizip Perfekt: Nominativ Plural Maskulinum",
+              "sense": "verbunden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t11",
+              "idx": 11,
+              "surface": "da",
+              "lemma": "da",
+              "form": "Präposition",
+              "sense": "durch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t12",
+              "idx": 12,
+              "surface": "un",
+              "lemma": "un",
+              "form": "Unbestimmter Artikel: Akkusativ Singular Maskulinum",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t13",
+              "idx": 13,
+              "surface": "albero",
+              "lemma": "albero",
+              "form": "Substantiv: Nominativ Singular Maskulinum",
+              "sense": "Baum",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t14",
+              "idx": 14,
+              "surface": "genealogico",
+              "lemma": "genealogico",
+              "form": "Adjektiv: Akkusativ Singular Maskulinum",
+              "sense": "stammbaumähnlichen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t15",
+              "idx": 15,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t16",
+              "idx": 16,
+              "surface": "discendenza",
+              "lemma": "discendenza",
+              "form": "Substantiv: Genitiv Singular Femininum",
+              "sense": "Abstammung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t17",
+              "idx": 17,
+              "surface": "con",
+              "lemma": "con",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s0:t18",
+              "idx": 18,
+              "surface": "modificazioni.",
+              "lemma": "modificazione",
+              "form": "Substantiv: Ablativ Singular Femininum (oder Nominativ Plural)",
+              "sense": "Veränderungen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 3,
+              "tokenIds": [
+                "tp_17851390198240000157:s0:t0",
+                "tp_17851390198240000157:s0:t1",
+                "tp_17851390198240000157:s0:t2",
+                "tp_17851390198240000157:s0:t3"
+              ],
+              "lemma": "tutti gli esseri viventi",
+              "gloss": "alle Lebewesen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 6,
+              "end": 7,
+              "tokenIds": [
+                "tp_17851390198240000157:s0:t6",
+                "tp_17851390198240000157:s0:t7"
+              ],
+              "lemma": "fra loro",
+              "gloss": "untereinander",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T09:13:35.435Z",
+            "sentenceId": "tp_17851390198240000157:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Tutti gli esseri viventi sono imparentati fra loro e sono connessi da un albero genealogico di discendenza con modificazioni.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17851390198240000157:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17851390198240000157:s1:t0",
+              "idx": 0,
+              "surface": "Questo",
+              "lemma": "questo",
+              "form": "Demonstrativpronomen, maskulin, Singular, Nominativ",
+              "sense": "dieser",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s1:t1",
+              "idx": 1,
+              "surface": "è",
+              "lemma": "essere",
+              "form": "Verb, Präsens, Indikativ, 3. Person Singular",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s1:t2",
+              "idx": 2,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, maskulin, Singular, Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s1:t3",
+              "idx": 3,
+              "surface": "primo",
+              "lemma": "primo",
+              "form": "Ordinalzahladjektiv, maskulin, Singular, Nominativ",
+              "sense": "erste",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s1:t4",
+              "idx": 4,
+              "surface": "pilastro",
+              "lemma": "pilastro",
+              "form": "Substantiv, maskulin, Singular, Nominativ",
+              "sense": "Pfeiler",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s1:t5",
+              "idx": 5,
+              "surface": "del",
+              "lemma": "del",
+              "form": "Präpositionalartikel (di + il), maskulin, Singular, Genitiv",
+              "sense": "des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s1:t6",
+              "idx": 6,
+              "surface": "programma",
+              "lemma": "programma",
+              "form": "Substantiv, neutral/maskulin, Singular, Genitiv",
+              "sense": "Programm",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s1:t7",
+              "idx": 7,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition, Genitiv",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s1:t8",
+              "idx": 8,
+              "surface": "ricerca",
+              "lemma": "ricerca",
+              "form": "Substantiv, feminin, Singular, Genitiv",
+              "sense": "Forschung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s1:t9",
+              "idx": 9,
+              "surface": "darwiniano.",
+              "lemma": "darwiniano",
+              "form": "Adjektiv, maskulin, Singular, Nominativ",
+              "sense": "darwinistisch",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 6,
+              "end": 8,
+              "tokenIds": [
+                "tp_17851390198240000157:s1:t6",
+                "tp_17851390198240000157:s1:t7",
+                "tp_17851390198240000157:s1:t8"
+              ],
+              "lemma": "programma di ricerca",
+              "gloss": "Forschungsprogramm",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T09:19:44.414Z",
+            "sentenceId": "tp_17851390198240000157:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Questo è il primo pilastro del programma di ricerca darwiniano.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17851390198240000157:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17851390198240000157:s2:t0",
+              "idx": 0,
+              "surface": "In",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t1",
+              "idx": 1,
+              "surface": "sostanza,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t2",
+              "idx": 2,
+              "surface": "prese",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t3",
+              "idx": 3,
+              "surface": "a",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t4",
+              "idx": 4,
+              "surface": "caso",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t5",
+              "idx": 5,
+              "surface": "due",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t6",
+              "idx": 6,
+              "surface": "specie,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t7",
+              "idx": 7,
+              "surface": "anche",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t8",
+              "idx": 8,
+              "surface": "molto",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t9",
+              "idx": 9,
+              "surface": "diverse",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t10",
+              "idx": 10,
+              "surface": "fra",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t11",
+              "idx": 11,
+              "surface": "loro",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t12",
+              "idx": 12,
+              "surface": "come",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t13",
+              "idx": 13,
+              "surface": "una",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t14",
+              "idx": 14,
+              "surface": "pianta",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t15",
+              "idx": 15,
+              "surface": "e",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t16",
+              "idx": 16,
+              "surface": "un",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t17",
+              "idx": 17,
+              "surface": "verme,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t18",
+              "idx": 18,
+              "surface": "avranno",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t19",
+              "idx": 19,
+              "surface": "certamente",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t20",
+              "idx": 20,
+              "surface": "avuto",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t21",
+              "idx": 21,
+              "surface": "un",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t22",
+              "idx": 22,
+              "surface": "antenato",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t23",
+              "idx": 23,
+              "surface": "in",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t24",
+              "idx": 24,
+              "surface": "comune",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t25",
+              "idx": 25,
+              "surface": "vissuto",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t26",
+              "idx": 26,
+              "surface": "in",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t27",
+              "idx": 27,
+              "surface": "epoche",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s2:t28",
+              "idx": 28,
+              "surface": "lontane.",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T09:30:56.290Z",
+            "sentenceId": "tp_17851390198240000157:s2",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "In sostanza, prese a caso due specie, anche molto diverse fra loro come una pianta e un verme, avranno certamente avuto un antenato in comune vissuto in epoche lontane.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17851390198240000157:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17851390198240000157:s3:t0",
+              "idx": 0,
+              "surface": "Tutte",
+              "lemma": "tutto",
+              "form": "Adjektiv: Nominativ/Feminin/Plural",
+              "sense": "alle",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t1",
+              "idx": 1,
+              "surface": "le",
+              "lemma": "il",
+              "form": "Artikel: Nominativ/Feminin/Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t2",
+              "idx": 2,
+              "surface": "specie",
+              "lemma": "specie",
+              "form": "Nomen: Nominativ/Feminin/Plural",
+              "sense": "Arten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t3",
+              "idx": 3,
+              "surface": "sono",
+              "lemma": "essere",
+              "form": "Verb: Indikativ/Präsens/3.Person/Plural",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t4",
+              "idx": 4,
+              "surface": "quindi",
+              "lemma": "quindi",
+              "form": "Adverb",
+              "sense": "daher",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t5",
+              "idx": 5,
+              "surface": "«cugine»,",
+              "lemma": "cugino",
+              "form": "Nomen: Nominativ/Feminin/Plural (mit Anführungszeichen)",
+              "sense": "\"Cousinen\"",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t6",
+              "idx": 6,
+              "surface": "nel",
+              "lemma": "nel",
+              "form": "Präposition + Artikel: Lokativ/Maskulin/Singular",
+              "sense": "im Sinne von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t7",
+              "idx": 7,
+              "surface": "senso",
+              "lemma": "senso",
+              "form": "Nomen: Maskulin/Singular",
+              "sense": "Sinn",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t8",
+              "idx": 8,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Konjunktion",
+              "sense": "dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t9",
+              "idx": 9,
+              "surface": "hanno",
+              "lemma": "avere",
+              "form": "Verb: Indikativ/Passato_Prossimo/Hauptpartizip/Maskulin/Plural (aux)",
+              "sense": "haben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t10",
+              "idx": 10,
+              "surface": "avuto",
+              "lemma": "avere",
+              "form": "Verb: Indikativ/Passato_Prossimo/Hauptpartizip/Maskulin/Plural (pp)",
+              "sense": "gehabt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t11",
+              "idx": 11,
+              "surface": "un",
+              "lemma": "un",
+              "form": "Artikel: Akkusativ/Maskulin/Singular",
+              "sense": "einen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t12",
+              "idx": 12,
+              "surface": "«nonno»",
+              "lemma": "nonno",
+              "form": "Nomen: Akkusativ/Maskulin/Singular (mit Anführungszeichen)",
+              "sense": "\"Großvater\"",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t13",
+              "idx": 13,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "gemeinsam",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t14",
+              "idx": 14,
+              "surface": "comune,",
+              "lemma": "comune",
+              "form": "Adjektiv: Akkusativ/Maskulin/Singular (mit Komma)",
+              "sense": "gemeinsam",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t15",
+              "idx": 15,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t16",
+              "idx": 16,
+              "surface": "poi",
+              "lemma": "poi",
+              "form": "Adverb",
+              "sense": "danach",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t17",
+              "idx": 17,
+              "surface": "si",
+              "lemma": "si",
+              "form": "Reflexivpronomen: Akkusativ/Dativ/3.Person/Plural",
+              "sense": "sich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t18",
+              "idx": 18,
+              "surface": "sono",
+              "lemma": "essere",
+              "form": "Verb: Indikativ/Passato_Prossimo/Hauptpartizip/Feminin/Plural (aux)",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t19",
+              "idx": 19,
+              "surface": "ramificate",
+              "lemma": "ramificare",
+              "form": "Verb: Indikativ/Passato_Prossimo/Hauptpartizip/Feminin/Plural (pp)",
+              "sense": "verzweigt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t20",
+              "idx": 20,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s3:t21",
+              "idx": 21,
+              "surface": "diversificate.",
+              "lemma": "diversificare",
+              "form": "Verb: Indikativ/Passato_Prossimo/Hauptpartizip/Feminin/Plural (pp)",
+              "sense": "diversifiziert",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 6,
+              "end": 7,
+              "tokenIds": [
+                "tp_17851390198240000157:s3:t6",
+                "tp_17851390198240000157:s3:t7"
+              ],
+              "lemma": "nel senso che",
+              "gloss": "im Sinne dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 13,
+              "end": 14,
+              "tokenIds": [
+                "tp_17851390198240000157:s3:t13",
+                "tp_17851390198240000157:s3:t14"
+              ],
+              "lemma": "in comune",
+              "gloss": "gemeinsam",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T09:38:16.676Z",
+            "sentenceId": "tp_17851390198240000157:s3",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Tutte le specie sono quindi «cugine», nel senso che hanno avuto un «nonno» in comune, e poi si sono ramificate e diversificate.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17851390198240000157:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17851390198240000157:s4:t0",
+              "idx": 0,
+              "surface": "Noi",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t1",
+              "idx": 1,
+              "surface": "umani",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t2",
+              "idx": 2,
+              "surface": "per",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t3",
+              "idx": 3,
+              "surface": "esempio",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t4",
+              "idx": 4,
+              "surface": "abbiamo",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t5",
+              "idx": 5,
+              "surface": "avuto",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t6",
+              "idx": 6,
+              "surface": "un",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t7",
+              "idx": 7,
+              "surface": "antenato",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t8",
+              "idx": 8,
+              "surface": "in",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t9",
+              "idx": 9,
+              "surface": "comune",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t10",
+              "idx": 10,
+              "surface": "con",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t11",
+              "idx": 11,
+              "surface": "gli",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t12",
+              "idx": 12,
+              "surface": "scimpanzé,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t13",
+              "idx": 13,
+              "surface": "i",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t14",
+              "idx": 14,
+              "surface": "nostri",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t15",
+              "idx": 15,
+              "surface": "cugini",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t16",
+              "idx": 16,
+              "surface": "non",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t17",
+              "idx": 17,
+              "surface": "umani",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t18",
+              "idx": 18,
+              "surface": "più",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t19",
+              "idx": 19,
+              "surface": "prossimi,",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t20",
+              "idx": 20,
+              "surface": "vissuto",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t21",
+              "idx": 21,
+              "surface": "in",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t22",
+              "idx": 22,
+              "surface": "Africa",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t23",
+              "idx": 23,
+              "surface": "intorno",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t24",
+              "idx": 24,
+              "surface": "a",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t25",
+              "idx": 25,
+              "surface": "sei",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t26",
+              "idx": 26,
+              "surface": "milioni",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t27",
+              "idx": 27,
+              "surface": "di",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t28",
+              "idx": 28,
+              "surface": "anni",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s4:t29",
+              "idx": 29,
+              "surface": "fa.",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T09:45:53.668Z",
+            "sentenceId": "tp_17851390198240000157:s4",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Noi umani per esempio abbiamo avuto un antenato in comune con gli scimpanzé, i nostri cugini non umani più prossimi, vissuto in Africa intorno a sei milioni di anni fa.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-05T09:45:53.669Z",
+        "chapterId": "tp_17851390198240000157",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "20c250c8d2bb",
+      "analyzedAt": "2026-09-05T09:45:53.669Z",
+      "partial": true,
+      "totalSentences": 6
     }
   },
-  "generatedAt": "2026-09-04T11:30:49.116Z",
-  "chapterCount": 15
+  "generatedAt": "2026-09-05T09:45:53.675Z",
+  "chapterCount": 16
 }

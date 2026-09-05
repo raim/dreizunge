@@ -704,7 +704,7 @@
       "lang": "de",
       "srcLang": "en",
       "createdAt": "2026-08-26T14:55:11.285Z",
-      "updatedAt": "2026-08-27T14:42:30.149Z",
+      "updatedAt": "2026-09-05T09:00:06.976Z",
       "tokenUsage": {
         "totalPromptTokens": 1324,
         "totalCompletionTokens": 1576,
@@ -1043,7 +1043,8 @@
           ]
         }
       ],
-      "storyboardScheme": "classic"
+      "storyboardScheme": "classic",
+      "thumbMode": "images"
     },
     {
       "id": "sl_1597155858",
@@ -1056,7 +1057,7 @@
       "lang": "it",
       "srcLang": "en",
       "createdAt": "2026-08-26T13:36:24.963Z",
-      "updatedAt": "2026-08-26T14:02:33.386Z",
+      "updatedAt": "2026-09-05T08:59:19.095Z",
       "tokenUsage": {
         "totalPromptTokens": 958,
         "totalCompletionTokens": 866,
@@ -1245,7 +1246,8 @@
           ]
         }
       ],
-      "storyboardScheme": "classic"
+      "storyboardScheme": "classic",
+      "thumbMode": "images"
     },
     {
       "id": "sl_1253510366",
@@ -47112,33 +47114,7 @@
       "updatedAt": "2026-08-04T08:49:03.404Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
-      "storyQcCheckedAt": "2026-07-29T09:28:03.925Z",
-      "storyQcProposal": {
-        "corrected": "La teoria darwiniana si aggiorna.\n\nTutte queste nuove e appassionanti scoperte non hanno confutato la spiegazione darwiniana, ma l’hanno corretta, arricchita ed estesa. Oggi il programma di ricerca evoluzionistico è più pluralista, perché prevede una molteplicità di fattori e di fenomeni: le sorgenti di variazione non sono soltanto le mutazioni genetiche, ma anche quelle epigenetiche e quelle dovute al trasferimento genico orizzontale; i processi selettivi stessi sono molteplici, perché la selezione naturale classica si integra alla selezione sessuale (già scoperta da Darwin) e alla selezione di gruppo; alcuni fattori casuali, come la deriva genetica (quando la variazione genetica viene sorteggiata casualmente in occasione di improvvise riduzioni della popolazione di una specie o di migrazioni di piccoli gruppi), erano stati sottovalutati; inoltre, oggi sappiamo che la selezione naturale non parte mai da zero, ma fa di necessità virtù con il materiale che ha a disposizione e con i vincoli che esso contiene (vincoli di sviluppo, storici, architettonici, fisici, ecc.).",
-        "against": "La teoria darwiniana si aggiorna\n\nTutte queste nuove appassionanti scoperte non hanno confutato la spiegazione darwiniana, ma l’hanno corretta, arricchita ed estesa. Oggi il programma di ricerca evoluzionistico è più pluralista, perché prevede una molteplicità di fattori e di fenomeni: le sorgenti di variazione non sono soltanto le mutazioni genetiche, ma anche quelle epigenetiche e quelle dovute al trasferimento genico orizzontale; i processi selettivi stessi sono molteplici, perché la selezione naturale classica si integra alla selezione sessuale (già scoperta da Darwin) e alla selezione di gruppo; alcuni fattori casuali, come la deriva genetica (quando la variazione genetica viene sorteggiata casualmente in occasione di improvvise riduzioni della popolazione di una specie o di migrazioni di piccoli gruppi), erano stati sottovalutati; inoltre, oggi sappiamo che la selezione naturale non parte mai da zero, ma fa di necessità virtù con il materiale che ha a disposizione e con i vincoli che esso contiene (vincoli di sviluppo, storici, architettonici, fisici, etc.).",
-        "verdict": "corrected",
-        "rejected": false,
-        "changedSentences": 3,
-        "totalSentences": 22,
-        "changedRatio": 0.136,
-        "wordEditRatio": 0.019,
-        "meta": {
-          "type": "story_qc",
-          "model": "translategemma:12b",
-          "attempts": null,
-          "valid": 1,
-          "rejected": 0,
-          "rejectReasons": null,
-          "promptTokens": 436,
-          "completionTokens": 245,
-          "ms": 271385,
-          "at": "2026-07-29T09:28:03.925Z",
-          "verdict": "corrected",
-          "changedRatio": 0.136,
-          "wordEditRatio": 0.019
-        },
-        "at": "2026-07-29T09:28:03.925Z"
-      }
+      "storyQcCheckedAt": "2026-07-29T09:28:03.925Z"
     },
     {
       "id": "tp_17851398260610000477",

@@ -2241,6 +2241,19 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_u` — strategy 1 for "the wrong answer is also correct", MEASURED AS INEFFECTIVE** (user
+request; a negative result worth more than the change)
+
+| what | where |
+|---|---|
+| ⚠️ **the lever the roadmap named does not exist** | distractors for `mcq_target_source` / `mcq_source_target` / `read_translate` / `listen_mcq` are chosen **CLIENT-side** by `wS`/`wV` (index.html), sampling sibling items' glosses and filtering only on **exact string inequality**. The model never picks them, so "harden the prompt so distractors must be wrong" was aimed at nothing — and would have looked like a fix |
+| the nearest real lever | which ITEMS share a lesson. `PROMPTS.vocab` + `PROMPTS.vocabFromText` now forbid two interchangeable items in one lesson, **and explain the mechanism** (the app makes each question from one item plus the others as wrong options) — the same why-not-just-what shape the synonyms prompt's "marked WRONG" clause already uses |
+| ⚠️ **the measurement: NO effect** | real prompt, live model, the exact sign text that produced the bug, 3 runs each: **3/3 defective before, 3/3 after**. Worse than `v89_c`'s precedent, which at least moved 0/3 → 1/3 |
+| ⚠️ **why, structurally** | the source text itself says *"gratis en kosteloos"*. "Teach the vocabulary of this text" and "do not include interchangeable items" are in **direct conflict**, and the text wins. No wording resolves that — the model is being faithful to its real instruction |
+| the rule is KEPT, not believed | free, correct, and possibly useful for texts that do not force a synonym pair — none of which this measurement covers. `unit-prompt-strictness`'s comment says so explicitly, so a green test is never read as "handled" |
+| what actually works | `v89_j`'s answer-time re-check — in the user's own log: `"umsonst" vs "kostenlos" -> also_acceptable`. Opt-in, off by default |
+| the remaining candidate | a **generation-time QC pass over the built options** (resample a distractor that is also valid). It operates where distractors are actually chosen, and both halves exist — `PROMPTS.answerCheck`/`parseAnswerCheck` for the judgement, `callLLMQC` for the shape. One call per option set, so it wants a ruling |
+
 **`v89_t` — the chapter-title parser reads an array of bare strings** (third defect from the user's
 `v89_o` server log)
 

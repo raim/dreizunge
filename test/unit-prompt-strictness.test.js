@@ -7,6 +7,35 @@ const path = require('path');
 const server = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
 const prompts = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'prompts.json'), 'utf8'));
 
+// ── Vocab: no two items in one lesson may be interchangeable (v89_u) ──────────────────
+// ⚠️ THE LEVER HERE IS NOT WHAT THE ROADMAP ASSUMED. "Harden the prompt so DISTRACTORS must be wrong
+// for this item" cannot work: distractors for the meaning-based MCQ types are chosen CLIENT-side,
+// by `wS`/`wV` sampling the OTHER items' glosses, filtered only by exact string inequality. The
+// model never picks them. What the model DOES control is which items share a lesson — so the rule
+// is about the ITEM SET, and it is the one place a prompt can reduce this defect at all.
+//
+// The reported instance: `gratis`→`kostenlos` and `kosteloos`→`umsonst` in ONE lesson, so the
+// sibling-sampled distractor `KOSTENLOS` was a perfectly good answer to `KOSTELOOS`.
+//
+// ⚠️ Prompt text is not behaviour — see the inflections block below, where three release lines of
+// {S} instructions were obeyed in 1 run of 3. This asserts the instruction is PRESENT and was not
+// quietly reworded away; `v89_u`'s entry carries the live measurement.
+for (const key of ['vocab', 'vocabFromText']) {
+  const sys = prompts[key].system;
+  assert.ok(/NO TWO ITEMS IN ONE LESSON MAY BE INTERCHANGEABLE/.test(sys),
+    key + ': carries the interchangeability rule');
+  // ⚠️ The REASON is asserted, not just the rule. This repo has its own evidence that a model told
+  // WHY a rule exists follows it more reliably — the synonyms prompt's "marked WRONG" clause, pinned
+  // a few lines below. Dropping the explanation would leave a bare instruction that reads as style.
+  assert.ok(/multiple-choice questions by taking ONE item as the answer/.test(sys),
+    key + ': explains the MECHANISM — that the app samples the other items as wrong options');
+  assert.ok(/marked WRONG for choosing the one you did not designate/.test(sys),
+    key + ': and states the consequence for the learner, which is what makes it a rule and not a preference');
+  assert.ok(/Concrete: if one entry is glossed/.test(sys), key + ': and gives a worked counter-example');
+}
+console.log('  vocab prompts forbid interchangeable items in one lesson, with the mechanism and the reason: OK');
+
+
 // ── Inflections: which language each field is written in (v89_c) ───────────────────
 // User ruling, taken after the live corpus was measured: the grammatical-form LABEL stays an
 // explanation in {S}, the language the learner already speaks — it is not moved to {L}. The label's
