@@ -110,8 +110,6 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   uploaded image gets a whole-image panel (the act `AM` already performs for one), the panel list
   stays editable, and `comicCreateChapter()`'s one-chapter-per-panel formation (`v85_p`) is confirmed
   correct. Mostly a question of the DRAFT shape holding more than one page.
-- **The completion card (`_renderCompStory`) still has no force-regenerate control** — only the
-  lesson-set card does. Quick and well-precedented.
 - **⭐ Finish the flake audit.** `unit-ui-journeys` and `unit-word-progress` remain **UNVERIFIED**
   (12/12 each is far too few runs to clear them). ⚠️ Both inherited "known flake" labels that have
   been examined so far turned out to be WRONG — `unit-tap-word` was a `Math.random()` in the PRODUCT
@@ -504,6 +502,24 @@ shipped list before being carried again"*) caught all three at this cut:
 ⚠️ And note a stale sentence that survives INSIDE `roadmap_v88.md`'s own shipped section: the
 `v88_k`/`v88_m` entries say *"`_runRecreateJob` … is NOT yet covered"*. True when written, superseded
 by `v88_z`. Read a shipped entry as a record of its own moment, not as a live claim.
+
+## ✅ RESOLVED BY USER RULING AT THE v89 CUT — no code change, not carried as open tasks
+
+**The completion card's missing "force-regenerate" (text-analysis) control** — carried as buildable
+filler work since the `v88_a` prompt. **User's ruling: *"we don't need it, completion card is not
+thought to generate text analysis."*** Do not build it, and do not re-derive it as a symmetry gap.
+
+The observation behind the item was correct as far as it went: the lesson-set card has BOTH
+`#ls-story-explorer-btn` (view) and `#ls-story-analyze-btn` → `analyzeChaptersRun` (generate /
+re-generate, with `v88_x`'s Expand-vs-Overwrite dialog), while the completion card has only
+`#comp-story-explorer-btn`. Toggling the explorer there on an unanalysed chapter fires
+`_ensureTextExplorerData` and degrades to the empty state with no control to fix it.
+
+⚠️ **The ruling is a SURFACE decision, not a cost one**, and that is what stops it coming back: the
+lesson-set card is a teacher/curator surface, the completion card is where a LEARNER lands after
+finishing a chapter, and generation belongs on the former. The asymmetry is the design. A future
+session noticing "these two surfaces show the same explorer but only one can generate it" is looking
+at the intended state.
 
 ## ✅ RESOLVED BY USER RULING AT THE v86 CUT — no code change, not carried as open tasks
 

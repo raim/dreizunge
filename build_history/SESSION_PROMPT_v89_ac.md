@@ -327,7 +327,6 @@ to be stale and were dropped**. Do not re-derive it from older prompts.
 
 **The shortest paths to value if the user has no preference:**
 - **Item `V`** (multi-image upload) — fully specified, unblocked, no decision needed.
-- **The completion card's missing force-regenerate control** — quick, well-precedented.
 - **⭐ Finish the flake audit** — `unit-ui-journeys` and `unit-word-progress` are the last two
   UNVERIFIED files. ⚠️ Every "known flake" examined so far has been WRONG: three for three
   (`v87_i` a `Math.random()` in the product, `v88_h` a test driver on a proxy, `v88_ak` a guard
