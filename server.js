@@ -11,7 +11,8 @@ const { createSkillRegistry, resolveSkill, withRegisteredSkill, withSkillAlias, 
 const { CANCELLED, callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
         setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens,
-        stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
+        stripRaw, extractJSON, extractArray, salvageArray,
+        modelCapabilities } = require('./llm');
 const { AsyncLocalStorage } = require('async_hooks');
 const { buildExport } = require('./export-lessons');
 const LEARNERS = require('./learners');
@@ -284,7 +285,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_v';
+const APP_VERSION  = 'v89_w';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7867,7 +7868,23 @@ http.createServer(async (req, res) => {
     // Model picker: list the models Ollama has installed, and which are active per role.
     if (M === 'GET' && url.pathname === '/api/models') {
       const available = active === 'ollama' ? await listOllamaModels() : [];
-      return json(res, 200, { backend: active, available, active: currentModels() });
+      // v89_w: which of them can SEE. The vision picker must not offer a text-only model — the
+      // default text model has no vision capability at all, and silently pointing comic extraction
+      // at it produces a confusing "the model can't see images" failure instead of a clear one
+      // (OLLAMA_VISION_MODEL's own comment already says exactly this, which is why it is the one
+      // role that never falls back to OLLAMA_MODEL).
+      //
+      // Read from Ollama's own `capabilities`, cached per process — NOT from a family-name
+      // allowlist. Measured: `translategemma:12b` reports vision (gemma3 is multimodal), so an
+      // allowlist built from the obvious names would already have been wrong.
+      const visionCapable = [];
+      if (active === 'ollama') {
+        for (const m of available) {
+          try { if ((await modelCapabilities(m)).includes('vision')) visionCapable.push(m); }
+          catch (_) { /* unknown → not offered; see modelCapabilities' own comment */ }
+        }
+      }
+      return json(res, 200, { backend: active, available, visionCapable, active: currentModels() });
     }
     // Switch the active model(s) at runtime. Body: any subset of {story, translation, lessons}
     // (or {model} to set all three). Unknown model names (not installed) are rejected when the

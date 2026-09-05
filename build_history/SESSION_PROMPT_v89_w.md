@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_v` cut
+# Session prompt — written at the `v89_w` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_v`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_w`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -250,6 +250,14 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   `QC_AMBIGUOUS_BY` bucket: `_check` clears whatever flag exists for the model it writes under, so
   sharing the QC key would have wiped every translation flag. Reached by the **shift-click** QC
   gesture (zero `ui.json` keys); an explicit `scope.checkAmbiguous` overrides.
+- **`v89_w`** — **roadmap item B is CLOSED**: the model picker now has rows for `vision`, `analysis`
+  and `answerCheck`, so all EIGHT server roles are settable in-app. ⚠️ Item B's open design question
+  ("Ollama's capabilities field vs. a family-name allowlist") was settled by **measurement**: the
+  vision row is filtered by `/api/show`'s `capabilities`, because `translategemma:12b` and
+  `qwen3.6:35b-a3b` both report vision — a name allowlist would have kept only `qwen2.5vl` and
+  dropped six working models. ⚠️ **One row, two features**: `answerCheck` drives BOTH the answer-time
+  re-check (`v89_j`) and the ambiguous-options QC (`v89_v`), since both call `callLLMAnswerCheck`.
+  **3 `ui.json` keys, granted.**
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -286,8 +294,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 345 checks
-node test/run.js --quick                  → expect 284
+node test/run.js                          → expect 346 checks
+node test/run.js --quick                  → expect 285
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -319,8 +327,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **344 topics, 98 storylines, 33 languages, 758 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_v'`.
+Corpus at this cut: **344 topics, 98 storylines, 33 languages, 761 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_w'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

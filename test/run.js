@@ -169,6 +169,7 @@ run('unit: every model role is released and validated (v89_r)', 'node', [path.jo
 run('unit: continue-from survives a picker rebuild (v89_s)', 'node', [path.join(__dirname, 'unit-continue-from.test.js')]);
 run('unit: chapter-title reply shapes the parser must read (v89_t)', 'node', [path.join(__dirname, 'unit-chapter-title-shapes.test.js')]);
 run('unit: QC catches a distractor that is also correct \u2014 opt-in (v89_v)', 'node', [path.join(__dirname, 'unit-qc-ambiguous-options.test.js')]);
+run('unit: every model role has a picker row; vision filtered by capability (v89_w)', 'node', [path.join(__dirname, 'unit-model-picker-roles.test.js')]);
 run('unit: showToast() null-guard checks the right variable (v86_i)', 'node', [path.join(__dirname, 'unit-show-toast-guard.test.js')]);
 run('unit: Settings Card shell (PLAN §C4 stage 1)', 'node', [path.join(__dirname, 'unit-settings-card.test.js')]);
 run('unit: global mute-pill consolidation (PLAN §C4 "keep going")', 'node', [path.join(__dirname, 'unit-mute-consolidation.test.js')]);

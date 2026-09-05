@@ -476,4 +476,46 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
   });
 }
 
-module.exports = { CANCELLED, callLLM, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout, setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens };
+// v89_w: which installed models can actually SEE an image, straight from Ollama rather than from a
+// name allowlist. `/api/show` returns a `capabilities` array — measured on this box:
+//     qwen2.5vl:7b       -> ["completion","vision"]
+//     translategemma:12b -> ["completion","vision"]   (gemma3-based, multimodal)
+//     qwen2.5:14b        -> ["completion","tools"]
+// That settles the open design question in roadmap item B ("capabilities field vs. family-name
+// allowlist") with data: the field exists, it is authoritative, and a family allowlist would already
+// have been wrong about translategemma.
+//
+// Cached for the process: the set of installed models changes when a human runs `ollama pull`, which
+// is not something to pay N HTTP round trips per picker open to notice. `capabilitiesReset()` exists
+// so a test — or a future "rescan" control — can clear it without restarting.
+let _capCache = new Map();
+function capabilitiesReset() { _capCache = new Map(); }
+function modelCapabilities(model) {
+  if (_capCache.has(model)) return Promise.resolve(_capCache.get(model));
+  const body = JSON.stringify({ model });
+  return new Promise((resolve) => {
+    const u = new URL('/api/show', OLLAMA_HOST);
+    const req = (u.protocol === 'https:' ? require('https') : http).request({
+      hostname: u.hostname, port: u.port, path: u.pathname, method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
+    }, (res) => {
+      let d = ''; res.setEncoding('utf8');
+      res.on('data', c => d += c);
+      res.on('end', () => {
+        let caps = [];
+        try { const j = JSON.parse(d); if (Array.isArray(j.capabilities)) caps = j.capabilities.map(String); } catch (_) {}
+        // ⚠️ A model whose capabilities cannot be read is cached as UNKNOWN (an empty array), not as
+        // "assume it can do everything". The caller decides what an unknown means for its own role;
+        // guessing capable here would put a text model in the vision picker, which is the exact
+        // failure the picker exists to prevent.
+        _capCache.set(model, caps);
+        resolve(caps);
+      });
+    });
+    req.setTimeout(4000, () => req.destroy());
+    req.on('error', () => { _capCache.set(model, []); resolve([]); });
+    req.end(body);
+  });
+}
+
+module.exports = { CANCELLED, callLLM, modelCapabilities, capabilitiesReset, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout, setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens };
