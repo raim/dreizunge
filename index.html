@@ -9631,7 +9631,17 @@ async function qcRun(scope, btn){
   // after tuning the QC prompt, which doesn't change lesson content). Capture the modifier
   // BEFORE any await, while the click event is still current. An explicit scope.force wins.
   const force = (scope && scope.force) || !!(window.event && window.event.shiftKey);
-  const body = { ...scope, force };
+  // v89_v (user ruling: "implement that an explicit QC run catches it, but don't do on default —
+  // it is a very rare case"): the "wrong answer is also correct" check rides on the SAME deliberate
+  // gesture, and only on it. It costs one extra model call per lesson, which on a CPU-only box is
+  // ~30s of the user's evening, so it must never be part of the ordinary sweep.
+  //
+  // Tied to `force` rather than given its own control ON PURPOSE: a new button or settings row costs
+  // a `ui.json` key, the user translates those by hand, and shift-click is already this screen's
+  // "do the thorough, deliberate run" gesture. An explicit `scope.checkAmbiguous` still wins, so a
+  // dedicated control can be added later without touching this line.
+  const checkAmbiguous = (scope && scope.checkAmbiguous !== undefined) ? !!scope.checkAmbiguous : force;
+  const body = { ...scope, force, checkAmbiguous };
   const old = btn ? btn.innerHTML : null;
   if(btn){ btn.disabled=true; btn.innerHTML='⏳'; }
   let data=null;

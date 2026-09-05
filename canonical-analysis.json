@@ -7453,8 +7453,8 @@
       "script": [
         "latin"
       ],
-      "sentenceCount": 5,
-      "tokenCount": 110,
+      "sentenceCount": 6,
+      "tokenCount": 132,
       "sentences": [
         {
           "sentenceId": "tp_17851390198240000157:s0",
@@ -8121,7 +8121,7 @@
             "stage": "CP2",
             "pipelineVersion": 1,
             "producedBy": "canonical-analysis.js",
-            "at": "2026-09-05T09:30:56.290Z",
+            "at": "2026-09-05T10:06:39.354Z",
             "sentenceId": "tp_17851390198240000157:s2",
             "model": "qwen3.6:35b-a3b"
           },
@@ -8700,11 +8700,286 @@
             "stage": "CP2",
             "pipelineVersion": 1,
             "producedBy": "canonical-analysis.js",
-            "at": "2026-09-05T09:45:53.668Z",
+            "at": "2026-09-05T10:17:06.757Z",
             "sentenceId": "tp_17851390198240000157:s4",
             "model": "qwen3.6:35b-a3b"
           },
           "text": "Noi umani per esempio abbiamo avuto un antenato in comune con gli scimpanzé, i nostri cugini non umani più prossimi, vissuto in Africa intorno a sei milioni di anni fa.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17851390198240000157:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17851390198240000157:s5:t0",
+              "idx": 0,
+              "surface": "Con",
+              "lemma": "con",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t1",
+              "idx": 1,
+              "surface": "i",
+              "lemma": "il",
+              "form": "bestimmter Artikel, Plural, maskulin",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t2",
+              "idx": 2,
+              "surface": "Neanderthal,",
+              "lemma": "Neanderthal",
+              "form": "Eigenname, Plural",
+              "sense": "Neandertaler",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t3",
+              "idx": 3,
+              "surface": "i",
+              "lemma": "il",
+              "form": "bestimmter Artikel, Plural, maskulin",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t4",
+              "idx": 4,
+              "surface": "nostri",
+              "lemma": "nostro",
+              "form": "Possessivpronomen, Plural, maskulin",
+              "sense": "unsere",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t5",
+              "idx": 5,
+              "surface": "cugini",
+              "lemma": "cugino",
+              "form": "Substantiv, Plural, maskulin",
+              "sense": "Vetter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t6",
+              "idx": 6,
+              "surface": "umani",
+              "lemma": "umano",
+              "form": "Adjektiv, Plural, maskulin",
+              "sense": "menschliche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t7",
+              "idx": 7,
+              "surface": "più",
+              "lemma": "più",
+              "form": "Adverb, Komparativ",
+              "sense": "näher",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t8",
+              "idx": 8,
+              "surface": "prossimi,",
+              "lemma": "prossimo",
+              "form": "Adjektiv, Plural, maskulin, Superlativ",
+              "sense": "verwandten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t9",
+              "idx": 9,
+              "surface": "abbiamo",
+              "lemma": "avere",
+              "form": "Verb, Indikativ, Präsens, 1. Person Plural",
+              "sense": "haben wir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t10",
+              "idx": 10,
+              "surface": "avuto",
+              "lemma": "avere",
+              "form": "Partizip Perfekt, maskulin Singular",
+              "sense": "gehabt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t11",
+              "idx": 11,
+              "surface": "un",
+              "lemma": "uno",
+              "form": "unbestimmter Artikel, Singular, maskulin",
+              "sense": "einen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t12",
+              "idx": 12,
+              "surface": "antenato",
+              "lemma": "antenato",
+              "form": "Substantiv, Singular, maskulin",
+              "sense": "Vorfahren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t13",
+              "idx": 13,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "gemeinsamen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t14",
+              "idx": 14,
+              "surface": "comune",
+              "lemma": "comune",
+              "form": "Adjektiv, Singular, maskulin",
+              "sense": "gemeinsamen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t15",
+              "idx": 15,
+              "surface": "vissuto",
+              "lemma": "vivere",
+              "form": "Partizip Perfekt, maskulin Singular",
+              "sense": "der lebte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t16",
+              "idx": 16,
+              "surface": "sempre",
+              "lemma": "sempre",
+              "form": "Adverb",
+              "sense": "immer",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t17",
+              "idx": 17,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t18",
+              "idx": 18,
+              "surface": "Africa",
+              "lemma": "Africa",
+              "form": "Eigenname, Singular, feminin",
+              "sense": "Afrika",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t19",
+              "idx": 19,
+              "surface": "500.000",
+              "lemma": "500.000",
+              "form": "Zahlwort",
+              "sense": "500.000",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t20",
+              "idx": 20,
+              "surface": "anni",
+              "lemma": "anno",
+              "form": "Substantiv, Plural",
+              "sense": "Jahre",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17851390198240000157:s5:t21",
+              "idx": 21,
+              "surface": "fa.",
+              "lemma": "fa",
+              "form": "Adverbialphrase (von fare)",
+              "sense": "vor",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 9,
+              "end": 10,
+              "tokenIds": [
+                "tp_17851390198240000157:s5:t9",
+                "tp_17851390198240000157:s5:t10"
+              ],
+              "lemma": "avere avuto",
+              "gloss": "gehabt haben (Perfekt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 13,
+              "end": 14,
+              "tokenIds": [
+                "tp_17851390198240000157:s5:t13",
+                "tp_17851390198240000157:s5:t14"
+              ],
+              "lemma": "in comune",
+              "gloss": "gemeinsam",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 19,
+              "end": 21,
+              "tokenIds": [
+                "tp_17851390198240000157:s5:t19",
+                "tp_17851390198240000157:s5:t20",
+                "tp_17851390198240000157:s5:t21"
+              ],
+              "lemma": "anni fa",
+              "gloss": "Jahre vor (Zeitangabe)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T09:52:58.343Z",
+            "sentenceId": "tp_17851390198240000157:s5",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Con i Neanderthal, i nostri cugini umani più prossimi, abbiamo avuto un antenato in comune vissuto sempre in Africa 500.000 anni fa.",
           "paraBreakBefore": false
         }
       ],
@@ -8712,16 +8987,14 @@
         "stage": "CP2",
         "pipelineVersion": 1,
         "producedBy": "canonical-analysis.js",
-        "at": "2026-09-05T09:45:53.669Z",
+        "at": "2026-09-05T10:17:06.765Z",
         "chapterId": "tp_17851390198240000157",
         "model": "qwen3.6:35b-a3b"
       },
       "sourceTextHash": "20c250c8d2bb",
-      "analyzedAt": "2026-09-05T09:45:53.669Z",
-      "partial": true,
-      "totalSentences": 6
+      "analyzedAt": "2026-09-05T10:17:06.765Z"
     }
   },
-  "generatedAt": "2026-09-05T09:45:53.675Z",
+  "generatedAt": "2026-09-05T10:17:06.772Z",
   "chapterCount": 16
 }

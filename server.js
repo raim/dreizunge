@@ -284,7 +284,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_u';
+const APP_VERSION  = 'v89_v';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -2210,6 +2210,11 @@ async function generateDialectStoryV2(glossaryRows, baseLang, opts) {
 // Identity this check files its findings under, so they sit beside model verdicts in `qcByModel`
 // rather than competing with them. Not a model name — deliberately readable in the flag UI.
 const QC_DIACRITIC_BY = 'diacritics';
+// v89_v: the ambiguous-options check writes under its OWN key, exactly as the diacritic check does.
+// ⚠️ Load-bearing: `_check` CLEARS whatever flag exists for the model it is writing under, so
+// running this pass with the plain QC model key would silently wipe every translation flag that
+// model had raised. Per-model buckets are what make two independent checks coexist on one item.
+const QC_AMBIGUOUS_BY = 'ambiguous-options';
 // ── Deterministic diacritic check (v72) ───────────────────────────────────────
 // Roadmap item, validated against the user's pre-edit export: a word written WITHOUT its diacritics
 // where the same corpus contains the properly-accented form. `naturliche` vs `natürliche` survived
@@ -2302,6 +2307,58 @@ async function qcCheckDiacriticCandidate(word, suggestion, lang) {
   // user to dismiss the whole QC panel.
   if (!/^FIX/.test(reply)) return { ok: true };
   return { ok: false, sug: suggestion };
+}
+
+// ── v89_v: the "wrong answer is also correct" check, for an EXPLICIT QC run only ──────────────
+//
+// ⚠️ Why this is a LESSON-level check and not an item-level one, unlike every other QC checker:
+// the ambiguity is a property of a PAIR. And it cannot be checked against the options a learner
+// actually saw, because there are none to check — `wS`/`wV` (index.html) resample the distractors
+// from the sibling items on every single round. What IS stable is the POOL: if two items in a
+// lesson have interchangeable {S} answers, then whichever sample the learner gets, the question is
+// ambiguous whenever those two land together. So the pool is what gets checked.
+//
+// ONE model call per lesson, not one per pair — a 13-item lesson has 156 ordered pairs, and asking
+// about each would cost more than generating the lesson did.
+//
+// `v89_u` measured why this exists: hardening the generation prompt did NOT help (3/3 defective
+// before, 3/3 after), because the source text itself supplied the synonym pair. A model asked to
+// JUDGE the finished lesson is a different question from a model asked to avoid the problem while
+// writing it.
+//
+// Returns [{ a, b, why }] with 0-based indices into `rows`, or [] — and [] on any doubt, by the
+// prompt's own instruction and by this parser's construction.
+async function qcCheckAmbiguousOptions(rows, lang, srcLang) {
+  if (!Array.isArray(rows) || rows.length < 2) return [];
+  const L = langName(lang), S = langName(srcLang || 'en');
+  const listed = rows.map((r, i) => `${i + 1}. ${String(r.target || '').trim()} => ${String(r.source || '').trim()}`).join('\n');
+  const vars = { L, S, rows: listed };
+  // ⚠️ The ANSWER-CHECK role, NOT the QC role — measured, not assumed. On the user's own lesson:
+  //     translategemma:12b (the QC default)   -> []  twice. Catches nothing.
+  //     qwen2.5:14b (the answer-check default) -> the pair, twice, with a correct German reason,
+  //                                               and [] twice on a clean control lesson.
+  // That is the same finding writing-feedback already recorded from the other direction (the QC-role
+  // model ignored its requested output format), and it is the same judgement `v89_l` benchmarked
+  // this role's default for: "is this other answer also valid for this item?"
+  const { text } = await callLLMAnswerCheck(fillPrompt(PROMPTS.qcAmbiguousOptions.system, vars),
+                                            fillPrompt(PROMPTS.qcAmbiguousOptions.user, vars), 400, { think: false });
+  let arr;
+  try { arr = JSON.parse(stripRaw(String(text || '')).replace(/```json|```/g, '').trim()); }
+  catch (_) { try { arr = extractArray(text); } catch (_2) { return []; } }
+  if (!Array.isArray(arr)) return [];
+  const out = [];
+  for (const it of arr) {
+    if (!it || typeof it !== 'object') continue;
+    // 1-based in the prompt (a model counts from 1 far more reliably), 0-based here.
+    const a = parseInt(it.a, 10) - 1, b = parseInt(it.b, 10) - 1;
+    // ⚠️ An index the model invented is DROPPED, not clamped. Clamping would attach a real-sounding
+    // finding to an item nobody judged — the same class of harm as a false positive, but harder to
+    // spot because the note reads plausibly.
+    if (!Number.isInteger(a) || !Number.isInteger(b) || a === b) continue;
+    if (a < 0 || b < 0 || a >= rows.length || b >= rows.length) continue;
+    out.push({ a, b, why: String(it.why || '').trim().slice(0, 200) });
+  }
+  return out;
 }
 
 async function qcCheckPair(target, source, lang, srcLang, userComment, siblings) {
@@ -2715,7 +2772,7 @@ async function generateSummaryQc(summary, srcLang) {
 }
 
 async function _runQc(jobId, topics, opts) {
-  const { lessonIdx, onlyFlagged, force, includeStory = true } = opts;
+  const { lessonIdx, onlyFlagged, force, includeStory = true, checkAmbiguous = false } = opts;
   let checked = 0, flagged = 0, cleared = 0, skipped = 0;
   let storyProposed = 0, storyClean = 0;
   const affected = [];
@@ -2953,6 +3010,53 @@ async function _runQc(jobId, topics, opts) {
                 }, 'diacritic', QC_DIACRITIC_BY, _at);
               }
             }
+          }
+        }
+        // ── v89_v: "the wrong answer is also correct" — EXPLICIT runs only ──────────────────
+        // ⚠️ OFF unless asked for (user ruling: "it is a very rare case"). It costs one extra model
+        // call per lesson and, unlike every other checker here, it can only ever report on a PAIR.
+        //
+        // Checked against the POOL, not against any option set a learner saw: `wS`/`wV` resample
+        // the distractors from the sibling items every round, so there is no stable set to inspect.
+        // If two items have interchangeable {S} answers, the question is ambiguous whenever the two
+        // land together — which is a property of the lesson, and that is what gets flagged.
+        //
+        // Restricted to the vocab/sentence shape, where the answer side genuinely IS a free-text
+        // {S} gloss sampled as a distractor. The typed and grammar-driven types build their options
+        // differently, and asserting otherwise would be a guess.
+        if (checkAmbiguous && _lessonQcRan && (Array.isArray(ls.vocab) || Array.isArray(ls.sentences))) {
+          const rows = [];
+          for (const key of ['vocab', 'sentences']) {
+            const arr = ls[key];
+            if (!Array.isArray(arr)) continue;
+            arr.forEach((item, _i) => {
+              if (item && item.target && item.source) rows.push({ key, i: _i, target: item.target, source: item.source });
+            });
+          }
+          let pairs = [];
+          try { pairs = await qcCheckAmbiguousOptions(rows, tp.lang, tp.srcLang); }
+          catch (e) {
+            if (String(e && e.message) === CANCELLED) throw e;   // item AU: a cancel is not a failure
+            console.warn(`    QC ambiguous-options failed for lesson ${li}: ${e.message}`);
+          }
+          // One verdict per ROW, resolved from the single call above. Running `_check` per row (with
+          // an instant runner) rather than writing flags by hand reuses its re-resolution, its
+          // per-model bookkeeping and its clearing — the parts that took two releases to get right.
+          const noteFor = new Map();
+          for (const pr of pairs) {
+            const A = rows[pr.a], B = rows[pr.b];
+            if (!A || !B) continue;
+            const why = pr.why ? ' — ' + pr.why : '';
+            if (!noteFor.has(pr.a)) noteFor.set(pr.a, `Also a correct answer for "${B.target}" (${B.source})${why}`);
+            if (!noteFor.has(pr.b)) noteFor.set(pr.b, `Also a correct answer for "${A.target}" (${A.source})${why}`);
+          }
+          for (let _r = 0; _r < rows.length; _r++) {
+            const row = rows[_r];
+            const item = (ls[row.key] || [])[row.i];
+            if (!item) continue;
+            const sug = noteFor.get(_r);
+            await _check(item, async () => (sug ? { ok: false, field: 'source', sug } : { ok: true }),
+                         'ambiguous', QC_AMBIGUOUS_BY, (L) => (L[row.key] || [])[row.i]);
           }
         }
         // Stamp a full (not flagged-only) pass that left the lesson clean, so future bulk runs
@@ -8347,7 +8451,7 @@ http.createServer(async (req, res) => {
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
       if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
-      const { storylineId, topicId, lessonIdx, onlyFlagged, force, includeStory } = body;
+      const { storylineId, topicId, lessonIdx, onlyFlagged, force, includeStory, checkAmbiguous } = body;
       // Resolve the topics in scope.
       let topics = [];
       if (storylineId) {
@@ -8363,7 +8467,7 @@ http.createServer(async (req, res) => {
         link: storylineId ? { type: 'storyline', id: storylineId } : (topicId ? { type: 'topic', id: topicId } : null),
       });
       console.log(`  ⚙ QC requested (${storylineId?('storyline '+storylineId):topicId?('topic '+topicId+(lessonIdx!==undefined&&lessonIdx!==null?' lesson '+lessonIdx:'')):'?'}) → ${topics.length} topic(s), job=${jobId}`);
-      runCancellable(jobId, () => _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force, includeStory: includeStory !== false }))
+      runCancellable(jobId, () => _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force, checkAmbiguous: !!checkAmbiguous, includeStory: includeStory !== false }))
         .catch(e => { console.error('  QC error:', e.message); jobFailOrCancel(jobId, e); });
       return json(res, 202, { jobId, topics: topics.length });
     }

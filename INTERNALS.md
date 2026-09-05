@@ -2241,6 +2241,20 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_v` — an EXPLICIT QC run catches "the wrong answer is also correct"** (user ruling: opt-in,
+"it is a very rare case")
+
+| what | where |
+|---|---|
+| the checker | `qcCheckAmbiguousOptions(rows, lang, srcLang)` (server.js) → `[{a,b,why}]`, 0-based. `PROMPTS.qcAmbiguousOptions`. Wired into `_runQc` behind `checkAmbiguous` |
+| ⚠️ **why it is LESSON-level**, unlike every other QC checker | the ambiguity is a property of a PAIR, and there is NO option set to inspect: `wS`/`wV` resample the distractors every round, so what the learner saw is neither stored nor reproducible. The **pool** is stable, so the pool is judged. ONE call per lesson — 13 items is 156 ordered pairs |
+| ⚠️ **the role was MEASURED, and the obvious choice was wrong** | it is a QC check, so `callLLMQC` looked right. On the user's own lesson: `translategemma:12b` (QC default) → `[]` twice, **catches nothing**; `qwen2.5:14b` (answer-check default) → the pair twice with a correct reason, and `[]` twice on a clean control. Uses **`callLLMAnswerCheck`**. Same finding writing-feedback recorded from the other side (the QC model ignores a requested output format), and the same judgement `v89_l` benchmarked that role for |
+| ⚠️ **its own flag bucket is load-bearing** | `_check` CLEARS whatever flag exists for the model it writes under. The plain QC key would have silently wiped every translation flag that model raised. `QC_AMBIGUOUS_BY` follows `QC_DIACRITIC_BY`'s synthetic-key pattern, so both findings coexist per item |
+| why reuse `_check` at all | an instant runner resolving from the one call inherits its mid-pass re-resolution (`v73_j`) and per-model bookkeeping (`v88_z`) — two releases' worth of care, for free |
+| how it is reached | the **shift-click** QC gesture, already this screen's "thorough, deliberate run". A button or settings row would cost a `ui.json` key. `scope.checkAmbiguous` overrides, so a dedicated control needs no change here. Default OFF in THREE places (client, route, `_runQc`), each with its own red mutation |
+| it refuses to invent | an index the model made up is DROPPED, never clamped — clamping attaches a real-sounding finding to an item nobody judged. A good pair beside a bad one survives. Silence is the expected answer and every unusable reply gives it; a <2-item lesson never reaches the model |
+| the asymmetry, deliberately | a missed pair costs a rare confusing question; a false one sends a curator to break a lesson that was correct |
+
 **`v89_u` — strategy 1 for "the wrong answer is also correct", MEASURED AS INEFFECTIVE** (user
 request; a negative result worth more than the change)
 

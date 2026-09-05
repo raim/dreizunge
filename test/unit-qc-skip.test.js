@@ -223,9 +223,16 @@ function freshTopic() {
   assert.ok(/url\.pathname === '\/api\/qc'/.test(server),
     'and the on-demand QC endpoint still exists (the storyline 🔍 sweep and per-chapter QC)');
   // The /api/qc endpoint threads a force flag (bulk re-check override) into _runQc.
-  assert.ok(/const \{ storylineId, topicId, lessonIdx, onlyFlagged, force, includeStory \} = body/.test(server),
-    '/api/qc reads a force flag');
-  assert.ok(/force: !!force, includeStory: includeStory !== false \}\)/.test(server), '/api/qc passes force into _runQc');
+  // ⚠️ RE-ANCHORED at v89_v, and it is the same brittle-anchor class v89_p hit: these two pinned the
+  // ENTIRE destructure and the ENTIRE options literal, character for character, so ADDING a field to
+  // either — `checkAmbiguous`, here — broke a guard whose claim ("force is read, force is passed")
+  // was still perfectly true. Anchored on the claim now: `force` appears in the destructure, and is
+  // passed into the options object. A field added beside it is not a regression.
+  const _qcRoute = server.slice(server.indexOf("url.pathname === '/api/qc'"));
+  const _qcDestructure = _qcRoute.slice(0, _qcRoute.indexOf('} = body') + 8);
+  assert.ok(/const \{[^}]*\bforce\b[^}]*\} = body/.test(_qcDestructure), '/api/qc reads a force flag');
+  assert.ok(/_runQc\(jobId, topics, \{[^}]*force: !!force[^}]*\}\)/.test(_qcRoute.slice(0, 4000)),
+    '/api/qc passes force into _runQc');
 
   // ── Client: shift-click on the QC button forces a full re-check ──────────────────────
   const qcRunFn = html.slice(html.indexOf('async function qcRun('),
@@ -233,8 +240,12 @@ function freshTopic() {
   assert.ok(qcRunFn.length > 0, 'qcRun body found');
   assert.ok(/const force = \(scope && scope\.force\) \|\| !!\(window\.event && window\.event\.shiftKey\)/.test(qcRunFn),
     'qcRun derives force from an explicit scope.force or a shift-click, captured before any await');
-  assert.ok(/body:JSON\.stringify\(body\)/.test(qcRunFn) && /const body = \{ \.\.\.scope, force \}/.test(qcRunFn),
-    'qcRun sends the force flag in the request body');
+  // ⚠️ Same re-anchoring as the route above (v89_v): this pinned the body literal exactly, so adding
+  // `checkAmbiguous` beside `force` broke a guard whose claim was untouched. The claim is that the
+  // request body spreads the scope AND carries `force` — not the exact set of fields.
+  assert.ok(/body:JSON\.stringify\(body\)/.test(qcRunFn), 'qcRun sends the body it built');
+  assert.ok(/const body = \{ \.\.\.scope,[^}]*\bforce\b[^}]*\}/.test(qcRunFn),
+    'qcRun sends the force flag in the request body, alongside whatever else the scope carries');
   assert.ok(/qc\.toast\.forced/.test(qcRunFn), 'qcRun surfaces a forced-run indicator in the toast');
   // Tooltips advertise the shift-click affordance on the two bulk buttons.
   assert.ok(/t\('qc\.btn\.topic'\) \} \$\{t\('qc\.btn\.force_hint'\)/.test(html) ||

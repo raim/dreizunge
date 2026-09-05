@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_u` cut
+# Session prompt — written at the `v89_v` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_u`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_v`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -240,6 +240,16 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   items" are in direct conflict, and the text wins. The rule is KEPT (free, correct, may help texts
   that do not force a synonym pair) but **must not be believed** — `v89_j`'s answer-time re-check is
   the only thing measured to handle this case.
+- **`v89_v`** — an **explicit** QC run now catches it (user ruling: *"don't do on default. it is a
+  very rare case"*). `qcCheckAmbiguousOptions` is a **LESSON-level** check — the ambiguity is a
+  property of a PAIR, and there is no option set to inspect because `wS`/`wV` resample the
+  distractors every round, so the POOL is what gets judged. ONE call per lesson. ⚠️ **The ROLE was
+  measured**: the QC-role model returned `[]` twice on the user's own lesson (catches nothing), while
+  the **answer-check** role's default found the pair twice with a correct German reason AND stayed
+  silent twice on a clean control — so it uses `callLLMAnswerCheck`. ⚠️ It writes under its own
+  `QC_AMBIGUOUS_BY` bucket: `_check` clears whatever flag exists for the model it writes under, so
+  sharing the QC key would have wiped every translation flag. Reached by the **shift-click** QC
+  gesture (zero `ui.json` keys); an explicit `scope.checkAmbiguous` overrides.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -276,8 +286,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 344 checks
-node test/run.js --quick                  → expect 283
+node test/run.js                          → expect 345 checks
+node test/run.js --quick                  → expect 284
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -310,7 +320,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 98 storylines, 33 languages, 758 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_u'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_v'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing
