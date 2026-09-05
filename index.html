@@ -18591,7 +18591,7 @@ function renderEx(){
     // still want to check first. Pure reorder, same two pieces of markup, nothing else changed.
     _exStoryPanelHtml(ex)+
     flagUi;
-  if(ex.type==='listen_mcq'||ex.type==='listen_type') _speakTimeout = setTimeout(()=>{
+  if(_exAutoSpeaks(ex)) _speakTimeout = setTimeout(()=>{
     _speakTimeout = null;
     if(_ttsUnlocked){ speak(ex.target); }
     else {
@@ -21024,6 +21024,14 @@ function _speechExLocale(kind){
 // BOTH share their render function with such an intro variant — checked here explicitly, not assumed
 // from the type name, since exactly that assumption was what left `mcq_source_target` unwired at
 // v84_h (found and fixed at v84_i).
+// v89_x: the ONE answer to "does rendering this question read something out?" — used by `renderEx`
+// to DO it and by the mic to WAIT for it. Two copies of this condition would drift, and the drift
+// would be SILENT: the mic would quietly go back to opening during the readout, with nothing on
+// screen to show for it. Same one-rule-one-place reasoning as `_speechKindFor` below.
+function _exAutoSpeaks(ex){
+  return !!ex && (ex.type === 'listen_mcq' || ex.type === 'listen_type');
+}
+
 function _speechKindFor(ex){
   if(!ex) return null;
   switch(ex.type){
@@ -21044,6 +21052,19 @@ function _speechKindFor(ex){
   }
 }
 
+// v89_x (user request): the four `ex.mic_no_match` toasts ("Didn't catch that — try again, or answer
+// by hand") are GONE. They fired on every non-matching phrase, which in continuous listening means
+// on ordinary background noise — "the pill appears too often; we can remove it, since it's obvious
+// that a correct answer wasn't recognized."
+//
+// What REMAINS is the informative half: `#mic-heard-pill` still shows WHAT was heard, in red, for
+// `_MIC_HEARD_CLEAR_MS`. That is not an apology — it tells the learner which word was misheard,
+// which is the thing they can act on. And for a typed answer the heard text is still written into
+// the input, so it is visible and editable rather than merely announced.
+//
+// ⚠️ `ex.mic_no_match` is deliberately LEFT in ui.json. The user hand-translated it into five
+// languages; deleting the key would throw that work away for cosmetic tidiness, and restoring the
+// toast later would cost it again.
 const _MIC_HEARD_CLEAR_MS = 2500;   // how long a NON-matching FINAL "heard" word lingers before self-clearing
 
 // Shows what's currently/just been heard in the ONE persistent `#mic-heard-pill`, floating above the
@@ -21124,7 +21145,7 @@ function _speechHandlePhrase(gen, cfg, alts){
       const hit = alts.some(a => normDiacritics(a) === correct);
       _micShowHeard(alts[0], hit ? 'match' : 'bad');
       if(hit){ inp.value = ex.correct; onType(); check(); _speechStopListening(); }
-      else { inp.value = alts[0]; onType(); showToast(t('ex.mic_no_match')); }
+      else { inp.value = alts[0]; onType(); }   // v89_x: the heard word is shown; no apology on top
     }
   } else if(cfg.kind === 'mcq'){
     const correct = normDiacritics(stripFuri(ex.correct));
@@ -21133,8 +21154,8 @@ function _speechHandlePhrase(gen, cfg, alts){
     if(said){
       const idx = (ex.choices||[]).findIndex(c => normDiacritics(stripFuri(c)) === correct);
       const el = idx >= 0 ? document.getElementById('c'+idx) : null;
-      if(el){ pickChoice(idx, el); _speechStopListening(); } else showToast(t('ex.mic_no_match'));
-    } else showToast(t('ex.mic_no_match'));
+      if(el){ pickChoice(idx, el); _speechStopListening(); }
+    }
   } else if(cfg.kind === 'syn'){
     const tiles = [...document.querySelectorAll('.syn-tile')];
     const said = alts.map(a => normDiacritics(a));
@@ -21146,7 +21167,7 @@ function _speechHandlePhrase(gen, cfg, alts){
       hit.classList.toggle('ok', isCorrect);
       hit.classList.toggle('bad', !isCorrect);
       document.getElementById('cbtn').disabled = document.querySelectorAll('.syn-tile.sel').length===0;
-    } else showToast(t('ex.mic_no_match'));
+    }
   }
 }
 
@@ -21168,6 +21189,47 @@ function _speechHandleInterim(gen, text){
 // itself on the browser's own natural session end (its silence timeout, still present even in
 // continuous mode) unless the generation is stale, the question got answered, or the end was a HARD
 // error (toasted once here, not retried blindly — "always listening" cannot mean "toasts on a loop").
+// ⚠️ v89_x, USER-REPORTED AND EXACTLY RIGHT: "for listen-type question the automatic read-out IS
+// the correct answer, and if speech input is active, it seems the app answers the question itself
+// via the readout of the correct answer being recognized by the speech input."
+//
+// It did. `renderEx` calls `_speechMicRefresh()` and only THEN queues the readout (350ms later), so
+// the mic was already open and listening when the app spoke `ex.target` — which for `listen_type`
+// IS the answer. The learner watched the question answer itself.
+//
+// So for a question that reads something out, the session opens only once the app has stopped
+// talking. Polled rather than chained to a TTS callback on purpose: the readout is started by
+// `renderEx` through `speak()`, on its own timer, and may be re-queued by the unlock path
+// (`_ttsPendingAfterUnlock`) — a poll observes the ENGINE, whoever started it, and cannot be
+// bypassed by a path that does not know to call back.
+//
+// Same three-way shape `_speakAndAdvance`'s own watchdog settled on, and for the same reasons:
+//   • speech observed, then stopped   → open the mic (the ordinary case)
+//   • never started within the grace  → open anyway (muted, no voice, TTS not unlocked)
+//   • the hard cap                    → open regardless; a wedged engine must never leave the mic
+//                                       shut for the rest of the question
+const _MIC_WAIT_POLL_MS  = 120;
+const _MIC_WAIT_START_MS = 1500;    // the readout is queued 350ms after render — room to begin
+const _MIC_WAIT_CAP_MS   = 20000;   // a wedged engine must not silence speech input forever
+function _speechStartWhenQuiet(gen, cfg, ex){
+  if(gen !== _speechGen) return;
+  const ss = window.speechSynthesis;
+  if(!_exAutoSpeaks(ex) || !ss){ _speechStartSession(gen, cfg); return; }
+  const t0 = Date.now();
+  let sawSpeech = false;
+  const tick = () => {
+    // A question change bumps `_speechGen`, and muting is checked live — either abandons the wait
+    // rather than opening a session into a question nobody is on any more.
+    if(gen !== _speechGen || APP.micMuted) return;
+    const elapsed = Date.now() - t0;
+    if(ss.speaking || ss.pending) sawSpeech = true;
+    else if(sawSpeech || elapsed > _MIC_WAIT_START_MS){ _speechStartSession(gen, cfg); return; }
+    if(elapsed > _MIC_WAIT_CAP_MS){ _speechStartSession(gen, cfg); return; }
+    setTimeout(tick, _MIC_WAIT_POLL_MS);
+  };
+  setTimeout(tick, _MIC_WAIT_POLL_MS);
+}
+
 function _speechStartSession(gen, cfg){
   if(gen !== _speechGen) return;
   const pill = document.getElementById('speech-mic-pill');
@@ -21217,7 +21279,7 @@ function _speechMicRefresh(){
   pill.classList.toggle('muted', !!cfg && !!APP.micMuted);
   pill.classList.remove('listening');
   pill.title = !cfg ? 'Speak your answer' : (APP.micMuted ? 'Speech input off — tap to activate' : 'Speech input active — tap to deactivate');
-  if(cfg && !APP.micMuted) _speechStartSession(gen, cfg);
+  if(cfg && !APP.micMuted) _speechStartWhenQuiet(gen, cfg, ex);   // v89_x: never during the readout
 }
 
 // The pill's ONLY job is now a MUTE TOGGLE (user request: "active all the time, except the microphone

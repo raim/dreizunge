@@ -2241,6 +2241,29 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_x` — the mic waits for the readout; the didn-not-catch toast is gone** (two user reports)
+
+| what | where |
+|---|---|
+| ⚠️ **the app was answering its own questions** | `renderEx` calls `_speechMicRefresh()` (which opens recognition at once) and only THEN queues the readout 350ms later. On `listen_type` the readout IS the answer, so the mic heard the app speak `ex.target` and filled it in |
+| the fix | `_speechStartWhenQuiet(gen, cfg, ex)` holds the session shut until the engine is quiet. `_MIC_WAIT_POLL_MS` / `_MIC_WAIT_START_MS` / `_MIC_WAIT_CAP_MS` |
+| ⚠️ **polled, not a TTS callback** | the readout runs on `renderEx`'s own timer and can be re-queued by `_ttsPendingAfterUnlock`. A poll observes the ENGINE, whoever started it. Same three-way shape as `_speakAndAdvance`'s watchdog: spoke-then-stopped / never-started-within-grace / hard cap |
+| ⚠️ `pending` counts as talking | a queued utterance has not been spoken yet; treating it as silence reopens the bug for the common case where the readout is one tick away |
+| ONE shared predicate | `_exAutoSpeaks(ex)` — `renderEx` uses it to DO the readout, the mic to WAIT for it. Two copies would drift SILENTLY. A non-speaking question still opens the mic synchronously, so most questions pay no delay |
+| the toast | all four `showToast(t('ex.mic_no_match'))` sites removed — in continuous listening they fired on background noise. The heard WORD and the filled input REMAIN (asserted). ⚠️ The key stays in ui.json: hand-translated into five languages |
+| ⚠️ **three of my own assertions were vacuous, all found BY mutations** | (1) reverting `_speechMicRefresh` to open the mic directly — the reported bug in full — left every section green, because each drove `_speechStartWhenQuiet` DIRECTLY and none touched the call site that makes it reachable; (2) the heard-pill check pinned 1 of 3 sites; (3) the abandon section waited 500ms against a 1500ms grace. **A test that drives a helper directly proves nothing about the caller** |
+
+**`v89_w` — the model picker reaches all eight roles; item B closed by measurement** (user request)
+
+| what | where |
+|---|---|
+| the rows | `renderModelPicker`'s `roles` array gains `vision`, `analysis`, `answerCheck`. `switchModel(role, model)` was already generic, so two of the three cost only a label |
+| ⚠️ one row, two features | `answerCheck` drives BOTH the answer-time re-check (`v89_j`) and the ambiguous-options QC (`v89_v`) — both call `callLLMAnswerCheck` |
+| ⚠️ **item B's design question, settled by MEASUREMENT** | it named the fork: `/api/show` capabilities vs. a family-name allowlist. Measured: `qwen2.5vl:7b`, `translategemma:12b` (gemma3 is multimodal) and `qwen3.6:35b-a3b` all report vision; `qwen2.5:14b` does not. **A name allowlist would have kept only `qwen2.5vl` and dropped six working models** |
+| the probe | `modelCapabilities(model)` (llm.js), cached per process; `capabilitiesReset()` clears it. `GET /api/models` returns `visionCapable`. ⚠️ A model whose capabilities cannot be READ is cached as UNKNOWN, not capable — guessing capable would put a text model in the vision picker, the exact failure the filter prevents |
+| two ways a filter strands a user, both closed | an empty probe result falls back to the FULL list (an empty select reads as broken); and the ACTIVE value is always present in its own row, so a role never displays another model's name |
+| the acceptance tests | `unit-model-picker-roles.test.js`. ⚠️ §1 derives the expected rows from the SERVER's own role declarations, not a copied list — same reasoning as `v89_r` |
+
 **`v89_v` — an EXPLICIT QC run catches "the wrong answer is also correct"** (user ruling: opt-in,
 "it is a very rare case")
 

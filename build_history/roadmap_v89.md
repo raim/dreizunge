@@ -2620,6 +2620,74 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_x — the app stopped answering its own questions; the mic stopped apologising
+
+Two user-reported speech-input bugs. **ZERO `ui.json` keys.**
+
+### ⚠️ 1. The app was answering its own questions
+
+User: *"for listen-type question the automatic read-out IS the correct answer, and if speech input is
+active, it seems the app answers the question itself via the readout of the correct answer being
+recognized by the speech input."*
+
+**Exactly right, and the ordering in `renderEx` says why.** It calls `_speechMicRefresh()` — which
+opens the recognition session immediately — and only THEN queues the readout, 350ms later. So the mic
+was already listening when the app spoke `ex.target`. For `listen_type` that string **is the answer**,
+so recognition heard it, matched it, and filled it in. The learner watched the question answer itself.
+
+`_speechStartWhenQuiet(gen, cfg, ex)` now holds the session shut until the engine falls quiet.
+
+**Polled, not chained to a TTS callback** — deliberately. The readout is started by `renderEx` on its
+own timer and can be re-queued by the unlock path (`_ttsPendingAfterUnlock`); a poll observes the
+ENGINE, whoever started it, and cannot be bypassed by a path that does not know to call back.
+
+Same three-way shape `_speakAndAdvance`'s watchdog already settled on, for the same reasons:
+
+| case | outcome |
+|---|---|
+| speech observed, then stopped | open the mic — the ordinary case |
+| never started within `_MIC_WAIT_START_MS` | open anyway — muted, no voice, TTS not unlocked |
+| `_MIC_WAIT_CAP_MS` reached | open regardless — a wedged engine must never silence input for the rest of the question |
+
+⚠️ `pending` counts as talking: a queued utterance has not been spoken yet, and treating it as silence
+would reopen the whole bug for the common case where the readout is one tick away.
+
+**One shared predicate.** `_exAutoSpeaks(ex)` is used by `renderEx` to DO the readout and by the mic
+to WAIT for it. Two copies would drift, and the drift would be **silent** — the mic would quietly go
+back to opening during the readout with nothing on screen to show for it. A question that reads
+nothing out still opens the mic **synchronously**, so the majority of questions pay no delay.
+
+### 2. The "didn't catch that" toast is gone
+
+User: *"the 'i couldn't catch that' pill appears too often; we can remove the pill, since its obvious
+that a correct answer wasn't recognized."*
+
+All four `showToast(t('ex.mic_no_match'))` sites removed. In continuous listening they fired on every
+non-matching phrase — i.e. **on ordinary background noise**.
+
+**The informative half stays**, and is asserted so a later cleanup does not take it too: the
+`#mic-heard-pill` still shows WHAT was heard, in red, self-clearing. That is not an apology — it
+names the word that was misheard, which is the thing a learner can act on. And a typed answer still
+receives the heard text, visible and editable rather than merely announced.
+
+⚠️ **`ex.mic_no_match` is deliberately LEFT in `ui.json`.** The user hand-translated it into five
+languages; deleting the key would throw that away for cosmetic tidiness, and restoring the toast
+later would cost it again.
+
+### Guards, and three of my own assertions that were vacuous
+
+`unit-speech-readout-race.test.js` (new, 7 sections). **Eleven mutations red — after three fixes, all
+found BY the mutations rather than by review:**
+
+1. ⚠️ **Reverting `_speechMicRefresh` to open the mic directly — restoring the reported bug in full —
+   left every section GREEN.** Each drove `_speechStartWhenQuiet` *directly*, so none of them touched
+   the one call site that makes the behaviour reachable. A wiring assertion was added.
+2. The heard-pill assertion pinned one of **three** call sites, so removing the typed-answer one
+   stayed green. Now counted: all three, or fail.
+3. The abandon-on-question-change section waited **500ms against a 1500ms grace**, so deleting the
+   guard outright left it green — the unguarded version had not reached its own start point either.
+   The window now outlasts the grace.
+
 ## ✅ v89_w — the model picker reaches all eight roles; item B closed by measurement
 
 User: *"Model-picker rows: yes, please add these."* **3 `ui.json` keys, granted explicitly.**
