@@ -761,7 +761,9 @@
     "walk.summary": "Back to the story summary",
     "text_explorer.reanalyze_expand": "Analyse only what is missing",
     "text_explorer.reanalyze_force": "Re-analyse everything from scratch",
-    "form.image_description_lbl": "Image description"
+    "form.image_description_lbl": "Image description",
+    "qc.btn.text": "Check spelling & capitalization",
+    "qc.toast.text_done": "✓ {n} of {total} texts corrected"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

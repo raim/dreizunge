@@ -9721,8 +9721,8 @@
       "script": [
         "latin"
       ],
-      "sentenceCount": 1,
-      "tokenCount": 6,
+      "sentenceCount": 2,
+      "tokenCount": 9,
       "sentences": [
         {
           "sentenceId": "tp_17886332486940000399:s0",
@@ -9800,22 +9800,381 @@
           },
           "text": "NATÜRLICH KAM DANN NIE EIN RIESE.",
           "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17886332486940000399:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17886332486940000399:s1:t0",
+              "idx": 0,
+              "surface": "GIBT",
+              "lemma": "geben",
+              "form": "verb present tense third-person singular indicative active",
+              "sense": "exists / is available",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886332486940000399:s1:t1",
+              "idx": 1,
+              "surface": "JA",
+              "lemma": "ja",
+              "form": "particle emphatic affirmative",
+              "sense": "indeed / really",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886332486940000399:s1:t2",
+              "idx": 2,
+              "surface": "KEINE",
+              "lemma": "kein",
+              "form": "determiner negative nominative singular neuter",
+              "sense": "no / not any",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17886332486940000399:s1:t0",
+                "tp_17886332486940000399:s1:t1",
+                "tp_17886332486940000399:s1:t2"
+              ],
+              "lemma": "es gibt keine",
+              "gloss": "there is no",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T18:54:52.596Z",
+            "sentenceId": "tp_17886332486940000399:s1",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "GIBT JA KEINE",
+          "paraBreakBefore": false
         }
       ],
       "provenance": {
         "stage": "CP2",
         "pipelineVersion": 1,
         "producedBy": "canonical-analysis.js",
-        "at": "2026-09-05T18:46:18.522Z",
+        "at": "2026-09-05T18:54:52.602Z",
         "chapterId": "tp_17886332486940000399",
         "model": "qwen3.6:35b-a3b"
       },
       "sourceTextHash": "46cbd776f386",
-      "analyzedAt": "2026-09-05T18:46:18.522Z",
-      "partial": true,
-      "totalSentences": 2
+      "analyzedAt": "2026-09-05T18:54:52.602Z"
+    },
+    "tp_17886338472190000441": {
+      "chapterId": "tp_17886338472190000441",
+      "lang": "de",
+      "srcLang": "en",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 14,
+      "sentences": [
+        {
+          "sentenceId": "tp_17886338472190000441:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17886338472190000441:s0:t0",
+              "idx": 0,
+              "surface": "Freilich",
+              "lemma": "freilich",
+              "form": "adverb",
+              "sense": "admittedly",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t1",
+              "idx": 1,
+              "surface": "hat",
+              "lemma": "haben",
+              "form": "auxiliary verb; third-person singular; present tense; indicative mood",
+              "sense": "has",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t2",
+              "idx": 2,
+              "surface": "sich",
+              "lemma": "sich",
+              "form": "reflexive pronoun; accusative case; third-person singular",
+              "sense": "itself",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t3",
+              "idx": 3,
+              "surface": "die",
+              "lemma": "der",
+              "form": "definite article; nominative case; feminine singular",
+              "sense": "the",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t4",
+              "idx": 4,
+              "surface": "Regierung",
+              "lemma": "Regierung",
+              "form": "noun; nominative case; feminine singular",
+              "sense": "government",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t5",
+              "idx": 5,
+              "surface": "damit",
+              "lemma": "damit",
+              "form": "adverb; demonstrative adverb",
+              "sense": "with it",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t6",
+              "idx": 6,
+              "surface": "gebrüstet,",
+              "lemma": "sich brüsten",
+              "form": "verb; past participle; separable prefix ge-; perfect tense construction",
+              "sense": "boasted",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t7",
+              "idx": 7,
+              "surface": "dass",
+              "lemma": "dass",
+              "form": "subordinating conjunction",
+              "sense": "that",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t8",
+              "idx": 8,
+              "surface": "das",
+              "lemma": "der",
+              "form": "definite article; nominative case; neuter singular",
+              "sense": "the",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t9",
+              "idx": 9,
+              "surface": "Land",
+              "lemma": "Land",
+              "form": "noun; nominative case; neuter singular",
+              "sense": "country",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t10",
+              "idx": 10,
+              "surface": "dank",
+              "lemma": "dank",
+              "form": "preposition; dative case",
+              "sense": "thanks to",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t11",
+              "idx": 11,
+              "surface": "ihr",
+              "lemma": "sie",
+              "form": "personal pronoun; dative case; third-person singular feminine",
+              "sense": "her",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t12",
+              "idx": 12,
+              "surface": "riesenfrei",
+              "lemma": "riesenfrei",
+              "form": "adjective; positive degree",
+              "sense": "free of charge",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886338472190000441:s0:t13",
+              "idx": 13,
+              "surface": "ist",
+              "lemma": "sein",
+              "form": "copula verb; third-person singular; present tense; indicative mood",
+              "sense": "is",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 6,
+              "tokenIds": [
+                "tp_17886338472190000441:s0:t1",
+                "tp_17886338472190000441:s0:t2",
+                "tp_17886338472190000441:s0:t3",
+                "tp_17886338472190000441:s0:t4",
+                "tp_17886338472190000441:s0:t5",
+                "tp_17886338472190000441:s0:t6"
+              ],
+              "lemma": "sich gebrüstet haben",
+              "gloss": "to boast",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 10,
+              "end": 11,
+              "tokenIds": [
+                "tp_17886338472190000441:s0:t10",
+                "tp_17886338472190000441:s0:t11"
+              ],
+              "lemma": "dank ihr",
+              "gloss": "thanks to her",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T18:53:53.242Z",
+            "sentenceId": "tp_17886338472190000441:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Freilich hat sich die Regierung damit gebrüstet, dass das Land dank ihr riesenfrei ist",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-05T18:53:53.249Z",
+        "chapterId": "tp_17886338472190000441",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "03305a50aae5",
+      "analyzedAt": "2026-09-05T18:53:53.249Z"
+    },
+    "tp_17886342066130000515": {
+      "chapterId": "tp_17886342066130000515",
+      "lang": "de",
+      "srcLang": "en",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 4,
+      "sentences": [
+        {
+          "sentenceId": "tp_17886342066130000515:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17886342066130000515:s0:t0",
+              "idx": 0,
+              "surface": "Sie",
+              "lemma": "sie",
+              "form": "personal pronoun, nominative, singular or plural, third person",
+              "sense": "She (or they)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886342066130000515:s0:t1",
+              "idx": 1,
+              "surface": "wurde",
+              "lemma": "werden",
+              "form": "auxiliary verb, passive, indicative, past tense, singular or plural, third person",
+              "sense": "was (passive marker)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886342066130000515:s0:t2",
+              "idx": 2,
+              "surface": "wiedergewählt",
+              "lemma": "wiedergewählen",
+              "form": "past participle, transitive verb",
+              "sense": "reelected",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886342066130000515:s0:t3",
+              "idx": 3,
+              "surface": "HURRA",
+              "lemma": "hurra",
+              "form": "interjection",
+              "sense": "Hooray",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 2,
+              "tokenIds": [
+                "tp_17886342066130000515:s0:t1",
+                "tp_17886342066130000515:s0:t2"
+              ],
+              "lemma": "wiedergewählt werden",
+              "gloss": "to be reelected",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T19:01:09.442Z",
+            "sentenceId": "tp_17886342066130000515:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "Sie wurde wiedergewählt\nHURRA",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-05T19:01:09.459Z",
+        "chapterId": "tp_17886342066130000515",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "ad53bee2cb60",
+      "analyzedAt": "2026-09-05T19:01:09.459Z"
     }
   },
-  "generatedAt": "2026-09-05T18:46:18.526Z",
-  "chapterCount": 20
+  "generatedAt": "2026-09-05T19:01:09.463Z",
+  "chapterCount": 22
 }

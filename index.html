@@ -1468,6 +1468,9 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <button type="button" id="pdf-aiclean-btn" class="cont-btn"
               style="font-size:12px;padding:6px 14px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)"
               onclick="aiCleanChunks()">✨ <span id="pdf-aiclean-lbl">Remove ads &amp; boilerplate</span></button>
+            <button type="button" id="pdf-textqc-btn" class="cont-btn"
+              style="font-size:12px;padding:6px 14px;margin-left:6px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)"
+              onclick="pdfTextQc()">✨ <span id="pdf-textqc-lbl">Check spelling &amp; capitalization</span></button>
             <button type="button" id="pdf-aiclean-undo" class="cont-btn"
               style="display:none;font-size:12px;padding:6px 12px;margin-left:6px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)"
               onclick="aiCleanUndo()">↩</button>
@@ -3149,6 +3152,7 @@ function applyUIStrings() {
   _renderSplitModes();
   { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
   { const al=document.getElementById('pdf-aiclean-lbl'); if(al) al.textContent=t('pdf.aiclean_lbl'); }
+  { const tq=document.getElementById('pdf-textqc-lbl'); if(tq) tq.textContent=t('qc.btn.text'); }
   const useTransLbl = document.getElementById('use-translation-lbl');
   if (useTransLbl) useTransLbl.textContent = t('form.translation_cb');
   const storyPanelLbl = document.getElementById('story-panel-lbl');
@@ -4929,7 +4933,7 @@ function comicOpenReview(auto){
            TITLE above stays a single-line field — a title really is one line.
            (No backticks in this comment: it lives inside a template literal.) -->
       ${_fld('form.image_caption_ph')}
-      <textarea rows="6" oninput="_comicReviewEdit(${k},'text',this.value)"
+      <textarea rows="6" id="comic-review-text-${k}" oninput="_comicReviewEdit(${k},'text',this.value)"
         style="font-size:15px;font-weight:700;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text);resize:vertical;min-height:120px">${escHtml(_comicReviewText(buf))}</textarea>
       ${_fld('form.image_description_lbl')}
       <textarea rows="3" oninput="_comicReviewEdit(${k},'description',this.value)"
@@ -4948,6 +4952,7 @@ function comicOpenReview(auto){
     + `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;padding-bottom:16px">${rows}</div>`
     + `</div>`
     + `<div class="modal-footer">`
+    + `<button type="button" id="comic-review-qc-btn" class="modal-btn secondary" onclick="comicReviewQc()">${escHtml('\u2728 ' + t('qc.btn.text'))}</button>`
     + `<button type="button" class="modal-btn secondary" onclick="_comicReviewCancel()">${escHtml(t('dialog.cancel'))}</button>`
     + `<button type="button" class="modal-btn primary" onclick="_comicReviewConfirm()">${escHtml(t('form.image_review_save'))}</button>`
     + `</div></div>`;
@@ -7411,6 +7416,98 @@ function _tdOpenFlag(topicId){
 }
 
 function onCleanupToggle(){ _applyUploadCleanup(); _resplitUpload(); }
+
+// ── The on-demand text QC (v89_aa, user request) ─────────────────────────────
+// "we want the possibility to run a pure text QC on that page, on a similar page after PDF
+// extraction that could catch cases where de-capitalization failed, or where we can generally
+// detect and fix typos."
+//
+// ONE helper behind BOTH surfaces, because /api/text-qc already takes a BATCH: the comic review
+// card and the PDF chunk panel differ only in where the texts come from and where the corrections
+// go back to. A job, so the whole page-worth is one cancellable unit rather than N blocking calls
+// (each is a real model call on a CPU-only box — see normaliseExtractedText's own measurements).
+//
+// ⚠️ This does NOT gate on the all-caps detector the way the automatic extraction pass does. Half of
+// what the user asked it to find — typos — leaves no all-caps trace at all, so gating here would
+// ship a typo check that cannot see typos. The detector's job is to save work when NOBODY asked;
+// here somebody did.
+let _textQcBusy = false;
+async function _textQcRun(texts, lang, apply){
+  if(_textQcBusy) return null;
+  const idx = [];                                  // which original slots we actually sent
+  const send = [];
+  texts.forEach((s,i)=>{ if(String(s||'').trim()){ idx.push(i); send.push({text:String(s)}); } });
+  if(!send.length){ showToast(t('ex.writing.no_issues')); return null; }
+  _textQcBusy = true;
+  try{
+    const data = await _jobAwait(await fetch('/api/text-qc',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({items:send, lang})}));
+    // Cancelled. ⚠️ Belt and braces only, and worth saying so: _jobAwait ALREADY returns null for
+    // a cancelled job and drops its payload, so this line cannot independently fail — mutating it
+    // away leaves the suite green. The property (a cancel applies nothing) is real and IS guarded,
+    // one layer down: breaking _jobAwait's own cancel branch turns unit-text-qc-ui §3 red.
+    if(!data) return null;
+    const rows = (data && data.results) || [];
+    let n = 0;
+    rows.forEach((r,j)=>{
+      // ⚠️ Only a CHANGED text is written back. `unchanged` covers both "already correct" (the
+      // normal, good case) and "could not be checked" (the model failed its own contract three
+      // times and the server returned the input untouched) — writing either one back would churn
+      // state and, on the PDF side, mark the chunk list dirty for nothing.
+      if(!r || r.unchanged || !r.text) return;
+      apply(idx[j], r.text); n++;
+    });
+    showToast(n ? t('qc.toast.text_done',{n, total: rows.length}) : t('ex.writing.no_issues'));
+    return { corrected:n, total: rows.length };
+  }catch(e){
+    // 503 is the one failure with its own existing string — no backend is a different problem from
+    // a backend that failed, and the user can act on it.
+    showToast(/backend/i.test(e.message||'') ? t('qc.toast.no_backend') : t('qc.toast.failed')+': '+e.message);
+    return null;
+  }finally{ _textQcBusy = false; }
+}
+
+// Surface 1 — the comic review card. The corrections land in the SAME edit buffer the textareas
+// write to, so Cancel still discards them: the card is its own undo, and no extra control (or
+// string) is needed here.
+async function comicReviewQc(){
+  if(!_comicReviewBuffer || !_comicReviewEditable) return;
+  const keys = Object.keys(_comicReviewBuffer);
+  const btn = document.getElementById('comic-review-qc-btn');
+  const was = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = t('app.checking'); }
+  await _textQcRun(keys.map(k=>_comicReviewText(_comicReviewBuffer[k])), APP.lang, (j,text)=>{
+    _comicReviewEdit(keys[j], 'text', text);
+    // The card is already on screen, so the box the user is looking at has to change too — the
+    // buffer alone would leave the correction invisible until a reopen.
+    const el = document.getElementById('comic-review-text-'+keys[j]);
+    if(el) el.value = text;
+  });
+  if(btn){ btn.disabled = false; btn.textContent = was; }
+}
+
+// Surface 2 — the PDF chunk panel. Reuses aiCleanChunks' OWN backup slot and undo button rather
+// than adding a second one: both are "the last model pass over this chunk text", and one undo that
+// means that is clearer than two that each mean half of it.
+async function pdfTextQc(){
+  if(!_pdfChunks.length) return;
+  const btn = document.getElementById('pdf-textqc-btn');
+  if(btn) btn.disabled = true;
+  _aiCleanBackup = _pdfChunks.map(c=>c.text);
+  const r = await _textQcRun(_pdfChunks.map(c=>c.text), APP.srcLang || APP.lang || 'en', (j,text)=>{
+    const c = _pdfChunks[j];
+    c.text = text; c.wordCount = wordCount(text); c.title = _autoTitle(text, j);
+  });
+  if(r && r.corrected){
+    _chunksDirty = true;
+    const undo = document.getElementById('pdf-aiclean-undo'); if(undo) undo.style.display='';
+  }else{
+    _aiCleanBackup = null;   // nothing changed, so there is nothing to undo
+  }
+  _renderPdfChunks();
+  if(btn) btn.disabled = false;
+}
 
 // ── Stage 2: the model pass (v69_m) ──────────────────────────────────────────
 // The deterministic pass (cleanExtractedText) fixes what code can fix reliably. What survives it is

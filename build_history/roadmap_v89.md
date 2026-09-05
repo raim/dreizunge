@@ -2619,6 +2619,33 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_aa — extracted text is un-shouted automatically, and a text QC can be run on demand
+
+User report, two runs of the SAME comic: *"Some texts are correctly un-capitalized others not. We
+generally want to un-capitalize and issue a correct normal capitalization for the extracted language.
+Also, we want the possibility to run a pure text QC on that page, on a similar page after PDF
+extraction that could catch cases where de-capitalization failed, or where we can generally detect
+and fix typos."* User rulings: **2 `ui.json` keys** (`qc.btn.text`, `qc.toast.text_done`), **both
+surfaces**.
+
+⚠️ **AN INSTRUCTION IS NOT A MECHANISM, demonstrated as clearly as this project has ever managed.**
+`_comicExtractPrompt` has asked for normal capitalization since `v85_k` — in detail, with a German
+worked example `v85_l` proved necessary across three live rounds. The corpus holds
+`ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN` — **the very sentence that worked
+example spells out** — transcribed in full caps anyway. The prompt is KEPT (it works most of the
+time and costs nothing); a mechanism now catches what survives it.
+
+| | |
+|---|---|
+| **the detector, and why its floor is 4** | `shoutedRun(text)` = longest run of consecutive ALL-CAPS words; `needsCaseNormalise` fires at ≥ 4. **Measured over all 20 corpus panels carrying text**, not chosen: genuine failures scored 9, 11, 15, 19, 20, 20, 33; text that must be LEFT scored 3 (`REIZEN DOOR ZEELAND`, a brand lockup), 2 (`GRATIS / KOSTENLOS`, a real bilingual sign) and 1 (`ONTEIGENINGSZONE`, `PULITO`). A floor of 4 separates them with room either side. **Rewriting the second group would be the bug** — those signs really are set in capitals and the learner is reading a photograph of them. Same judgement `_ttsSpeakableText` makes leaving 3-letter runs alone (item AW). Unicode properties only, no per-language table (PLAN §4): Greek/Cyrillic ride the same rule; a caseless script scores 0 and is never sent anywhere |
+| **the verifier, which is what makes it safe unattended** | `textNormaliseChanges(before, after)`. `cleanNarrativeText`'s contract is "deletion only"; this one's is **"surface only"** — same discipline, different invariant. Word count pinned, line count pinned (`v88_z` established that a line break is real content, a sign's own boundary), and a word whose surface key changed is allowed ONLY as a bounded repair (`_lev ≤ max(1, len/4)`). Three rejected attempts with pointed feedback, then the input is returned UNCHANGED rather than thrown — this runs inside the extraction job, where a throw would cost the panel its transcription |
+| **⚠️ the ß bug, caught by a LIVE run and not by any test** | `_surfaceKey` folds **UP**, not down. German ß upper-cases to SS, so un-shouting `GROSSES` → `großes` is a CASE mapping and the right answer — but folded down it scored two edits, blew the repair budget, was rejected as a word substitution, and **the retry then returned a visibly worse, timid result that left the whole line shouted**. Folding up maps ß→SS, ﬁ→FI and every expanding case pair onto its own upper form |
+| **⚠️ the model choice was measured, and the first measurement was WRONG** | Four real shouted German panels, one call each: **translategemma:12b 4/4** (101–144s), qwen3.6:35b-a3b 3/4 (~43s), qwen2.5:14b 3/4 (27–165s). Neither failure is a near miss — qwen3.6 returned one item **entirely in lower case** (`so wurde zur abschreckung an der grenze…`, which for German is just a different wrong), and qwen2.5 left `angst`/`riesen` lower-case, stably, 3 runs of 3. **An earlier draft used `OLLAMA_MODEL` on the strength of ONE item**, where qwen3.6 was correct and twice as fast; the fuller matrix reversed it. A single sample was the whole error. Lands on the QC role, whose default already IS translategemma:12b. ⚠️ Worth knowing: `v89_v` measured qwen2.5:14b as the BETTER model for the ambiguity QC — one role cannot serve both |
+| **automatic vs on-demand — the gate is deliberately asymmetric** | The extraction job runs the pass ONLY when the detector fires, so a panel the vision model already got right costs nothing. `/api/text-qc` (a batch, a `runAsJob`, so a page is one cancellable unit) does **NOT** gate on the detector: half of what the user asked it to find — typos — leaves no all-caps trace at all, and gating it would ship a typo check that cannot see typos |
+| **the two surfaces** | Comic review card: corrections land in `_comicReviewBuffer` (what confirm saves from) AND in the on-screen textarea, so Cancel is the undo and no extra control or string was needed. PDF chunk panel: reuses `aiCleanChunks`' own backup slot and undo button — both are "the last model pass over this chunk text", and one undo meaning that is clearer than two meaning half each. ⚠️ They send DIFFERENT languages: the card sends `APP.lang` (what `/api/comic-extract` itself sends), the PDF panel `APP.srcLang` (what `aiCleanChunks` beside it already assumes) |
+| **live-verified, not just faked** | A fresh `PORT=3461` server (the user's own on 3000 untouched) against the real `translategemma:12b`, through the ACTUAL route: `NATÜRLICH KAM DANN NIE EIN RIESE / GIBT JA KEINE` → `Natürlich kam dann nie ein Riese.\n Gibt ja keine.`; the sign panel → `So wurde zur Abschreckung an der Grenze von der Regierung ein großes Schild aufgestellt.\n Riesen sind hier nicht willkommen.` — `großes` restored, `RIÉSEN`→`Riesen` and `SINd`→`sind` repaired, line structure kept. Then the same click driven in a real browser end to end |
+| **guards** | `unit-text-normalise.test.js` (detector both sides of the floor incl. the four real corpus strings that must be left alone, caseless scripts, and the verifier's full accept/refuse table) — **nine mutations red**. `unit-text-qc-ui.test.js` (both surfaces, driven through the REAL `_jobAwait` with a stubbed `fetch`) — **ten mutations red** after three of the first eleven came back GREEN and were fixed: a cancel stub that withheld its payload, an assertion on `wordCount` that **the verifier makes invariant so it could never fail**, and a non-unique anchor. ⚠️ The cancel property is enforced by `_jobAwait`, not by `_textQcRun`'s own redundant check — confirmed by mutating `_jobAwait`'s branch instead and watching §3 go red; both the code and the test say so in place |
+
 ## ✅ v89_z — the comic review card has ONE text box, not two
 
 User question, then user ruling: *"I still don't understand the multiple text fields in image

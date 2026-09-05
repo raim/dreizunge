@@ -169,6 +169,8 @@ run('unit: every model role is released and validated (v89_r)', 'node', [path.jo
 run('unit: continue-from survives a picker rebuild (v89_s)', 'node', [path.join(__dirname, 'unit-continue-from.test.js')]);
 run('unit: chapter-title reply shapes the parser must read (v89_t)', 'node', [path.join(__dirname, 'unit-chapter-title-shapes.test.js')]);
 run('unit: QC catches a distractor that is also correct \u2014 opt-in (v89_v)', 'node', [path.join(__dirname, 'unit-qc-ambiguous-options.test.js')]);
+run('unit: extracted-text capitalization \u2014 detector + verifier (v89_aa)', 'node', [path.join(__dirname, 'unit-text-normalise.test.js')]);
+run('unit: the on-demand text QC on both surfaces (v89_aa)', 'node', [path.join(__dirname, 'unit-text-qc-ui.test.js')]);
 run('unit: every model role has a picker row; vision filtered by capability (v89_w)', 'node', [path.join(__dirname, 'unit-model-picker-roles.test.js')]);
 run('unit: the mic waits for the readout; no didn-not-catch toast (v89_x)', 'node', [path.join(__dirname, 'unit-speech-readout-race.test.js')]);
 run('unit: a failed chapter-title post-pass is visible (v89_y)', 'node', [path.join(__dirname, 'unit-title-failed-marker.test.js')]);

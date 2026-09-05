@@ -285,7 +285,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_z';
+const APP_VERSION  = 'v89_aa';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -3723,6 +3723,105 @@ async function generateStorylineStoryboard(topics, stories, srcLang, opts) {
 // be a SUBSEQUENCE of the input at word level: every kept word appears in the original, in order.
 // That single check rejects rewriting, rewording, translating and reordering in one go — far
 // stronger than a length ratio, and cheap. Returns { ok, kept, total, dropped }.
+// ── Extracted-text surface repair (v89_aa) ───────────────────────────────────
+// User report, two runs of the SAME comic: "Some texts are correctly un-capitalized others not. We
+// generally want to un-capitalize and issue a correct normal capitalization for the extracted
+// language."
+//
+// ⚠️ _comicExtractPrompt has ASKED for this since v85_k, in detail, with a German worked example
+// that v85_l proved necessary through three live rounds. It still fails: the corpus holds
+// "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN" — the very sentence the worked
+// example spells out — transcribed in full caps anyway. An INSTRUCTION IS NOT A MECHANISM. The
+// prompt keeps the instruction (it works most of the time, and it is free), and a deterministic
+// detector now catches what survives it and asks for a second, TEXT-only pass.
+//
+// The detector's threshold is set by MEASUREMENT over all 20 panels in the corpus that carry text,
+// not by taste. Longest run of consecutive shouted words per panel:
+//   genuine failures        9, 11, 15, 19, 20, 20, 33
+//   deliberate, must stay   3  ("REIZEN DOOR ZEELAND", a brand lockup on a real sign)
+//                           2  ("GRATIS / KOSTENLOS", a real bilingual sign)
+//                           1  ("ONTEIGENINGSZONE"; "PULITO" — one shouted word for emphasis)
+// A floor of 4 separates them with room on both sides. Below it, ALL CAPS is a thing the sign
+// itself is doing and rewriting it would be the bug — the same judgement _ttsSpeakableText makes
+// when it deliberately leaves 3-letter runs alone (item AW).
+const SHOUT_RUN_MIN = 4;
+
+// A word "shouts" if it has at least two cased letters and every one of them is upper-case.
+// Unicode properties only, no per-language table (PLAN §4): Greek and Cyrillic are handled by the
+// same rule, and a caseless script (Japanese, Arabic, Devanagari) can never match, so those texts
+// score 0 and are never touched.
+function shoutedRun(text) {
+  let run = 0, best = 0;
+  for (const w of String(text || '').split(/\s+/)) {
+    if (!w) continue;
+    const cased = [...w].filter(c => c.toLowerCase() !== c.toUpperCase());
+    if (cased.length < 2) continue;                     // "I", "5.", "—": no opinion, run survives
+    if (cased.every(c => c === c.toUpperCase())) { run++; if (run > best) best = run; }
+    else run = 0;
+  }
+  return best;
+}
+function needsCaseNormalise(text) { return shoutedRun(text) >= SHOUT_RUN_MIN; }
+
+// Compare a word ignoring everything this pass is ALLOWED to change: case, punctuation, and
+// diacritics (so "KOEPFE" → "Köpfe" reads as a one-letter repair, not a different word).
+//
+// ⚠️ Folds UP, not down, and that is not a detail — a LIVE run caught it. German ß upper-cases to
+// SS, so un-shouting "GROSSES" to "großes" is a CASE mapping, and the correct answer. Folded down
+// ("grosses" vs "großes") it scored two edits, blew the repair budget, and was rejected as a word
+// substitution; the retry then produced a visibly worse, timid result that left the whole line
+// shouted. Folding up maps ß→SS, ﬁ→FI and every other expanding case pair onto its own upper form,
+// so a legitimate un-shouting is free. The lenient direction is the safe one here: a word that is
+// otherwise identical stays bounded by the repair budget either way.
+function _surfaceKey(w) {
+  return String(w).normalize('NFD').replace(/\p{M}+/gu, '')
+    .replace(/[^\p{L}\p{N}]+/gu, '').toUpperCase();
+}
+function _lev(a, b) {
+  if (a === b) return 0;
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[b.length];
+}
+function _lines(s) {
+  const L = String(s || '').split('\n').map(x => x.trim());
+  while (L.length && !L[0]) L.shift();
+  while (L.length && !L[L.length - 1]) L.pop();
+  return L;
+}
+
+// The verifier, and the reason this feature is safe to run automatically. cleanNarrativeText's own
+// contract is "deletion only"; this one's is "SURFACE only" — same discipline, different invariant.
+// The model may recase, repunctuate and repair a misread letter; it may NOT add, drop, reorder or
+// swap a word, or re-flow the lines (v88_z's newline-structure work is a real content boundary and
+// this pass must not move it). A word whose surface key changed is allowed only as a bounded typo
+// repair, which is what keeps "fix a misread letter" from becoming "substitute a different word".
+function textNormaliseChanges(before, after) {
+  const AL = _lines(before), BL = _lines(after);
+  if (BL.length !== AL.length) return { ok: false, why: 'lines', lines: AL.length, gotLines: BL.length };
+  const A = AL.join('\n').split(/\s+/).filter(Boolean);
+  const B = BL.join('\n').split(/\s+/).filter(Boolean);
+  if (A.length !== B.length) return { ok: false, why: 'words', words: A.length, gotWords: B.length };
+  let cased = 0, repaired = 0;
+  for (let i = 0; i < A.length; i++) {
+    if (A[i] === B[i]) continue;
+    const ka = _surfaceKey(A[i]), kb = _surfaceKey(B[i]);
+    if (ka === kb) { cased++; continue; }               // case / punctuation / diacritic only
+    // A repair is bounded by the word's own length: one edit always, more only for a long word.
+    if (_lev(ka, kb) > Math.max(1, Math.floor(ka.length / 4))) {
+      return { ok: false, why: 'word', from: A[i], to: B[i] };
+    }
+    repaired++;
+  }
+  return { ok: true, words: A.length, cased, repaired, changed: cased + repaired };
+}
+
 function cleanTextChanges(original, cleaned) {
   const A = String(original || '').split(/\s+/).filter(Boolean);
   const B = String(cleaned || '').split(/\s+/).filter(Boolean);
@@ -3738,6 +3837,85 @@ function cleanTextChanges(original, cleaned) {
 // Remove non-narrative fragments from an extracted passage (v69_m). Retries with SPECIFIC feedback,
 // exactly like the error-hunt generator: a prompt alone cannot guarantee the contract, so the
 // contract is verified and any violation is fed back in words the model can act on.
+// The pass itself. Shape borrowed wholesale from cleanNarrativeText: bounded attempts, POINTED
+// feedback naming the rule that was broken, and — critically — a fallback that returns the input
+// UNCHANGED rather than throwing. This runs inside the extraction job, where a thrown error would
+// cost the panel its transcription; a text that could not be repaired is worth strictly less than
+// one that could, and strictly more than none.
+//
+// ⚠️ Uses the QC role, and the choice was MEASURED — four real shouted German panels from the
+// corpus, one call each, same prompt:
+//
+//                        1 riese  2 land  3 schild  4 angst   per call
+//   translategemma:12b      ✓        ✓        ✓        ✓      101-144s   ← QC role's own default
+//   qwen3.6:35b-a3b         ✓        ✓        ✗        ✓       ~43s      ← OLLAMA_MODEL
+//   qwen2.5:14b             ✓        ✓        ✓        ✗       27-165s
+//
+// The two failures are not near-misses. qwen3.6 returned item 3 entirely in lower case ("so wurde
+// zur abschreckung an der grenze…") — no sentence capital, no noun capitals, which for German is
+// just a different kind of wrong from ALL CAPS. qwen2.5 left "angst"/"riesen" lower-case on item 4,
+// stably, 3 runs out of 3.
+//
+// ⚠️ An earlier draft of this function used OLLAMA_MODEL on the strength of ONE item, where qwen3.6
+// was correct and twice as fast. The fuller matrix reversed it. A single sample was the whole error.
+//
+// The QC role is right on its merits too: this is a faithfulness check over a surface rewrite,
+// which is what that role already exists for, and it is independently settable for anyone whose
+// tradeoff differs. Note the tension worth knowing about — the session that added the ambiguity QC
+// measured qwen2.5:14b as the BETTER model for THAT check, and it is the worse one here.
+async function normaliseExtractedText(text, lang, opts) {
+  const _t0 = Date.now();
+  const src = String(text || '');
+  const o = opts || {};
+  if (!src.trim()) return { text: src, unchanged: true, skipped: 'empty' };
+  const sys = fillPrompt(PROMPTS.textNormalise.system, { L: langName(lang) });
+  const ATTEMPTS = 3;
+  let promptTokens = 0, completionTokens = 0, lastProblem = '';
+  console.log(`  [${OLLAMA_QC_MODEL}] Normalising extracted ${langName(lang)} text ` +
+    `(${src.split(/\s+/).filter(Boolean).length} words, longest shouted run ${shoutedRun(src)})…`);
+  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+    const feedback = lastProblem
+      ? `\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED: ${lastProblem}\nReturn the text again, changing ONLY capitalization, punctuation and clear misreadings, and copying every word and every line break exactly.`
+      : '';
+    let out = '';
+    try {
+      // think:false for cleanNarrativeText's own reason — the contract is verbatim copying with a
+      // surface edit, which reasoning does not help with, and on a CPU-only box THINK_TIMEOUT_MULT
+      // turns a 40-word panel into a job that looks hung.
+      const r = await callLLMQC(sys, src + feedback, Math.ceil(src.length * 1.4) + 64,
+        { think: false, temperature: 0.1, timeoutMs: getRequestTimeout() });
+      out = String(r.text || '').trim();
+      promptTokens += r.promptTokens || 0; completionTokens += r.completionTokens || 0;
+    } catch (e) {
+      if (String(e && e.message) === CANCELLED) throw e;   // v88_k: a cancel is not a failure
+      if (attempt === ATTEMPTS) break;
+      lastProblem = `the request failed (${e.message})`;
+      continue;
+    }
+    const chk = out ? textNormaliseChanges(src, out) : { ok: false, why: 'empty' };
+    if (chk.ok) {
+      console.log(`  Text normalise: ${chk.changed}/${chk.words} words changed ` +
+        `(${chk.cased} recased, ${chk.repaired} repaired)${attempt > 1 ? `, attempt ${attempt}` : ''}`);
+      return { text: out, changed: chk.changed, cased: chk.cased, repaired: chk.repaired,
+               words: chk.words, unchanged: out === src,
+               tokens: { promptTokens, completionTokens },
+               meta: buildGenMeta({ type: 'text_normalise', model: OLLAMA_QC_MODEL, t0: _t0,
+                                    promptTokens, completionTokens }) };
+    }
+    lastProblem =
+      chk.why === 'empty' ? 'you returned nothing'
+      : chk.why === 'lines' ? `you returned ${chk.gotLines} lines but the input has ${chk.lines} — never merge or split lines`
+      : chk.why === 'words' ? `you returned ${chk.gotWords} words but the input has ${chk.words} — never add or delete a word`
+      : `you replaced the word "${chk.from}" with "${chk.to}" — you may fix a misread letter, never substitute a different word`;
+    console.warn(`    Text normalise attempt ${attempt}/${ATTEMPTS} rejected: ${lastProblem}`);
+  }
+  console.warn(`  Text normalise: left unchanged — ${lastProblem}`);
+  return { text: src, unchanged: true, failed: true, note: lastProblem,
+           tokens: { promptTokens, completionTokens },
+           meta: buildGenMeta({ type: 'text_normalise', model: OLLAMA_QC_MODEL, t0: _t0,
+                                promptTokens, completionTokens }) };
+}
+
 async function cleanNarrativeText(text, lang) {
   const _t0 = Date.now();
   const sys = fillPrompt(PROMPTS.textCleanup.system, { L: langName(lang) });
@@ -7611,6 +7789,16 @@ async function _runComicExtractJob(jobId, images, lang, opts) {
         const { text } = await callLLMVision('', _comicExtractPrompt(name, lang), 400,
           { images: [b64], temperature: 0.1, ctxTokens: getNumCtxMax() });
         parsed = _parseComicExtraction(text);
+        // v89_aa: the prompt ASKED for normal capitalization and sometimes did not get it (see
+        // normaliseExtractedText's own comment — the corpus holds the worked example's own sentence
+        // shouted back). Gated by a deterministic detector, so a panel the vision model already got
+        // right costs nothing, and a sign that is GENUINELY set in capitals is left alone.
+        for (const f of ['caption', 'inScene']) {
+          if (!needsCaseNormalise(parsed[f])) continue;
+          jobStep(jobId, `[${OLLAMA_QC_MODEL}] Fixing capitalization, panel ${i + 1}/${images.length}…`);
+          const n = await normaliseExtractedText(parsed[f], lang);
+          parsed[f] = n.text;
+        }
       }
       // The lazy half: only when this panel produced no lettering at all.
       let description = '';
@@ -8272,6 +8460,53 @@ http.createServer(async (req, res) => {
       try { return json(res, 200, await cleanNarrativeText(text, body.lang || 'en')); }
       catch(e) { return json(res, 502, { error: e.message }); }
     }
+    // ── The on-demand text QC (v89_aa, user request) ──────────────────────
+    // "we want the possibility to run a pure text QC on that page, on a similar page after PDF
+    // extraction that could catch cases where de-capitalization failed, or where we can generally
+    // detect and fix typos."
+    //
+    // ⚠️ The DETECTOR deliberately does NOT gate this route. `needsCaseNormalise` gates the
+    // AUTOMATIC pass inside the extraction job, where the point is to spend nothing on a panel the
+    // vision model already got right. Here the user has asked for the check, and half of what they
+    // asked it to find — typos — leaves no all-caps trace at all. Gating this on the caps detector
+    // would ship a "typo check" that cannot see typos.
+    //
+    // A BATCH and a JOB: a page is many panels or chunks, each its own model call on a CPU-only
+    // box. One job per page gives it one cancel button and one progress line, instead of N blocking
+    // requests the user cannot stop.
+    if (M === 'POST' && url.pathname === '/api/text-qc') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const items = Array.isArray(body.items)
+        ? body.items.map(it => String((it && it.text) != null ? it.text : it || '')) : [];
+      if (!items.length) return json(res, 400, { error: 'Nothing to check.' });
+      // A comic page is a handful of panels; a split document is a few dozen chunks. Same "generous
+      // but real" cap every other batch route in this file carries.
+      if (items.length > 100) return json(res, 400, { error: 'Too many items for one check (max 100).' });
+      if (items.join('').length > 200000) return json(res, 400, { error: 'Too much text — split it first.' });
+      const qcLang = body.lang || 'en';
+      // ⚠️ Validation OUTSIDE the job (v88_al): a 400/503 answers the REQUEST. Turning a malformed
+      // call into a failed job makes it look like the model failed and loses the status code.
+      return runAsJob(res, { label: 'Checking text' }, async (jobId) => {
+        const out = [];
+        let promptTokens = 0, completionTokens = 0;
+        for (let i = 0; i < items.length; i++) {
+          jobStep(jobId, `[${OLLAMA_QC_MODEL}] Checking text ${i + 1}/${items.length}\u2026`);
+          const r = await normaliseExtractedText(items[i], qcLang);
+          if (r.tokens) { promptTokens += r.tokens.promptTokens || 0; completionTokens += r.tokens.completionTokens || 0; }
+          out.push({ text: r.text, changed: r.changed || 0, cased: r.cased || 0,
+                     repaired: r.repaired || 0, unchanged: !!r.unchanged,
+                     failed: !!r.failed, note: r.note || null });
+        }
+        const touched = out.filter(r => !r.unchanged).length;
+        const failed  = out.filter(r => r.failed).length;
+        console.log(`  Text QC: ${touched}/${out.length} item(s) corrected, ${failed} could not be checked`);
+        return { results: out, touched, failed, promptTokens, completionTokens };
+      });
+    }
+
     if (M === 'POST' && url.pathname === '/api/split-chapters') {
       if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
       let body;

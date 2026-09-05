@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_z` cut
+# Session prompt — written at the `v89_aa` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_z`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_aa`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -286,6 +286,20 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   extraction prompt's `CAPTION:`/`IN-SCENE:` contract is UNCHANGED (two named slots is a better
   prompt than one). **ZERO `ui.json` keys.**
 
+- **`v89_aa`** — extracted image text is un-shouted AUTOMATICALLY, and a text QC can be run on
+  demand on the comic review card and the PDF chunk panel (user report + rulings: 2 `ui.json` keys,
+  both surfaces). ⚠️ **The clearest "an instruction is not a mechanism" case this project has
+  produced**: `_comicExtractPrompt` has asked for normal capitalization since `v85_k` with a German
+  worked example `v85_l` proved necessary, and the corpus holds THAT EXAMPLE'S OWN SENTENCE shouted
+  back. A deterministic detector (floor 4, measured over all 20 corpus panels — real signs score
+  1-3 and must be LEFT) gates a repair pass whose reply is structurally verified: **surface only**,
+  word count and line count pinned, a changed word allowed only as a bounded repair.
+  ⚠️ `_surfaceKey` folds **UP** because German ß upper-cases to SS — a live run caught that, and
+  folding down made the retry return a WORSE result. ⚠️ The on-demand QC deliberately does NOT gate
+  on the detector: typos leave no all-caps trace. Model measured across 4 real panels
+  (translategemma:12b 4/4; **an earlier draft picked a different model off ONE sample and was
+  reversed**). 19 mutations red across two new files, 3 of them vacuous on the first pass.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -321,8 +335,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 348 checks
-node test/run.js --quick                  → expect 287
+node test/run.js                          → expect 350 checks
+node test/run.js --quick                  → expect 289
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -354,8 +368,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **351 topics, 99 storylines, 33 languages, 762 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_z'`.
+Corpus at this cut: **352 topics, 99 storylines, 33 languages, 764 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_aa'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing
