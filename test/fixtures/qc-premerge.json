@@ -1,0 +1,265 @@
+{
+  "_comment": "Outputs CAPTURED from the pre-merge server.js (v89_ab) — see unit-qc-unify-parity.test.js.",
+  "cases": [
+    {
+      "fn": "generateStoryQc",
+      "name": "clean",
+      "args": [
+        "Der Hund lief schnell. Die Katze schlief.",
+        "de",
+        null
+      ],
+      "reply": [
+        "Der Hund lief schnell. Die Katze schlief."
+      ],
+      "result": {
+        "corrected": "Der Hund lief schnell. Die Katze schlief.",
+        "story": "Der Hund lief schnell. Die Katze schlief.",
+        "verdict": "clean",
+        "rejected": false,
+        "changedSentences": 0,
+        "totalSentences": 2,
+        "changedRatio": 0,
+        "wordEditRatio": 0,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "valid": 1,
+          "promptTokens": 11,
+          "completionTokens": 22,
+          "verdict": "clean",
+          "changedRatio": 0,
+          "wordEditRatio": 0
+        }
+      }
+    },
+    {
+      "fn": "generateStoryQc",
+      "name": "corrected",
+      "args": [
+        "Der hund lief schnel. Die Katze schlief.",
+        "de",
+        null
+      ],
+      "reply": [
+        "Der Hund lief schnell. Die Katze schlief."
+      ],
+      "result": {
+        "corrected": "Der Hund lief schnell. Die Katze schlief.",
+        "story": "Der hund lief schnel. Die Katze schlief.",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 1,
+        "totalSentences": 2,
+        "changedRatio": 0.5,
+        "wordEditRatio": 0.286,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "valid": 1,
+          "promptTokens": 11,
+          "completionTokens": 22,
+          "verdict": "corrected",
+          "changedRatio": 0.5,
+          "wordEditRatio": 0.286
+        }
+      }
+    },
+    {
+      "fn": "generateStoryQc",
+      "name": "rewrite",
+      "args": [
+        "Der Hund lief. Die Katze schlief. Es regnete.",
+        "de",
+        null
+      ],
+      "reply": [
+        "Ein völlig anderer Text entstand hier. Nichts blieb gleich. Alles wurde neu."
+      ],
+      "result": {
+        "corrected": "Ein völlig anderer Text entstand hier. Nichts blieb gleich. Alles wurde neu.",
+        "story": "Der Hund lief. Die Katze schlief. Es regnete.",
+        "verdict": "rewrite",
+        "rejected": true,
+        "changedSentences": 3,
+        "totalSentences": 3,
+        "changedRatio": 1,
+        "wordEditRatio": 1.5,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "valid": 0,
+          "promptTokens": 11,
+          "completionTokens": 22,
+          "verdict": "rewrite",
+          "changedRatio": 1,
+          "wordEditRatio": 1.5
+        }
+      }
+    },
+    {
+      "fn": "generateStoryQc",
+      "name": "corrupt",
+      "args": [
+        "Der Hund lief schnell durch den großen Park und war dabei sehr sehr glücklich heute.",
+        "de",
+        null
+      ],
+      "reply": [
+        "DerHundliefschnelldurchdengroßenParkundwardabeisehrsehrglücklichheute."
+      ],
+      "result": {
+        "corrected": "DerHundliefschnelldurchdengroßenParkundwardabeisehrsehrglücklichheute.",
+        "story": "Der Hund lief schnell durch den großen Park und war dabei sehr sehr glücklich heute.",
+        "verdict": "corrupt",
+        "rejected": true,
+        "changedSentences": 1,
+        "totalSentences": 1,
+        "changedRatio": 1,
+        "wordEditRatio": 1,
+        "meta": {
+          "type": "story_qc",
+          "model": "translategemma:12b",
+          "valid": 0,
+          "promptTokens": 11,
+          "completionTokens": 22,
+          "verdict": "corrupt",
+          "changedRatio": 1,
+          "wordEditRatio": 1
+        }
+      }
+    },
+    {
+      "fn": "generateSummaryQc",
+      "name": "corrected",
+      "args": [
+        "Een jongen loopt naar school. Hij is laat.",
+        "nl"
+      ],
+      "reply": [
+        "Een jongen loopt naar school. Hij is te laat."
+      ],
+      "result": {
+        "corrected": "Een jongen loopt naar school. Hij is te laat.",
+        "summary": "Een jongen loopt naar school. Hij is laat.",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 1,
+        "totalSentences": 2,
+        "changedRatio": 0.5,
+        "wordEditRatio": 0.125,
+        "meta": {
+          "type": "summary_qc",
+          "model": "translategemma:12b",
+          "valid": 1,
+          "promptTokens": 11,
+          "completionTokens": 22,
+          "verdict": "corrected",
+          "changedRatio": 0.5,
+          "wordEditRatio": 0.125
+        }
+      }
+    },
+    {
+      "fn": "normaliseExtractedText",
+      "name": "first-try",
+      "args": [
+        "ES GIBT EIN LAND\nWO DIE KOEPFE GLEICHEN",
+        "de"
+      ],
+      "reply": [
+        "Es gibt ein Land.\nWo die Köpfe gleichen."
+      ],
+      "result": {
+        "text": "Es gibt ein Land.\nWo die Köpfe gleichen.",
+        "changed": 8,
+        "cased": 7,
+        "repaired": 1,
+        "words": 8,
+        "unchanged": false,
+        "tokens": {
+          "promptTokens": 11,
+          "completionTokens": 22
+        },
+        "meta": {
+          "type": "text_normalise",
+          "model": "translategemma:12b",
+          "promptTokens": 11,
+          "completionTokens": 22
+        }
+      }
+    },
+    {
+      "fn": "normaliseExtractedText",
+      "name": "retry-then-accept",
+      "args": [
+        "ES GIBT EIN LAND\nWO DIE KOEPFE GLEICHEN",
+        "de"
+      ],
+      "reply": [
+        "Es gibt ein Land mit vielen Leuten.",
+        "Es gibt ein Land mit vielen Leuten.",
+        "Es gibt ein Land.\nWo die Köpfe gleichen."
+      ],
+      "result": {
+        "text": "Es gibt ein Land.\nWo die Köpfe gleichen.",
+        "changed": 8,
+        "cased": 7,
+        "repaired": 1,
+        "words": 8,
+        "unchanged": false,
+        "tokens": {
+          "promptTokens": 33,
+          "completionTokens": 66
+        },
+        "meta": {
+          "type": "text_normalise",
+          "model": "translategemma:12b",
+          "promptTokens": 33,
+          "completionTokens": 66
+        }
+      }
+    },
+    {
+      "fn": "normaliseExtractedText",
+      "name": "give-up",
+      "args": [
+        "ES GIBT EIN LAND\nWO DIE KOEPFE GLEICHEN",
+        "de"
+      ],
+      "reply": [
+        "Ein ganz anderer Satz."
+      ],
+      "result": {
+        "text": "ES GIBT EIN LAND\nWO DIE KOEPFE GLEICHEN",
+        "unchanged": true,
+        "failed": true,
+        "note": "you returned 1 lines but the input has 2 — never merge or split lines",
+        "tokens": {
+          "promptTokens": 33,
+          "completionTokens": 66
+        },
+        "meta": {
+          "type": "text_normalise",
+          "model": "translategemma:12b",
+          "promptTokens": 33,
+          "completionTokens": 66
+        }
+      }
+    },
+    {
+      "fn": "normaliseExtractedText",
+      "name": "empty-input",
+      "args": [
+        "  ",
+        "de"
+      ],
+      "reply": [],
+      "result": {
+        "text": "  ",
+        "unchanged": true,
+        "skipped": "empty"
+      }
+    }
+  ]
+}

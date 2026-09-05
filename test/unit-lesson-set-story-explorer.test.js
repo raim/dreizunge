@@ -322,22 +322,32 @@ console.log("  regression: the lesson-set body is the IDENTICAL _storyBodyHtml r
   // returned the old inline payload would drive `_qcPoll` down its unknown-status path instead of
   // the real one — and with the FIRST version of that poller, which continued on any unrecognised
   // status, it did worse than that: an unbounded 2s timer kept this whole FILE alive after it had
-  // printed ALL PASSED, so the suite hung rather than failing. `seen` still holds the story-qc POST
-  // because it is read in the same tick, before the poll's own fetch can overwrite it.
-  const posted = C.run(`(function(){
-    var seen = null;
-    fetch = function(u, o){ if (seen === null) seen = { url:u, body:o && o.body };
+  // printed ALL PASSED, so the suite hung rather than failing.
+  //
+  // ⚠️ v89_ac: the POST is NO LONGER in the same tick. runStoryQc now opens the QC mode picker and
+  // AWAITS it, so `seen` is still null when the setup IIFE returns — the old read-it-immediately
+  // shape silently observed "no request was made" and asserted against nothing. Split into set-up,
+  // a real await, then the read.
+  C.run(`SEEN = null;
+    // The picker is stubbed to choose 'heavy'; this file is about the route, not about the picker
+    // (unit-text-qc-ui §3d owns that).
+    showChoiceDialog = function(){ return Promise.resolve('heavy'); };
+    fetch = function(u, o){ if (SEEN === null) SEEN = { url:u, body:o && o.body };
       return Promise.resolve({ ok:true, json:function(){ return Promise.resolve({
         ok:true, jobId:'qcjob1', status:'done', data:{
         corrected:'x', original:'y', verdict:'ok', rejected:[], changedSentences:0,
         totalSentences:1, changedRatio:0, wordEditRatio:0 } }); } }); };
-    runStoryQc();
-    return JSON.stringify(seen);
-  })()`);
+    runStoryQc(); true;`);
+  await new Promise(r => setTimeout(r, 60));
+  const posted = C.run(`JSON.stringify(SEEN)`);
+  assert.notStrictEqual(posted, 'null',
+    '⚠️ a request really was issued — without this, every assertion below would pass vacuously on ' +
+    'a build where the QC button did nothing at all');
   const q = JSON.parse(posted);
   assert.ok(q && /story-qc/.test(q.url), 'QC still posts to its own route');
-  assert.deepStrictEqual(JSON.parse(q.body), { topicId: BASE_TOPIC.id },
-    'and sends ONLY the topic id — it never reads the rendered story body, so tappable marks are irrelevant to it');
+  assert.deepStrictEqual(JSON.parse(q.body), { topicId: BASE_TOPIC.id, mode: 'heavy' },
+    'and sends ONLY the topic id and the chosen mode — it never reads the rendered story body, ' +
+    'so tappable marks are irrelevant to it');
 }
 console.log('  edit + QC still work with a tappable body (the user\'s condition on the ruling): OK');
 

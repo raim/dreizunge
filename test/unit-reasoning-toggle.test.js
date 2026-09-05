@@ -74,7 +74,10 @@ console.log('  thinkOpts: off=safe, on=think:true + bumped tokens & timeout: OK'
   assert.ok(/_callLLM\(OLLAMA_LESSON_MODEL, system, userMsg, pol\.tokens, \{ \.\.\.pol, \.\.\.opts \}\)/.test(cll),
     'callLLMLesson passes the bumped token budget + think, caller opts win last');
   // QC/translation are NOT given the toggle — they stay non-thinking.
-  assert.ok(/callLLMQC\(sys, story,[\s\S]{0,80}\{ think: false \}\)/.test(server), 'story-QC stays think:false');
+  // v89_ac: the call moved into qcProse (one engine, two modes). BOTH modes must stay non-thinking —
+  // asserted on the branch itself, so a future mode that switched thinking on would be caught.
+  assert.ok(/callLLMQC\(sys, src \+ feedback,[\s\S]{0,220}think: false[\s\S]{0,120}think: false/.test(server),
+    'story-QC stays think:false — in BOTH mode branches');
 }
 console.log('  wiring: story thinkOpts, callLLMLesson central policy, QC unchanged: OK');
 

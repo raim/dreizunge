@@ -106,10 +106,15 @@ const classify = new Function(
 }
 
 // ── 4. Generator contract: QC model, think:false, story_qc stamp, no mutation ─
-const gen = ext(server, 'generateStoryQc');
-assert.ok(/callLLMQC\(sys, story,[\s\S]{0,80}\{ think: false \}\)/.test(gen), 'QC uses think:false (v55_c lesson)');
-assert.ok(/PROMPTS\.storyQc\.system/.test(gen), 'correction prompt lives in prompts.json (storyQc)');
-assert.ok(/buildGenMeta\(\{ type: 'story_qc', model: OLLAMA_QC_MODEL/.test(gen), 'stamped story_qc with the QC model');
+// v89_ac: generateStoryQc is now a thin wrapper and the contract lives in qcProse, the one engine
+// behind story QC, summary QC and the extracted-text QC. Re-pointed rather than dropped — every
+// claim below is still exactly the claim, just about the function that now makes the call.
+const gen = ext(server, 'qcProse');
+assert.ok(/callLLMQC\(sys, src \+ feedback,[\s\S]{0,220}think: false/.test(gen), 'QC uses think:false (v55_c lesson)');
+assert.ok(/PROMPTS\[spec\.prompt\]\.system/.test(gen) && /prompt: 'storyQc'/.test(ext(server, 'qcModeSpec')),
+  'correction prompt lives in prompts.json (storyQc), selected by the mode spec');
+assert.ok(/buildGenMeta\(\{ type: kind === 'summary' \? 'summary_qc' : 'story_qc',[\s\S]{0,60}model: OLLAMA_QC_MODEL/.test(gen),
+  'stamped story_qc (or summary_qc) with the QC model');
 // Regression guard (v55_g bug): generateStoryQc called stripThink, which server.js never imported
 // from llm.js — a crash the string-only tests missed because they never RAN the function. Assert
 // every llm.js export the server calls as a bare identifier is actually imported (or locally defined).
@@ -330,10 +335,28 @@ console.log('  qc-correct: per-sentence selection order-alignment + selective re
 
 // ── 12. Summary QC (v55_n) — reuses classifyStoryQc, no error-hunt ────────────
 const genSum = ext(server, 'generateSummaryQc');
-assert.ok(/classifyStoryQc\(summary, corrected\)/.test(genSum), 'summary QC reuses the shared classifier/guard');
-assert.ok(/callLLMQC\(sys, summary,[\s\S]{0,80}\{ think: false \}\)/.test(genSum), 'summary QC uses think:false');
-assert.ok(/PROMPTS\.storyQc\.system/.test(genSum), 'summary QC reuses the storyQc proofreading prompt');
-assert.ok(/buildGenMeta\(\{ type: 'summary_qc', model: OLLAMA_QC_MODEL/.test(genSum), 'stamped summary_qc with the QC model');
+// v89_ac: the shared classifier is now reached THROUGH qcProse, the one engine behind story QC,
+// summary QC and the extracted-text QC — which is a stronger form of "reuses the shared guard" than
+// the old inline call, not a weaker one. Both halves are asserted: summary QC really delegates, and
+// the engine really classifies.
+assert.ok(/qcProse\(summary,/.test(genSum), 'summary QC delegates to the shared engine');
+assert.ok(/kind: 'summary'/.test(genSum), 'and identifies itself so its meta stays summary_qc');
+assert.ok(/classifyStoryQc\(src, out\)/.test(ext(server, 'qcProse')),
+  'and that engine reuses the shared classifier/guard');
+// v89_ac: these three now hold in the shared engine, reached with kind:'summary'. The claims are
+// unchanged; only the function that carries them moved. The FOURTH is still about generateSummaryQc
+// itself, because "has no error-hunt" is a property of this wrapper and its route.
+{
+  const eng = ext(server, 'qcProse');
+  assert.ok(/callLLMQC\(sys, src \+ feedback,[\s\S]{0,220}think: false/.test(eng), 'summary QC uses think:false');
+  assert.ok(/PROMPTS\[spec\.prompt\]\.system/.test(eng) && /prompt: 'storyQc'/.test(ext(server, 'qcModeSpec')),
+    'summary QC reuses the storyQc proofreading prompt');
+  assert.ok(/type: kind === 'summary' \? 'summary_qc' : 'story_qc'/.test(eng),
+    'stamped summary_qc with the QC model');
+  // ⚠️ And the wrapper really does ask for that kind — without this the line above is a claim about
+  // a branch nothing proves is ever taken.
+  assert.ok(/kind: 'summary'/.test(genSum), 'and generateSummaryQc really asks for that kind');
+}
 assert.ok(!/ai_error_hunt|aiStory/.test(genSum), 'summary QC has no error-hunt (summaries are not drill text)');
 // generateSummaryQc must be module-scope (before boot) like generateStoryQc (v55_l lesson).
 {

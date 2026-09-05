@@ -41,6 +41,11 @@ function client() {
     APP.difficulty=2;
     _comicCropDataUrl = function(b){ return 'CROP_'+b.x1; };
     TOASTS = []; showToast = function(m){ TOASTS.push(m); };
+    // v89_ac: every QC button now opens the mode picker first. showChoiceDialog uses
+    // addEventListener, which this harness no-ops by design, so a real click is not available —
+    // stubbing it records what the picker was OFFERED and lets a test choose the answer.
+    PICKED = []; PICK = 'light';
+    showChoiceDialog = async function(o){ PICKED.push(o); return PICK; };
     true;`, 'seed');
   return C;
 }
@@ -297,6 +302,108 @@ console.log('  partial acceptance: only ticked rows land, and ticking none says 
   assert.ok(C.run(`!!_textQcProposal`), "and it only drops its OWN panel's proposal");
 }
 console.log('  a pending proposal dies with the card that owns it, and only that one: OK');
+
+// ── 3d. ⚠️ The mode picker in front of every QC button (v89_ac) ─────────────────────────────────
+{
+  const C = client();
+  C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:9,y2:9, text:{ caption:'EEN LUIDE ZIN HIER', inScene:'' } }];
+    comicOpenReview(); true;`, 'open');
+  stubJob(C, { results: [ { text:'Een luide zin hier.', unchanged:false } ] });
+  C.run(`comicReviewQc(); true;`, 'qc');
+  await settle();
+  const offered = JSON.parse(C.run(`JSON.stringify(PICKED)`));
+  assert.strictEqual(offered.length, 1, 'the picker opened');
+  const vals = offered[0].choices.map(c => c.value);
+  assert.deepStrictEqual(vals, ['light', 'heavy'],
+    '⚠️ on extracted text LIGHT is offered FIRST — heavy may change words, which on a photographed ' +
+    'sign is falsification, so it must not be the obvious button');
+  assert.strictEqual(offered[0].choices[0].primary, true, 'and it is the primary one');
+  assert.strictEqual(offered[0].choices[0].label, UI.en['qc.mode.light'], 'labelled from the granted key');
+  assert.strictEqual(offered[0].choices[1].label, UI.en['qc.mode.heavy'], 'and so is the other');
+  // The chosen mode really travels to the server.
+  assert.strictEqual(JSON.parse(C.run(`JSON.stringify(SENT)`)).mode, 'light', 'the pick is sent');
+}
+{
+  // Choosing HEAVY on the same surface sends heavy — the choice is real, not decoration.
+  const C = client();
+  C.run(`PICK = 'heavy';
+    APP_COMIC.boxes = [{ x1:0,y1:0,x2:9,y2:9, text:{ caption:'EEN LUIDE ZIN HIER', inScene:'' } }];
+    comicOpenReview(); true;`, 'open');
+  stubJob(C, { results: [ { text:'Een luide zin hier.', unchanged:false } ] });
+  C.run(`comicReviewQc(); true;`, 'qc');
+  await settle();
+  assert.strictEqual(JSON.parse(C.run(`JSON.stringify(SENT)`)).mode, 'heavy', 'heavy travels too');
+}
+{
+  // ⚠️ CANCELLING the picker must not start a model call at all.
+  const C = client();
+  C.run(`PICK = null;
+    _pdfChunks = [{ text:'EEN LUIDE ZIN HIER', wordCount:4, title:'a', status:'pending' }]; true;`, 'chunks');
+  stubJob(C, { results: [ { text:'Een luide zin hier.', unchanged:false } ] });
+  C.run(`pdfTextQc(); true;`, 'qc');
+  await settle();
+  assert.strictEqual(C.run(`SENT`), null, 'cancelling the picker issues no request');
+  assert.strictEqual(JSON.parse(C.run(`JSON.stringify(_pdfChunks)`))[0].text, 'EEN LUIDE ZIN HIER',
+    'and changes nothing');
+}
+{
+  // ⚠️ The heavy surfaces default the other way round — story QC has always been a full proofread.
+  const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  for (const fn of ['runStoryQc', 'runSummaryQc']) {
+    const at = src.indexOf('async function ' + fn + '(');
+    assert.ok(at > -1, fn + ' exists');
+    const body = src.slice(at, at + 700);
+    assert.ok(/_qcPickMode\('heavy'\)/.test(body), fn + ' opens the picker defaulting to heavy');
+    assert.ok(/if \(!mode\) return;/.test(body), fn + ' aborts on cancel');
+    assert.ok(/mode\b/.test(body.slice(body.indexOf('JSON.stringify('))), fn + ' sends the mode');
+  }
+}
+console.log('  the mode picker fronts all four QC buttons, defaults per surface, cancel is a no-op: OK');
+
+// ── 3e. ⚠️ A flagged HEAVY result must warn (v89_ac, found live) ────────────────────────────────
+// classifyStoryQc flags 'rewrite' when a lot changed and 'corrupt' when the model mangled the text.
+// A SHORT text — one sign, one sentence — trips the rewrite ratio easily, so this is the COMMON
+// case for heavy mode on extracted text, not an edge one. The panel showed no warning at all until
+// the proposal started carrying a verdict.
+{
+  const C = client();
+  C.run(`PICK = 'heavy';
+    _pdfChunks = [{ text:'Der hund lief schnel.', wordCount:4, title:'a', status:'pending' }]; true;`, 'chunks');
+  stubJob(C, { results: [ { text:'Der Hund lief schnell.', unchanged:false, rejected:true, verdict:'rewrite' } ] });
+  C.run(`pdfTextQc(); true;`, 'qc');
+  await settle();
+  const html = C.run(`document.getElementById('pdf-textqc-panel').innerHTML`);
+  assert.ok(html.includes(UI.en['qc.rewrite_warn']),
+    'a flagged heavy result shows the existing large-change warning');
+  // ⚠️ v86_h's ruling, inherited: a 'rewrite' still offers Accept — a big ratio on a short text is
+  // not the same signal as corruption, and a human who has read the diff may well accept it.
+  assert.ok(/textQcAccept\(\)/.test(html), "and 'rewrite' still lets a human accept it (v86_h)");
+}
+{
+  // 'corrupt' is the one that withholds Accept — also inherited, not re-implemented.
+  const C = client();
+  C.run(`PICK = 'heavy';
+    _pdfChunks = [{ text:'Der hund lief schnel.', wordCount:4, title:'a', status:'pending' }]; true;`, 'chunks');
+  stubJob(C, { results: [ { text:'DerHundliefschnell.', unchanged:false, rejected:true, verdict:'corrupt' } ] });
+  C.run(`pdfTextQc(); true;`, 'qc');
+  await settle();
+  const html = C.run(`document.getElementById('pdf-textqc-panel').innerHTML`);
+  assert.ok(html.includes(UI.en['qc.corrupt_warn']), 'a corrupt result says so');
+  assert.ok(!/textQcAccept\(\)/.test(html), 'and withholds Accept entirely');
+}
+{
+  // Non-vacuity: an ordinary LIGHT result must NOT be dressed up as a warning.
+  const C = client();
+  C.run(`_pdfChunks = [{ text:'EEN LUIDE ZIN HIER', wordCount:4, title:'a', status:'pending' }]; true;`, 'chunks');
+  stubJob(C, { results: [ { text:'Een luide zin hier.', unchanged:false } ] });
+  C.run(`pdfTextQc(); true;`, 'qc');
+  await settle();
+  const html = C.run(`document.getElementById('pdf-textqc-panel').innerHTML`);
+  assert.ok(!html.includes(UI.en['qc.rewrite_warn']) && !html.includes(UI.en['qc.corrupt_warn']),
+    'a clean light correction carries no warning');
+  assert.ok(html.includes(UI.en['qc.review_hdr']), 'just the ordinary header');
+}
+console.log('  a flagged heavy result warns, corrupt withholds accept, light stays quiet: OK');
 
 // ── 4. The button exists on BOTH surfaces (the user asked for both) ─────────────────────────────
 {

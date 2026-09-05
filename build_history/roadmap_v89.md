@@ -2619,6 +2619,29 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_ac — ONE QC engine, two modes, and a picker in front of every QC button
+
+User ruling: *"can we merge or unify the two text QC functions, and at all places where texts can be
+edited the QC icon should open a popover that allows the user to select between the light version (as
+currently for PDF and comics) and the heavier (as currently for story-QC)?"* — **2 `ui.json` keys**
+(`qc.mode.light`, `qc.mode.heavy`), **all four surfaces**.
+
+What was here before: THREE functions across TWO contracts. `generateStoryQc`, `generateSummaryQc`
+(a near-verbatim COPY of it — its own comment said *"same proofreading prompt (text-agnostic)"*), and
+`normaliseExtractedText`. They are now one `qcProse(text, lang, {mode, kind, …})`.
+
+| | |
+|---|---|
+| **⚠️ `mode` names a BEHAVIOUR, not a flag on one** | It selects a prompt AND a verifier AND a retry policy, together. **HEAVY** may change words — that is what fixing grammar IS — and is verified STATISTICALLY (`changedRatio`/`wordEditRatio`/corruption → clean\|corrected\|rewrite\|corrupt), one shot. **LIGHT** may not change a word and is verified STRUCTURALLY (exact word and line counts, bounded per-word edit distance), 3 attempts with feedback, and hands back the input rather than throwing. The merge had to preserve that split, not blur it |
+| **⚠️ the parity test is a real DIFF, not "the tests still pass"** | `test/fixtures/qc-premerge.json` holds **9 outputs CAPTURED from the pre-merge functions** — all four heavy verdicts, the summary path, and light's first-try / retry-then-accept / give-up / empty-input. `unit-qc-unify-parity.test.js` replays each case's recorded reply sequence through the merged engine and deep-compares. **A first draft read the old source via `git show <tag>:server.js`** — works here, fails on any clone without the tag, so a guard would have gone red for a reason unrelated to the code. Capturing the OUTPUT is also the more literal reading of the standing rule |
+| **shapes matched exactly, on purpose** | The light wrapper keeps two DISTINCT return shapes (a give-up carries no counts; a success carries no `failed`/`note`), because widening either — harmless for both consumers — would be the one difference the diff had to report, and a diff you explain away is worth less than an empty one |
+| **kept mode-specific, deliberately** | `scriptPinNote` stays HEAVY-only: `v79_f` added it because a proofreader that silently transliterates rewrites a chapter that was already right, and that risk only exists where the model may rewrite. Light's own verifier would refuse a transliteration outright |
+| **the picker** | `_qcPickMode(dflt)` fronts all four buttons (story, summary, comic panels, PDF chunks) and reuses `showChoiceDialog` — labelled options, Esc/backdrop cancel, resolves to a value — so the only new strings are the two labels. ⚠️ **The default is per surface and it is a safety property**: extracted text offers LIGHT first and primary, because heavy's licence to change words is, on a photographed sign, falsification rather than a fix. Cancelling starts no model call at all |
+| **⚠️ a z-index bug found in a BROWSER, not by a test** | The comic review card sets its own `zIndex:400` (to clear the generation wizard), so the picker opened from inside it rendered at the `.modal-overlay` default of 300 — present in the DOM, fully interactive, and completely invisible behind the card that asked for it. `showChoiceDialog` now computes its z-index above every open overlay, which fixes the whole class for future callers |
+| **⚠️ a second live finding: a flagged heavy result showed no warning** | Heavy on `"Der hund lief schnel durch den park."` returned `verdict:'rewrite', rejected:true` — a SHORT text trips the change ratio easily, which the `v86_h` comment already predicted, so this is the COMMON case for heavy on extracted text. The batch proposal carried no verdict, so the panel warned about nothing. It now escalates the worst row to the whole proposal, reusing `qc.rewrite_warn`/`qc.corrupt_warn` and inheriting `v86_h`'s ruling for free: `rewrite` still offers Accept, only `corrupt` withholds it |
+| **live-verified** | Picker → light → real `translategemma:12b` → the diff panel, in a browser, end to end. And heavy through the batch route by curl: `"Der hund lief schnel durch den park."` → `"Der Hund lief schnell durch den Park."`, logged as `Extracted text QC (heavy)` with its verdict |
+| **guards** | `unit-qc-unify-parity.test.js` (9 captured outputs + the heavy-throws-on-empty contract + §4 proving the modes are genuinely different behaviours) — **eleven mutations red**, one of which was found only after a first pass stayed green. `unit-text-qc-ui.test.js` §3d (picker: order, primary, labels, mode travels, cancel is a no-op) and §3e (flagged verdicts) — **twelve more red** |
+
 ## ✅ v89_ab — the text QC PROPOSES, through the panel story QC already used
 
 User question — *"is this the same QC that we already had for story texts, available on the lesson-set

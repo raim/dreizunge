@@ -3675,6 +3675,17 @@ function showChoiceDialog(opts){
   return new Promise(resolve=>{
     const ov=document.createElement('div');
     ov.className='modal-overlay';
+    // ⚠️ v89_ac: stack ABOVE whatever is already open. Found in a browser, not by a test: the comic
+    // review card sets its own zIndex:400 (to clear the generation wizard), so the QC mode picker
+    // opened from inside it rendered at the class default of 300 — present in the DOM, fully
+    // interactive, and completely invisible behind the card that had asked for it. Computed rather
+    // than hardcoded so the next dialog opened from inside another raised overlay is right for free.
+    {
+      const zs = [...document.querySelectorAll('.modal-overlay')]
+        .map(o => parseInt(o.style.zIndex || (window.getComputedStyle ? getComputedStyle(o).zIndex : ''), 10))
+        .filter(n => !isNaN(n));
+      if (zs.length) ov.style.zIndex = Math.max(...zs) + 10;
+    }
     const choices=opts.choices||[];
     const btns=choices.map((c,i)=>
       `<button type="button" class="modal-btn ${c.primary?'primary':'secondary'}" data-i="${i}" `
@@ -6510,11 +6521,13 @@ function _qcPoll(key, jobId, btnId, onDone){
 
 async function runStoryQc() {
   const d = APP.lessonData; if (!d || !d.id) return;
+  const mode = await _qcPickMode('heavy');
+  if (!mode) return;                       // cancelled — the icon must not start a model call
   const btn = document.getElementById('story-qc-btn');
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   try {
     const r = await fetch('/api/story-qc', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topicId: d.id }) });
+      body: JSON.stringify({ topicId: d.id, mode }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'Failed');
     // The payload is unchanged — it just arrives as the job's `data` now, so everything below reads
@@ -6610,6 +6623,26 @@ function _renderQcProposalInto(prop, o) {
   panel.style.display = '';
 }
 
+// ── The QC mode picker (v89_ac, user ruling) ─────────────────────────────────
+// "at all places where texts can be edited the QC icon should open a popover that allows the user to
+// select between the light version (as currently for PDF and comics) and the heavier (as currently
+// for story-QC)."
+//
+// ONE picker in front of all four QC buttons — story, summary, comic panels, PDF chunks — so the
+// choice cannot mean different things in different places. Reuses `showChoiceDialog`, which already
+// renders exactly this (labelled options with hints, Esc/backdrop cancel, resolves to a value), so
+// the only new strings are the two mode labels the user granted.
+//
+// ⚠️ `dflt` is the surface's OWN historical behaviour, and it is offered FIRST and marked primary.
+// That matters most on extracted text: heavy mode may change words, and on a photographed sign that
+// is falsification rather than a fix. The user asked to be able to choose it there, so it is
+// offered — it is just never what happens by pressing the obvious button.
+function _qcPickMode(dflt){
+  const light = { value:'light', label: t('qc.mode.light'), primary: dflt === 'light' };
+  const heavy = { value:'heavy', label: t('qc.mode.heavy'), primary: dflt === 'heavy' };
+  return showChoiceDialog({ choices: dflt === 'light' ? [light, heavy] : [heavy, light] });
+}
+
 // Collect the checked fix indices from a panel's checkboxes. Returns undefined if no checkboxes
 // (→ caller omits `selected` → server accepts all), or [] if all unchecked (→ caller treats as none).
 function _qcSelectedIdx(panelId, cbClass) {
@@ -6687,11 +6720,13 @@ function _sumQcSlId() { return APP._slScreen && APP._slScreen._summaryQcSlId; }
 
 async function runSummaryQc() {
   const slId = _sumQcSlId(); if (!slId) return;
+  const mode = await _qcPickMode('heavy');
+  if (!mode) return;
   const btn = document.getElementById('sum-qc-btn');
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   try {
     const r = await fetch('/api/summary-qc', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slId, srcLang: APP._slScreen?.slMeta?.srcLang }) });
+      body: JSON.stringify({ slId, srcLang: APP._slScreen?.slMeta?.srcLang, mode }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'Failed');
     _qcPoll('summary', data.jobId, 'sum-qc-btn', (out) => {
@@ -7463,6 +7498,7 @@ let _textQcProposal = null;   // { rows:[{slot, before, after}], apply, panelId,
 
 async function _textQcRun(texts, lang, o){
   if(_textQcBusy) return null;
+  const mode = o.mode || 'light';
   const idx = [], send = [];
   texts.forEach((s,i)=>{ if(String(s||'').trim()){ idx.push(i); send.push({text:String(s)}); } });
   if(!send.length){ showToast(t('ex.writing.no_issues')); return null; }
@@ -7470,7 +7506,7 @@ async function _textQcRun(texts, lang, o){
   try{
     const data = await _jobAwait(await fetch('/api/text-qc',{method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({items:send, lang})}));
+      body:JSON.stringify({items:send, lang, mode})}));
     // Cancelled. ⚠️ Belt and braces only, and worth saying so: _jobAwait ALREADY returns null for
     // a cancelled job and drops its payload, so this line cannot independently fail — mutating it
     // away leaves the suite green. The property (a cancel proposes nothing) is real and IS guarded,
@@ -7483,11 +7519,23 @@ async function _textQcRun(texts, lang, o){
       // good case) and "could not be checked" (the model failed its own contract three times and
       // the server returned the input untouched) — neither is a correction to offer.
       if(!r || r.unchanged || !r.text) return;
-      rows.push({ slot: idx[j], before: texts[idx[j]], after: r.text });
+      rows.push({ slot: idx[j], before: texts[idx[j]], after: r.text,
+                  verdict: r.verdict || 'corrected', rejected: !!r.rejected });
     });
     _textQcProposal = { rows, apply:o.apply, panelId:o.panelId, cbClass:o.cbClass, done:o.done||null };
+    // ⚠️ HEAVY mode can come back flagged, and the user has to see it. classifyStoryQc returns
+    // 'rewrite' when a lot of the text changed and 'corrupt' when the model mangled it (v55_i:
+    // run-together words, eaten whitespace) — and a SHORT text trips the rewrite ratio easily, which
+    // is precisely the case here: one sign, one sentence. Found live, not by a test: heavy on
+    // "Der hund lief schnel durch den park." came back verdict:'rewrite', rejected:true, and the
+    // panel showed no warning at all because this proposal never carried a verdict.
+    // Escalating the worst row to the whole proposal reuses qc.rewrite_warn / qc.corrupt_warn and
+    // inherits v86_h's ruling for free: 'rewrite' still offers Accept, only 'corrupt' withholds it.
+    const worst = rows.some(r => r.verdict === 'corrupt') ? 'corrupt'
+                : rows.some(r => r.rejected || r.verdict === 'rewrite') ? 'rewrite'
+                : rows.length ? 'corrected' : 'clean';
     _renderQcProposalInto(
-      { verdict: rows.length ? 'corrected' : 'clean',
+      { verdict: worst, rejected: worst === 'rewrite' || worst === 'corrupt',
         // One row per item. `_renderQcProposalInto` renders {a,b} through the same inline diff it
         // uses for a sentence pair, so a multi-line panel shows its changes inline like any other.
         pairs: rows.map(r=>({ a:r.before, b:r.after })) },
@@ -7527,12 +7575,14 @@ function _textQcClosePanel(){
 // textareas write to, so Cancel still discards them.
 async function comicReviewQc(){
   if(!_comicReviewBuffer || !_comicReviewEditable) return;
+  const mode = await _qcPickMode('light');
+  if (!mode) return;
   const keys = Object.keys(_comicReviewBuffer);
   const btn = document.getElementById('comic-review-qc-btn');
   const was = btn ? btn.textContent : '';
   if(btn){ btn.disabled = true; btn.textContent = t('app.checking'); }
   await _textQcRun(keys.map(k=>_comicReviewText(_comicReviewBuffer[k])), APP.lang, {
-    panelId:'comic-review-qc-panel', cbClass:'qc-textfix-cb',
+    mode, panelId:'comic-review-qc-panel', cbClass:'qc-textfix-cb',
     apply:(j,text)=>{
       _comicReviewEdit(keys[j], 'text', text);
       // The card is already on screen, so the box the user is looking at has to change too — the
@@ -7549,10 +7599,12 @@ async function comicReviewQc(){
 // this chunk text", and one undo meaning that is clearer than two meaning half each.
 async function pdfTextQc(){
   if(!_pdfChunks.length) return;
+  const mode = await _qcPickMode('light');
+  if (!mode) return;
   const btn = document.getElementById('pdf-textqc-btn');
   if(btn) btn.disabled = true;
   await _textQcRun(_pdfChunks.map(c=>c.text), APP.srcLang || APP.lang || 'en', {
-    panelId:'pdf-textqc-panel', cbClass:'qc-textfix-cb',
+    mode, panelId:'pdf-textqc-panel', cbClass:'qc-textfix-cb',
     apply:(j,text)=>{
       const c = _pdfChunks[j];
       if(_aiCleanBackup === null) _aiCleanBackup = _pdfChunks.map(x=>x.text);

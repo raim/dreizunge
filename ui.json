@@ -763,7 +763,9 @@
     "text_explorer.reanalyze_force": "Re-analyse everything from scratch",
     "form.image_description_lbl": "Image description",
     "qc.btn.text": "Check spelling & capitalization",
-    "qc.toast.text_done": "✓ {n} of {total} texts corrected"
+    "qc.toast.text_done": "✓ {n} of {total} texts corrected",
+    "qc.mode.light": "Spelling & capitalization only — never changes a word",
+    "qc.mode.heavy": "Full proofread — may fix grammar and wording"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

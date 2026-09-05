@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_ab` cut
+# Session prompt — written at the `v89_ac` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_ab`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_ac`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -309,13 +309,16 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   factored for reuse. It gained two options (`prop.pairs`, `o.cleanKey`); both existing callers are
   untouched; **zero new `ui.json` keys**. One row per ITEM, ticked rows only. Nine mutations red.
 
-⚠️ **OWED — the user's next ask, not yet built:** *"can we merge or unify the two text QC functions,
-and at all places where texts can be edited the QC icon should open a popover that allows the user to
-select between the light version (as currently for PDF and comics) and the heavier (as currently for
-story-QC)?"* The `v89_ab` table above is the analysis to start from: the two differ in PROMPT and in
-VERIFIER, so the unification is one engine taking a MODE, not one behaviour. ⚠️ Flag when building:
-heavy mode may change words, which on a photographed sign is falsification — the user has asked for
-the choice, so provide it, but the light default matters.
+- **`v89_ac`** — **ONE QC engine, two modes, one picker.** `generateStoryQc`, `generateSummaryQc` (a
+  near-verbatim copy of it) and `normaliseExtractedText` collapsed into `qcProse(text, lang, {mode,
+  kind})`. ⚠️ **`mode` names a BEHAVIOUR, not a flag on one**: it picks a prompt AND a verifier AND a
+  retry policy together — heavy may change words and is checked statistically, light may not and is
+  checked structurally. `_qcPickMode` fronts all four QC buttons (story, summary, comic, PDF); the
+  per-surface default is a safety property, not a convenience. ⚠️ **Behaviour preservation is proven
+  by a DIFF**: `test/fixtures/qc-premerge.json` holds 9 outputs captured from the pre-merge functions
+  and the parity test replays each through the merged engine. ⚠️ **Two bugs found in a BROWSER, not
+  by tests**: the picker rendered invisibly behind the comic review card (z-index 300 vs its 400),
+  and a flagged heavy verdict showed no warning. **2 `ui.json` keys.** 23 mutations red.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -352,8 +355,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 350 checks
-node test/run.js --quick                  → expect 289
+node test/run.js                          → expect 351 checks
+node test/run.js --quick                  → expect 290
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -385,8 +388,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **352 topics, 99 storylines, 33 languages, 764 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ab'`.
+Corpus at this cut: **352 topics, 99 storylines, 33 languages, 766 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ac'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

@@ -43,7 +43,7 @@ const NEEDS_PIN = {
   generateComprehension: 'questions and answer choices in the target language',
   generateWriting:      'the writing task itself is written in the target language (PLAN §D4, v82)',
   generateMathLLM:      'word problems are prose in the target language',
-  generateStoryQc:      'returns a CORRECTED COPY of the story — target text',
+  qcProse:              'heavy mode returns a CORRECTED COPY of the story — target text (v89_ac)',
   generateDialectStory: 'a story in a dialect of the target language',
   generateDialectStoryV2: 'the same, via a constrained rewrite',
 };
@@ -55,6 +55,11 @@ const DELEGATES = {
   generateConjugation:  'sysConjugation',
   generateOneLesson:    'sysLesson',
   generateArcLesson:    'ADD_LESSON_GENERATORS',
+  // v89_ac: the story/summary QC bodies merged into qcProse, which carries the pin. Moved here
+  // rather than loosened — "it is covered by the builder it calls" is exactly the claim the
+  // delegate check below exists to verify, and generateStoryQc really does call it now.
+  generateStoryQc:      'qcProse',
+  generateSummaryQc:    'qcProse',
 };
 const EXEMPT = {
   sysMeta:              'topic metadata, written in the SOURCE language',

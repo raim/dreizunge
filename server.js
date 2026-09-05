@@ -285,7 +285,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_ab';
+const APP_VERSION  = 'v89_ac';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -2714,62 +2714,170 @@ function classifyStoryQc(original, corrected) {
   };
 }
 
-// Run the QC model over a story. Returns { corrected, story, ...classifier, meta }. Never mutates
-// anything — the caller decides whether to store the proposal. `story` echoes the original so the
-// client can diff without re-fetching. think:false (v55_c) — proofreading is not a reasoning task.
-async function generateStoryQc(story, lang, script) {
-  if (!story || !story.trim()) throw new Error('QC: empty story');
-  const L = langName(lang, script || null);
-  const _t0 = Date.now();
-  console.log(`\n── Story QC ─────────────────────────────────────────`);
-  console.log(`  Lang: ${L}, Model: ${OLLAMA_QC_MODEL}, ${story.length} chars`);
-  // v79_f: QC returns a CORRECTED COPY of the story, so it emits target-language text like any
-  // generator — and a proofreader that silently transliterates is the worst version of this bug,
-  // because the chapter it rewrites was already right.
-  const sys = fillPrompt(PROMPTS.storyQc.system, { L }) + scriptPinNote(lang, script || null, 'story QC prompt');
-  const { text, promptTokens, completionTokens } = await callLLMQC(sys, story,
-    Math.min(4096, Math.ceil(story.length * 1.3)), { think: false });
-  const corrected = stripRaw(text).trim();  // stripRaw already strips <think> internally
-  console.log(`  Response : after ${((Date.now() - _t0) / 1000).toFixed(0)}s (${completionTokens || '?'} tok)`);
-  if (!corrected) throw new Error('QC: model returned empty correction');
-  const c = classifyStoryQc(story, corrected);
-  console.log(`  Verdict  : ${c.verdict} (${c.changedSentences}/${c.totalSentences} sentences, wordΔ ${c.wordEditRatio})`);
-  console.log('────────────────────────────────────────────────────\n');
-  const meta = buildGenMeta({ type: 'story_qc', model: OLLAMA_QC_MODEL, t0: _t0,
-    valid: c.rejected ? 0 : 1, promptTokens, completionTokens });
-  meta.verdict = c.verdict;
-  meta.changedRatio = c.changedRatio;
-  meta.wordEditRatio = c.wordEditRatio;
-  return { corrected, story, verdict: c.verdict, rejected: c.rejected,
-    changedSentences: c.changedSentences, totalSentences: c.totalSentences,
-    changedRatio: c.changedRatio, wordEditRatio: c.wordEditRatio, meta };
+// ── ONE QC engine, two modes (v89_ac) ────────────────────────────────────────
+// User ruling: *"can we merge or unify the two text QC functions, and at all places where texts can
+// be edited the QC icon should open a popover that allows the user to select between the light
+// version (as currently for PDF and comics) and the heavier (as currently for story-QC)?"*
+//
+// What was actually here before this merge: THREE functions across TWO contracts.
+//   generateStoryQc   — storyQc prompt, classifyStoryQc verdict, one shot
+//   generateSummaryQc — a near-verbatim COPY of it (its own comment said "same proofreading prompt
+//                       (text-agnostic)"), differing only in label, token cap and meta type
+//   normaliseExtractedText — textNormalise prompt, structural verifier, 3 attempts with feedback
+//
+// ⚠️ The two MODES are not a stylistic split, and merging them must not blur it:
+//   HEAVY may change words — that is what fixing grammar IS — and is verified STATISTICALLY
+//         (changedRatio / wordEditRatio / corruption heuristics → clean|corrected|rewrite|corrupt).
+//   LIGHT may not change a word, and is verified STRUCTURALLY (exact word and line counts, bounded
+//         per-word edit distance), because extracted text is a TRANSCRIPTION of something real and
+//         "fixing" a photographed sign's grammar falsifies what the learner is looking at.
+// So `mode` selects a prompt AND a verifier AND a retry policy, together. It is not a flag on one
+// behaviour; it names which of two behaviours runs.
+//
+// ⚠️ Each mode's behaviour is preserved EXACTLY, not approximately — heavy keeps its single shot and
+// its classifier, light keeps its 3 attempts and its unchanged-on-failure fallback.
+// `unit-qc-unify-parity.test.js` drives the pre-merge functions (lifted from git) and this one with
+// identical stubbed model replies and deep-compares the results, because "the tests still pass" is a
+// weaker claim than a diff.
+const QC_MODES = ['light', 'heavy'];
+// v89_ac: every QC route reads its mode through here, so an unknown value can never mean three
+// different things in three places. Absent → the surface's own historical default, which the caller
+// passes: heavy for story/summary, light for extracted text.
+function readQcMode(v, dflt) {
+  return QC_MODES.indexOf(v) === -1 ? (dflt || 'heavy') : v;
 }
 
-// Summary QC (v55_n): the storyline-summary counterpart of generateStoryQc. Same proofread prompt,
-// same classifier/guard (clean/corrected/rewrite/corrupt), same proposal shape — but there is NO
-// ai_error_hunt (a summary isn't drill text), so acceptance simply writes sl.summary. The summary is
-// in the SOURCE language, so QC runs in srcLang. think:false (v55_c).
-async function generateSummaryQc(summary, srcLang) {
-  if (!summary || !summary.trim()) throw new Error('QC: empty summary');
-  const L = langName(srcLang || 'en');
+// The one place that knows what a mode IS.
+function qcModeSpec(mode) {
+  return mode === 'light'
+    ? { prompt: 'textNormalise', attempts: 3, verify: 'structural' }
+    : { prompt: 'storyQc',       attempts: 1, verify: 'statistical' };
+}
+
+// `o` = { mode, kind ('story'|'summary'|'text'), script, maxTokens, label }.
+// Returns ONE shape for both modes so every caller — and the client's shared proposal panel — can
+// read the same fields regardless of which mode ran:
+//   { corrected, original, mode, verdict, rejected, changedSentences, totalSentences,
+//     changedRatio, wordEditRatio, unchanged, failed, note, tokens, meta }
+async function qcProse(text, lang, o) {
+  const opt = o || {};
+  const mode = QC_MODES.indexOf(opt.mode) === -1 ? 'heavy' : opt.mode;
+  const spec = qcModeSpec(mode);
+  const src = String(text || '');
+  if (!src.trim()) throw new Error('QC: empty text');
+  const kind = opt.kind || 'text';
+  const L = langName(lang, opt.script || null);
   const _t0 = Date.now();
-  console.log(`\n── Summary QC ───────────────────────────────────────`);
-  console.log(`  Lang: ${L}, Model: ${OLLAMA_QC_MODEL}, ${summary.length} chars`);
-  const sys = fillPrompt(PROMPTS.storyQc.system, { L });  // same proofreading prompt (text-agnostic)
-  const { text, promptTokens, completionTokens } = await callLLMQC(sys, summary,
-    Math.min(2048, Math.ceil(summary.length * 1.3)), { think: false });
-  const corrected = stripRaw(text).trim();
-  console.log(`  Response : after ${((Date.now() - _t0) / 1000).toFixed(0)}s (${completionTokens || '?'} tok)`);
-  if (!corrected) throw new Error('QC: model returned empty correction');
-  const c = classifyStoryQc(summary, corrected);
-  console.log(`  Verdict  : ${c.verdict} (${c.changedSentences}/${c.totalSentences} sentences, wordΔ ${c.wordEditRatio})`);
-  console.log('────────────────────────────────────────────────────\n');
-  const meta = buildGenMeta({ type: 'summary_qc', model: OLLAMA_QC_MODEL, t0: _t0,
-    valid: c.rejected ? 0 : 1, promptTokens, completionTokens });
-  meta.verdict = c.verdict; meta.changedRatio = c.changedRatio; meta.wordEditRatio = c.wordEditRatio;
-  return { corrected, summary, verdict: c.verdict, rejected: c.rejected,
-    changedSentences: c.changedSentences, totalSentences: c.totalSentences,
-    changedRatio: c.changedRatio, wordEditRatio: c.wordEditRatio, meta };
+  const cap = opt.maxTokens || 4096;
+
+  console.log(`\n── ${opt.label || 'Text'} QC (${mode}) ──────────────────────────────`);
+  console.log(`  Lang: ${L}, Model: ${OLLAMA_QC_MODEL}, ${src.length} chars`);
+
+  // ⚠️ scriptPinNote is HEAVY-only, and deliberately. v79_f added it because a proofreader that
+  // silently transliterates rewrites a chapter that was already right — a risk that exists only
+  // where the model is allowed to rewrite. Light mode cannot change a word at all, and its own
+  // verifier would refuse a transliteration outright.
+  let sys = fillPrompt(PROMPTS[spec.prompt].system, { L });
+  if (mode === 'heavy' && kind === 'story') sys += scriptPinNote(lang, opt.script || null, 'story QC prompt');
+
+  let promptTokens = 0, completionTokens = 0, lastProblem = '';
+  for (let attempt = 1; attempt <= spec.attempts; attempt++) {
+    const feedback = lastProblem
+      ? `\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED: ${lastProblem}\nReturn the text again, changing ONLY capitalization, punctuation and clear misreadings, and copying every word and every line break exactly.`
+      : '';
+    let out = '';
+    try {
+      const r = await callLLMQC(sys, src + feedback,
+        Math.min(cap, Math.ceil(src.length * (mode === 'light' ? 1.4 : 1.3)) + (mode === 'light' ? 64 : 0)),
+        mode === 'light' ? { think: false, temperature: 0.1, timeoutMs: getRequestTimeout() }
+                         : { think: false });
+      out = stripRaw(String(r.text || '')).trim();   // stripRaw already strips <think> internally
+      promptTokens += r.promptTokens || 0; completionTokens += r.completionTokens || 0;
+    } catch (e) {
+      if (String(e && e.message) === CANCELLED) throw e;      // v88_k: a cancel is not a failure
+      if (mode === 'heavy') throw e;                          // heavy has always surfaced its errors
+      if (attempt === spec.attempts) break;
+      lastProblem = `the request failed (${e.message})`;
+      continue;
+    }
+    console.log(`  Response : after ${((Date.now() - _t0) / 1000).toFixed(0)}s (${completionTokens || '?'} tok)`);
+
+    if (spec.verify === 'statistical') {
+      // ⚠️ Heavy's contract, byte for byte as generateStoryQc had it: an empty answer THROWS (it is
+      // not a proposal), and a bad verdict is REPORTED rather than retried — classifyStoryQc's
+      // 'rewrite'/'corrupt' are for a human to see, and v86_h ruled that 'rewrite' must still be
+      // acceptable by someone who has read the diff.
+      if (!out) throw new Error('QC: model returned empty correction');
+      const c = classifyStoryQc(src, out);
+      console.log(`  Verdict  : ${c.verdict} (${c.changedSentences}/${c.totalSentences} sentences, wordΔ ${c.wordEditRatio})`);
+      console.log('────────────────────────────────────────────────────\n');
+      const meta = buildGenMeta({ type: kind === 'summary' ? 'summary_qc' : 'story_qc',
+        model: OLLAMA_QC_MODEL, t0: _t0, valid: c.rejected ? 0 : 1, promptTokens, completionTokens });
+      meta.verdict = c.verdict; meta.changedRatio = c.changedRatio; meta.wordEditRatio = c.wordEditRatio;
+      return { corrected: out, original: src, mode, verdict: c.verdict, rejected: c.rejected,
+               changedSentences: c.changedSentences, totalSentences: c.totalSentences,
+               changedRatio: c.changedRatio, wordEditRatio: c.wordEditRatio,
+               unchanged: c.verdict === 'clean', failed: false, note: null,
+               tokens: { promptTokens, completionTokens }, meta };
+    }
+
+    // Structural (light).
+    const chk = out ? textNormaliseChanges(src, out) : { ok: false, why: 'empty' };
+    if (chk.ok) {
+      console.log(`  Text normalise: ${chk.changed}/${chk.words} words changed ` +
+        `(${chk.cased} recased, ${chk.repaired} repaired)${attempt > 1 ? `, attempt ${attempt}` : ''}`);
+      console.log('────────────────────────────────────────────────────\n');
+      return { corrected: out, original: src, mode,
+               verdict: out === src ? 'clean' : 'corrected', rejected: false,
+               changedSentences: chk.changed, totalSentences: chk.words,
+               changedRatio: chk.words ? +(chk.changed / chk.words).toFixed(3) : 0,
+               wordEditRatio: 0, cased: chk.cased, repaired: chk.repaired,
+               unchanged: out === src, failed: false, note: null,
+               tokens: { promptTokens, completionTokens },
+               meta: buildGenMeta({ type: 'text_normalise', model: OLLAMA_QC_MODEL, t0: _t0,
+                                    promptTokens, completionTokens }) };
+    }
+    lastProblem =
+      chk.why === 'empty' ? 'you returned nothing'
+      : chk.why === 'lines' ? `you returned ${chk.gotLines} lines but the input has ${chk.lines} — never merge or split lines`
+      : chk.why === 'words' ? `you returned ${chk.gotWords} words but the input has ${chk.words} — never add or delete a word`
+      : `you replaced the word "${chk.from}" with "${chk.to}" — you may fix a misread letter, never substitute a different word`;
+    console.warn(`    Text normalise attempt ${attempt}/${spec.attempts} rejected: ${lastProblem}`);
+  }
+
+  // ⚠️ Light only. Returning the input UNCHANGED rather than throwing is deliberate: this mode also
+  // runs unattended inside the extraction job, where a throw would cost the panel its transcription.
+  console.warn(`  Text normalise: left unchanged — ${lastProblem}`);
+  return { corrected: src, original: src, mode, verdict: 'clean', rejected: false,
+           changedSentences: 0, totalSentences: 0, changedRatio: 0, wordEditRatio: 0,
+           cased: 0, repaired: 0, unchanged: true, failed: true, note: lastProblem,
+           tokens: { promptTokens, completionTokens },
+           meta: buildGenMeta({ type: 'text_normalise', model: OLLAMA_QC_MODEL, t0: _t0,
+                                promptTokens, completionTokens }) };
+}
+
+// ⚠️ Thin wrappers over qcProse, kept because their CALLERS and their stored proposal shapes are
+// unchanged: `story`/`summary` echo the original under the field name each route already returns,
+// and every other field is passed straight through. Deleting these would push the rename into four
+// call sites and two route payloads for no gain.
+async function generateStoryQc(story, lang, script, mode) {
+  if (!story || !story.trim()) throw new Error('QC: empty story');
+  const r = await qcProse(story, lang, { mode: mode || 'heavy', kind: 'story', script,
+                                         maxTokens: 4096, label: 'Story' });
+  return { corrected: r.corrected, story, verdict: r.verdict, rejected: r.rejected,
+    changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+    changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio, mode: r.mode, meta: r.meta };
+}
+
+// The summary counterpart. There is NO ai_error_hunt (a summary isn't drill text), so acceptance
+// simply writes sl.summary. The summary is in the SOURCE language, so QC runs in srcLang.
+async function generateSummaryQc(summary, srcLang, mode) {
+  if (!summary || !summary.trim()) throw new Error('QC: empty summary');
+  const r = await qcProse(summary, srcLang || 'en', { mode: mode || 'heavy', kind: 'summary',
+                                                      maxTokens: 2048, label: 'Summary' });
+  return { corrected: r.corrected, summary, verdict: r.verdict, rejected: r.rejected,
+    changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+    changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio, mode: r.mode, meta: r.meta };
 }
 
 async function _runQc(jobId, topics, opts) {
@@ -3843,8 +3951,8 @@ function cleanTextChanges(original, cleaned) {
 // cost the panel its transcription; a text that could not be repaired is worth strictly less than
 // one that could, and strictly more than none.
 //
-// ⚠️ Uses the QC role, and the choice was MEASURED — four real shouted German panels from the
-// corpus, one call each, same prompt:
+// ⚠️ Uses the QC role, and the choice was MEASURED — four real shouted German panels, one call
+// each, same prompt:
 //
 //                        1 riese  2 land  3 schild  4 angst   per call
 //   translategemma:12b      ✓        ✓        ✓        ✓      101-144s   ← QC role's own default
@@ -3859,61 +3967,23 @@ function cleanTextChanges(original, cleaned) {
 // ⚠️ An earlier draft of this function used OLLAMA_MODEL on the strength of ONE item, where qwen3.6
 // was correct and twice as fast. The fuller matrix reversed it. A single sample was the whole error.
 //
-// The QC role is right on its merits too: this is a faithfulness check over a surface rewrite,
-// which is what that role already exists for, and it is independently settable for anyone whose
-// tradeoff differs. Note the tension worth knowing about — the session that added the ambiguity QC
-// measured qwen2.5:14b as the BETTER model for THAT check, and it is the worse one here.
+// v89_ac: the body moved into qcProse (mode 'light'); this is now the named entry point its two
+// callers already use — the automatic pass inside the extraction job, and /api/text-qc. It keeps
+// the {text, changed, cased, repaired, unchanged, failed, note, tokens, meta} shape both read.
 async function normaliseExtractedText(text, lang, opts) {
-  const _t0 = Date.now();
   const src = String(text || '');
-  const o = opts || {};
   if (!src.trim()) return { text: src, unchanged: true, skipped: 'empty' };
-  const sys = fillPrompt(PROMPTS.textNormalise.system, { L: langName(lang) });
-  const ATTEMPTS = 3;
-  let promptTokens = 0, completionTokens = 0, lastProblem = '';
-  console.log(`  [${OLLAMA_QC_MODEL}] Normalising extracted ${langName(lang)} text ` +
-    `(${src.split(/\s+/).filter(Boolean).length} words, longest shouted run ${shoutedRun(src)})…`);
-  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
-    const feedback = lastProblem
-      ? `\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED: ${lastProblem}\nReturn the text again, changing ONLY capitalization, punctuation and clear misreadings, and copying every word and every line break exactly.`
-      : '';
-    let out = '';
-    try {
-      // think:false for cleanNarrativeText's own reason — the contract is verbatim copying with a
-      // surface edit, which reasoning does not help with, and on a CPU-only box THINK_TIMEOUT_MULT
-      // turns a 40-word panel into a job that looks hung.
-      const r = await callLLMQC(sys, src + feedback, Math.ceil(src.length * 1.4) + 64,
-        { think: false, temperature: 0.1, timeoutMs: getRequestTimeout() });
-      out = String(r.text || '').trim();
-      promptTokens += r.promptTokens || 0; completionTokens += r.completionTokens || 0;
-    } catch (e) {
-      if (String(e && e.message) === CANCELLED) throw e;   // v88_k: a cancel is not a failure
-      if (attempt === ATTEMPTS) break;
-      lastProblem = `the request failed (${e.message})`;
-      continue;
-    }
-    const chk = out ? textNormaliseChanges(src, out) : { ok: false, why: 'empty' };
-    if (chk.ok) {
-      console.log(`  Text normalise: ${chk.changed}/${chk.words} words changed ` +
-        `(${chk.cased} recased, ${chk.repaired} repaired)${attempt > 1 ? `, attempt ${attempt}` : ''}`);
-      return { text: out, changed: chk.changed, cased: chk.cased, repaired: chk.repaired,
-               words: chk.words, unchanged: out === src,
-               tokens: { promptTokens, completionTokens },
-               meta: buildGenMeta({ type: 'text_normalise', model: OLLAMA_QC_MODEL, t0: _t0,
-                                    promptTokens, completionTokens }) };
-    }
-    lastProblem =
-      chk.why === 'empty' ? 'you returned nothing'
-      : chk.why === 'lines' ? `you returned ${chk.gotLines} lines but the input has ${chk.lines} — never merge or split lines`
-      : chk.why === 'words' ? `you returned ${chk.gotWords} words but the input has ${chk.words} — never add or delete a word`
-      : `you replaced the word "${chk.from}" with "${chk.to}" — you may fix a misread letter, never substitute a different word`;
-    console.warn(`    Text normalise attempt ${attempt}/${ATTEMPTS} rejected: ${lastProblem}`);
-  }
-  console.warn(`  Text normalise: left unchanged — ${lastProblem}`);
-  return { text: src, unchanged: true, failed: true, note: lastProblem,
-           tokens: { promptTokens, completionTokens },
-           meta: buildGenMeta({ type: 'text_normalise', model: OLLAMA_QC_MODEL, t0: _t0,
-                                promptTokens, completionTokens }) };
+  const r = await qcProse(src, lang, { mode: 'light', kind: 'text', maxTokens: 4096,
+                                       label: 'Extracted text' });
+  // ⚠️ The two shapes are kept DISTINCT, exactly as the pre-merge function had them: a give-up
+  // carries no counts (there is nothing to count), a success carries no failed/note. Either could be
+  // widened harmlessly — both consumers read `!!r.failed` and `r.text` — but every field that did
+  // not exist before is a difference the parity diff has to report, and a diff you explain away is
+  // worth less than one that is empty.
+  if (r.failed) return { text: r.corrected, unchanged: true, failed: true, note: r.note,
+                         tokens: r.tokens, meta: r.meta };
+  return { text: r.corrected, changed: r.changedSentences, cased: r.cased, repaired: r.repaired,
+           words: r.totalSentences, unchanged: r.unchanged, tokens: r.tokens, meta: r.meta };
 }
 
 async function cleanNarrativeText(text, lang) {
@@ -8487,6 +8557,11 @@ http.createServer(async (req, res) => {
       if (items.length > 100) return json(res, 400, { error: 'Too many items for one check (max 100).' });
       if (items.join('').length > 200000) return json(res, 400, { error: 'Too much text — split it first.' });
       const qcLang = body.lang || 'en';
+      // ⚠️ Defaults to LIGHT, and that default is the safety property. This route serves extracted
+      // text — a transcription of a real sign or panel — where heavy mode's licence to change words
+      // is falsification, not a fix. The user asked to be able to CHOOSE heavy here, so it is
+      // reachable; it is never what happens by accident.
+      const qcMode = readQcMode(body.mode, 'light');
       // ⚠️ Validation OUTSIDE the job (v88_al): a 400/503 answers the REQUEST. Turning a malformed
       // call into a failed job makes it look like the model failed and loses the status code.
       return runAsJob(res, { label: 'Checking text' }, async (jobId) => {
@@ -8494,16 +8569,27 @@ http.createServer(async (req, res) => {
         let promptTokens = 0, completionTokens = 0;
         for (let i = 0; i < items.length; i++) {
           jobStep(jobId, `[${OLLAMA_QC_MODEL}] Checking text ${i + 1}/${items.length}\u2026`);
-          const r = await normaliseExtractedText(items[i], qcLang);
+          // ⚠️ Both modes answer in ONE shape, so the client's proposal panel does not branch on
+          // which one ran. An empty item is skipped rather than sent — heavy THROWS on empty where
+          // light short-circuits, and that difference must not become a route-level inconsistency.
+          let r;
+          if (!String(items[i] || '').trim()) {
+            r = { corrected: items[i], unchanged: true, failed: false, note: null,
+                  changedSentences: 0, cased: 0, repaired: 0, tokens: null };
+          } else {
+            r = await qcProse(items[i], qcLang, { mode: qcMode, kind: 'text', maxTokens: 4096,
+                                                  label: 'Extracted text' });
+          }
           if (r.tokens) { promptTokens += r.tokens.promptTokens || 0; completionTokens += r.tokens.completionTokens || 0; }
-          out.push({ text: r.text, changed: r.changed || 0, cased: r.cased || 0,
+          out.push({ text: r.corrected, changed: r.changedSentences || 0, cased: r.cased || 0,
                      repaired: r.repaired || 0, unchanged: !!r.unchanged,
+                     rejected: !!r.rejected, verdict: r.verdict || 'clean',
                      failed: !!r.failed, note: r.note || null });
         }
         const touched = out.filter(r => !r.unchanged).length;
         const failed  = out.filter(r => r.failed).length;
-        console.log(`  Text QC: ${touched}/${out.length} item(s) corrected, ${failed} could not be checked`);
-        return { results: out, touched, failed, promptTokens, completionTokens };
+        console.log(`  Text QC (${qcMode}): ${touched}/${out.length} item(s) corrected, ${failed} could not be checked`);
+        return { results: out, touched, failed, mode: qcMode, promptTokens, completionTokens };
       });
     }
 
@@ -10443,6 +10529,7 @@ http.createServer(async (req, res) => {
       const t = topicId ? findSavedById(topicId) : null;
       if (!t) return json(res, 404, { error: 'Topic not found' });
       if (!t.story || !t.story.trim()) return json(res, 400, { error: 'Topic has no story to QC' });
+      const _qcMode = readQcMode(body.mode, 'heavy');
       const _t0 = Date.now();
       // ⚠️ v88_ag (user report): "translation job is not listed in the job popover (and ideally
       // should be cancel-able)" — clarified afterwards as a QC click, not the translate button.
@@ -10461,7 +10548,7 @@ http.createServer(async (req, res) => {
       (async () => {
         try {
           const { result: r, tokens: _mTok } = await runCancellable(_qcJobId,
-            () => meterLLMTokens(() => generateStoryQc(t.story, t.lang || 'it', t.script || null)));
+            () => meterLLMTokens(() => generateStoryQc(t.story, t.lang || 'it', t.script || null, _qcMode)));
           addTokenUsage(t, _mTok, 'story_qc');   // cumulative per-chapter tokens (v59)
           // Persist the proposal (survives a client refresh; overwrites any prior proposal). Store
           // the exact original it was diffed against, so acceptance can't drift if the story changed.
@@ -10612,6 +10699,7 @@ http.createServer(async (req, res) => {
       const sl = slId ? findStoryline(slId) : null;
       if (!sl) return json(res, 404, { error: 'Storyline not found' });
       if (!sl.summary || !sl.summary.trim()) return json(res, 400, { error: 'Storyline has no summary to QC' });
+      const _sqMode = readQcMode(body.mode, 'heavy');
       const _t0 = Date.now();
       // v88_ag: same conversion as /api/story-qc directly above — "where else is this question
       // asked?". The two QC buttons are the same control in two places, and fixing only the one the
@@ -10623,7 +10711,7 @@ http.createServer(async (req, res) => {
       (async () => {
         try {
           const { result: r, tokens: _mTok } = await runCancellable(_sqJobId,
-            () => meterLLMTokens(() => generateSummaryQc(sl.summary, srcLang || sl.srcLang || 'en')));
+            () => meterLLMTokens(() => generateSummaryQc(sl.summary, srcLang || sl.srcLang || 'en', _sqMode)));
           addTokenUsage(sl, _mTok, 'summary_qc');   // storyline-level artefact (v59)
           sl.summaryQcProposal = { corrected: r.corrected, against: sl.summary, verdict: r.verdict,
             rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
