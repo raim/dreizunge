@@ -128,7 +128,7 @@ const bookBody = C => JSON.parse(C.run(
       C.run(`comicOpenReview(); true;`, 't5');
       const html = C.run(`_comicReviewOverlayEl.innerHTML`);
       assert.ok(html.includes(`_comicReviewEdit(0,'title'`), 'a title input, bound to the title field');
-      assert.ok(html.includes(`_comicReviewEdit(0,'caption'`), 'and the caption input is still there');
+      assert.ok(html.includes(`_comicReviewEdit(0,'text'`), 'and the extracted-text input is still there');
       assert.ok(html.includes(UI.en['form.image_title_ph']), 'labelled with the new placeholder');
       console.log('  the review card renders a title input beside the caption one: OK');
 }
@@ -170,8 +170,10 @@ const bookBody = C => JSON.parse(C.run(
   };
   for (const [key, field] of [
     ['form.image_title_ph', 'title'],
-    ['form.image_caption_ph', 'caption'],
-    ['form.image_scene_ph', 'inScene'],
+    // ⚠️ v89_z: caption+inScene became ONE box, on the user's ruling — nothing downstream ever
+    // distinguished them. `form.image_scene_ph` is no longer rendered; the key is deliberately LEFT
+    // in ui.json (hand-translated into five languages) rather than deleted for tidiness.
+    ['form.image_caption_ph', 'text'],
     ['form.image_description_lbl', 'description'],
   ]) {
     const l = labelAt(key), f = fieldAt(field);
@@ -191,8 +193,8 @@ const bookBody = C => JSON.parse(C.run(
   // ⚠️ Non-vacuity, and the assertion that would have caught the original bug: with the title field
   // EMPTY — the exact state the user was in — its label must still be visible, and must still be
   // adjacent to the TITLE field rather than reading as a heading for the caption below.
-  assert.ok(html.indexOf(UI['form.image_caption_ph']) < fieldAt('caption'),
-    'and with an empty title, the caption still has its OWN label directly above it');
+  assert.ok(html.indexOf(UI['form.image_caption_ph']) < fieldAt('text'),
+    'and with an empty title, the extracted-text box still has its OWN label directly above it');
 
   // The description box is rendered even with NO description — "none was generated" is the state
   // worth seeing, and the old conditional hid it precisely then.

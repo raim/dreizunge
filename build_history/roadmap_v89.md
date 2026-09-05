@@ -2619,6 +2619,28 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_z — the comic review card has ONE text box, not two
+
+User question, then user ruling: *"I still don't understand the multiple text fields in image
+recognition… the text on a sign in the panel is recorded in an extra field. Why do we need that? Do
+all texts end up in the story text? I think, we don't need to distinguish text in signs or banners.
+Visually separated texts should just be separated by a newline."* → *"yes, do the UI merge."*
+**ZERO `ui.json` keys** — the merged box reuses `form.image_caption_ph`; `form.image_scene_ph` is
+left in the file untouched (it is hand-translated into five languages and costs nothing to keep).
+
+⚠️ **This REVERSES the `v88_ab` ruling** ("KEEP the split as-is"). That earlier ruling was made when
+the question was whether the DESCRIPTION should be combined; the caption/in-scene split was never the
+thing being examined and got waved through. This time the question was asked directly, and the
+answer measured before answering it.
+
+| | |
+|---|---|
+| **the measurement that decided it** | The user's question — *"do all texts end up in the story text?"* — is answerable from the code, and the answer is **yes, always, identically**. `_comicTextFromFields` is `[src.caption, src.inScene].filter(Boolean).join('\n')`; `_comicStoryPanelsHtml` and the server's own assembly re-join the same way; and a story EDIT already collapses them (`caption = corrected`, `delete inScene`). **No consumer has ever distinguished the two fields.** So the split was purely an artifact of the extraction contract leaking into the UI — two boxes for one string, where an edit to the wrong one still landed in the same place |
+| **what changed** | `_comicReviewText(buf)` (new) renders `caption` + `inScene` joined by ONE newline into a single `rows="6"` textarea; `_comicReviewEdit(k,'text',v)` (new branch) writes the whole value to `caption` and **CLEARS `inScene`** |
+| **⚠️ why the clear is not optional** | Without it a hidden `inScene` survives the edit and is re-appended downstream by `_comicTextFromFields` — the learner deletes a line, saves, and watches it come back. The mutation that only drops the clear is the one this is guarded against most directly |
+| **what did NOT change** | The extraction prompt's `CAPTION:`/`IN-SCENE:` contract, `_parseComicExtraction`, the stored field shape, and every consumer. The split still earns its keep at the model boundary — it gives the vision model two named slots to fill, which is a better prompt than one — it just no longer surfaces as two boxes. The DESCRIPTION box is untouched and still joins with a BLANK line (`v88_ab`) |
+| **guards** | `unit-comic-review-card.test.js` §v89_z: both extracted parts visible in exactly one box (`_comicReviewEdit(0,'text'` appears once, `'inScene'` never), the join is a single newline with no stray newline when either side is empty, an edit clears `inScene`, `title`/`description` still route to themselves (non-vacuity), and a **round-trip check** — what the box shows `===` what `_comicPanelText` derives, which is the property the whole change rests on. `unit-comic-title-field.test.js` re-scoped to the merged field. **Five mutations red**: leave `inScene` alive after an edit; drop the merged routing; show only the caption; leave the stray newline; bind the box to `buf.caption` |
+
 ## ✅ v89_y — a failed chapter-title post-pass is finally visible
 
 User ruling on the item `v89_t` left open: **make the failure visible.** **1 `ui.json` key, granted.**

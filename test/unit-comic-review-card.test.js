@@ -97,7 +97,12 @@ console.log('  comicOpenReview(): filters to panels with usable text, seeds the 
     'the modal box is sized near-fullscreen, not the original 520px fixed width');
   assert.ok(/display:grid;grid-template-columns:repeat\(auto-fill,minmax\(340px,1fr\)\)/.test(html),
     'panels are laid out in a responsive GRID (multiple columns on a wide screen), not a single flex column');
-  assert.ok(/rows="4"/.test(html), 'the in-scene textarea grew from 2 rows to 4, so a typical caption is visible without scrolling inside its own field');
+  // v89_z: the two boxes became one, so it starts at 6 rows rather than the 3+4 it replaced. Pinned
+  // as ">= 5" rather than an exact number — the CLAIM is "tall enough to read a panel without
+  // scrolling", and an exact row count is the brittle-anchor shape that broke three guards in this
+  // line already.
+  assert.ok(/rows="([5-9]|\d{2,})"/.test(html),
+    'the merged textarea is tall enough to show a typical panel text without scrolling');
 
   // ⚠️ v88_t (user, live test, with a screenshot): the CAPTION field was a single-line <input>. On a
   // photographed information board the extracted "caption" is the whole body of the sign — several
@@ -114,17 +119,28 @@ console.log('  comicOpenReview(): filters to panels with usable text, seeds the 
     const open = html.lastIndexOf('<', at);
     return html.slice(open + 1, html.indexOf(' ', open));
   };
-  assert.strictEqual(fieldTag('caption'), 'textarea',
-    'the extracted CAPTION is a resizable textarea — it is body text, not a label');
-  assert.strictEqual(fieldTag('inScene'), 'textarea', 'as the in-scene text already was');
+  // ⚠️ RE-SCOPED at v89_z, and this pinned a ruling the user REVERSED. v88_ab asked and was told to
+  // KEEP two extraction fields; the user has now asked why they exist at all — "we don't need to
+  // distinguish text in signs or banners. Visually separated texts should just be separated by a
+  // newline" — which is, verifiably, what every consumer already did. The card now shows ONE box.
+  // The extraction prompt still asks for CAPTION:/IN-SCENE: separately (that is what makes the model
+  // account for a sign), and the server still returns both; only the review card is merged.
+  assert.strictEqual(fieldTag('text'), 'textarea',
+    'the extracted text is ONE resizable textarea — body text, not a label');
+  assert.ok(!/_comicReviewEdit\(0,'inScene'/.test(html),
+    'and there is no separate in-scene box: nothing downstream ever distinguished the two');
   assert.strictEqual(fieldTag('title'), 'input',
     'while the chapter TITLE stays a single-line field — non-vacuity: this section would pass on a '
     + 'blanket "make everything a textarea" edit without it, and a one-line title is correct');
   // The resize affordance is the point, not just the tag: a textarea with `resize:none` would read
   // as a fixed three-line box and reintroduce the same complaint one size up.
-  const capBlock = html.slice(html.lastIndexOf('<', html.indexOf("_comicReviewEdit(0,'caption'")),
-                              html.indexOf('>', html.indexOf("_comicReviewEdit(0,'caption'")));
+  const capBlock = html.slice(html.lastIndexOf('<', html.indexOf("_comicReviewEdit(0,'text'")),
+                              html.indexOf('>', html.indexOf("_comicReviewEdit(0,'text'")));
   assert.ok(/resize:vertical/.test(capBlock), 'and it can actually be resized');
+  // It replaced TWO boxes, so it starts taller than either did — otherwise the merge would show
+  // less text at once than the split it replaced, which would be a regression dressed as a cleanup.
+  assert.ok(/min-height:1[0-9][0-9]px/.test(capBlock),
+    'and is taller than either box it replaced: ' + capBlock.slice(0, 40));
 }
 console.log('  comicOpenReview(): the rendered markup is the near-fullscreen grid layout, not the original narrow single-column list: OK');
 
@@ -253,3 +269,51 @@ console.log('unit-comic-review-card: ALL PASSED');
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
+
+// ── v89_z: the merged text box ────────────────────────────────────────────────────────────────
+// ⚠️ USER RULING, REVERSING v88_ab's. They asked why two fields exist — "we don't need to distinguish
+// text in signs or banners. Visually separated texts should just be separated by a newline" — and
+// checking before answering showed they were right: `_comicTextFromFields`, `_comicStoryPanelsHtml`
+// and the server's own assembly ALL join caption+inScene with exactly one newline, and a story edit
+// already collapses them into `caption` and deletes `inScene`. Nothing downstream ever distinguished
+// them. The split now lives only where it earns its keep: the extraction PROMPT.
+{
+  const C = client();
+  C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:10,y2:10,
+      text: { caption:'So wurde ein Schild aufgestellt', inScene:'RIESEN SIND HIER NICHT WILLKOMMEN' } }];
+    comicOpenReview(); true;`, 'merged');
+  const html = C.run(`_comicReviewOverlayEl.innerHTML`);
+
+  // 1) Both extracted parts are visible, in ONE box, newline-separated — the user's own words.
+  assert.ok(html.includes('So wurde ein Schild aufgestellt'), 'the caption text is shown');
+  assert.ok(html.includes('RIESEN SIND HIER NICHT WILLKOMMEN'), 'and the sign text is shown too');
+  assert.strictEqual((html.match(/_comicReviewEdit\(0,'text'/g) || []).length, 1,
+    'in exactly ONE box, not two');
+  assert.ok(!/_comicReviewEdit\(0,'inScene'/.test(html), 'the separate in-scene box is gone');
+  const joined = C.run(`_comicReviewText({ caption:'A', inScene:'B' })`);
+  assert.strictEqual(joined, 'A\nB', 'joined with a single newline — the same join every consumer uses');
+  assert.strictEqual(C.run(`_comicReviewText({ caption:'A', inScene:'' })`), 'A', 'no stray newline when one side is empty');
+  assert.strictEqual(C.run(`_comicReviewText({ caption:'', inScene:'B' })`), 'B', 'either way round');
+
+  // 2) ⚠️ Editing writes the WHOLE text to `caption` and CLEARS `inScene`, so what is shown is what
+  // is stored. A surviving hidden `inScene` would be re-appended downstream and the user would see
+  // text they had just deleted come back.
+  C.run(`_comicReviewEdit(0, 'text', 'Corrected everything'); true;`);
+  const buf = JSON.parse(C.run(`JSON.stringify(_comicReviewBuffer[0])`));
+  assert.strictEqual(buf.caption, 'Corrected everything', 'the edit lands in caption');
+  assert.strictEqual(buf.inScene, '', 'and inScene is CLEARED — no hidden second field survives the edit');
+  // Non-vacuity: the other fields still route to themselves.
+  C.run(`_comicReviewEdit(0, 'title', 'T'); _comicReviewEdit(0, 'description', 'D'); true;`);
+  const buf2 = JSON.parse(C.run(`JSON.stringify(_comicReviewBuffer[0])`));
+  assert.strictEqual(buf2.title, 'T', 'title still routes to title');
+  assert.strictEqual(buf2.description, 'D', 'description still routes to description');
+  assert.strictEqual(buf2.caption, 'Corrected everything', 'and neither disturbed the merged text');
+
+  // 3) ⚠️ The round trip is what matters: the chapter text after the merge must equal what the box
+  // showed. This is the property the whole change rests on.
+  const shown = C.run(`_comicReviewText({ caption:'So wurde ein Schild aufgestellt', inScene:'RIESEN SIND HIER NICHT WILLKOMMEN' })`);
+  const derived = C.run(`_comicPanelText({ text: { caption:'So wurde ein Schild aufgestellt', inScene:'RIESEN SIND HIER NICHT WILLKOMMEN', description:'' } })`);
+  assert.strictEqual(shown, derived,
+    'what the review box shows IS the chapter text — the merge changed the UI, not the content');
+}
+console.log('  v89_z: one merged text box, edits clear inScene, and what is shown is what the chapter gets: OK');

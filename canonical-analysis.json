@@ -8993,8 +8993,829 @@
       },
       "sourceTextHash": "20c250c8d2bb",
       "analyzedAt": "2026-09-05T10:17:06.765Z"
+    },
+    "tp_17886319318190000082": {
+      "chapterId": "tp_17886319318190000082",
+      "lang": "de",
+      "srcLang": "en",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 11,
+      "sentences": [
+        {
+          "sentenceId": "tp_17886319318190000082:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17886319318190000082:s0:t0",
+              "idx": 0,
+              "surface": "ES",
+              "lemma": "es",
+              "form": "pronoun nominative neuter singular",
+              "sense": "it (dummy subject for existential construction)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t1",
+              "idx": 1,
+              "surface": "GIBT",
+              "lemma": "geben",
+              "form": "verb present tense 3rd person singular indicative active",
+              "sense": "there is / exists",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t2",
+              "idx": 2,
+              "surface": "EIN",
+              "lemma": "ein",
+              "form": "indefinite article nominative neuter singular",
+              "sense": "a / one",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t3",
+              "idx": 3,
+              "surface": "LAND,",
+              "lemma": "Land",
+              "form": "noun nominative neuter singular",
+              "sense": "country",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t4",
+              "idx": 4,
+              "surface": "WO",
+              "lemma": "wo",
+              "form": "relative adverb",
+              "sense": "where",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t5",
+              "idx": 5,
+              "surface": "DIE",
+              "lemma": "der",
+              "form": "definite article nominative masculine plural",
+              "sense": "the",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t6",
+              "idx": 6,
+              "surface": "KÖPFE",
+              "lemma": "Kopf",
+              "form": "noun nominative masculine plural",
+              "sense": "heads",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t7",
+              "idx": 7,
+              "surface": "ALLER",
+              "lemma": "all",
+              "form": "indefinite pronoun genitive masculine plural",
+              "sense": "of all",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t8",
+              "idx": 8,
+              "surface": "MENSCHEN",
+              "lemma": "Mensch",
+              "form": "noun genitive masculine plural",
+              "sense": "people's",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t9",
+              "idx": 9,
+              "surface": "KNÖDELN",
+              "lemma": "knödeln",
+              "form": "verb present tense 3rd person plural indicative active",
+              "sense": "clump together / ball up",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886319318190000082:s0:t10",
+              "idx": 10,
+              "surface": "GLEICHEN",
+              "lemma": "gleichen",
+              "form": "verb infinitive",
+              "sense": "to be equal to / resemble",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17886319318190000082:s0:t0",
+                "tp_17886319318190000082:s0:t1"
+              ],
+              "lemma": "es gibt",
+              "gloss": "there is/are",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 9,
+              "end": 10,
+              "tokenIds": [
+                "tp_17886319318190000082:s0:t9",
+                "tp_17886319318190000082:s0:t10"
+              ],
+              "lemma": "knödeln gleich",
+              "gloss": "clump together like dumplings / be equal in clumping",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T18:19:30.256Z",
+            "sentenceId": "tp_17886319318190000082:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-05T18:19:30.265Z",
+        "chapterId": "tp_17886319318190000082",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "e18ea40e2f1f",
+      "analyzedAt": "2026-09-05T18:19:30.265Z"
+    },
+    "tp_17886321781240000163": {
+      "chapterId": "tp_17886321781240000163",
+      "lang": "de",
+      "srcLang": "en",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 20,
+      "sentences": [
+        {
+          "sentenceId": "tp_17886321781240000163:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17886321781240000163:s0:t0",
+              "idx": 0,
+              "surface": "WEIL",
+              "lemma": "weil",
+              "form": "subordinating conjunction",
+              "sense": "because",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t1",
+              "idx": 1,
+              "surface": "SIE",
+              "lemma": "sie",
+              "form": "personal pronoun nominative plural feminine or formal singular",
+              "sense": "they (or formal you)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t2",
+              "idx": 2,
+              "surface": "MEINEN,",
+              "lemma": "meinen",
+              "form": "verb indicative present plural third person",
+              "sense": "think (believe/assume)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t3",
+              "idx": 3,
+              "surface": "DASS",
+              "lemma": "dass",
+              "form": "subordinating conjunction",
+              "sense": "that",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t4",
+              "idx": 4,
+              "surface": "SIE",
+              "lemma": "sie",
+              "form": "personal pronoun nominative plural feminine or formal singular",
+              "sense": "they (or formal you)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t5",
+              "idx": 5,
+              "surface": "LECKER",
+              "lemma": "lecker",
+              "form": "adjective nominative plural neuter or masculine accusative plural",
+              "sense": "tasty/delicious",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t6",
+              "idx": 6,
+              "surface": "AUSSEHEN,",
+              "lemma": "aussehen",
+              "form": "verb indicative present plural third person",
+              "sense": "look (appear)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t7",
+              "idx": 7,
+              "surface": "LEBEN",
+              "lemma": "leben",
+              "form": "verb indicative present plural second person formal",
+              "sense": "live",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t8",
+              "idx": 8,
+              "surface": "SIE",
+              "lemma": "sie",
+              "form": "personal pronoun nominative singular feminine or formal singular",
+              "sense": "you (formal)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t9",
+              "idx": 9,
+              "surface": "IN",
+              "lemma": "in",
+              "form": "preposition dative",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t10",
+              "idx": 10,
+              "surface": "DER",
+              "lemma": "der",
+              "form": "definite article dative singular feminine",
+              "sense": "the",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t11",
+              "idx": 11,
+              "surface": "STÄNDIGEN",
+              "lemma": "ständig",
+              "form": "adjective dative singular feminine weak declension",
+              "sense": "constant/continuous",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t12",
+              "idx": 12,
+              "surface": "ANGST,",
+              "lemma": "Angst",
+              "form": "noun dative singular feminine",
+              "sense": "fear/anxiety",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t13",
+              "idx": 13,
+              "surface": "DASS",
+              "lemma": "dass",
+              "form": "subordinating conjunction",
+              "sense": "that",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t14",
+              "idx": 14,
+              "surface": "DIE",
+              "lemma": "die",
+              "form": "definite article nominative plural",
+              "sense": "the",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t15",
+              "idx": 15,
+              "surface": "RIESEN",
+              "lemma": "Riese",
+              "form": "noun nominative plural masculine",
+              "sense": "giants",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t16",
+              "idx": 16,
+              "surface": "KOMMEN,",
+              "lemma": "kommen",
+              "form": "verb indicative present plural third person",
+              "sense": "come",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t17",
+              "idx": 17,
+              "surface": "UM",
+              "lemma": "um",
+              "form": "preposition accusative",
+              "sense": "to (purpose)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t18",
+              "idx": 18,
+              "surface": "SIE",
+              "lemma": "sie",
+              "form": "personal pronoun accusative plural feminine or formal singular",
+              "sense": "them (or formal you)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886321781240000163:s0:t19",
+              "idx": 19,
+              "surface": "AUFZUFRISSEN",
+              "lemma": "aufessen",
+              "form": "verb infinitive with zu separable prefix",
+              "sense": "to eat up/consume",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 17,
+              "end": 19,
+              "tokenIds": [
+                "tp_17886321781240000163:s0:t17",
+                "tp_17886321781240000163:s0:t18",
+                "tp_17886321781240000163:s0:t19"
+              ],
+              "lemma": "um ... aufzuessen",
+              "gloss": "in order to eat up",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 5,
+              "end": 6,
+              "tokenIds": [
+                "tp_17886321781240000163:s0:t5",
+                "tp_17886321781240000163:s0:t6"
+              ],
+              "lemma": "lecker aussehen",
+              "gloss": "to look tasty",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T18:29:18.402Z",
+            "sentenceId": "tp_17886321781240000163:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRISSEN",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-05T18:29:18.409Z",
+        "chapterId": "tp_17886321781240000163",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "52245db57342",
+      "analyzedAt": "2026-09-05T18:29:18.409Z"
+    },
+    "tp_17886326391250000240": {
+      "chapterId": "tp_17886326391250000240",
+      "lang": "de",
+      "srcLang": "en",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 19,
+      "sentences": [
+        {
+          "sentenceId": "tp_17886326391250000240:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17886326391250000240:s0:t0",
+              "idx": 0,
+              "surface": "SO",
+              "lemma": "so",
+              "form": "adverb",
+              "sense": "thus",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t1",
+              "idx": 1,
+              "surface": "WURDE",
+              "lemma": "werden",
+              "form": "auxiliary verb past tense passive indicative 3rd person singular",
+              "sense": "was",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t2",
+              "idx": 2,
+              "surface": "ZUR",
+              "lemma": "zu",
+              "form": "preposition dative",
+              "sense": "for the purpose of",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t3",
+              "idx": 3,
+              "surface": "ABSCHRECKUNG",
+              "lemma": "Abschreckung",
+              "form": "noun nominative singular feminine",
+              "sense": "deterrence",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t4",
+              "idx": 4,
+              "surface": "AN",
+              "lemma": "an",
+              "form": "preposition dative",
+              "sense": "at",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t5",
+              "idx": 5,
+              "surface": "DER",
+              "lemma": "der",
+              "form": "definite article dative singular feminine",
+              "sense": "the",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t6",
+              "idx": 6,
+              "surface": "GRENZE",
+              "lemma": "Grenze",
+              "form": "noun dative singular feminine",
+              "sense": "border",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t7",
+              "idx": 7,
+              "surface": "VON",
+              "lemma": "von",
+              "form": "preposition dative",
+              "sense": "by",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t8",
+              "idx": 8,
+              "surface": "DER",
+              "lemma": "der",
+              "form": "definite article dative singular feminine",
+              "sense": "the",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t9",
+              "idx": 9,
+              "surface": "REGIERUNG",
+              "lemma": "Regierung",
+              "form": "noun dative singular feminine",
+              "sense": "government",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t10",
+              "idx": 10,
+              "surface": "EIN",
+              "lemma": "ein",
+              "form": "indefinite article nominative singular neuter",
+              "sense": "a",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t11",
+              "idx": 11,
+              "surface": "GROSSES",
+              "lemma": "groß",
+              "form": "adjective strong nominative singular neuter",
+              "sense": "large",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t12",
+              "idx": 12,
+              "surface": "SCHILD",
+              "lemma": "Schild",
+              "form": "noun nominative singular neuter",
+              "sense": "sign",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t13",
+              "idx": 13,
+              "surface": "AUFGESTELLT",
+              "lemma": "aufstellen",
+              "form": "verb past participle",
+              "sense": "set up",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t14",
+              "idx": 14,
+              "surface": "RIÉSEN",
+              "lemma": "Riese",
+              "form": "noun nominative plural masculine",
+              "sense": "giants",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t15",
+              "idx": 15,
+              "surface": "SINd",
+              "lemma": "sein",
+              "form": "auxiliary verb present tense indicative 3rd person plural",
+              "sense": "are",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t16",
+              "idx": 16,
+              "surface": "HIER",
+              "lemma": "hier",
+              "form": "adverb",
+              "sense": "here",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t17",
+              "idx": 17,
+              "surface": "NICHT",
+              "lemma": "nicht",
+              "form": "adverb",
+              "sense": "not",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886326391250000240:s0:t18",
+              "idx": 18,
+              "surface": "WILLKOMMEN",
+              "lemma": "willkommen",
+              "form": "adjective",
+              "sense": "welcome",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 13,
+              "tokenIds": [
+                "tp_17886326391250000240:s0:t0",
+                "tp_17886326391250000240:s0:t1",
+                "tp_17886326391250000240:s0:t2",
+                "tp_17886326391250000240:s0:t3",
+                "tp_17886326391250000240:s0:t4",
+                "tp_17886326391250000240:s0:t5",
+                "tp_17886326391250000240:s0:t6",
+                "tp_17886326391250000240:s0:t7",
+                "tp_17886326391250000240:s0:t8",
+                "tp_17886326391250000240:s0:t9",
+                "tp_17886326391250000240:s0:t10",
+                "tp_17886326391250000240:s0:t11",
+                "tp_17886326391250000240:s0:t12",
+                "tp_17886326391250000240:s0:t13"
+              ],
+              "lemma": "so wurde ... aufgestellt",
+              "gloss": "was thus set up",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 2,
+              "end": 3,
+              "tokenIds": [
+                "tp_17886326391250000240:s0:t2",
+                "tp_17886326391250000240:s0:t3"
+              ],
+              "lemma": "zur Abschreckung",
+              "gloss": "for deterrence",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 14,
+              "end": 18,
+              "tokenIds": [
+                "tp_17886326391250000240:s0:t14",
+                "tp_17886326391250000240:s0:t15",
+                "tp_17886326391250000240:s0:t16",
+                "tp_17886326391250000240:s0:t17",
+                "tp_17886326391250000240:s0:t18"
+              ],
+              "lemma": "Riesen sind hier nicht willkommen",
+              "gloss": "giants are not welcome here",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T18:39:30.855Z",
+            "sentenceId": "tp_17886326391250000240:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT\nRIÉSEN SINd HIER NICHT WILLKOMMEN",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-05T18:39:30.864Z",
+        "chapterId": "tp_17886326391250000240",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "f306155486fe",
+      "analyzedAt": "2026-09-05T18:39:30.864Z"
+    },
+    "tp_17886332486940000399": {
+      "chapterId": "tp_17886332486940000399",
+      "lang": "de",
+      "srcLang": "en",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 1,
+      "tokenCount": 6,
+      "sentences": [
+        {
+          "sentenceId": "tp_17886332486940000399:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17886332486940000399:s0:t0",
+              "idx": 0,
+              "surface": "NATÜRLICH",
+              "lemma": "natürlich",
+              "form": "adverb",
+              "sense": "of course",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886332486940000399:s0:t1",
+              "idx": 1,
+              "surface": "KAM",
+              "lemma": "kommen",
+              "form": "verb past tense 3rd person singular",
+              "sense": "came",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886332486940000399:s0:t2",
+              "idx": 2,
+              "surface": "DANN",
+              "lemma": "dann",
+              "form": "adverb",
+              "sense": "then",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886332486940000399:s0:t3",
+              "idx": 3,
+              "surface": "NIE",
+              "lemma": "nie",
+              "form": "adverb",
+              "sense": "never",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886332486940000399:s0:t4",
+              "idx": 4,
+              "surface": "EIN",
+              "lemma": "ein",
+              "form": "indefinite article nominative singular masculine",
+              "sense": "a",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17886332486940000399:s0:t5",
+              "idx": 5,
+              "surface": "RIESE.",
+              "lemma": "Riese",
+              "form": "noun nominative singular masculine",
+              "sense": "giant",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-05T18:46:18.522Z",
+            "sentenceId": "tp_17886332486940000399:s0",
+            "model": "qwen3.6:35b-a3b"
+          },
+          "text": "NATÜRLICH KAM DANN NIE EIN RIESE.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-05T18:46:18.522Z",
+        "chapterId": "tp_17886332486940000399",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "46cbd776f386",
+      "analyzedAt": "2026-09-05T18:46:18.522Z",
+      "partial": true,
+      "totalSentences": 2
     }
   },
-  "generatedAt": "2026-09-05T16:08:47.410Z",
-  "chapterCount": 16
+  "generatedAt": "2026-09-05T18:46:18.526Z",
+  "chapterCount": 20
 }

@@ -4929,11 +4929,8 @@ function comicOpenReview(auto){
            TITLE above stays a single-line field — a title really is one line.
            (No backticks in this comment: it lives inside a template literal.) -->
       ${_fld('form.image_caption_ph')}
-      <textarea rows="3" oninput="_comicReviewEdit(${k},'caption',this.value)"
-        style="font-size:15px;font-weight:700;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text);resize:vertical;min-height:66px">${escHtml(buf.caption)}</textarea>
-      ${_fld('form.image_scene_ph')}
-      <textarea rows="4" oninput="_comicReviewEdit(${k},'inScene',this.value)"
-        style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text);resize:vertical;min-height:88px">${escHtml(buf.inScene)}</textarea>
+      <textarea rows="6" oninput="_comicReviewEdit(${k},'text',this.value)"
+        style="font-size:15px;font-weight:700;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;color:var(--text);resize:vertical;min-height:120px">${escHtml(_comicReviewText(buf))}</textarea>
       ${_fld('form.image_description_lbl')}
       <textarea rows="3" oninput="_comicReviewEdit(${k},'description',this.value)"
         style="font-size:15px;font-weight:600;font-family:Nunito,sans-serif;padding:8px 10px;border:1.5px dashed var(--blue);border-radius:8px;color:var(--text);resize:vertical;min-height:66px">${escHtml(buf.description)}</textarea>
@@ -4958,8 +4955,34 @@ function comicOpenReview(auto){
   _comicReviewOverlayEl=ov;
   document.body.appendChild(ov);
 }
+// ⚠️ v89_z (user ruling, REVERSING the v88_ab one recorded above): ONE text box per panel, not two.
+//
+// The user asked why the split exists — "I think, we don't need to distinguish text in signs or
+// banners. Visually separated texts should just be separated by a newline." Checked before
+// answering, and they were right: `caption` and `inScene` are joined with exactly one newline by
+// `_comicTextFromFields`, by `_comicStoryPanelsHtml`, and by the server's own assembly. **Nothing
+// downstream has ever distinguished them.** More telling, a story edit already collapses them —
+// `saved.comicPanels[0].caption = corrected; delete …inScene` — so the split does not survive its
+// first edit anyway.
+//
+// So the split is now confined to where it earns its keep: the EXTRACTION PROMPT still asks the
+// vision model for CAPTION: and IN-SCENE: separately, which is what makes it account for a sign as
+// well as the narration box. The server keeps returning both. Only the review card, and what an
+// edit writes, is merged.
+//
+// ⚠️ The v88_ab ruling ("KEEP the split as-is") is superseded, not forgotten — it is recorded in the
+// comment above this card's fields, and `unit-comic-review-card` §2 was RE-SCOPED rather than
+// deleted, because it pinned exactly that ruling.
+function _comicReviewText(buf){
+  return [buf && buf.caption, buf && buf.inScene].filter(Boolean).join('\n');
+}
 function _comicReviewEdit(k,field,value){
   if(!_comicReviewBuffer || !_comicReviewBuffer[k]) return;
+  // The merged box writes the WHOLE text into `caption` and clears `inScene`, so what the user sees
+  // is exactly what is stored — no hidden second field surviving underneath the box they edited.
+  // Same collapse the story-edit sync has always done (server.js's save-story path), reused rather
+  // than invented.
+  if(field==='text'){ _comicReviewBuffer[k].caption=value; _comicReviewBuffer[k].inScene=''; return; }
   _comicReviewBuffer[k][field]=value;
 }
 function _comicReviewClose(){
