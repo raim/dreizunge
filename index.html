@@ -550,6 +550,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .addlesson-cancel{background:none;border:none;cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);padding:2px 6px;border-radius:5px;font-family:'Nunito',sans-serif}
 .addlesson-cancel:hover{background:var(--gray-mid)}
 .addlesson-status{font-size:11px;color:var(--blue);font-weight:700;width:100%;margin-top:2px;min-height:13px}
+.title-failed-badge{font-size:11px;margin-left:2px;cursor:help;opacity:.85}
 .saved-item-edit{display:none;align-items:center;gap:4px;padding:6px 10px;border-top:1.5px solid var(--accent);background:var(--white)}.saved-item-edit.open{display:flex}.saved-item-edit-emoji{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:26px;text-align:center;flex-shrink:0}.saved-item-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:3px 8px;min-width:0;outline:none}.saved-item-edit-btn{background:none;border:none;cursor:pointer;font-size:12px;font-weight:800;font-family:"Nunito",sans-serif;color:var(--gray-dark);padding:2px 6px;border-radius:5px;white-space:nowrap}.saved-item-edit-btn:hover{background:var(--gray-mid)}.saved-item-edit-btn.danger{color:var(--red)}
 .saved-item-story-hdr{display:flex;align-items:center;gap:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);user-select:none;width:100%;background:none;border:none;font-family:'Nunito',sans-serif;text-align:left}
 .saved-item-story-hdr:hover{background:var(--gray-light)}.story-icon-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;line-height:1;opacity:.7;flex-shrink:0}.story-icon-btn:hover{opacity:1}
@@ -8893,6 +8894,22 @@ function setLibFilter(lang){
 // three call sites today, and reusing one as a proxy for "which screen" is the same conflation
 // `_canEdit()` used to have between teacher-mode and live-mode — fixed in `v79_j`, and the reason
 // that fix was worth making rather than living with.
+// v89_y (user ruling: "make the failure visible"). When the chapter-title post-pass gives up after
+// its three attempts, the chapter keeps the placeholder it was created with — for an uploaded chunk,
+// the raw first 40 characters of the source text. That used to be a `console.warn` and nothing else,
+// so the only way to learn your chapter was called "Flexvervoer Welkom op de hub Domburg, St" was to
+// read a terminal.
+//
+// ⚠️ A MARK, not a replacement title. The ruling was to surface the failure, not to paper over it
+// with a guessed name — an invented title reads as deliberate, which makes a bad one HARDER to
+// notice than an obviously-raw one. The badge is the pencil's invitation: rename it yourself.
+//
+// The server clears `_titleFailed` the moment any title is applied, and on a manual rename — so this
+// can only show for a chapter whose title genuinely was never written.
+function _titleFailedBadge(s){
+  if(!s || !s._titleFailed) return '';
+  return `<span class="title-failed-badge" title="${escAttr(t('lesson.title_failed'))}">⚠️</span>`;
+}
 function savedItemHtml(s, connector, hideStory, hideProv, slChapter) {
   const dateStr = s.updatedAt || s.generatedAt;
   const date = dateStr ? new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '';
@@ -8911,7 +8928,7 @@ function savedItemHtml(s, connector, hideStory, hideProv, slChapter) {
     <div class="saved-item" onclick="loadSaved('${s.id||enc}')">
       ${conn}<span class="saved-emoji">${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
-        <div class="saved-topic">${s.topic} ${diffBadge}</div>
+        <div class="saved-topic">${s.topic} ${_titleFailedBadge(s)}${diffBadge}</div>
         <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
         ${hideProv ? '' : provLineHtml(s)}
       </div>

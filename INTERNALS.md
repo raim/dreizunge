@@ -2241,6 +2241,18 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_y` — a failed chapter-title post-pass is visible** (user ruling, closing what `v89_t` left)
+
+| what | where |
+|---|---|
+| ⚠️ **a MARK, not a replacement title** | the ruling was to SURFACE the failure. A derived fallback name was offered and NOT chosen: an invented title reads as deliberate, which makes a bad one HARDER to notice than an obviously-raw one. The raw placeholder stays and gains a ⚠️ badge |
+| set | `_titleStorylinePostPass`'s catch — the one place the post-pass gives up. ⚠️ NEVER on a chapter with `topicAuto === false`: a user-named title is exactly what was wanted, so there is nothing to report (same flag item AN uses) |
+| ⚠️ written to the LIVE store | `findSavedById(tp.id)` before writing — the post-pass is minutes long and `v73_j` records what happens to writes through references captured before an await |
+| cleared, three ways | inside `_applyChapterTitles` (so EVERY titling path clears it, incl. the manual storyline retitle that shares it), and in `/api/lessons/save-meta` — ⚠️ **before** the no-op check, so re-confirming the existing name also dismisses it. **A mark that cannot be dismissed becomes furniture and stops being read** |
+| ⚠️ **the savedList WHITELIST** | `_titleFailed` must ride in `/api/lessons/list`'s projection or the badge is dead LIVE while working in the static build — the projection's own comments record that trap twice already (`v74_i`, `v79_n`). Omitted when falsy |
+| the badge | `_titleFailedBadge(s)` + `.title-failed-badge`, rendered beside the title in `savedItemHtml` |
+| ⚠️ the mutation that stayed GREEN | "never persist the mark": the assertion was `/saveStore\(store\)/`, which still matches inside `if (false) { saveStore(store); … }`. **The containment trap, met a fourth time.** Now asserted on the guarded form `if (_marked) { saveStore(store)` |
+
 **`v89_x` — the mic waits for the readout; the didn-not-catch toast is gone** (two user reports)
 
 | what | where |

@@ -285,7 +285,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_x';
+const APP_VERSION  = 'v89_y';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6701,6 +6701,10 @@ function _applyChapterTitles(topics, chapterMeta, bj) {
     used.add(uniq.toLowerCase());
     const oldName = tp.topic;
     tp.topic = uniq;
+    // v89_y: a title landed, so any earlier "titling failed" mark is stale. Cleared here rather
+    // than at the call site so EVERY path that applies a title clears it — including the manual
+    // storyline retitle, which shares this function.
+    if (tp._titleFailed) delete tp._titleFailed;
     if (m.emoji) tp.topicEmoji = m.emoji;
     store.topics.forEach(c => {
       if (c.continuedFromId === tp.id && c.continuedFrom === oldName) c.continuedFrom = uniq;
@@ -6753,7 +6757,27 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
     const _slT = getStorylines().find(s => s.id === _chainId(chapterIds))
               || getStorylines().find(s => chapterIds.every(id => s.chapters.includes(id)));
     if (_slT) { addTokenUsage(_slT, _mTok, 'retitle'); upsertStoryline(_slT); }
-  } catch (e) { console.warn(`  Chapter-title post-pass failed: ${e.message}`); }
+  } catch (e) {
+    // ⚠️ v89_y (user ruling: "make the failure visible"). A console.warn is invisible to the person
+    // holding the phone: the chapter simply keeps the placeholder it was created with, which for an
+    // uploaded chunk is the raw first 40 characters of the source text. The user found this by
+    // reading a terminal, which is not a way to find out that your chapter is called
+    // "Flexvervoer Welkom op de hub Domburg, St".
+    //
+    // The title is NOT invented here — the ruling was to surface the failure, not to paper over it
+    // with a guessed name. The raw placeholder stays and is now MARKED, so the card can say the
+    // title was never model-written and the learner can rename it. `_titleFailed` is cleared the
+    // moment a title is applied (below) or the chapter is renamed by hand (`/api/lessons/save-meta`).
+    console.warn(`  Chapter-title post-pass failed: ${e.message}`);
+    let _marked = 0;
+    for (const tp of topics) {
+      const live = (tp.id && findSavedById(tp.id)) || tp;
+      // A chapter the USER named is not a failure to report — its title is exactly what was wanted.
+      if (live.topicAuto === false) continue;
+      if (!live._titleFailed) { live._titleFailed = true; _marked++; }
+    }
+    if (_marked) { saveStore(store); console.log(`    ⚑ ${_marked} chapter(s) marked as untitled`); }
+  }
   // 2) Whole-storyline title + icon (reuse existing helper).
   try {
     // v78_r (user): only when there is none. A continuation must not rename a storyline the learner
@@ -7958,6 +7982,12 @@ http.createServer(async (req, res) => {
         // length, so live showed "Kälte und Paella · 3 lessons" where static showed 2 — the static
         // builder strips hidden ai_error_hunts at bake time, and the two counts disagreed on screen.
         lessonCount: (l.lessons || []).filter(L => L && !L._hidden && !L._aiExamples).length,
+        // ⚠️ v89_y: `_titleFailed` HAS to ride in this whitelist. The badge reads it from
+        // `APP.savedList`, and the two comments below this line already record the same trap twice
+        // (`v74_i`, `v79_n`): a field left out here works in the STATIC build — which ships whole
+        // topics and gets it for free — and silently does nothing LIVE. Omitted when falsy, like
+        // every other optional field here, so an ordinary chapter's payload is unchanged.
+        ...(l._titleFailed ? { _titleFailed: true } : {}),
         // item AR (v88_j): ONE pre-summed scalar for the library's token sort. ⚠️ It HAS to ride in
         // this whitelist projection: `generationStats` is not otherwise sent, so a token sort built
         // without this works in the STATIC build (which ships whole topics and has the field for
@@ -8067,6 +8097,10 @@ http.createServer(async (req, res) => {
         console.warn(`  save-meta: topic not found: ${id ? `id ${id}` : `"${oldTopic}"`} (schema v${store.schemaVersion}, ${arr.length} topics)`);
         return json(res, 404, { error: `Topic not found: ${id ? id : `"${String(oldTopic).slice(0,40)}"`}` });
       }
+      // v89_y: renaming by hand answers the "this was never titled" mark, whatever the new name is.
+      // Cleared BEFORE the no-op check below, so re-confirming the existing name also dismisses it —
+      // a learner who looks at the flagged title and decides it is fine has dealt with it.
+      if (saved._titleFailed) delete saved._titleFailed;
       const newName = newTopic.trim().slice(0, 80);
       // No-op if nothing changes
       if (saved.topic.trim().toLowerCase() === newName.toLowerCase() && !topicEmoji)

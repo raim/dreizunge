@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_x` cut
+# Session prompt — written at the `v89_y` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_x`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_y`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -267,6 +267,14 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   shared predicate**, used by `renderEx` to DO the readout and the mic to WAIT for it. And the four
   `ex.mic_no_match` toasts are gone (they fired on background noise); the heard WORD and the filled
   input remain — ⚠️ the key STAYS in `ui.json`, hand-translated into five languages.
+- **`v89_y`** — a failed chapter-title post-pass is now VISIBLE (user ruling). ⚠️ **A MARK, not a
+  replacement title**: the raw placeholder stays and gets a ⚠️ badge whose tooltip says to rename it.
+  An invented title would read as deliberate, which makes a bad one HARDER to notice. `_titleFailed`
+  is set only where a title genuinely failed (never on a user-named chapter, `topicAuto === false`),
+  cleared by ANY applied title and by a manual rename — **before** the no-op check, so re-confirming
+  the existing name also dismisses it. ⚠️ It rides in the **savedList whitelist**: the projection's
+  own comments record that trap twice (`v74_i`, `v79_n`) — a field left out works in the static build
+  and is silently dead live. **1 `ui.json` key, granted.**
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -303,8 +311,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 347 checks
-node test/run.js --quick                  → expect 286
+node test/run.js                          → expect 348 checks
+node test/run.js --quick                  → expect 287
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -336,8 +344,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **346 topics, 99 storylines, 33 languages, 761 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_x'`.
+Corpus at this cut: **346 topics, 98 storylines, 33 languages, 762 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_y'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

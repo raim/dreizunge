@@ -180,12 +180,11 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   rebuild, so the picker resetting under the learner needs no language change — only a rebuild
   against an empty or stale `APP.savedList`.
 
-- ~~The chapter-title post-pass failed silently~~ — **its CAUSE is fixed at `v89_t`** (the parser
-  now reads an array of bare strings, the shape behind `0/1 came back named`). ⚠️ **What remains
-  open is the SILENCE**: when the post-pass genuinely fails, it `console.warn`s and the chapter
-  keeps its raw 40-character placeholder title, so a learner sees a bad title and no reason for
-  it. Surfacing the failure, or falling back to something better than the first 40 characters of
-  the source text, is a **behaviour change that needs a ruling** rather than a bug fix.
+- ~~The chapter-title post-pass failed silently~~ — **FULLY CLOSED**: the CAUSE at `v89_t` (the
+  parser now reads an array of bare strings) and the SILENCE at `v89_y` (a ⚠️ badge on the
+  chapter card, cleared by any applied title or a manual rename). ⚠️ The raw placeholder is
+  deliberately KEPT rather than replaced by a derived name — an invented title reads as
+  deliberate, which makes a bad one harder to notice than an obviously-raw one.
 
 - ~~The static build cannot offer the LLM-free alphabet course~~ — **FIXED at `v89_q`**
   (the static `init()` now awaits `loadScripts()`; guarded behaviourally against the built
@@ -2619,6 +2618,57 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_y — a failed chapter-title post-pass is finally visible
+
+User ruling on the item `v89_t` left open: **make the failure visible.** **1 `ui.json` key, granted.**
+
+`v89_t` fixed the *cause* of the user's `0/1 titles came back named` — the parser could not read an
+array of bare strings. What it deliberately left open was the **silence**: when the post-pass
+genuinely fails, the chapter keeps the placeholder it was created with, which for an uploaded chunk
+is the raw first 40 characters of the source text. The only way to learn your chapter is called
+*"Flexvervoer Welkom op de hub Domburg, St"* was to read a terminal — which is exactly how the user
+found it.
+
+### ⚠️ A MARK, not a replacement title
+
+The ruling was to surface the failure, not to paper over it. The alternative — deriving a nicer
+fallback name — was offered and **not** chosen, and the reason is worth keeping:
+
+> An invented title reads as **deliberate**, which makes a bad one **harder** to notice than an
+> obviously-raw one.
+
+So the raw placeholder stays exactly as it is, and gains a ⚠️ badge beside it whose tooltip says what
+happened and what to do: *"Title could not be generated — rename it yourself."* The badge is the
+pencil's invitation; the machinery it points at already exists.
+
+| what | where |
+|---|---|
+| set | `_titleStorylinePostPass`'s catch — the one place the post-pass gives up |
+| ⚠️ never on a user-named chapter | `topicAuto === false` is skipped: its title is exactly what was wanted, so there is no failure to report. Same flag item `AN` uses to protect a hand-written title |
+| ⚠️ written to the LIVE store | `findSavedById(tp.id)` before writing — the post-pass is minutes long, and `v73_j` records precisely what happens to writes through references captured before an await |
+| cleared by any applied title | inside `_applyChapterTitles`, so **every** path that titles a chapter clears it — including the manual storyline retitle, which shares that function |
+| cleared by a manual rename | `/api/lessons/save-meta`, ⚠️ **before** its no-op short-circuit: a learner who looks at the flagged title and decides it is fine has dealt with it, and re-confirming the name must dismiss the mark |
+| the badge | `_titleFailedBadge(s)`, rendered beside the title in `savedItemHtml` |
+
+**A mark that cannot be dismissed is worse than no mark** — it becomes furniture and stops being
+read. That is why three separate paths clear it.
+
+### ⚠️ It rides in the savedList WHITELIST, or it is dead in live mode
+
+`/api/lessons/list` is a whitelist projection, and its own comments already record this trap **twice**
+(`v74_i`, `v79_n`): a field left out works perfectly in the STATIC build — which ships whole topics
+and gets it for free — and silently does nothing LIVE. `_titleFailed` is in the projection, omitted
+when falsy so an ordinary chapter's payload is unchanged. Its own mutation is red.
+
+### Guards
+
+`unit-title-failed-marker.test.js` (new, 5 sections). **Nine mutations red — after a fix.**
+
+⚠️ The "never persist the mark" mutation stayed GREEN: the assertion was `/saveStore\(store\)/`, and
+that text is still present inside `if (false) { saveStore(store); … }`. **The containment trap this
+repo has written down three times, met a fourth.** Now asserted on the guarded form,
+`if (_marked) { saveStore(store)`, and the mutation is red.
 
 ## ✅ v89_x — the app stopped answering its own questions; the mic stopped apologising
 

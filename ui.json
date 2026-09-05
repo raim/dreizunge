@@ -233,6 +233,7 @@
     "lesson.gen_title": "Generate title with AI",
     "lesson.generating_title": "Generating story title…",
     "lesson.title_saved": "Title saved",
+    "lesson.title_failed": "Title could not be generated — rename it yourself",
     "lesson.flagged_count": "You have {n} flagged exercise — download to review offline",
     "lesson.flagged_count_plural": "You have {n} flagged exercises — download to review offline",
     "ex.error_hunt.instruction": "Tap words that look wrong — spelling or grammar mistakes.",
