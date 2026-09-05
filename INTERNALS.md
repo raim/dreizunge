@@ -2241,6 +2241,19 @@ lessons" tick-list. User-requested from a real screenshot of the comic panel-rev
 | the acceptance tests | `unit-card-swipe-nav.test.js` (9 sections, twelve mutations all red). ⚠️ **It builds the card's nesting by hand**: the harness auto-vivifies a FLAT, detached element per id, so `closest('#complete-screen')` returns null even from a span inside `#comp-story-text` |
 | live-verified | real `TouchEvent`s against the running app: swipe left moved "Der Waldpfad" → "Landschaft hinter dem Zaun", swipe right came back, a vertical drag did nothing, a swipe across a HIGHLIGHTED word browsed with its trailing click `cancelled` and no lesson opened, and the same word plain-clicked still opened `lesson-screen` |
 
+**`v89_t` — the chapter-title parser reads an array of bare strings** (third defect from the user's
+`v89_o` server log)
+
+| what | where |
+|---|---|
+| ⚠️ **the log's own wording identified it** | `_generateChapterMetaOnce` fails two distinguishable ways and SAYS which: `Attempt N failed: …` (unparseable) vs `0/N titles came back named` (parsed into the WRONG SHAPE). The user's log showed the second, three times — so the answer was valid JSON the normaliser read nothing out of, which narrows the candidates to a handful, all testable offline |
+| the cause | an array of bare STRINGS, `["Hub Domburg"]`. Parses at the first rung, then `.title` is read off a `String` → `''` for every chapter. The only candidate producing that wording rather than the other |
+| the rungs added | a bare string → `{title, emoji:'📖'}`; and a bare OBJECT, ⚠️ **only when `n === 1`** — for `n > 1` one object genuinely IS a wrong-shaped answer and must still fail, or the retry loop is denied its chance |
+| the standing lesson, now twice | `v77_x` (pair arrays) and `v89_t` (bare strings): **a parse that succeeds into the wrong shape is worse than one that fails**, because the retry sees a well-formed answer and nothing reports it |
+| the acceptance tests | `unit-chapter-title-shapes.test.js` drives the REAL function with only its model call stubbed. ⚠️ §4 asserts that genuinely unusable replies STILL fail — a parser that never fails would turn every bad answer into a silent empty title, i.e. the same defect from the other side. Five mutations red |
+| ⚠️⚠️ **the suite never exercised the SUCCESS path** | `fake-ollama` answers this prompt with `["Chapter One", …]` — the broken shape — so every book e2e had been exercising the post-pass's FAILURE path since that fixture existed. That is why nothing caught this before a user did. `e2e-book-duplicate-titles` even located its chapters by their SHARED title, which only worked because titles were never replaced: **passing for the wrong reason, and the reason was this bug.** Re-scoped to find them by their own story text, plus a new assertion that the post-pass actually RAN — which is now the end-to-end proof of the fix (removing the string rung turns it red) |
+| ⚠️ NOT fixed | the FAILURE is still silent in the app — a `console.warn` and a raw 40-character placeholder title. Surfacing it needs a ruling; in the open list |
+
 **`v89_s` — the continue-from send paths read the RECORD, not the view** (user request; the
 client-side half of `v89_o`'s log finding)
 

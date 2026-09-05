@@ -66,11 +66,34 @@ console.log('  structural: id minted pre-upsert, parent linked by id, minter at 
     assert(new Set(st.topics.map(t => t.id)).size === 3, 'all three ids are unique');
     assert(st.topics.every(t => t.id), 'every topic has an id');
 
-    // The two same-titled chapters are genuinely separate rows with different stories.
-    const a13 = st.topics.filter(t => /A13/.test(t.topic));
-    assert(a13.length === 2, `both A13 chapters are present (got ${a13.length})`);
-    assert(a13[0].id !== a13[1].id, 'they are distinct topics');
-    assert(a13[0].story !== a13[1].story, 'each kept its own story (neither overwrote the other)');
+    // ⚠️ RE-SCOPED at v89_t, and the reason is a finding in itself. This block used to locate the
+    // two chapters by their SHARED title (/A13/) — which only worked because the chapter-title
+    // post-pass was FAILING: fake-ollama answers that prompt with `["Chapter One", …]`, an array of
+    // bare strings, and the parser could not read that shape, so the placeholder titles survived.
+    // v89_t taught the parser that shape (it is the one a real model gave the user), the post-pass
+    // now succeeds, and the chapters are legitimately renamed.
+    //
+    // So this test had been PASSING FOR THE WRONG REASON, and depending on a bug to do it. The two
+    // chapters are now identified by their own STORY text — unique, supplied by this test, and
+    // untouched by any titling — which is what "neither overwrote the other" was ever about.
+    const byStory = (frag) => st.topics.filter(t => (t.story || '').includes(frag));
+    const second = byStory('Seconda cronaca'), third = byStory('Terza cronaca');
+    assert(second.length === 1, `the 2nd same-titled chapter is present exactly once (got ${second.length})`);
+    assert(third.length === 1, `and the 3rd (got ${third.length})`);
+    assert(second[0].id !== third[0].id, 'they are distinct topics');
+    assert(second[0].story !== third[0].story, 'each kept its own story (neither overwrote the other)');
+    // They went in sharing one title; whatever they are called now, they must not still collide —
+    // that is the v69_q claim, stated on the data as it actually ends up.
+    assert(second[0].topic !== third[0].topic || second[0].id !== third[0].id,
+      'two chapters that arrived with the same title remain separately addressable');
+
+    // ⚠️ And the post-pass genuinely RAN — otherwise the re-scoping above would quietly restore the
+    // old accidental dependency, with this test green either way. This is the end-to-end proof that
+    // v89_t's bare-string rung works through the whole stack, not just in its unit test.
+    const renamed = st.topics.filter(t => /^Chapter (One|Two|Three)$/.test(t.topic || ''));
+    assert(renamed.length === 3,
+      `the chapter-title post-pass applied all three titles (got ${renamed.length}: ` +
+      JSON.stringify(st.topics.map(t => t.topic)) + ')');
 
     // The storyline lists all three, and the chain does not point a topic at itself.
     const sl = (st.storylines || [])[0];

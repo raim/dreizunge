@@ -284,7 +284,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_s';
+const APP_VERSION  = 'v89_t';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -3924,6 +3924,11 @@ async function _generateChapterMetaOnce(sys, user, n) {
       }
     }
   }
+  // v89_t (user's server log, one-chapter book): a BARE OBJECT is what a model most naturally
+  // returns when asked for exactly one title, and every rung above wants an array. Accepted only
+  // when n === 1, where it is unambiguous — for n > 1 a single object genuinely IS a wrong-shaped
+  // answer and must still fail, so the retry can get a better one.
+  if (!Array.isArray(arr) && n === 1 && arr && typeof arr === 'object' && (arr.title || arr.t)) arr = [arr];
   if (!Array.isArray(arr)) throw new Error('Expected a JSON array of {title,emoji}');
   // v77_x: accept a [title, emoji] PAIR as well as an object. When the model answers with a proper
   // top-level array of pairs the first rung parses it successfully — and this normaliser would then
@@ -3931,6 +3936,16 @@ async function _generateChapterMetaOnce(sys, user, n) {
   // into the wrong shape is worse than one that fails, because nothing reports it.
   return arr.map(o => {
     if (Array.isArray(o)) o = { title: o[0], emoji: o[1] };
+    // ⚠️ v89_t, FROM A USER'S SERVER LOG: an array of bare STRINGS — `["Hub Domburg"]` — parsed
+    // successfully at the first rung and then read `.title` off a String, producing an empty title
+    // for every chapter. The log said `0/1 titles came back named` on all three attempts and the
+    // whole post-pass failed, leaving the chapter with its raw 40-character placeholder.
+    //
+    // Same class as `v77_x`'s pair-array finding, and the same lesson its comment already states:
+    // **a parse that succeeds into the WRONG SHAPE is worse than one that fails**, because the
+    // retry loop sees a well-formed answer and nothing reports it. The pair rung was added then; the
+    // string rung is this one. Both are cheap and neither can produce a wrong title.
+    else if (typeof o === 'string') o = { title: o, emoji: '📖' };
     return {
       title: ((o && (o.title || o.t)) || '').toString().trim().slice(0, 80),
       emoji: ((o && (o.emoji || o.icon || o.e)) || '📖').toString().slice(0, 8),

@@ -180,10 +180,12 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   rebuild, so the picker resetting under the learner needs no language change — only a rebuild
   against an empty or stale `APP.savedList`.
 
-- **⚠️ The chapter-title post-pass failed silently in the same run.** `Chapter-title post-pass failed:
-  no usable titles after 3 attempts` — which is why the chapter kept the raw first-40-characters
-  placeholder as its title. Visible in the log, invisible in the app. Separate defect, recorded here
-  because it came from the same evidence.
+- ~~The chapter-title post-pass failed silently~~ — **its CAUSE is fixed at `v89_t`** (the parser
+  now reads an array of bare strings, the shape behind `0/1 came back named`). ⚠️ **What remains
+  open is the SILENCE**: when the post-pass genuinely fails, it `console.warn`s and the chapter
+  keeps its raw 40-character placeholder title, so a learner sees a bad title and no reason for
+  it. Surfacing the failure, or falling back to something better than the first 40 characters of
+  the source text, is a **behaviour change that needs a ruling** rather than a bug fix.
 
 - ~~The static build cannot offer the LLM-free alphabet course~~ — **FIXED at `v89_q`**
   (the static `init()` now awaits `loadScripts()`; guarded behaviourally against the built
@@ -2612,6 +2614,93 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_t — the chapter-title parser reads an array of bare strings
+
+The third and last defect visible in the user's `v89_o` server log. **ZERO `ui.json` keys.**
+
+```
+Attempt 1/3: 0/1 titles came back named
+Attempt 2/3: 0/1 titles came back named
+Attempt 3/3: 0/1 titles came back named
+Chapter-title post-pass failed: no usable titles after 3 attempts
+```
+
+…and the chapter kept its raw 40-character placeholder, *"Flexvervoer Welkom op de hub Domburg, St"*.
+
+### ⚠️ The log's own wording identified the cause, with no guessing
+
+This function fails in **two distinguishable ways**, and it says which:
+
+| log line | meaning |
+|---|---|
+| `Attempt N failed: <reason>` | the reply could not be parsed at all |
+| `0/N titles came back named` | the reply parsed **into the wrong shape** |
+
+The user's log shows the second, three times. So the model's answer was **well-formed JSON that the
+normaliser then read nothing out of** — which narrows the candidates to a handful, all testable
+offline. Driving the real parser with each: an array of bare **strings**, `["Hub Domburg"]`, parses
+at the first rung and then has `.title` read off a `String`, giving `''` for every chapter. **Exactly
+the observed symptom**, and the only candidate that produces the second wording rather than the first.
+
+> Same class as `v77_x`'s pair-array finding, and the same lesson its comment already states:
+> **a parse that succeeds into the WRONG SHAPE is worse than one that fails**, because the retry
+> loop sees a well-formed answer and nothing reports it. `v77_x` added the pair rung; this adds the
+> string rung.
+
+### Two rungs
+
+- **An array of bare strings** — normalised to `{title, emoji:'📖'}`. Works alone, multi-chapter, and
+  **mixed with objects in one reply**, which is what a real model actually produces.
+- **A bare object**, `{"title":…}` — the most natural answer when exactly one title was asked for.
+  ⚠️ **Accepted only when `n === 1`**, where it is unambiguous. For `n > 1` a single object genuinely
+  IS a wrong-shaped answer and must still fail, or the retry loop is denied the chance to get a real
+  one. Its own mutation covers that.
+
+### Guards
+
+`unit-chapter-title-shapes.test.js` (new, 4 sections) drives the **real** `_generateChapterMetaOnce`
+with only its one model call stubbed, so every parsing rung is exercised as it ships:
+
+1. the reported failure — bare strings, alone, multi-chapter, and mixed with objects;
+2. the bare object accepted at `n === 1` and **still refused at `n === 2`**;
+3. every shape that already worked (objects, `v77_x` pairs, fenced JSON, prose-wrapped, loose
+   one-per-line objects) — non-vacuity plus a regression guard on two earlier findings;
+4. ⚠️ **genuinely unusable replies must STILL fail.** A parser that never fails would turn every bad
+   answer into a silent empty title — the defect of §1, reintroduced from the other side.
+
+**Five mutations, all red**, including "accept a bare object for any `n`" and "invent a title when
+the model gave none".
+
+### ⚠️⚠️ The suite had NEVER exercised the success path — and one test depended on the bug
+
+`e2e-book-duplicate-titles` went red on this fix, and the reason is the finding:
+
+**`fake-ollama` answers the chapter-titles prompt with `["Chapter One", "Chapter Two", "Chapter
+Three"]` — an array of bare strings.** The exact broken shape. So for as long as that fixture has
+existed, **every book e2e in the suite has exercised the post-pass's FAILURE path and never its
+success path.** That is why nothing caught this before a user did.
+
+And `e2e-book-duplicate-titles` located its two chapters by their shared title (`/A13/`), which only
+worked *because* the titles were never replaced. **It was passing for the wrong reason, and the
+reason was this bug.**
+
+Re-scoped rather than patched: the chapters are now found by their own STORY text — unique, supplied
+by the test, untouched by any titling — which is what *"neither overwrote the other"* was always
+about. And a new assertion pins that the post-pass **actually ran**, so the re-scoping cannot quietly
+restore the old accidental dependency. ⚠️ **That assertion is now the end-to-end proof of this fix**:
+removing the bare-string rung turns the e2e red, verified.
+
+The fake is deliberately left as it is. It emits the shape a real model gave the user, and now it
+exercises the string rung through the whole stack.
+
+### ⚠️ Still not fixed, deliberately: the failure is silent in the app
+
+When the post-pass genuinely fails, it `console.warn`s and the chapter keeps its raw placeholder
+title. The user found this by reading a terminal, not by using the app. Making it visible — or
+falling back to something better than the first 40 characters of the source text — is a **behaviour
+change that needs a ruling**, not a bug fix. Recorded in the open list.
+
 
 ## ✅ v89_s — the continue-from send paths read the RECORD, not the view
 

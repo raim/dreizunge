@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_s` cut
+# Session prompt — written at the `v89_t` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_s`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_t`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -220,6 +220,14 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   ONE resolver and all **eight** send sites use it; a pin whose chapter no longer exists is dropped
   rather than sent as a dangling ref. ⚠️ The harness **cannot** reproduce the reset (its stub
   `select.value` is independent of its options) — recorded in INTERNALS §5.
+- **`v89_t`** — the chapter-title parser reads **an array of bare STRINGS** (`["Hub Domburg"]`), the
+  shape behind the user's `0/1 titles came back named` × 3. ⚠️ **The log's two failure wordings are
+  what identified it without guessing**: an unparseable reply logs `Attempt N failed: …`, a
+  wrong-SHAPED one logs `0/N came back named` — theirs was the second, so the answer was valid JSON
+  the normaliser read nothing out of. Same class as `v77_x`'s pair arrays, and the same lesson:
+  **a parse that succeeds into the wrong shape is worse than one that fails.** A bare OBJECT is now
+  accepted too, but **only when `n === 1`**, where it is unambiguous — for `n > 1` it must still fail
+  so the retry can get a real answer.
 
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
@@ -256,8 +264,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 343 checks
-node test/run.js --quick                  → expect 282
+node test/run.js                          → expect 344 checks
+node test/run.js --quick                  → expect 283
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -290,7 +298,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **344 topics, 98 storylines, 33 languages, 758 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_s'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_t'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing
