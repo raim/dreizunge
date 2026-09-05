@@ -2619,6 +2619,36 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_ab — the text QC PROPOSES, through the panel story QC already used
+
+User question — *"is this the same QC that we already had for story texts, available on the lesson-set
+teacher view page with 'Proofread with QC model'?"* — then ruling: **yes, do the diff panel.**
+**ZERO `ui.json` keys**: every string on the panel was already written and hand-translated.
+
+⚠️ **The question was a finding.** `v89_aa` shipped a QC that applied straight away and leaned on
+undo, while `runStoryQc` (`v55_g`) had shown a reviewable diff for thirty releases. The two are NOT
+the same feature — see the table below — but the older one had the better interaction, and
+`_renderQcProposalInto` was already factored for exactly this (`v55_n`, two callers). **The
+comparison should have happened before `v89_aa` was designed, not after the user asked.**
+
+| | `runStoryQc` (`v55_g`) | `/api/text-qc` (`v89_aa`) |
+|---|---|---|
+| runs on | a **saved** chapter's story | text that is **not a chapter yet** — draft comic panels, PDF chunks |
+| may change words? | **yes** — that is what a grammar fix is | **no** — word count and line count pinned |
+| verification | statistical: `changedRatio`/`wordEditRatio` + corruption heuristics → clean/corrected/rewrite/corrupt | structural: exact word and line counts, bounded per-word edit distance |
+| why they differ | a generated story has no ground truth, so a grammar fix is pure gain | **extracted text is a TRANSCRIPTION of something real** — "fixing" a photographed sign's grammar falsifies what the learner is looking at |
+
+| | |
+|---|---|
+| **the reuse, and how small it was** | `_renderQcProposalInto(prop, o)` gained exactly two things: `prop.pairs` (use caller-supplied rows instead of diffing one text pair into sentences) and `o.cleanKey`. Both existing callers are untouched. Checkboxes, indices, select-all/none, the inline diff and the accept/discard row are shared verbatim — which is the payoff `v55_n` was factored for |
+| **one row per ITEM, not per sentence** | The text QC is a BATCH of N panels or chunks, and a batch's natural question is *"which of these texts do I accept?"*. `_qcInlineDiff` renders an item pair exactly as it renders a sentence pair, so a multi-line panel shows its changes inline like anything else |
+| **`o.cleanKey`** | `qc.clean` reads *"…the story is already clean"*, which is wrong on a comic panel. The text QC passes `ex.writing.no_issues` instead — a string the app already had, rather than a translation spent on a nuance |
+| **⚠️ the PDF backup moved to ACCEPT time** | Taking it before the run would arm the undo button for a proposal the user then discarded. `_aiCleanBackup` is now filled by the first `apply` call, and `done(n)` sets `_chunksDirty` / reveals undo only when something was really applied |
+| **⚠️ a proposal dies with the card that owns it** | `comicOpenReview` rebuilds the overlay from scratch, so a surviving `_textQcProposal` would point at a panel node that no longer exists AND hold an `apply` closure over a replaced buffer. `_comicReviewClose` drops it — **but only its own**, so a PDF proposal on another screen survives |
+| **live-verified** | Real `translategemma:12b` through the actual route on two shouted German panels: the panel rendered "Proofreader suggestions (2)" with per-item red/green diffs, both textareas still shouted. Unticking row 2 and accepting applied row 1 only, left row 2 shouted, closed the panel and cleared the proposal |
+| **⚠️ a guard that overclaimed, corrected** | `v89_aa`'s "the textarea already on screen shows it" was reading an AUTO-VIVIFIED `getElementById` stub, not the rendered node — it proved the write happens (the mutation does turn it red), not that the on-screen box updates. Reworded to say exactly that; the real-DOM behaviour is verified in a browser instead |
+| **guards** | `unit-text-qc-ui.test.js` §1/§2 re-scoped to propose-then-accept, plus **§3b partial acceptance** (tick one of two → only that one lands; tick none → `qc.none_selected` and the proposal stays open) and **§3c** the ownership rule. **Nine mutations red**, including "apply at propose time" (the whole `v89_aa` behaviour) and "ignore the ticks" |
+
 ## ✅ v89_aa — extracted text is un-shouted automatically, and a text QC can be run on demand
 
 User report, two runs of the SAME comic: *"Some texts are correctly un-capitalized others not. We

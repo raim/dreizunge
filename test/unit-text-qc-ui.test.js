@@ -100,20 +100,47 @@ async function main() {
   assert.strictEqual(sent.items[0].text, 'ES GIBT EIN LAND\nWO DIE KOEPFE GLEICHEN',
     'and each item is the MERGED text the box shows (v89_z), not a bare caption');
 
-  const buf = JSON.parse(C.run(`JSON.stringify(_comicReviewBuffer)`));
+  // ⚠️ v89_ab: NOTHING is applied yet. The QC proposes; the user accepts. A build that wrote the
+  // correction straight into the buffer would pass every later assertion here while removing the
+  // whole feature, so this is checked BEFORE the accept.
+  let buf = JSON.parse(C.run(`JSON.stringify(_comicReviewBuffer)`));
+  assert.strictEqual(buf[0].caption, 'ES GIBT EIN LAND',
+    'the buffer is UNTOUCHED until the user accepts');
+  // (No textarea assertion here: lib-dom's getElementById AUTO-VIVIFIES a miss, so a textarea
+  // rendered inside the modal's innerHTML reads back as an empty stub until product code writes to
+  // it. That makes "unchanged" unobservable at this layer — the buffer check above is the real one.)
+  // The panel is up, with one row for the one changed item — not one per sentence, and not one for
+  // the unchanged panel.
+  const panelHtml = C.run(`document.getElementById('comic-review-qc-panel').innerHTML`);
+  assert.ok(/textQcAccept\(\)/.test(panelHtml) && /textQcDiscard\(\)/.test(panelHtml),
+    'the proposal panel offers accept and discard');
+  assert.strictEqual(C.run(`document.querySelectorAll('#comic-review-qc-panel .qc-textfix-cb').length`), 1,
+    'ONE row — per ITEM, and the unchanged panel contributed none');
+  assert.ok(panelHtml.includes(UI.en['qc.review_hdr']),
+    'headed by the existing proofreader string — no new key was spent');
+
+  C.run(`textQcAccept(); true;`, 'accept');
+  buf = JSON.parse(C.run(`JSON.stringify(_comicReviewBuffer)`));
   assert.strictEqual(buf[0].caption, 'Es gibt ein Land.\nWo die Köpfe gleichen.',
-    'the correction is in the buffer _comicReviewConfirm saves from');
+    'after accept, the correction is in the buffer _comicReviewConfirm saves from');
   assert.strictEqual(buf[0].inScene, '', 'and it collapsed through the v89_z merge rule');
   // ⚠️ The unchanged panel must be left completely alone.
   assert.strictEqual(buf[1].caption, 'Schon korrekt.', 'an unchanged panel keeps its text');
   // The box on screen has to change too, or the fix is invisible until a reopen.
+  // ⚠️ Precisely what this proves, and no more: accept WRITES the corrected text to
+  // getElementById('comic-review-text-N').value. It does NOT prove the on-screen textarea updates —
+  // lib-dom auto-vivifies this lookup, so the value read back is the one product code just wrote.
+  // (The real-DOM behaviour was verified separately in a browser against a live model at v89_aa.)
+  // The mutation that drops the write still turns this red, which is what it is here for.
   assert.strictEqual(C.run(`document.getElementById('comic-review-text-0').value`),
-    'Es gibt ein Land.\nWo die Köpfe gleichen.', 'the textarea already on screen shows it');
+    'Es gibt ein Land.\nWo die Köpfe gleichen.', 'accept writes the correction to the textarea node');
+  assert.strictEqual(C.run(`document.getElementById('comic-review-qc-panel').style.display`), 'none',
+    'and the panel closes behind the accept');
   const toasts = JSON.parse(C.run(`JSON.stringify(TOASTS)`));
-  assert.ok(/\b1\b/.test(toasts.join(' ')) && /\b2\b/.test(toasts.join(' ')),
-    `the toast reports 1 of 2 corrected, got ${JSON.stringify(toasts)}`);
+  assert.ok(/\b1\b/.test(toasts.join(' ')),
+    `the toast reports what was applied, got ${JSON.stringify(toasts)}`);
 }
-console.log('  comic review card: corrections reach the save buffer AND the open textarea: OK');
+console.log('  comic review card: proposes first, and only an ACCEPT reaches the save buffer: OK');
 
 // ── 2. The PDF chunk panel ──────────────────────────────────────────────────────────────────────
 {
@@ -133,6 +160,14 @@ console.log('  comic review card: corrections reach the save buffer AND the open
   assert.strictEqual(sent.lang, 'nl',
     '⚠️ the PDF panel sends APP.srcLang, NOT APP.lang — a document is in the SOURCE language, ' +
     'which is what aiCleanChunks alongside it already assumes. The two surfaces genuinely differ.');
+  // ⚠️ Proposed, not applied — and in particular the UNDO must not be armed yet, or discarding a
+  // proposal would leave a live undo button pointing at a pass that never happened.
+  assert.strictEqual(JSON.parse(C.run(`JSON.stringify(_pdfChunks)`))[0].text, 'DIT IS EEN HELE LUIDE ZIN',
+    'the chunk is untouched until accept');
+  assert.strictEqual(C.run(`_aiCleanBackup`), null, 'and no undo is armed for an unaccepted proposal');
+  assert.strictEqual(C.run(`_chunksDirty`), false, 'nor is the list dirty yet');
+
+  C.run(`textQcAccept(); true;`, 'accept');
   const chunks = JSON.parse(C.run(`JSON.stringify(_pdfChunks)`));
   assert.strictEqual(chunks[0].text, 'Dit is een hele luide zin.', 'the chunk text is corrected');
   // ⚠️ NOT asserted on wordCount: the server's verifier refuses any reply whose word count differs,
@@ -144,9 +179,12 @@ console.log('  comic review card: corrections reach the save buffer AND the open
   assert.notStrictEqual(chunks[0].title, 'a', 'and it really moved off the seeded value');
   assert.strictEqual(chunks[1].text, 'Deze is al goed.', 'the unchanged chunk is untouched');
   assert.strictEqual(C.run(`_chunksDirty`), true, 'the chunk list is marked dirty so the draft saves');
-  assert.ok(/if\(r && r\.corrected\)\{\s*\n\s*_chunksDirty = true;/.test(
+  // v89_ab: the dirty flag moved into the proposal's `done` callback, which only fires on an
+  // accept that applied something. Pinned at the SOURCE layer too because `_chunksDirty = true`
+  // appears elsewhere in the file, so a behavioural check alone cannot say WHICH writer ran.
+  assert.ok(/done:\(n\)=>\{\s*\n\s*if\(!n\) return;\s*\n\s*_chunksDirty = true;/.test(
       fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8')),
-    'and it is set on the corrected branch specifically — the file has another _chunksDirty writer');
+    'and it is set only when an accept actually applied something');
   const backup = JSON.parse(C.run(`JSON.stringify(_aiCleanBackup)`));
   assert.strictEqual(backup[0], 'DIT IS EEN HELE LUIDE ZIN',
     'the pre-QC text is kept so the shared undo can restore it');
@@ -168,9 +206,14 @@ console.log('  PDF panel: corrects chunks, sends the SOURCE language, and the sh
   await settle();
   assert.strictEqual(C.run(`_chunksDirty`), false, 'an all-unchanged run does NOT dirty the list');
   assert.strictEqual(C.run(`_aiCleanBackup`), null, 'and leaves no undo pointing at nothing');
-  const toasts = JSON.parse(C.run(`JSON.stringify(TOASTS)`));
-  assert.strictEqual(toasts[0], UI.en['ex.writing.no_issues'],
-    'it says so, reusing the existing string rather than claiming a correction');
+  // v89_ab: it says so in the PANEL now, not a toast — and with ex.writing.no_issues rather than
+  // qc.clean, whose text ("…the story is already clean") is wrong for a PDF chunk. That override is
+  // the `cleanKey` option added to the shared renderer.
+  const clean = C.run(`document.getElementById('pdf-textqc-panel').innerHTML`);
+  assert.ok(clean.includes(UI.en['ex.writing.no_issues']),
+    'the panel says there was nothing to fix, reusing an existing string');
+  assert.ok(!clean.includes(UI.en['qc.clean']), 'and NOT the story-specific wording');
+  assert.ok(!/textQcAccept/.test(clean), 'with no accept button, since there is nothing to accept');
 }
 {
   const C = client();
@@ -188,6 +231,72 @@ console.log('  PDF panel: corrects chunks, sends the SOURCE language, and the sh
   assert.strictEqual(C.run(`_chunksDirty`), false, 'and nothing was marked dirty');
 }
 console.log('  an unchanged run claims nothing, and a cancelled one changes nothing: OK');
+
+// ── 3b. ⚠️ PARTIAL acceptance — the entire reason the panel exists ──────────────────────────────
+// Applying all-or-nothing would make the panel decoration. Ticking one row of two must apply that
+// row and leave the other exactly as it was.
+{
+  const C = client();
+  C.run(`_pdfChunks = [
+      { text:'EERSTE LUIDE ZIN HIER', wordCount:4, title:'a', status:'pending' },
+      { text:'TWEEDE LUIDE ZIN HIER', wordCount:4, title:'b', status:'pending' }];
+    _chunksDirty = false; _aiCleanBackup = null; true;`, 'chunks');
+  stubJob(C, { results: [
+    { text:'Eerste luide zin hier.', unchanged:false },
+    { text:'Tweede luide zin hier.', unchanged:false },
+  ] });
+  C.run(`pdfTextQc(); true;`, 'qc');
+  await settle();
+  assert.strictEqual(C.run(`document.querySelectorAll('#pdf-textqc-panel .qc-textfix-cb').length`), 2,
+    'two changed chunks, two rows');
+  // Untick the SECOND row, then accept.
+  C.run(`document.querySelectorAll('#pdf-textqc-panel .qc-textfix-cb')[1].checked = false;
+    textQcAccept(); true;`, 'accept one');
+  const chunks = JSON.parse(C.run(`JSON.stringify(_pdfChunks)`));
+  assert.strictEqual(chunks[0].text, 'Eerste luide zin hier.', 'the ticked row was applied');
+  assert.strictEqual(chunks[1].text, 'TWEEDE LUIDE ZIN HIER',
+    '⚠️ and the UNTICKED row was not — a correction the user declined must not land');
+}
+// And unticking EVERYTHING says so rather than silently doing nothing.
+{
+  const C = client();
+  C.run(`_pdfChunks = [{ text:'EEN LUIDE ZIN HIER', wordCount:4, title:'a', status:'pending' }];
+    _chunksDirty = false; _aiCleanBackup = null; true;`, 'chunks');
+  stubJob(C, { results: [ { text:'Een luide zin hier.', unchanged:false } ] });
+  C.run(`pdfTextQc(); true;`, 'qc');
+  await settle();
+  C.run(`document.querySelectorAll('#pdf-textqc-panel .qc-textfix-cb')[0].checked = false;
+    TOASTS = []; textQcAccept(); true;`, 'accept none');
+  assert.strictEqual(JSON.parse(C.run(`JSON.stringify(_pdfChunks)`))[0].text, 'EEN LUIDE ZIN HIER',
+    'nothing applied');
+  assert.strictEqual(JSON.parse(C.run(`JSON.stringify(TOASTS)`))[0], UI.en['qc.none_selected'],
+    'and the user is told, using acceptStoryQc\'s own existing string');
+  assert.ok(C.run(`!!_textQcProposal`), 'the proposal stays open so they can tick something');
+}
+console.log('  partial acceptance: only ticked rows land, and ticking none says so: OK');
+
+// ── 3c. ⚠️ A proposal must not outlive the card it belongs to ───────────────────────────────────
+// comicOpenReview rebuilds the overlay from scratch every time, so a proposal left behind points at
+// a panel node that no longer exists AND holds an `apply` closure over a buffer that has been
+// replaced — accepting it would write into the previous card's state.
+{
+  const C = client();
+  C.run(`APP_COMIC.boxes = [{ x1:0,y1:0,x2:9,y2:9, text:{ caption:'EEN LUIDE ZIN HIER', inScene:'' } }];
+    comicOpenReview(); true;`, 'open');
+  stubJob(C, { results: [ { text:'Een luide zin hier.', unchanged:false } ] });
+  C.run(`comicReviewQc(); true;`, 'qc');
+  await settle();
+  assert.ok(C.run(`!!_textQcProposal`), 'the proposal is open while the card is');
+  C.run(`_comicReviewCancel(); true;`, 'close');
+  assert.strictEqual(C.run(`_textQcProposal`), null,
+    'closing the card drops it — nothing survives to be accepted into a replaced buffer');
+  // Non-vacuity: closing the COMIC card must not drop a PDF panel's proposal, which lives on a
+  // different screen and is not rebuilt by this close.
+  C.run(`_textQcProposal = { rows:[], apply:function(){}, panelId:'pdf-textqc-panel', cbClass:'qc-textfix-cb' };
+    _comicReviewCancel(); true;`, 'close again');
+  assert.ok(C.run(`!!_textQcProposal`), "and it only drops its OWN panel's proposal");
+}
+console.log('  a pending proposal dies with the card that owns it, and only that one: OK');
 
 // ── 4. The button exists on BOTH surfaces (the user asked for both) ─────────────────────────────
 {

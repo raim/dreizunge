@@ -1475,6 +1475,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
               style="display:none;font-size:12px;padding:6px 12px;margin-left:6px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)"
               onclick="aiCleanUndo()">↩</button>
           </div>
+          <div id="pdf-textqc-panel" style="display:none;margin:0 0 8px;font-size:12px;border-top:1.5px solid var(--gray-mid);padding-top:10px"></div>
           <div id="split-mode-row" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin:2px 0 4px">
             <span id="split-mode-lbl" style="font-size:11px;font-weight:800;color:var(--gray-dark)">Chapters:</span>
             <button type="button" id="split-mode-para" class="split-mode-btn" onclick="setSplitMode('para')">¶</button>
@@ -4950,6 +4951,7 @@ function comicOpenReview(auto){
     + `<div style="padding:0 20px;overflow-y:auto;flex:1">`
     + `<div style="font-size:13px;color:var(--gray-dark);padding:12px 0">${escHtml(t('form.image_review_hint'))}</div>`
     + `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;padding-bottom:16px">${rows}</div>`
+    + `<div id="comic-review-qc-panel" style="display:none;margin:0 0 12px;font-size:12px;border-top:1.5px solid var(--gray-mid);padding-top:10px"></div>`
     + `</div>`
     + `<div class="modal-footer">`
     + `<button type="button" id="comic-review-qc-btn" class="modal-btn secondary" onclick="comicReviewQc()">${escHtml('\u2728 ' + t('qc.btn.text'))}</button>`
@@ -4995,6 +4997,10 @@ function _comicReviewClose(){
   // dynamically-created node (like showChoiceDialog's), never registered under any id.
   if(_comicReviewOverlayEl) _comicReviewOverlayEl.remove();
   _comicReviewOverlayEl=null; _comicReviewEditable=null; _comicReviewBuffer=null;
+  // v89_ab: a pending QC proposal belongs to THIS card. The overlay is rebuilt from scratch on every
+  // open, so leaving the proposal behind would leave _textQcProposal pointing at a node that no
+  // longer exists — and its `apply` closure at a buffer that has been replaced.
+  if(_textQcProposal && _textQcProposal.panelId==='comic-review-qc-panel') _textQcProposal=null;
 }
 function _comicReviewCancel(){ _comicReviewClose(); }
 function _comicReviewConfirm(){
@@ -6559,10 +6565,18 @@ function _renderQcProposalInto(prop, o) {
   if (!panel || !prop) return;
   const orig = prop.against || '', corr = prop.corrected || '';
   if (prop.verdict === 'clean') {
-    panel.innerHTML = '<div style="font-weight:700;color:var(--gray-dark)">' + escHtml(t('qc.clean')) + '</div>';
+    // v89_ab: `cleanKey` is overridable because qc.clean says "…the story is already clean", which
+    // is wrong on a comic panel or a PDF chunk. The text QC passes ex.writing.no_issues instead —
+    // reusing a string the app already has rather than spending a translation on the nuance.
+    panel.innerHTML = '<div style="font-weight:700;color:var(--gray-dark)">' + escHtml(t(o.cleanKey || 'qc.clean')) + '</div>';
     panel.style.display = ''; return;
   }
-  const sents = _qcChangedPairs(orig, corr);
+  // v89_ab: a caller may supply its OWN pairs instead of having them diffed out of one text pair.
+  // The text QC is a BATCH — N panels or chunks — so its natural unit is one row per ITEM, not one
+  // per sentence of a single story. Everything below (checkboxes, indices, select-all, the inline
+  // diff, the accept/discard row) is identical either way, which is exactly why this function was
+  // factored out at v55_n. `prop.pairs` entries are {a, b} just like _qcChangedPairs' own output.
+  const sents = prop.pairs || _qcChangedPairs(orig, corr);
   const rows = sents.map((p, idx) => {
     let inner;
     if (!p.a) inner = '<ins style="background:#dfd;color:#060;text-decoration:none">' + escHtml(p.b) + '</ins>';
@@ -7432,10 +7446,24 @@ function onCleanupToggle(){ _applyUploadCleanup(); _resplitUpload(); }
 // ship a typo check that cannot see typos. The detector's job is to save work when NOBODY asked;
 // here somebody did.
 let _textQcBusy = false;
-async function _textQcRun(texts, lang, apply){
+// ⚠️ v89_ab (user question, then ruling): the QC PROPOSES, it no longer applies.
+//
+// The user asked whether this was the same thing as the lesson-set view's "Proofread with QC model"
+// (`runStoryQc`, v55_g). It is not — that one runs on a SAVED chapter, may change words to fix
+// grammar, and is verified statistically; this one runs on text that is not a chapter yet and is
+// forbidden from changing a single word. But that one shows a DIFF and asks, while this one used to
+// apply straight away and lean on undo. For text a human is in the middle of reviewing, the diff is
+// the better interaction, and the panel already existed — so this now goes through the SAME
+// `_renderQcProposalInto` that story QC and summary QC use. **Zero new ui.json keys**: every string
+// on the panel was already written and hand-translated.
+//
+// The unit is one row per ITEM (panel / chunk), not per sentence: a batch's natural question is
+// "which of these texts do I accept?".
+let _textQcProposal = null;   // { rows:[{slot, before, after}], apply, panelId, cbClass, done }
+
+async function _textQcRun(texts, lang, o){
   if(_textQcBusy) return null;
-  const idx = [];                                  // which original slots we actually sent
-  const send = [];
+  const idx = [], send = [];
   texts.forEach((s,i)=>{ if(String(s||'').trim()){ idx.push(i); send.push({text:String(s)}); } });
   if(!send.length){ showToast(t('ex.writing.no_issues')); return null; }
   _textQcBusy = true;
@@ -7445,21 +7473,27 @@ async function _textQcRun(texts, lang, apply){
       body:JSON.stringify({items:send, lang})}));
     // Cancelled. ⚠️ Belt and braces only, and worth saying so: _jobAwait ALREADY returns null for
     // a cancelled job and drops its payload, so this line cannot independently fail — mutating it
-    // away leaves the suite green. The property (a cancel applies nothing) is real and IS guarded,
+    // away leaves the suite green. The property (a cancel proposes nothing) is real and IS guarded,
     // one layer down: breaking _jobAwait's own cancel branch turns unit-text-qc-ui §3 red.
     if(!data) return null;
-    const rows = (data && data.results) || [];
-    let n = 0;
-    rows.forEach((r,j)=>{
-      // ⚠️ Only a CHANGED text is written back. `unchanged` covers both "already correct" (the
-      // normal, good case) and "could not be checked" (the model failed its own contract three
-      // times and the server returned the input untouched) — writing either one back would churn
-      // state and, on the PDF side, mark the chunk list dirty for nothing.
+    const results = (data && data.results) || [];
+    const rows = [];
+    results.forEach((r,j)=>{
+      // ⚠️ Only a CHANGED text becomes a row. `unchanged` covers both "already correct" (the normal,
+      // good case) and "could not be checked" (the model failed its own contract three times and
+      // the server returned the input untouched) — neither is a correction to offer.
       if(!r || r.unchanged || !r.text) return;
-      apply(idx[j], r.text); n++;
+      rows.push({ slot: idx[j], before: texts[idx[j]], after: r.text });
     });
-    showToast(n ? t('qc.toast.text_done',{n, total: rows.length}) : t('ex.writing.no_issues'));
-    return { corrected:n, total: rows.length };
+    _textQcProposal = { rows, apply:o.apply, panelId:o.panelId, cbClass:o.cbClass, done:o.done||null };
+    _renderQcProposalInto(
+      { verdict: rows.length ? 'corrected' : 'clean',
+        // One row per item. `_renderQcProposalInto` renders {a,b} through the same inline diff it
+        // uses for a sentence pair, so a multi-line panel shows its changes inline like any other.
+        pairs: rows.map(r=>({ a:r.before, b:r.after })) },
+      { panelId:o.panelId, cbClass:o.cbClass, cleanKey:'ex.writing.no_issues',
+        acceptCall:'textQcAccept()', discardCall:'textQcDiscard()' });
+    return { proposed: rows.length, total: results.length };
   }catch(e){
     // 503 is the one failure with its own existing string — no backend is a different problem from
     // a backend that failed, and the user can act on it.
@@ -7468,44 +7502,68 @@ async function _textQcRun(texts, lang, apply){
   }finally{ _textQcBusy = false; }
 }
 
-// Surface 1 — the comic review card. The corrections land in the SAME edit buffer the textareas
-// write to, so Cancel still discards them: the card is its own undo, and no extra control (or
-// string) is needed here.
+// Accept only the TICKED rows — the whole point of the panel. `_qcSelectedIdx` returns undefined
+// when the panel has no checkboxes at all (→ take everything, matching acceptStoryQc's own reading)
+// and [] when every box was unticked (→ take nothing, and say so rather than silently doing nothing).
+function textQcAccept(){
+  const p = _textQcProposal; if(!p) return;
+  const sel = _qcSelectedIdx(p.panelId, p.cbClass);
+  if(sel && sel.length === 0){ showToast(t('qc.none_selected')); return; }
+  const take = p.rows.filter((_,i)=> !sel || sel.indexOf(i) !== -1);
+  take.forEach(r => p.apply(r.slot, r.after));
+  const total = p.rows.length;
+  _textQcClosePanel();
+  if(p.done) p.done(take.length);
+  showToast(take.length ? t('qc.toast.text_done',{n:take.length, total}) : t('ex.writing.no_issues'));
+}
+function textQcDiscard(){ _textQcClosePanel(); }
+function _textQcClosePanel(){
+  const p = _textQcProposal;
+  if(p){ const el = document.getElementById(p.panelId); if(el){ el.innerHTML=''; el.style.display='none'; } }
+  _textQcProposal = null;
+}
+
+// Surface 1 — the comic review card. Accepted corrections land in the SAME edit buffer the
+// textareas write to, so Cancel still discards them.
 async function comicReviewQc(){
   if(!_comicReviewBuffer || !_comicReviewEditable) return;
   const keys = Object.keys(_comicReviewBuffer);
   const btn = document.getElementById('comic-review-qc-btn');
   const was = btn ? btn.textContent : '';
   if(btn){ btn.disabled = true; btn.textContent = t('app.checking'); }
-  await _textQcRun(keys.map(k=>_comicReviewText(_comicReviewBuffer[k])), APP.lang, (j,text)=>{
-    _comicReviewEdit(keys[j], 'text', text);
-    // The card is already on screen, so the box the user is looking at has to change too — the
-    // buffer alone would leave the correction invisible until a reopen.
-    const el = document.getElementById('comic-review-text-'+keys[j]);
-    if(el) el.value = text;
-  });
+  await _textQcRun(keys.map(k=>_comicReviewText(_comicReviewBuffer[k])), APP.lang, {
+    panelId:'comic-review-qc-panel', cbClass:'qc-textfix-cb',
+    apply:(j,text)=>{
+      _comicReviewEdit(keys[j], 'text', text);
+      // The card is already on screen, so the box the user is looking at has to change too — the
+      // buffer alone would leave the accepted correction invisible until a reopen.
+      const el = document.getElementById('comic-review-text-'+keys[j]);
+      if(el) el.value = text;
+    }});
   if(btn){ btn.disabled = false; btn.textContent = was; }
 }
 
-// Surface 2 — the PDF chunk panel. Reuses aiCleanChunks' OWN backup slot and undo button rather
-// than adding a second one: both are "the last model pass over this chunk text", and one undo that
-// means that is clearer than two that each mean half of it.
+// Surface 2 — the PDF chunk panel. ⚠️ The backup is taken at ACCEPT, not before the run: with a
+// proposal in between, taking it up front would arm the undo button for a QC the user then
+// discarded. Reuses aiCleanChunks' own slot and undo button — both are "the last model pass over
+// this chunk text", and one undo meaning that is clearer than two meaning half each.
 async function pdfTextQc(){
   if(!_pdfChunks.length) return;
   const btn = document.getElementById('pdf-textqc-btn');
   if(btn) btn.disabled = true;
-  _aiCleanBackup = _pdfChunks.map(c=>c.text);
-  const r = await _textQcRun(_pdfChunks.map(c=>c.text), APP.srcLang || APP.lang || 'en', (j,text)=>{
-    const c = _pdfChunks[j];
-    c.text = text; c.wordCount = wordCount(text); c.title = _autoTitle(text, j);
-  });
-  if(r && r.corrected){
-    _chunksDirty = true;
-    const undo = document.getElementById('pdf-aiclean-undo'); if(undo) undo.style.display='';
-  }else{
-    _aiCleanBackup = null;   // nothing changed, so there is nothing to undo
-  }
-  _renderPdfChunks();
+  await _textQcRun(_pdfChunks.map(c=>c.text), APP.srcLang || APP.lang || 'en', {
+    panelId:'pdf-textqc-panel', cbClass:'qc-textfix-cb',
+    apply:(j,text)=>{
+      const c = _pdfChunks[j];
+      if(_aiCleanBackup === null) _aiCleanBackup = _pdfChunks.map(x=>x.text);
+      c.text = text; c.wordCount = wordCount(text); c.title = _autoTitle(text, j);
+    },
+    done:(n)=>{
+      if(!n) return;
+      _chunksDirty = true;
+      const undo = document.getElementById('pdf-aiclean-undo'); if(undo) undo.style.display='';
+      _renderPdfChunks();
+    }});
   if(btn) btn.disabled = false;
 }
 

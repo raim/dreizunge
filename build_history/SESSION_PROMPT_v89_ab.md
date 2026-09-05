@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_aa` cut
+# Session prompt — written at the `v89_ab` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_aa`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_ab`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -300,6 +300,23 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   (translategemma:12b 4/4; **an earlier draft picked a different model off ONE sample and was
   reversed**). 19 mutations red across two new files, 3 of them vacuous on the first pass.
 
+- **`v89_ab`** — the text QC now **proposes** through the same reviewable diff panel story QC has
+  used since `v55_g`, instead of applying and leaning on undo. ⚠️ **The user's question was the
+  finding**: they asked whether this was the same as "Proofread with QC model", and the comparison
+  should have happened before `v89_aa` was designed. They are genuinely different (saved chapter vs
+  draft text; may change words vs may not — **a transcription has ground truth a generated story
+  does not**), but the older one had the better interaction and `_renderQcProposalInto` was already
+  factored for reuse. It gained two options (`prop.pairs`, `o.cleanKey`); both existing callers are
+  untouched; **zero new `ui.json` keys**. One row per ITEM, ticked rows only. Nine mutations red.
+
+⚠️ **OWED — the user's next ask, not yet built:** *"can we merge or unify the two text QC functions,
+and at all places where texts can be edited the QC icon should open a popover that allows the user to
+select between the light version (as currently for PDF and comics) and the heavier (as currently for
+story-QC)?"* The `v89_ab` table above is the analysis to start from: the two differ in PROMPT and in
+VERIFIER, so the unification is one engine taking a MODE, not one behaviour. ⚠️ Flag when building:
+heavy mode may change words, which on a photographed sign is falsification — the user has asked for
+the choice, so provide it, but the light default matters.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -369,7 +386,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **352 topics, 99 storylines, 33 languages, 764 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_aa'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ab'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing
