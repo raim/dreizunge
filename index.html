@@ -7652,10 +7652,14 @@ async function aiCleanChunks(){
     const c = _pdfChunks[i];
     c.status = 'active'; _renderPdfChunks();
     try{
-      const r = await fetch('/api/clean-text', { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ text: c.text, lang: APP.srcLang || APP.lang || 'en' }) });
-      const data = await r.json();
-      if(!r.ok) throw new Error(data.error || 'failed');
+      // v89_ak: one job PER CHUNK — the loop is sequential, so exactly one row is live at a time,
+      // and each is individually cancellable. A cancel stops the BATCH rather than being counted as
+      // one failed chunk, matching retranslateChain's own reading of the same situation.
+      const data = await _jobAwait(await fetch('/api/clean-text',
+        { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ text: c.text, lang: APP.srcLang || APP.lang || 'en' }) }),
+        { every: 2000 });
+      if(data === null){ c.status = 'pending'; _renderPdfChunks(); break; }
       if(data.tokens){
         _aiCleanTokens.promptTokens     += data.tokens.promptTokens || 0;
         _aiCleanTokens.completionTokens += data.tokens.completionTokens || 0;
@@ -7724,12 +7728,15 @@ async function llmSplitChapters(){
   console.log(`✨ Chapter split: asking the model to group ${paragraphs.length} paragraphs`
     + (drop ? ' (and drop page furniture)' : ''));
   try{
-    const r = await fetch('/api/split-chapters', {
+    // v89_ak: a cancellable job now — `_jobAwait` hands back the same payload the route used to
+    // return inline, so everything below is unchanged. A CANCEL comes back as null: the user's own
+    // act, so it is not reported as a failure.
+    const data = await _jobAwait(await fetch('/api/split-chapters', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ paragraphs, lang: APP.lang || 'en', drop })
-    });
-    const data = await r.json();
-    if(!r.ok || !Array.isArray(data.chapters) || !data.chapters.length) throw new Error(data.error || 'no chapters');
+    }), { every: 2000 });
+    if(data === null) return;
+    if(!Array.isArray(data.chapters) || !data.chapters.length) throw new Error(data.error || 'no chapters');
     _llmChunks = data.chapters.map((c,i) => ({
       text: c.text, wordCount: c.wordCount, title: c.title || _autoTitle(c.text, i), status:'pending' }));
     _llmChunksFor = _pdfRawText;

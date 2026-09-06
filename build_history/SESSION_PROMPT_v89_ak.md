@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_aj` cut
+# Session prompt — written at the `v89_ak` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_aj`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_ak`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -405,6 +405,15 @@ contain no quotes). Grep: `on[a-z]*="[^"]*\${JSON.stringify` — zero at this cu
   trap). ⚠️ A duplicate element id silently broke the neighbouring provenance footer; an existing
   e2e caught it.
 
+- **`v89_ak`** — the **job-coverage ENUMERATION**. `v88_ag`'s "all eight model routes are listed"
+  was wrong twice and a user found it both times, so this walks every route and requires each
+  model-backed one to be a listed job or a REASONED exemption. 21 routes: 18 already right, 1 named
+  exemption (`/api/tutor`), **2 real gaps nobody had reported** — `/api/clean-text` and
+  `/api/split-chapters`, both blocking on the PDF import path. ⚠️ A first `awk` sweep misread three
+  routes and was thrown away: **a wrong inventory is worse than none, because it retires the
+  question.** The guard is the enumeration, so the next omission fails there instead of reaching a
+  user.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -435,8 +444,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 357 checks
-node test/run.js --quick                  → expect 296
+node test/run.js                          → expect 358 checks
+node test/run.js --quick                  → expect 297
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -469,7 +478,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **355 topics, 99 storylines, 33 languages, 766 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_aj'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ak'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

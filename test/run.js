@@ -178,6 +178,7 @@ run('unit: a running book job can be cancelled from the popover (v89_ag)', 'node
 run('unit: the text-analysis token popover can actually save (v89_ah)', 'node', [path.join(__dirname, 'unit-te-popover-save.test.js')]);
 run('unit: the jobs badge updates when a job STARTS (v89_ai)', 'node', [path.join(__dirname, 'unit-jobs-badge-live.test.js')]);
 run('unit: provenance is edited on the storyline and inherited by chapters (v89_aj)', 'node', [path.join(__dirname, 'unit-provenance-inherit.test.js')]);
+run('unit: EVERY model-backed route is a listed job \u2014 the enumeration (v89_ak)', 'node', [path.join(__dirname, 'unit-job-coverage.test.js')]);
 run('unit: every model role has a picker row; vision filtered by capability (v89_w)', 'node', [path.join(__dirname, 'unit-model-picker-roles.test.js')]);
 run('unit: the mic waits for the readout; no didn-not-catch toast (v89_x)', 'node', [path.join(__dirname, 'unit-speech-readout-race.test.js')]);
 run('unit: a failed chapter-title post-pass is visible (v89_y)', 'node', [path.join(__dirname, 'unit-title-failed-marker.test.js')]);

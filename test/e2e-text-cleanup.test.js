@@ -15,6 +15,23 @@ const fs = require('fs');
 const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const { boot, post, get, sleep, assert } = require('./lib');
+
+// ⚠️ v89_ak: /api/clean-text became a real job — it awaited up to THREE model calls and answered
+// 200, so a document import ran with no popover row and no cancel. The route now answers
+// 202 + {jobId} and the payload arrives via /api/job/:id. Same shape as e2e-comic-extract's own
+// helper. The CLAIMS below are unchanged; only where the body is read from moved.
+async function cleanJob(sport, body) {
+  const r = await post(sport, '/api/clean-text', body);
+  if (r.status !== 202 || !r.body || !r.body.jobId) return r;   // a 400/503 still answers the REQUEST
+  const t0 = Date.now();
+  while (Date.now() - t0 < 30000) {
+    const j = await get(sport, '/api/job/' + r.body.jobId);
+    if (j.status === 200 && j.body.status === 'done')  return { status: 200, body: j.body.data };
+    if (j.status === 200 && j.body.status === 'error') return { status: 502, body: { error: j.body.error } };
+    await sleep(150);
+  }
+  throw new Error('clean-text job timed out');
+}
 const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 
@@ -107,7 +124,7 @@ console.log('  client: backend-gated button, per-chunk, undoable: OK');
       'I danni sono ingenti e diffusi ovunque.',
     ].join('\n');
 
-    const r = await post(env.sport, '/api/clean-text', { text: article, lang: 'it' });
+    const r = await cleanJob(env.sport, { text: article, lang: 'it' });
     assert(r.status === 200, `cleanup accepted (got ${r.status})`);
     assert(!/ADVERT|Read also|Photo:/.test(r.body.text), 'the advertisement, teaser and caption are gone');
     assert(/Il maltempo ha colpito il Nord\./.test(r.body.text), 'the article survives…');
@@ -136,7 +153,7 @@ console.log('  client: backend-gated button, per-chunk, undoable: OK');
     try {
       const long = ['Prima frase che resta.', 'Seconda frase importante.',
                     'Terza frase del racconto.', 'Quarta frase conclusiva.'].join('\n');
-      const rr = await post(env2.sport, '/api/clean-text', { text: long, lang: 'it' });
+      const rr = await cleanJob(env2.sport, { text: long, lang: 'it' });
       assert(rr.status === 200, 'an over-deleting model still returns 200');
       assert(rr.body.heavy === true, 'and the result is flagged heavy for review');
       assert(rr.body.kept < rr.body.total * 0.4, 'the heavy deletion really is below the floor');
@@ -149,7 +166,7 @@ console.log('  client: backend-gated button, per-chunk, undoable: OK');
     env2 = await boot({ log: false });
     try {
       const long = 'Prima frase che resta. Seconda frase importante. Terza frase del racconto.';
-      const rr = await post(env2.sport, '/api/clean-text', { text: long, lang: 'it' });
+      const rr = await cleanJob(env2.sport, { text: long, lang: 'it' });
       assert(rr.status === 200, 'a rewriting model does not fail the request');
       assert(rr.body.unchanged === true, 'the chunk is reported as left alone');
       assert(rr.body.text === long, 'and the original text is returned intact');

@@ -1,7 +1,24 @@
 // E2E: /api/split-chapters — the model groups paragraphs into chapters and never returns text.
 // v71_b. Runs the real server against the fake model, so the prompt build, the JSON parse, the
 // validation and the reassembly are all exercised end to end.
-const { boot, post, assert } = require('./lib');
+const { boot, post, get, sleep, assert } = require('./lib');
+
+// ⚠️ v89_ak: /api/split-chapters became a real job — a single model call over a whole document that
+// was invisible while it ran. It now answers 202 + {jobId}; the payload arrives via /api/job/:id.
+// The CLAIMS below are unchanged; only where the body is read from moved. A 400 still answers the
+// REQUEST directly (v88_al), which is why the non-202 path is passed straight through.
+async function splitJob(sport, body) {
+  const r = await post(sport, '/api/split-chapters', body);
+  if (r.status !== 202 || !r.body || !r.body.jobId) return r;
+  const t0 = Date.now();
+  while (Date.now() - t0 < 30000) {
+    const j = await get(sport, '/api/job/' + r.body.jobId);
+    if (j.status === 200 && j.body.status === 'done')  return { status: 200, body: j.body.data };
+    if (j.status === 200 && j.body.status === 'error') return { status: 502, body: { error: j.body.error } };
+    await sleep(150);
+  }
+  throw new Error('split-chapters job timed out');
+}
 
 const SEED = { schemaVersion: 29, topics: [], storylines: [], flags: {}, progress: {} };
 
@@ -22,7 +39,7 @@ const PARAS = [
     const { sport } = env;
 
     // ── the grouping pass ────────────────────────────────────────────────────
-    const r = await post(sport, '/api/split-chapters', { paragraphs: PARAS, lang: 'it' });
+    const r = await splitJob(sport, { paragraphs: PARAS, lang: 'it' });
     assert(r.status === 200, 'split-chapters accepted (got ' + r.status + ' ' + r.raw + ')');
     const ch = r.body.chapters;
     assert(Array.isArray(ch) && ch.length >= 2, 'the model returned more than one chapter');
@@ -44,7 +61,7 @@ const PARAS = [
     console.log(`  grouped ${PARAS.length} paragraphs -> ${ch.length} chapters, text unchanged`);
 
     // ── cleaning folded into the same pass ───────────────────────────────────
-    const r2 = await post(sport, '/api/split-chapters', { paragraphs: PARAS, lang: 'it', drop: true });
+    const r2 = await splitJob(sport, { paragraphs: PARAS, lang: 'it', drop: true });
     assert(r2.status === 200, 'the drop variant is accepted');
     assert(Array.isArray(r2.body.dropped) && r2.body.dropped.length >= 1,
       'the model discarded at least one furniture paragraph when allowed to');

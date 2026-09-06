@@ -2636,6 +2636,26 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_ak — the job-coverage audit: the enumeration, not another instance
+
+User request, after the class produced two reports in one session. **ZERO `ui.json` keys.**
+
+⚠️ **The claim kept being wrong.** `v88_ag`'s write-up said *"all EIGHT formerly-blocking model
+routes are now listed, cancellable jobs behind one shape"*. It was wrong twice, and a USER found it
+both times — `v89_af` (the storyboard awaited a ~30-minute generator and answered 200) and `v89_ag`
+(a book job was listed but the popover refused its cancel). Each was fixed as an INSTANCE. This cut
+does the enumeration instead.
+
+| | |
+|---|---|
+| **the method, and why the first attempt was thrown away** | A hand sweep with `awk` over fixed windows misread three routes — it called `/api/generate` non-cancellable (it is) and `/api/generate-book` untracked (it is, in its own store). **A wrong inventory is worse than none, because it retires the question.** Redone by walking every route block with real brace matching, then classifying by whether it calls a model directly OR calls a generator that does |
+| **the result: 21 model-backed routes** | 18 already correct. **1 named exemption**: `/api/tutor` is streaming and stateless (INTERNALS §6b) and appears in the popover as a client-derived SYNTHETIC entry. **2 REAL GAPS nobody had reported** |
+| **⚠️ `/api/clean-text`** | The PDF "Remove ads & boilerplate" pass. It AWAITED `cleanNarrativeText` and answered 200 — and that function makes up to THREE model calls per chunk, with `aiCleanChunks` looping it once per chunk. A document import could spend many minutes in the model with no popover row and no cancel |
+| **⚠️ `/api/split-chapters`** | The ✨ LLM chapter split: one model call over a whole document, invisible while it ran |
+| **both converted the same way** | `runAsJob` + label + `jobStep`, validation still OUTSIDE the job (`v88_al`). Clean-text is one job PER CHUNK — the loop is sequential, so exactly one row is live at a time and each is individually cancellable; a cancel stops the BATCH rather than counting as one failed chunk. Both client callers moved to `_jobAwait`, which is where `v89_af` had to catch a half-conversion on the storyboard's SECOND caller |
+| **live-verified** | `POST /api/split-chapters` → `202 {jobId}`, popover row `[running] "Splitting 3 paragraphs into chapters" kind=job` with its step; cancel → `stopped:true`. `/api/clean-text` → `"Cleaning text (21 words)"`, cancellable. And validation still answers the REQUEST: 400 on a short text and on a one-paragraph split, not a failed job |
+| **⚠️ the guard is the ENUMERATION, and that is the point** | `unit-job-coverage.test.js` walks every route itself and requires each model-backed one to be a listed job or to carry a **reasoned** entry in an explicit `EXEMPT` map — an unexplained exemption is how a real gap hides in a green test. It also pins that every converted route has a POLLING client caller, and `v89_ag`'s rule as a RULE (cancel for `job`/`book`, never for `sync`/`tutor`/`draft`). **Seven mutations red**, the decisive one being a SYNTHETIC new route added mid-file that reaches a model and answers inline — caught by name |
+
 ## ✅ v89_aj — source/provenance is edited on the STORYLINE and inherited by its chapters
 
 User request: *"Source/provenance editing currently lives on chapter-level, however we usually want

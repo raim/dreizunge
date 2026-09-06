@@ -7657,10 +7657,14 @@ async function aiCleanChunks(){
     const c = _pdfChunks[i];
     c.status = 'active'; _renderPdfChunks();
     try{
-      const r = await fetch('/api/clean-text', { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ text: c.text, lang: APP.srcLang || APP.lang || 'en' }) });
-      const data = await r.json();
-      if(!r.ok) throw new Error(data.error || 'failed');
+      // v89_ak: one job PER CHUNK — the loop is sequential, so exactly one row is live at a time,
+      // and each is individually cancellable. A cancel stops the BATCH rather than being counted as
+      // one failed chunk, matching retranslateChain's own reading of the same situation.
+      const data = await _jobAwait(await fetch('/api/clean-text',
+        { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ text: c.text, lang: APP.srcLang || APP.lang || 'en' }) }),
+        { every: 2000 });
+      if(data === null){ c.status = 'pending'; _renderPdfChunks(); break; }
       if(data.tokens){
         _aiCleanTokens.promptTokens     += data.tokens.promptTokens || 0;
         _aiCleanTokens.completionTokens += data.tokens.completionTokens || 0;
@@ -7729,12 +7733,15 @@ async function llmSplitChapters(){
   console.log(`✨ Chapter split: asking the model to group ${paragraphs.length} paragraphs`
     + (drop ? ' (and drop page furniture)' : ''));
   try{
-    const r = await fetch('/api/split-chapters', {
+    // v89_ak: a cancellable job now — `_jobAwait` hands back the same payload the route used to
+    // return inline, so everything below is unchanged. A CANCEL comes back as null: the user's own
+    // act, so it is not reported as a failure.
+    const data = await _jobAwait(await fetch('/api/split-chapters', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ paragraphs, lang: APP.lang || 'en', drop })
-    });
-    const data = await r.json();
-    if(!r.ok || !Array.isArray(data.chapters) || !data.chapters.length) throw new Error(data.error || 'no chapters');
+    }), { every: 2000 });
+    if(data === null) return;
+    if(!Array.isArray(data.chapters) || !data.chapters.length) throw new Error(data.error || 'no chapters');
     _llmChunks = data.chapters.map((c,i) => ({
       text: c.text, wordCount: c.wordCount, title: c.title || _autoTitle(c.text, i), status:'pending' }));
     _llmChunksFor = _pdfRawText;
@@ -169424,12 +169431,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v89_aj', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v89_ak', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"9113aab9183b","lessons.json":"07f4ada5bac9","ui.json":"4a402c56f092","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"016a5cc0e38b","analysis-corrections.json":"e64c06e5700a","build-static.js":"811abf3b5152"};
+  APP.buildSources = {"index.html":"d19ca02668f2","lessons.json":"07f4ada5bac9","ui.json":"4a402c56f092","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"016a5cc0e38b","analysis-corrections.json":"e64c06e5700a","build-static.js":"811abf3b5152"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

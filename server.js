@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_aj';
+const APP_VERSION  = 'v89_ak';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8627,8 +8627,17 @@ http.createServer(async (req, res) => {
       const text = String(body.text || '');
       if (text.trim().length < 40) return json(res, 400, { error: 'Text too short to clean.' });
       if (text.length > 20000) return json(res, 400, { error: 'Text too long — split it first.' });
-      try { return json(res, 200, await cleanNarrativeText(text, body.lang || 'en')); }
-      catch(e) { return json(res, 502, { error: e.message }); }
+      // ⚠️ v89_ak (job-coverage audit): a real job, like every other model-backed route since
+      // v88_al. This AWAITED `cleanNarrativeText` and answered 200 — and that function makes up to
+      // THREE model calls per chunk, with `aiCleanChunks` looping it once per chunk. So a document
+      // import could spend many minutes in the model with no popover row and no cancel, which is
+      // the same defect the user reported twice (`v88_ag` on QC, `v89_af` on the storyboard).
+      // Validation stays outside the job (`v88_al`).
+      const _clWords = text.split(/\s+/).filter(Boolean).length;
+      return runAsJob(res, { label: `Cleaning text (${_clWords} words)` }, async (jobId) => {
+        jobStep(jobId, `[${OLLAMA_MODEL}] Removing ads, teasers and navigation\u2026`);
+        return await cleanNarrativeText(text, body.lang || 'en');
+      });
     }
     // ── The on-demand text QC (v89_aa, user request) ──────────────────────
     // "we want the possibility to run a pure text QC on that page, on a similar page after PDF
@@ -8701,8 +8710,12 @@ http.createServer(async (req, res) => {
       const paras = Array.isArray(body.paragraphs) ? body.paragraphs.map(p => String(p || '').trim()).filter(Boolean) : [];
       if (paras.length < 2) return json(res, 400, { error: 'Need at least two paragraphs to split.' });
       if (paras.length > 400) return json(res, 400, { error: 'Too many paragraphs — split the document first.' });
-      try { return json(res, 200, await splitChaptersLLM(paras, body.lang || 'en', !!body.drop)); }
-      catch(e) { return json(res, 502, { error: e.message }); }
+      // v89_ak (job-coverage audit): same conversion, same reason — `splitChaptersLLM` is a single
+      // model call over a whole document and was invisible while it ran.
+      return runAsJob(res, { label: `Splitting ${paras.length} paragraphs into chapters` }, async (jobId) => {
+        jobStep(jobId, `[${OLLAMA_MODEL}] Grouping paragraphs into chapters\u2026`);
+        return await splitChaptersLLM(paras, body.lang || 'en', !!body.drop);
+      });
     }
 
     // ── item R (roadmap_v87.md): unfinished-project drafts ──────────────
