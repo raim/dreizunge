@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_am` cut
+# Session prompt — written at the `v89_an` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_am`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_an`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -429,6 +429,15 @@ contain no quotes). Grep: `on[a-z]*="[^"]*\${JSON.stringify` — zero at this cu
   sites) moved into `unit-job-coverage`; that file was then deleted. The check count DROPS by one,
   which is the deletion, not a loss.
 
+- **`v89_an`** — **29 dead `ui.json` keys removed** (766 → 737 `en`; **957 translated entries** across
+  33 languages, all hand-written). ⚠️ The real finding is the DETECTOR: `'prefix' + var` nearly cost
+  five scheme names, and **`var + '_suffix'` nearly cost `ex.syn.q_*_n` — the string the synonym
+  prompt shows MOST of the time.** The USER caught that one by asking for it to be checked first.
+  A third trap: `grep`'s `.` is a wildcard, so `app.tagline` "matches" `app-tagline` — a key must be
+  matched as a whole QUOTED string. Three keys are HELD (a test names each), listed with reasons.
+  24 duplicate-English groups are REPORTED, not merged — the `_plural` pairs exist for languages
+  whose rules differ from English, so that needs a per-group ruling.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -459,8 +468,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 358 checks
-node test/run.js --quick                  → expect 297
+node test/run.js                          → expect 359 checks
+node test/run.js --quick                  → expect 298
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -492,8 +501,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **355 topics, 99 storylines, 33 languages, 766 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_am'`.
+Corpus at this cut: **355 topics, 99 storylines, 33 languages, 737 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_an'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

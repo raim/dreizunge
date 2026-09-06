@@ -2635,6 +2635,33 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_an — 29 dead `ui.json` keys removed, and the detector that found them is now a guard
+
+User, before the v90 cut: *"are all untranslated entries still used? Do we have a lot of repeated or
+redundant entries, where we could also re-use existing translations, or merge redundant entries?"*
+
+**766 → 737 `en` keys. 957 translated entries removed across 33 languages** — all of it work the user
+does BY HAND, which is what made the audit worth running at all.
+
+### ⚠️ The finding is the DETECTOR, not the list
+
+Deciding a key is unused is easy to get wrong in the direction that costs most, and **two of the
+three ways were hit during this audit**:
+
+| blind spot | what it nearly cost |
+|---|---|
+| `'prefix' + var` | `_sbSchemeLabel` builds `'storyboard.scheme_' + name`. A literal-only search reported all five colour-scheme names dead. Caught before deleting — the first pass said 55 keys, the corrected one 34 |
+| `var + '_suffix'` | `_synQ` builds ``t(key + '_n')``, and since `_synN` is the number of correct words **that suffixed key is the string shown MOST of the time** — the un-suffixed one is only the count==0 fallback. A prefix-only detector called the PRIMARY string dead. ⚠️ **THE USER CAUGHT THIS**, by answering "delete, but check the synonym plurals first" rather than "delete". Deleting them would have broken the synonym prompt in 32 languages |
+| `grep`'s `.` | Verifying with `grep -c "app.tagline"` matches `app-tagline`; `qc.accept` matches `qc.accepted`. **My own verification pass was wrong** and briefly reported three of the dead keys as live. A key must be matched as a whole QUOTED string |
+
+| | |
+|---|---|
+| **what went** | 29 keys, in recognisable groups — features reworked without removing their old labels: `story.show_translation`/`show_original` (superseded by the flag buttons), `unlocked.next`/`unlocked.progress`/`summary.chapters` (the story-unlocked rework), `form.style_lbl`/`form.format_lbl` (labels dropped; the `form.style.*` VALUES are still live), `qc.accept` (→ `qc.accept_selected`), the arc-mode pair, the two math placeholders, the tags pair, and the rest |
+| **what was HELD, and why** | Three keys a TEST still names — `form.image_scene_ph` (0/32 translated; `v89_z` merged the review boxes), `form.image_review_confirm` (`v88_c` split the card's two modes), `sl.recreate_btn`. Removing them means re-scoping those assertions, which the user chose not to bundle into a bulk deletion. Listed in the guard's own `HELD` map **with the reason** — an unexplained exemption is how a real finding hides in a green test |
+| **also reported, NOT acted on** | 24 groups of identical English under several keys (`"⚑ {n}"` ×4, `"{n} chapters"` ×4, `"Story"` ×3…). ⚠️ Merging is **not** obviously safe: the `_plural` pairs exist for languages whose plural rule differs even where English collapses them, and a heading vs. a model-role label can inflect differently. The duplication may be English-only, so this needs a per-group ruling, not a sweep |
+| **coverage, for the record** | No language is 100%. `fr`/`de`/`it`/`es` were 59 short — the SAME 59 keys, missing from every language, i.e. one coherent backlog of recent features (`jobs.*`, `toast.draft_*`). The rest sit at 75–110 |
+| **guards** | `unit-ui-keys-live.test.js` re-runs the detector every cut. §1 pins all three blind spots with LIVE examples — and each with its negative partner (`storyboard.scheme_classic` is genuinely not a literal, so the prefix rule really is what saves it). §2 fails on any new unreferenced key, with `HELD` checked both ways so it cannot rot into a dumping ground. §3 no language carries a key `en` lacks. **Four mutations red**, including breaking the suffix path in the PRODUCT and watching the guard notice |
+
 ## ✅ v89_am — the dead `kind:'sync'` path is deleted
 
 Carried as an explicit follow-up since `v88_al`, and its own comment said so in place: *"THIS
