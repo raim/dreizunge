@@ -193,7 +193,14 @@ console.log('  a verdict that arrives after the learner moved on is dropped, and
     assert.ok(typeof UI.en[k] === 'string' && UI.en[k].trim(), 'ui.json carries ' + k);
     for (const lng of Object.keys(UI)) {
       if (lng === 'en') continue;
-      assert.ok(!(k in UI[lng]), `${k} is en-only — ${lng} must not carry a machine-written copy`);
+    // ⚠️ v90: the "en only" half of this check has EXPIRED, and deliberately so. It meant "the app
+    // did not machine-fill this key behind the user's back" — true and worth pinning at the moment a
+    // key is granted. But the user translates `ui.json` BY HAND, and once they have, a hand
+    // translation is indistinguishable from a machine one after the fact, so the check would fire on
+    // exactly the outcome it exists to protect. (It did: three guards went red mid-session while the
+    // user was translating.) What ENDURES is the budget claim — the key exists in `en` — which is
+    // asserted above. A guard with an implicit expiry should say so; this one now does.
+      // (was: assert the key is absent from every other language)
     }
   }
   const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
