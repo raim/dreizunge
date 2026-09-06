@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90` cut
+# Session prompt — written at the `v90_a` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_a`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -68,12 +68,12 @@ current one) carries the protocol, the open items and the RULES, but none of tha
 the end (job audit, item V, the `kind:'sync'` deletion) all landed. **Ask the user what they want
 next** — that is the right first move here.
 
-⚠️ **THE USER WAS TRANSLATING `ui.json` BY HAND ACROSS THE v90 CUT** and will commit it themselves.
+⚠️ **THE USER WAS TRANSLATING `ui.json` BY HAND ACROSS THE v90 AND v90_a CUTS** and will commit it themselves.
 Do not touch that file until `git log ui.json` shows their commit, and do not trust any translated
 count in this document until then.
 
-⚠️ **AND `docs/index.html` BAKES `ui.json`.** The v90 cut committed a `docs/` built from a
-mid-translation `ui.json`, because `APP_VERSION` is baked there too and had to be current. So
+⚠️ **AND `docs/index.html` BAKES `ui.json`.** Both the v90 and the v90_a cut committed a `docs/` built
+from a mid-translation `ui.json`, because `APP_VERSION` is baked there too and had to be current. So
 `unit-static-freshness` will be RED until someone re-runs `node build-static.js` after the user's
 translation lands. **That is the expected first action of the next session if `git log ui.json`
 shows a commit newer than `docs/index.html`** — it is not a finding, and the fix is one command:
@@ -108,8 +108,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 359 checks
-node test/run.js --quick                  → expect 298
+node test/run.js                          → expect 360 checks
+node test/run.js --quick                  → expect 299
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -142,7 +142,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **355 topics, 99 storylines, 33 languages, 737 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_a'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

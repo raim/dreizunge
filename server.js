@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90';
+const APP_VERSION  = 'v90_a';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8278,6 +8278,11 @@ http.createServer(async (req, res) => {
         // asymmetry v55_s hit with generationStats). source is tiny (≤4 short strings);
         // sourceFile covers PDF-generated chapters that predate structured sources.
         createdBy: l.createdBy || null,
+        // ⚠️ v90_a: chapter-level `source` rides here, and has since before the provenance work —
+        // `v89_aj` added a SECOND, conditional copy of this line believing it was missing, which was
+        // a redundant duplicate key with no behavioural effect. Found by the projection audit that
+        // release's own claim inspired. The `v89_aj` write-up called it "the FOURTH instance of the
+        // trap"; it was not an instance at all.
         source: l.source || null,
         sourceFile: l.storyMeta?.sourceFile || null,
         // User request ("use the images of a comic story, or thumbnails thereof, instead of the
@@ -8300,12 +8305,6 @@ http.createServer(async (req, res) => {
         // topics and gets it for free — and silently does nothing LIVE. Omitted when falsy, like
         // every other optional field here, so an ordinary chapter's payload is unchanged.
         ...(l._titleFailed ? { _titleFailed: true } : {}),
-        // ⚠️ v89_aj: chapter-level `source` HAS to ride here too — the FOURTH instance of the trap
-        // the comments above record (`v74_i`, `v79_n`, `v89_y`). The provenance line reads it from
-        // `APP.savedList`, so omitted here it would work in the STATIC build (which ships whole
-        // topics) and show nothing LIVE. Only present when the chapter actually differs from its
-        // storyline — an inheriting chapter has no entry at all (see effectiveSource).
-        ...(l.source && Object.keys(l.source).length ? { source: l.source } : {}),
         // item AR (v88_j): ONE pre-summed scalar for the library's token sort. ⚠️ It HAS to ride in
         // this whitelist projection: `generationStats` is not otherwise sent, so a token sort built
         // without this works in the STATIC build (which ships whole topics and has the field for

@@ -181,6 +181,7 @@ run('unit: provenance is edited on the storyline and inherited by chapters (v89_
 run('unit: EVERY model-backed route is a listed job \u2014 the enumeration (v89_ak)', 'node', [path.join(__dirname, 'unit-job-coverage.test.js')]);
 run('unit: item V \u2014 multiple images become multiple panels (v89_al)', 'node', [path.join(__dirname, 'unit-comic-multi-image.test.js')]);
 run('unit: every ui.json key is still referenced (v89_an)', 'node', [path.join(__dirname, 'unit-ui-keys-live.test.js')]);
+run('unit: every topic field is projected or deliberately static-only (v90_a)', 'node', [path.join(__dirname, 'unit-savedlist-projection.test.js')]);
 run('unit: every model role has a picker row; vision filtered by capability (v89_w)', 'node', [path.join(__dirname, 'unit-model-picker-roles.test.js')]);
 run('unit: the mic waits for the readout; no didn-not-catch toast (v89_x)', 'node', [path.join(__dirname, 'unit-speech-readout-race.test.js')]);
 run('unit: a failed chapter-title post-pass is visible (v89_y)', 'node', [path.join(__dirname, 'unit-title-failed-marker.test.js')]);

@@ -2695,4 +2695,23 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
-*(Nothing yet — the line was cut at `v90`.)*
+## ✅ v90_a — the savedList projection is now a decision, not an accident (and a `v89_aj` claim corrected)
+
+User: *"go ahead with #1"* — the `savedList` projection differential, recommended because it is the
+class that has bitten most often. **ZERO `ui.json` keys** (the user was translating; the file was not
+touched).
+
+`/api/lessons` does not return topics, it returns a WHITELIST PROJECTION. The static build ships
+whole topics and gets every field free. So a field the client needs but the projection omits **works
+in the static build and is silently dead live** — no error, no empty state, just a feature that
+quietly does nothing on the real server. The projection's own comments record it three times
+(`v74_i`, `v79_n`, `v89_y`).
+
+| | |
+|---|---|
+| **the measurement** | The live projection ships **22** distinct keys; the store holds **46**. **31 fields are dropped** — including `story` (355 topics), `storyMeta` (355), `translationMeta` (355), `userTopic` (336) — and 7 are COMPUTED in the projection and stored nowhere (`lessonCount`, `comicPanelCount`, `storyQcPending`, `qcFlags`, `tokens`, `lessonTypes`, `sourceFile`) |
+| **the scan found no current violation** | Three shapes checked: variables bound from `savedList`, the `byTopic`/`byName` maps built from it, and inline `.find(…)?.field`. Zero reads of a dropped field. ⚠️ **This does not prove absence** — the client reads properties off short-named locals, so it is not statically decidable, and the guard does not pretend otherwise |
+| **⚠️⚠️ IT DID FIND AN ERROR IN `v89_aj` — MY OWN, TWO RELEASES OLD** | That release added `...(l.source && … ? { source: l.source } : {})` to the projection and its write-up called it *"the FOURTH instance of the trap"*. **`source: l.source \|\| null` was already there.** The addition was a redundant DUPLICATE KEY with no behavioural effect, and the claim was simply false. Found because the mutation "projection drops `source`" came back **GREEN** — the guard could not fail, because the other copy still satisfied it. Duplicate removed; `roadmap_v89.md` and `INTERNALS.md` corrected in place rather than quietly fixed |
+| **what the guard actually does** | It cannot decide reachability, so it makes the NEXT field a decision: every key any topic carries must be in the projection **or** in a `STATIC_ONLY` map **with a reason**. Adding a topic field now fails the suite until someone chooses. §2 keeps that list honest — an entry that is also projected is rejected (the list would no longer describe reality), and every reason must be a real sentence: `'ditto'` was refused by the guard's own check when I first wrote it |
+| **⚠️ the extractor caught its own broken parse** | `lastIndexOf('{', anchor)` finds the nearest brace BEFORE the anchor, which is an inner one, so the first version parsed a fragment and extracted zero fields. A non-vacuity assertion (`shipped.has('id') && …`) fired immediately. It now walks BACKWARD balancing braces to the enclosing literal — lines 8266-8367, 39 fields |
+| **guards** | `unit-savedlist-projection.test.js`, three sections. **Six mutations red**, the decisive one being **a brand-new topic field appearing unaccounted for** — the case the file exists for — plus each of the three historical regressions (`_titleFailed`, `comicPanelCount`, and `source` once its duplicate was gone) and the static-only list rotting |

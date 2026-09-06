@@ -91,7 +91,12 @@ console.log('  both routes enforce "store only if it differs": OK');
   const at = server.indexOf('lessonCount: (l.lessons || [])');
   assert.ok(at > -1, 'the savedList projection is where it was');
   const proj = server.slice(at - 2500, at + 2500);
-  assert.ok(/\.\.\.\(l\.source && Object\.keys\(l\.source\)\.length \? \{ source: l\.source \} : \{\}\)/.test(proj),
+  // ⚠️ v90_a CORRECTION. This pinned the exact conditional spread `v89_aj` added — but `source` was
+  // ALREADY projected by `source: l.source || null`, so that addition was a redundant duplicate key
+  // with no behavioural effect, and the write-up's claim that it was "the FOURTH instance of the
+  // savedList trap" was simply wrong. The duplicate is removed; the CLAIM the guard exists for is
+  // unchanged and is asserted here against whichever line actually carries it.
+  assert.ok(/\bsource: l\.source/.test(proj),
     '⚠️ chapter `source` is in the savedList projection — the provenance line reads it from ' +
     'APP.savedList, so omitted it would work statically and show nothing live');
 }
