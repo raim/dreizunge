@@ -2635,6 +2635,28 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_ag — a running story/book job can be cancelled from the popover
+
+User report: *"creating a story has no cancel/open buttons in the job popover."* **ZERO `ui.json`
+keys.** Both halves investigated; one was a real defect and one is honest behaviour.
+
+⚠️ **The cancel was a DELIBERATE exclusion whose reasoning was right and whose conclusion was
+wrong.** `_jobsRenderList`'s own comment: *"`book` is excluded too: multi-chapter generation lives in
+the separate `bookJobs` store with its own cancel route (`/api/book-job/cancel`), which this one does
+not reach."* True of the route — but **the answer is to reach it, not to withhold the button**. A
+book job is the longest-running thing in the app, chapter after chapter, so it is precisely the one a
+learner wants to stop; the route already existed and already worked, and the PDF panel's own
+`pdfCancelBook()` had been calling it all along. Only the popover was denied it.
+
+| | |
+|---|---|
+| **the fix** | `canCancel` widens by exactly ONE kind (`job` → `job` or `book`), and `_jobsCancelById(id, kind)` dispatches: `/api/book-job/cancel` + `{bookId}` for a book, `/api/jobs/cancel` + `{jobId}` otherwise. The kind is looked up from the current effective list by id — the same way the open button resolves its `link`, and for the same reason `_jobsLastList` is at module scope at all |
+| **⚠️ the exclusion is NARROWED, not removed** | `sync`, `tutor` and `draft` still offer no cancel. They have no server-side job at all, so `POST /api/jobs/cancel` would look up the id, find nothing and answer `stopped:false` — a button there would be a lie. That is the original comment's real point, and it still holds |
+| **⚠️ the route had to learn to tell the truth first** | `/api/book-job/cancel` answered a bare `{ok:true}` whether or not it found a running job. Fine for its only previous caller (`pdfCancelBook()` ignores the body), but `v88_k`'s ruling on this very button is that *telling a learner "cancelled" while the model is still running is the exact bug it exists to prevent* — and **a caller cannot be honest about an outcome the route will not tell it**. It now answers `{ok, stopped}`, matching `/api/jobs/cancel` |
+| **`cancelBookJob(bj)` is a NAMED function** | Same reason as `v89_af`'s `pingFailureIsHard`: inline in the route the decision was invisible to a test, and **a mutation reporting `stopped: true` unconditionally left the suite GREEN**. Named, it is driven over running / done / error / cancelled / pending / unknown — including cancelling the SAME job twice, which must report false the second time or a double-click claims two cancels |
+| **the OPEN button is honest, not broken** | A book job's `link` is `{type:'topic', id: firstTopicId}` where `firstTopicId` is the first chapter that has one — and `topicId` stays null until that chapter is SAVED. So during chapter 1 there is genuinely nothing to open, and the button appears as soon as the first chapter lands. `bookJobs` carries no storyline id either, so there is no earlier target to point at. Left as is; noted here so it is not "fixed" into a link that goes nowhere |
+| **guards** | `unit-book-job-cancel.test.js`: §1 a running book job offers cancel and a finished one does not, with `sync`/`tutor`/`draft` still excluded (the narrowing) and a plain job as the non-vacuity partner; §2 the book kind reaches the book ROUTE with the book BODY while plain jobs are untouched; §3 "cancelled" is claimed only when something was really stopped, plus the lifted `cancelBookJob` driven over six states and a double-cancel. **Nine mutations red, one only after a first pass came back green** |
+
 ## ✅ v89_af — storyboard runs as a job, and a stalled machine is no longer read as a dead Ollama
 
 Two user reports, one release. **ZERO `ui.json` keys.**

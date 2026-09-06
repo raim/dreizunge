@@ -24505,7 +24505,16 @@ function _jobsRenderList(){
     // so a button there would be a lie. `book` is excluded too: multi-chapter generation lives in
     // the separate `bookJobs` store with its own cancel route (`/api/book-job/cancel`), which this
     // one does not reach.
-    const canCancel = j.kind === 'job' && (j.status === 'running' || j.status === 'pending');
+    // ⚠️ v89_ag (user report: "creating a story has no cancel/open buttons in the job popover").
+    // `book` was excluded here on the grounds that multi-chapter generation "lives in the separate
+    // bookJobs store with its own cancel route, which this one does not reach" — true of the ROUTE,
+    // but the conclusion was wrong: the fix is to reach it, not to withhold the button. A book job
+    // is the LONGEST-running thing in the app (chapter after chapter), so it is the one a learner
+    // most wants to stop, and `/api/book-job/cancel` already existed and already worked — the PDF
+    // panel's own `pdfCancelBook()` has been calling it all along. `_jobsCancelById` dispatches on
+    // kind below.
+    const canCancel = (j.kind === 'job' || j.kind === 'book')
+      && (j.status === 'running' || j.status === 'pending');
     const cancelBtn = canCancel
       ? `<button class="jobs-row-cancel" data-jobid="${escAttr(j.id)}" title="${escAttr(t('jobs.cancel'))}">✕</button>`
       : '';
@@ -24529,19 +24538,35 @@ document.addEventListener('click', e => {
   const delBtn = e.target.closest && e.target.closest('.jobs-row-del');
   if(delBtn) _jobsDiscardDraftById(delBtn.dataset.jobid);
   const cancelBtn = e.target.closest && e.target.closest('.jobs-row-cancel');
-  if(cancelBtn) _jobsCancelById(cancelBtn.dataset.jobid);
+  if(cancelBtn){
+    // The KIND decides which cancel route to use, so it is looked up the same way the open button
+    // looks up its link — from the current effective list, not serialized into the markup.
+    const job = _jobsEffectiveList().find(j => j.id === cancelBtn.dataset.jobid);
+    _jobsCancelById(cancelBtn.dataset.jobid, job && job.kind);
+  }
 });
 // item AU cancel (v88_k). The route now answers `{ok, stopped}` — `stopped:false` means it found
 // nothing to abort (the job finished between the render and the click, which a 3s poll makes a real
 // race). Reporting the two differently matters: telling a learner "cancelled" when the model is
 // still running is the exact bug this item fixes, and doing it in the UI instead of the server
 // would be no better.
-async function _jobsCancelById(id){
+async function _jobsCancelById(id, kind){
+  // ⚠️ v89_ag: two stores, two routes. A `book` id lives in `bookJobs` and POST /api/jobs/cancel
+  // would look it up in the `jobs` map, find nothing, and answer `stopped:false` — reporting
+  // "too late" for a job that is still very much running. Dispatching on kind is what makes the
+  // button honest rather than merely present.
+  const isBook = kind === 'book';
+  const url  = isBook ? '/api/book-job/cancel' : '/api/jobs/cancel';
+  const body = isBook ? { bookId: id } : { jobId: id };
   try{
-    const r = await fetch('/api/jobs/cancel',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({jobId:id})});
+    const r = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)});
     const data = await r.json().catch(()=>({}));
-    showToast(data && data.stopped ? t('jobs.cancelled') : t('jobs.cancel_too_late'));
+    // Both routes now answer {ok, stopped} — the book one gained `stopped` at v89_ag precisely so
+    // this line does not have to guess. `stopped:false` means it found nothing to abort (the job
+    // finished between the render and the click, which a 3s poll makes a real race).
+    const stopped = !!(data && data.stopped);
+    showToast(stopped ? t('jobs.cancelled') : t('jobs.cancel_too_late'));
   }catch(e){ showToast('⚠ '+e.message); }
   _jobsFetchAndRender();
 }

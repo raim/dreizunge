@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_af` cut
+# Session prompt — written at the `v89_ag` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_af`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_ag`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -350,6 +350,22 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   no longer read as proof Ollama is gone (`pingFailureIsHard`), the background ping gets 15s instead
   of 2s, and the offline line now names the reason.
 
+- **`v89_ag`** — a running story/book job can be CANCELLED from the popover (user report). The
+  exclusion of `kind:'book'` was deliberate and its conclusion wrong: the route existed and worked,
+  only the popover was denied it. `sync`/`tutor`/`draft` stay excluded (no server-side job). ⚠️ The
+  route had to learn to report `{ok, stopped}` first — a caller cannot be honest about an outcome
+  the route will not tell it. The OPEN button is honest, not broken: a book job has no `topicId` to
+  link to until chapter 1 is saved.
+
+⚠️ **UNRESOLVED — do not record the `v89_af` wlan fix as confirmed.** A controlled test (server on
+`v89_af`, clean wlan off at 10:57:26, on at 10:58:45) produced **no failure at all**: the Ollama ping
+stayed at 1-3ms throughout, the app never left `backend:ollama`, memory was 28GB free and swap quiet.
+So the hard/soft split was never exercised — the toggle did not reproduce the original symptom, and
+the `v89_af` change is untested against it. ⚠️ Note the DIFFERENCE in failure mode: the original logs
+show `ip-config-unavailable` (DHCP timing out, 1564 times), whereas the manual toggle was a clean
+`user-requested` deactivate. The reproduction probably needs the flapping/DHCP-failure shape, not a
+clean off/on. `scratchpad/watch.js` in that session's notes is the monitor to re-run.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -380,8 +396,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 353 checks
-node test/run.js --quick                  → expect 292
+node test/run.js                          → expect 354 checks
+node test/run.js --quick                  → expect 293
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -413,8 +429,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **352 topics, 98 storylines, 33 languages, 766 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_af'`.
+Corpus at this cut: **355 topics, 99 storylines, 33 languages, 766 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ag'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

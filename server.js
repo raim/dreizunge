@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_af';
+const APP_VERSION  = 'v89_ag';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -9747,8 +9747,15 @@ http.createServer(async (req, res) => {
     if (M === 'POST' && url.pathname === '/api/book-job/cancel') {
       let body; try { body = JSON.parse(await readBody(req)); } catch(e) { body = {}; }
       const bj = body.bookId && bookJobs.get(body.bookId);
-      if (bj && bj.status === 'running') { bj.status = 'cancelled'; console.log('  Book job cancelled:', body.bookId); }
-      return json(res, 200, { ok: true });
+      // ⚠️ v89_ag: report whether anything was ACTUALLY stopped, the same `{ok, stopped}` shape
+      // /api/jobs/cancel uses. It answered a bare `{ok:true}` whether or not it found a running job
+      // — fine for its original caller (`pdfCancelBook()` ignores the body), but the jobs popover
+      // now offers a cancel button here too, and `v88_k`'s own ruling on that button was that
+      // telling a learner "cancelled" while the model is still running is precisely the bug to
+      // avoid. A caller cannot be honest about an outcome the route will not tell it.
+      const stopped = cancelBookJob(bj);
+      if (stopped) console.log('  Book job cancelled:', body.bookId);
+      return json(res, 200, { ok: true, stopped });
     }
     if (M === 'POST' && url.pathname === '/api/dialect-story') {
       let body;
@@ -11069,6 +11076,17 @@ async function shutdown(signal) {
 //
 // A named function rather than an inline ternary because it is the whole fix: as an expression
 // buried in the loop, a mutation flattening it to `true` left the suite GREEN.
+// ⚠️ v89_ag — a NAMED decision, for the same reason `pingFailureIsHard` is one: inline in the route
+// it was invisible to a test, and a mutation making it report `stopped: true` unconditionally left
+// the suite GREEN. Only a RUNNING job can be stopped; anything else (already done, already
+// cancelled, or an id that is not a book job at all) must answer false, or the popover claims a
+// cancel that never happened — `v88_k`'s ruling on exactly that button.
+function cancelBookJob(bj) {
+  if (!bj || bj.status !== 'running') return false;
+  bj.status = 'cancelled';
+  return true;
+}
+
 function pingFailureIsHard(code) {
   return code === 'ECONNREFUSED' || code === 'EHOSTUNREACH' || code === 'ENOTFOUND';
 }

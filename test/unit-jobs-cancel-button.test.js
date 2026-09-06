@@ -32,9 +32,16 @@ function client(list) {
     _jobsRenderList(); true;`, 'seed');
   return C;
 }
+// ⚠️ v89_ag: DELIMITED, not a window. This used to return html.slice(i-400, i+400) around the id —
+// a "the string appears somewhere nearby" match, which is exactly the shape this project's own rule
+// warns against. It held only while the rows happened to be short: the moment a BOOK row gained a
+// cancel button, the neighbouring DRAFT row's 400-char window swallowed it and the draft assertion
+// failed for a button that was never in its row. Split on the real row boundary instead, so a row
+// is a row.
 const row = (html, id) => {
-  const i = html.indexOf(id);
-  return i < 0 ? '' : html.slice(Math.max(0, i - 400), i + 400);
+  const parts = String(html).split('<div class="jobs-row');
+  const hit = parts.find(p => p.includes(id));
+  return hit === undefined ? '' : hit;
 };
 
 (async () => {
@@ -54,9 +61,14 @@ const row = (html, id) => {
         'a RUNNING server job gets a cancel button — the reported request');
       assert.ok(!row(html,'j_done').includes('jobs-row-cancel'),
         'a FINISHED job does not — there is nothing to stop');
-      assert.ok(!row(html,'j_book').includes('jobs-row-cancel'),
-        'a BOOK job does not — it lives in the separate bookJobs store with its own cancel route, '
-        + 'which /api/jobs/cancel does not reach');
+      // ⚠️ v89_ag REVERSES this one, on a user report ("creating a story has no cancel/open buttons
+      // in the job popover"). The original reasoning was accurate — a book job DOES live in the
+      // separate bookJobs store and /api/jobs/cancel does not reach it — but the conclusion was
+      // wrong: the fix is to reach the route that does, not to withhold the button from the
+      // longest-running thing in the app. `_jobsCancelById(id, kind)` now dispatches. The claim is
+      // INVERTED here rather than deleted, because this line is exactly where the old ruling lived.
+      assert.ok(row(html,'j_book').includes('jobs-row-cancel'),
+        'a running BOOK job DOES get a cancel button now (v89_ag) — routed to /api/book-job/cancel');
       assert.ok(!row(html,'d_1').includes('jobs-row-cancel'),
         'a DRAFT does not — it is parked, not running');
       assert.ok(row(html,'d_1').includes('jobs-row-del'), 'and the draft keeps its discard button');

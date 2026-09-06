@@ -2,6 +2,28 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_1448974954",
+      "title": "Silent Rain Glitch",
+      "titleAuto": false,
+      "icon": "🌧️",
+      "chapters": [
+        "tp_17886851668230000080",
+        "tp_17886855154650000142",
+        "tp_17886861038730000257"
+      ],
+      "lang": "de",
+      "srcLang": "en",
+      "createdAt": "2026-09-06T09:02:32.748Z",
+      "updatedAt": "2026-09-06T09:24:42.234Z",
+      "tokenUsage": {
+        "totalPromptTokens": 826,
+        "totalCompletionTokens": 104,
+        "tokensByType": {
+          "retitle": 930
+        }
+      }
+    },
+    {
       "id": "sl_498361078",
       "title": "Knuckleheads and Giants",
       "titleAuto": false,
@@ -12202,6 +12224,1201 @@
     }
   ],
   "topics": [
+    {
+      "id": "tp_17886861038730000257",
+      "topic": "Rainy Notes",
+      "topicEmoji": "☕",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 123,
+      "story": "Markus lehnte den Becher ab und öffnete sein Notizbuch. Die Seiten waren mit schnellen Skizzen gefüllt, die er während der Vorlesung angefertigt hatte. Er strich eine Zeile durch und notierte eine Korrektur in der Ecke. Das Papier knisterte leise, als er umblätterte. Draußen begann es zu regnen, kleine Tropfen klatschten gegen das Glas. Die Cafeteria füllte sich langsam mit anderen Studenten. Ein lautes Gespräch brach an einem benachbarten Tisch aus. Markus ignorierte den Lärm und konzentrierte sich auf seine Notizen. Er überprüfte die Formeln noch einmal. Alles stimmte. Er schloss das Buch und steckte es in seinen Rucksack. Die Prüfung war nur der erste Schritt. Jetzt musste er die Ergebnisse auswerten. Er stand auf und verließ den Raum. Der Flur war dunkel, nur die Notausgänge leuchteten grün. Er ging zur Tür hinaus. Die Luft outside war kühl und feucht. Markus zog seinen Mantel enger um sich. Er brauchte frische Luft, um klar zu denken.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 1-2 paragraphs, under 123 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (the full storyline so far, 2 chapters):\n## testgeschichte offline — 1\nDer Laptop zeigte kein Signal. Das WLAN war ausgefallen, während die Prüfung lief. Markus starrte auf den leeren Bildschirm und spürte, wie sich seine Hände leicht anfeuchteten. Er atmete tief ein und versuchte, ruhig zu bleiben. Die Uhr tickte laut im stillen Raum. Andere Studenten tippten weiter, doch er wusste nicht, was er tun sollte. Plötzlich erinnerte er sich an die offline gespeicherten Notizen auf seinem USB-Stick. Er griff in seine Tasche und zog das kleine Gerät heraus. Mit zitternden Fingern steckte er es in den freien Port. Der Computer erkannte das Medium sofort. Die Dateien öffneten sich schnell. Markus begann zu schreiben, ohne weitere Unterbrechung. Die Panik wich einer fokussierten Konzentration. Er beendete die Aufgabe kurz vor der Zeitablauf.\n\n## testgeschichte offline — 2\nMarkus lehnte sich zurück, als der letzte Punkt gesetzt war. Der Raum blieb still, nur das leise Summen der Lüfter war hörbar. Er packte seinen USB-Stick ein und steckte ihn sicher in die Tasche. Die Prüfung endete mit dem Klingeln der Glocke. Andere Studenten packten ihre Sachen zusammen und verließen hastig den Hörsaal. Markus wartete, bis sich die Tür hinter ihm schloss. Er ging zum Fenster und blickte auf den Campus. Der Himmel war grau, aber es regnete nicht. Seine Hände waren immer noch leicht feucht, doch der Schweiß hatte aufgehört. Er atmete tief ein und spürte, wie sich seine Schultern entspannten. Die Prüfung war vorbei, egal wie sie ausgefallen sein würde. Er nahm seinen Rucksack und ging zum Ausgang. Der Weg zur Bibliothek führte ihn an der Cafeteria vorbei. Dort kaufte er einen schwarzen Kaffee. Das heiße Getränk wärmte seine kalten Finger. Er setzte sich an einen freien Tisch in der Ecke. Von dort aus konnte er den Eingangsbereich beobachten. Niemand kam herein. Die Stille im Raum war angenehm nach dem Lärm des Prüfungsraums. Markus trank seinen Kaffee langsam und dachte über die nächsten Schritte nach.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 698,
+        "completionTokens": 242,
+        "ms": 115899,
+        "at": "2026-09-06T09:14:06.306Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 300,
+        "completionTokens": 180,
+        "ms": 57567,
+        "at": "2026-09-06T09:15:03.873Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Markus declined the cup and opened his notebook. The pages were filled with quick sketches he had made during the lecture. He crossed out a line and wrote a correction in the corner. The paper rustled softly as he turned the page. Outside, it began to rain; small drops splattered against the glass. The cafeteria slowly filled with other students. A loud conversation broke out at a nearby table. Markus ignored the noise and focused on his notes. He double-checked the formulas. Everything was correct. He closed the book and put it in his backpack. The exam was only the first step. Now he had to evaluate the results. He stood up and left the room. The hallway was dark, with only the emergency exits glowing green. He walked out the door. The air outside was cool and damp. Markus pulled his coat tighter around himself. He needed fresh air to think clearly.",
+      "continuedFrom": "Silent Relief",
+      "continuedFromId": "tp_17886855154650000142",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Markus Studies Hard",
+          "desc": "Markus focuses on notes in a cafe.",
+          "icon": "📝",
+          "vocab": [
+            {
+              "target": "das Notizbuch",
+              "source": "the notebook",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:das Notizbuch",
+                "canonicalId": "de:vocab:das notizbuch",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Skizze",
+              "source": "the sketch",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die Skizze",
+                "canonicalId": "de:vocab:die skizze",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Korrektur",
+              "source": "the correction",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die Korrektur",
+                "canonicalId": "de:vocab:die korrektur",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "das Papier",
+              "source": "the paper",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:das Papier",
+                "canonicalId": "de:vocab:das papier",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Tropfen",
+              "source": "the drop",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der Tropfen",
+                "canonicalId": "de:vocab:der tropfen",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Cafeteria",
+              "source": "the cafeteria",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die Cafeteria",
+                "canonicalId": "de:vocab:die cafeteria",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Lärm",
+              "source": "the noise",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der Lärm",
+                "canonicalId": "de:vocab:der lärm",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Formel",
+              "source": "the formula",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die Formel",
+                "canonicalId": "de:vocab:die formel",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Markus lehnte den Becher ab.",
+              "source": "Markus declined the cup.",
+              "words": [
+                "Markus",
+                "lehnte",
+                "den",
+                "Becher",
+                "ab."
+              ]
+            },
+            {
+              "target": "Er strich eine Zeile durch.",
+              "source": "He crossed out a line.",
+              "words": [
+                "Er",
+                "strich",
+                "eine",
+                "Zeile",
+                "durch."
+              ]
+            },
+            {
+              "target": "Das Papier knisterte leise.",
+              "source": "The paper rustled softly.",
+              "words": [
+                "Das",
+                "Papier",
+                "knisterte",
+                "leise."
+              ]
+            },
+            {
+              "target": "Alles stimmte.",
+              "source": "Everything was correct.",
+              "words": [
+                "Alles",
+                "stimmte."
+              ]
+            },
+            {
+              "target": "Er brauchte frische Luft.",
+              "source": "He needed fresh air.",
+              "words": [
+                "Er",
+                "brauchte",
+                "frische",
+                "Luft."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1440,
+            "completionTokens": 535,
+            "ms": 223741,
+            "at": "2026-09-06T09:18:47.719Z"
+          }
+        },
+        {
+          "id": "ls_1788686564455_7u3i9k",
+          "title": "Notebook and Rain",
+          "desc": "Markus takes notes while it rains outside.",
+          "icon": "📝",
+          "vocab": [
+            {
+              "skillId": null,
+              "target": "das Notizbuch",
+              "source": "the notebook",
+              "skillProposal": {
+                "proposedId": "de:vocab:das Notizbuch",
+                "canonicalId": "de:vocab:das notizbuch",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "skillId": null,
+              "target": "die Seite",
+              "source": "the page",
+              "skillProposal": {
+                "proposedId": "de:vocab:die Seite",
+                "canonicalId": "de:vocab:die seite",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "skillId": null,
+              "target": "die Skizze",
+              "source": "the sketch",
+              "skillProposal": {
+                "proposedId": "de:vocab:die Skizze",
+                "canonicalId": "de:vocab:die skizze",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "skillId": null,
+              "target": "die Korrektur",
+              "source": "the correction",
+              "skillProposal": {
+                "proposedId": "de:vocab:die Korrektur",
+                "canonicalId": "de:vocab:die korrektur",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "skillId": null,
+              "target": "das Papier",
+              "source": "the paper",
+              "skillProposal": {
+                "proposedId": "de:vocab:das Papier",
+                "canonicalId": "de:vocab:das papier",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "skillId": null,
+              "target": "der Tropfen",
+              "source": "the drop",
+              "skillProposal": {
+                "proposedId": "de:vocab:der Tropfen",
+                "canonicalId": "de:vocab:der tropfen",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "skillId": null,
+              "target": "das Glas",
+              "source": "the glass",
+              "skillProposal": {
+                "proposedId": "de:vocab:das Glas",
+                "canonicalId": "de:vocab:das glas",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "skillId": null,
+              "target": "der Lärm",
+              "source": "the noise",
+              "skillProposal": {
+                "proposedId": "de:vocab:der Lärm",
+                "canonicalId": "de:vocab:der lärm",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Markus öffnet sein Notizbuch.",
+              "source": "Markus opens his notebook.",
+              "words": [
+                "Markus",
+                "öffnet",
+                "sein",
+                "Notizbuch."
+              ]
+            },
+            {
+              "target": "Die Seiten sind mit Skizzen gefüllt.",
+              "source": "The pages are filled with sketches.",
+              "words": [
+                "Die",
+                "Seiten",
+                "sind",
+                "mit",
+                "Skizzen",
+                "gefüllt."
+              ]
+            },
+            {
+              "target": "Er notiert eine Korrektur.",
+              "source": "He writes down a correction.",
+              "words": [
+                "Er",
+                "notiert",
+                "eine",
+                "Korrektur."
+              ]
+            },
+            {
+              "target": "Kleine Tropfen klatschen gegen das Glas.",
+              "source": "Small drops splash against the glass.",
+              "words": [
+                "Kleine",
+                "Tropfen",
+                "klatschen",
+                "gegen",
+                "das",
+                "Glas."
+              ]
+            },
+            {
+              "target": "Ein lauter Lärm bricht aus.",
+              "source": "Loud noise breaks out.",
+              "words": [
+                "Ein",
+                "lauter",
+                "Lärm",
+                "bricht",
+                "aus."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1431,
+            "completionTokens": 544,
+            "ms": 236736,
+            "at": "2026-09-06T09:22:44.455Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 397313,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 2438,
+        "totalCompletionTokens": 957,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 223740,
+            "promptTokens": 1440,
+            "completionTokens": 535
+          }
+        ]
+      },
+      "generatedAt": "2026-09-06T09:15:03.873Z",
+      "updatedAt": "2026-09-06T09:22:44.622Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17886855154650000142",
+      "topic": "Silent Relief",
+      "topicEmoji": "🎓",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 123,
+      "story": "Markus lehnte sich zurück, als der letzte Punkt gesetzt war. Der Raum blieb still, nur das leise Summen der Lüfter war hörbar. Er packte seinen USB-Stick ein und steckte ihn sicher in die Tasche. Die Prüfung endete mit dem Klingeln der Glocke. Andere Studenten packten ihre Sachen zusammen und verließen hastig den Hörsaal. Markus wartete, bis sich die Tür hinter ihm schloss. Er ging zum Fenster und blickte auf den Campus. Der Himmel war grau, aber es regnete nicht. Seine Hände waren immer noch leicht feucht, doch der Schweiß hatte aufgehört. Er atmete tief ein und spürte, wie sich seine Schultern entspannten. Die Prüfung war vorbei, egal wie sie ausgefallen sein würde. Er nahm seinen Rucksack und ging zum Ausgang. Der Weg zur Bibliothek führte ihn an der Cafeteria vorbei. Dort kaufte er einen schwarzen Kaffee. Das heiße Getränk wärmte seine kalten Finger. Er setzte sich an einen freien Tisch in der Ecke. Von dort aus konnte er den Eingangsbereich beobachten. Niemand kam herein. Die Stille im Raum war angenehm nach dem Lärm des Prüfungsraums. Markus trank seinen Kaffee langsam und dachte über die nächsten Schritte nach.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 1-2 paragraphs, under 123 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (full):\nDer Laptop zeigte kein Signal. Das WLAN war ausgefallen, während die Prüfung lief. Markus starrte auf den leeren Bildschirm und spürte, wie sich seine Hände leicht anfeuchteten. Er atmete tief ein und versuchte, ruhig zu bleiben. Die Uhr tickte laut im stillen Raum. Andere Studenten tippten weiter, doch er wusste nicht, was er tun sollte. Plötzlich erinnerte er sich an die offline gespeicherten Notizen auf seinem USB-Stick. Er griff in seine Tasche und zog das kleine Gerät heraus. Mit zitternden Fingern steckte er es in den freien Port. Der Computer erkannte das Medium sofort. Die Dateien öffneten sich schnell. Markus begann zu schreiben, ohne weitere Unterbrechung. Die Panik wich einer fokussierten Konzentration. Er beendete die Aufgabe kurz vor der Zeitablauf.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 402,
+        "completionTokens": 268,
+        "ms": 97520,
+        "at": "2026-09-06T09:04:10.350Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 330,
+        "completionTokens": 222,
+        "ms": 65114,
+        "at": "2026-09-06T09:05:15.464Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Markus leaned back as the final point was marked. The room remained silent, with only the faint hum of the fans audible. He packed away his USB drive and secured it in his pocket. The exam ended with the ringing of the bell. Other students gathered their belongings and hurriedly left the lecture hall. Markus waited until the door closed behind him. He walked to the window and looked out over the campus. The sky was gray, but it wasn't raining. His hands were still slightly damp, but the sweat had stopped. He took a deep breath and felt his shoulders relax. The exam was over, regardless of how it had gone. He picked up his backpack and headed for the exit. The path to the library led him past the cafeteria. There, he bought a black coffee. The hot drink warmed his cold fingers. He sat down at an empty table in the corner. From there, he could observe the entrance area. No one came in. The silence in the room was pleasant after the noise of the exam hall. Markus drank his coffee slowly and thought about his next steps.",
+      "continuedFrom": "The Glitch",
+      "continuedFromId": "tp_17886851668230000080",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Markus After the Exam",
+          "desc": "Vocabulary from Markus's post-exam routine",
+          "icon": "☕",
+          "vocab": [
+            {
+              "target": "der USB-Stick",
+              "source": "the USB drive",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der_usb-stick",
+                "canonicalId": "de:vocab:der_usb-stick",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Prüfung",
+              "source": "the exam",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die_prüfung",
+                "canonicalId": "de:vocab:die_prüfung",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Hörsaal",
+              "source": "the lecture hall",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der_hörsaal",
+                "canonicalId": "de:vocab:der_hörsaal",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Campus",
+              "source": "the campus",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der_campus",
+                "canonicalId": "de:vocab:der_campus",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Bibliothek",
+              "source": "the library",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die_bibliothek",
+                "canonicalId": "de:vocab:die_bibliothek",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Cafeteria",
+              "source": "the cafeteria",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die_cafeteria",
+                "canonicalId": "de:vocab:die_cafeteria",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Kaffee",
+              "source": "the coffee",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der_kaffee",
+                "canonicalId": "de:vocab:der_kaffee",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Rucksack",
+              "source": "the backpack",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der_rucksack",
+                "canonicalId": "de:vocab:der_rucksack",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Er packte seinen USB-Stick ein.",
+              "source": "He packed away his USB drive.",
+              "words": [
+                "Er",
+                "packte",
+                "seinen",
+                "USB-Stick",
+                "ein."
+              ]
+            },
+            {
+              "target": "Die Prüfung endete mit dem Klingeln der Glocke.",
+              "source": "The exam ended with the ringing of the bell.",
+              "words": [
+                "Die",
+                "Prüfung",
+                "endete",
+                "mit",
+                "dem",
+                "Klingeln",
+                "der",
+                "Glocke."
+              ]
+            },
+            {
+              "target": "Der Himmel war grau, aber es regnete nicht.",
+              "source": "The sky was gray, but it wasn't raining.",
+              "words": [
+                "Der",
+                "Himmel",
+                "war",
+                "grau,",
+                "aber",
+                "es",
+                "regnete",
+                "nicht."
+              ]
+            },
+            {
+              "target": "Dort kaufte er einen schwarzen Kaffee.",
+              "source": "There, he bought a black coffee.",
+              "words": [
+                "Dort",
+                "kaufte",
+                "er",
+                "einen",
+                "schwarzen",
+                "Kaffee."
+              ]
+            },
+            {
+              "target": "Markus trank seinen Kaffee langsam.",
+              "source": "Markus drank his coffee slowly.",
+              "words": [
+                "Markus",
+                "trank",
+                "seinen",
+                "Kaffee",
+                "langsam."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1512,
+            "completionTokens": 578,
+            "ms": 251561,
+            "at": "2026-09-06T09:09:27.118Z"
+          }
+        },
+        {
+          "id": "ls_1788685930146_6zqnw2",
+          "title": "Post-Exam Relaxation",
+          "desc": "Vocabulary for relaxing after a test",
+          "icon": "☕",
+          "vocab": [
+            {
+              "target": "der Rucksack",
+              "source": "the backpack",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Cafeteria",
+              "source": "the cafeteria",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Kaffee",
+              "source": "the coffee",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "das Fenster",
+              "source": "the window",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Tasche",
+              "source": "the bag",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der Himmel",
+              "source": "the sky",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Hand",
+              "source": "the hand",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Tür",
+              "source": "the door",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Er packte den Rucksack ein.",
+              "source": "He packed the backpack.",
+              "words": [
+                "Er",
+                "packte",
+                "den",
+                "Rucksack",
+                "ein."
+              ]
+            },
+            {
+              "target": "Das Fenster war offen.",
+              "source": "The window was open.",
+              "words": [
+                "Das",
+                "Fenster",
+                "war",
+                "offen."
+              ]
+            },
+            {
+              "target": "Die Tasche lag auf dem Tisch.",
+              "source": "The bag lay on the table.",
+              "words": [
+                "Die",
+                "Tasche",
+                "lag",
+                "auf",
+                "dem",
+                "Tisch."
+              ]
+            },
+            {
+              "target": "Der Himmel ist grau.",
+              "source": "The sky is gray.",
+              "words": [
+                "Der",
+                "Himmel",
+                "ist",
+                "grau."
+              ]
+            },
+            {
+              "target": "Seine Hände waren feucht.",
+              "source": "His hands were moist.",
+              "words": [
+                "Seine",
+                "Hände",
+                "waren",
+                "feucht."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1385,
+            "completionTokens": 303,
+            "ms": 163027,
+            "at": "2026-09-06T09:12:10.146Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 414288,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 2244,
+        "totalCompletionTokens": 1068,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 251560,
+            "promptTokens": 1512,
+            "completionTokens": 578
+          }
+        ]
+      },
+      "generatedAt": "2026-09-06T09:05:15.465Z",
+      "updatedAt": "2026-09-06T09:12:10.327Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17886851668230000080",
+      "topic": "The Glitch",
+      "topicEmoji": "💻",
+      "userTopic": "testgeschichte offline",
+      "userPrompt": "testgeschichte offline",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 123,
+      "story": "Der Laptop zeigte kein Signal. Das WLAN war ausgefallen, während die Prüfung lief. Markus starrte auf den leeren Bildschirm und spürte, wie sich seine Hände leicht anfeuchteten. Er atmete tief ein und versuchte, ruhig zu bleiben. Die Uhr tickte laut im stillen Raum. Andere Studenten tippten weiter, doch er wusste nicht, was er tun sollte. Plötzlich erinnerte er sich an die offline gespeicherten Notizen auf seinem USB-Stick. Er griff in seine Tasche und zog das kleine Gerät heraus. Mit zitternden Fingern steckte er es in den freien Port. Der Computer erkannte das Medium sofort. Die Dateien öffneten sich schnell. Markus begann zu schreiben, ohne weitere Unterbrechung. Die Panik wich einer fokussierten Konzentration. Er beendete die Aufgabe kurz vor der Zeitablauf.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 1-2 paragraphs, under 123 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Clear, factual, neutral tone — no narrative flourish.\n\nWrite a story for the topic: \"testgeschichte offline\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 133,
+        "completionTokens": 182,
+        "ms": 35916,
+        "at": "2026-09-06T08:58:44.921Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 240,
+        "completionTokens": 143,
+        "ms": 41901,
+        "at": "2026-09-06T08:59:26.822Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "The laptop showed no signal. The Wi-Fi had gone down while the exam was underway. Markus stared at the blank screen and felt his hands begin to sweat slightly. He took a deep breath and tried to stay calm. The clock ticked loudly in the quiet room. Other students continued typing, but he didn’t know what to do. Suddenly, he remembered the offline-stored notes on his USB drive. He reached into his bag and pulled out the small device. With trembling fingers, he plugged it into the available port. The computer immediately recognized the media. The files opened quickly. Markus began writing without further interruption. Panic gave way to focused concentration. He completed the task just before time ran out.",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Exam Tech Failure",
+          "desc": "Markus saves his exam with a USB drive",
+          "icon": "💾",
+          "vocab": [
+            {
+              "target": "der Laptop",
+              "source": "the laptop",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der_laptop",
+                "canonicalId": "de:vocab:der_laptop",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "das WLAN",
+              "source": "Wi-Fi",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:das_wlan",
+                "canonicalId": "de:vocab:das_wlan",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "ausfallen",
+              "source": "to fail/go down",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:ausfallen",
+                "canonicalId": "de:vocab:ausfallen",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Prüfung",
+              "source": "the exam",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die_prüfung",
+                "canonicalId": "de:vocab:die_prüfung",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "der USB-Stick",
+              "source": "USB drive",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:der_usb-stick",
+                "canonicalId": "de:vocab:der_usb-stick",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "stecken",
+              "source": "to plug in",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:stecken",
+                "canonicalId": "de:vocab:stecken",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "erkennen",
+              "source": "to recognize",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:erkennen",
+                "canonicalId": "de:vocab:erkennen",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            },
+            {
+              "target": "die Panik",
+              "source": "panic",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "de:vocab:die_panik",
+                "canonicalId": "de:vocab:die_panik",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "de",
+                "sourceLang": "en",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Der Laptop zeigte kein Signal.",
+              "source": "The laptop showed no signal.",
+              "words": [
+                "Der",
+                "Laptop",
+                "zeigte",
+                "kein",
+                "Signal."
+              ]
+            },
+            {
+              "target": "Das WLAN war ausgefallen.",
+              "source": "The Wi-Fi had gone down.",
+              "words": [
+                "Das",
+                "WLAN",
+                "war",
+                "ausgefallen."
+              ]
+            },
+            {
+              "target": "Er erinnerte sich an die Notizen.",
+              "source": "He remembered the notes.",
+              "words": [
+                "Er",
+                "erinnerte",
+                "sich",
+                "an",
+                "die",
+                "Notizen."
+              ]
+            },
+            {
+              "target": "Der Computer erkannte das Medium.",
+              "source": "The computer recognized the media.",
+              "words": [
+                "Der",
+                "Computer",
+                "erkannte",
+                "das",
+                "Medium."
+              ]
+            },
+            {
+              "target": "Markus begann zu schreiben.",
+              "source": "Markus began to write.",
+              "words": [
+                "Markus",
+                "begann",
+                "zu",
+                "schreiben."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1311,
+            "completionTokens": 450,
+            "ms": 185716,
+            "at": "2026-09-06T09:02:32.643Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 263638,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1684,
+        "totalCompletionTokens": 775,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 185714,
+            "promptTokens": 1311,
+            "completionTokens": 450
+          }
+        ]
+      },
+      "generatedAt": "2026-09-06T08:59:26.823Z",
+      "updatedAt": "2026-09-06T09:02:32.643Z",
+      "createdBy": "admin"
+    },
     {
       "id": "tp_17886342066130000515",
       "topic": "Victory Parade",
