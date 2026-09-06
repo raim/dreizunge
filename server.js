@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_ai';
+const APP_VERSION  = 'v89_aj';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8300,6 +8300,12 @@ http.createServer(async (req, res) => {
         // topics and gets it for free — and silently does nothing LIVE. Omitted when falsy, like
         // every other optional field here, so an ordinary chapter's payload is unchanged.
         ...(l._titleFailed ? { _titleFailed: true } : {}),
+        // ⚠️ v89_aj: chapter-level `source` HAS to ride here too — the FOURTH instance of the trap
+        // the comments above record (`v74_i`, `v79_n`, `v89_y`). The provenance line reads it from
+        // `APP.savedList`, so omitted here it would work in the STATIC build (which ships whole
+        // topics) and show nothing LIVE. Only present when the chapter actually differs from its
+        // storyline — an inheriting chapter has no entry at all (see effectiveSource).
+        ...(l.source && Object.keys(l.source).length ? { source: l.source } : {}),
         // item AR (v88_j): ONE pre-summed scalar for the library's token sort. ⚠️ It HAS to ride in
         // this whitelist projection: `generationStats` is not otherwise sent, so a token sort built
         // without this works in the STATIC build (which ships whole topics and has the field for
@@ -8383,12 +8389,52 @@ http.createServer(async (req, res) => {
       const saved = findSavedById(body.id);
       if (!saved) return json(res, 404, { error: `Topic not found: ${String(body.id).slice(0, 40)}` });
       const source = sanitizeTopicSource(body.source);
-      if (source) saved.source = source; else delete saved.source;
+      // v89_aj: a chapter entry identical to the one it would INHERIT is not stored. Keeping it
+      // would look harmless and then quietly detach the chapter from the storyline: the next
+      // storyline-level edit would reach every OTHER chapter and not this one.
+      const _sl = (store.storylines || []).find(x => x && Array.isArray(x.chapters)
+        && x.chapters.indexOf(saved.id) !== -1) || null;
+      if (source && !sourcesEqual(source, _sl && _sl.source)) saved.source = source;
+      else delete saved.source;
       stampUpdated(saved);
       saveStore(store);
       console.log(`  Source ${source ? 'set' : 'cleared'}: ${saved.id} "${saved.topic}"${source ? ` — ${Object.keys(source).join('/')}` : ''}`);
       return json(res, 200, { ok: true, source: source || null });
     }
+    // v89_aj: the storyline-level editor the user asked for. Mirrors /api/topic-source exactly,
+    // including sanitizeTopicSource (same shape, same URL validation) — a second sanitiser is how
+    // the two would eventually disagree about what a valid URL is.
+    if (M === 'POST' && url.pathname === '/api/storyline-source') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      if (!body.slId) return json(res, 400, { error: 'Missing slId' });
+      const sl = findStoryline(body.slId);
+      if (!sl) return json(res, 404, { error: `Storyline not found: ${String(body.slId).slice(0, 40)}` });
+      const source = sanitizeTopicSource(body.source);
+      // ⚠️ `upsertStoryline` merges `{...existing, ...sl}`, so DELETING a key on `sl` does not
+      // remove it from the stored record — the old value survives the spread. Clearing has to write
+      // an explicit empty value and then drop it after the merge, which is what the second step
+      // below does. Found by reading upsertStoryline rather than by trusting `delete`.
+      if (source) sl.source = source; else sl.source = null;
+      // ⚠️ Setting the storyline's source makes any chapter entry that MATCHES it redundant, and a
+      // redundant entry is not inert — it detaches that chapter from every future storyline edit.
+      // Cleared here rather than left for the next chapter save, which might never come.
+      let freed = 0;
+      for (const cid of (sl.chapters || [])) {
+        const t = findSavedById(cid);
+        if (t && t.source && sourcesEqual(t.source, source)) { delete t.source; stampUpdated(t); freed++; }
+      }
+      // upsertStoryline stamps updatedAt itself — no separate stamp helper exists for storylines,
+      // and referencing a name that does not exist would throw rather than read as undefined.
+      upsertStoryline(sl);
+      if (!source) { const _st = findStoryline(sl.id); if (_st) delete _st.source; }
+      saveStore(store);
+      console.log(`  Storyline source ${source ? 'set' : 'cleared'}: ${sl.id} "${sl.title || ''}"` +
+        (freed ? ` — ${freed} redundant chapter entr${freed === 1 ? 'y' : 'ies'} cleared` : ''));
+      return json(res, 200, { ok: true, source: source || null, freed });
+    }
+
     if (M === 'POST' && url.pathname === '/api/lessons/save-meta') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
@@ -11085,6 +11131,30 @@ function cancelBookJob(bj) {
   if (!bj || bj.status !== 'running') return false;
   bj.status = 'cancelled';
   return true;
+}
+
+// ── Source / provenance inheritance (v89_aj) ─────────────────────────────────
+// User ruling: "we usually want to edit this on story level. The entry is inherited on chapter
+// level and a chapter level entry in lessons.json is only required if it differs from the inherited
+// story-level provenance field."
+//
+// So a chapter's stored `source` means "this chapter differs from its storyline", and its ABSENCE
+// means "inherit". Two consequences worth naming, because both are easy to get wrong:
+//   • Saving a chapter source EQUAL to its storyline's must DELETE the chapter entry, not store a
+//     duplicate — otherwise a later edit of the storyline silently stops reaching that chapter.
+//   • Reading is always through `effectiveSource`, never off `topic.source` directly.
+function sourcesEqual(a, b) {
+  const norm = o => ['author', 'licence', 'url', 'note']
+    .map(k => String((o && o[k]) || '').trim()).join('\u0000');
+  if (!a && !b) return true;
+  return norm(a) === norm(b);
+}
+// The chapter's own entry wins; otherwise the storyline's. `null` when neither has one.
+function effectiveSource(topic, storyline) {
+  const own = topic && topic.source;
+  if (own && Object.keys(own).length) return own;
+  const inherited = storyline && storyline.source;
+  return (inherited && Object.keys(inherited).length) ? inherited : null;
 }
 
 function pingFailureIsHard(code) {

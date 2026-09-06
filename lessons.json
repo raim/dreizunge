@@ -14,7 +14,7 @@
       "lang": "de",
       "srcLang": "en",
       "createdAt": "2026-09-06T09:02:32.748Z",
-      "updatedAt": "2026-09-06T09:25:47.174Z",
+      "updatedAt": "2026-09-06T10:46:43.007Z",
       "tokenUsage": {
         "totalPromptTokens": 1474,
         "totalCompletionTokens": 200,
@@ -13430,7 +13430,7 @@
         ]
       },
       "generatedAt": "2026-09-06T08:59:26.823Z",
-      "updatedAt": "2026-09-06T09:02:32.643Z",
+      "updatedAt": "2026-09-06T10:46:43.007Z",
       "createdBy": "admin"
     },
     {

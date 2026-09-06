@@ -2636,6 +2636,32 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_aj — source/provenance is edited on the STORYLINE and inherited by its chapters
+
+User request: *"Source/provenance editing currently lives on chapter-level, however we usually want
+to edit this on story level. Please add a full editor for this on the storyline page. The entry is
+inherited on chapter level and a chapter level entry in lessons.json is only required if it differs
+from the inherited story-level provenance field. If an entry exists, we want to show it more
+prominently, author and URL should be shown and clickable on the main page in the story fields, same
+font as the number of chapters and edited date entries … on a separate line below the title. And on
+the story page and progress/completion card in the top row (story title), in smaller font below the
+title."*
+
+**ZERO `ui.json` keys** — the `prov.*` family (`edit_title`/`author`/`licence`/`url`/`note`/`save`)
+already existed and is already hand-translated, so the new editor came up in Dutch on the first run.
+
+| | |
+|---|---|
+| **the rule, named on both sides** | `sourcesEqual(a,b)` and `effectiveSource(topic, storyline)` on the server, `provEffective(d)` on the client. A chapter's stored `source` MEANS "this chapter differs"; its absence means "inherit". Every read goes through the resolver — reading `d.source` directly is how a surface would show nothing for a chapter inheriting a perfectly good entry |
+| **⚠️ equality treats absent and blank as the same** | The editor always sends all four fields, so `{author:'x', licence:'', url:'y', note:''}` must equal a stored `{author:'x', url:'y'}` — otherwise nothing ever matches and every chapter keeps a redundant copy |
+| **⚠️ a duplicate is not inert** | Saving a chapter entry equal to its storyline's DELETES it instead. Left in place it would silently detach that chapter from every later storyline-level edit — the storyline edit would reach every other chapter and not this one. Setting the storyline also frees chapter entries that now merely repeat it (`freed` in the response), rather than waiting for a chapter save that may never come |
+| **⚠️ `upsertStoryline` merges, so `delete` does not clear** | It does `{...existing, ...sl}`, so deleting a key on the local object is undone by the spread. Clearing writes an explicit null and drops the key after the merge. Found by reading that function rather than by trusting `delete` |
+| **⚠️ the savedList projection, for the FOURTH time** | Chapter `source` had to be added to the whitelist. The projection's own comments record this trap three times already (`v74_i`, `v79_n`, `v89_y`): a field left out works in the STATIC build, which ships whole topics, and is silently dead LIVE |
+| **⚠️ an id collision I introduced, caught by an existing e2e** | The new line under the storyline title was first given `id="sl-screen-prov"` — which ALREADY belonged to the storyline page's provenance/stats footer (`provLineForChapters`). `getElementById` then handed my node to the footer's renderer too, silently breaking it. `e2e-pass-mark`'s ordering assertion is what caught it; renamed to `sl-screen-src` |
+| **the three surfaces** | Landing storyline card: a second `.storyline-title-sub` line — the SAME class as the chapter-count/date line, so "same font" holds by construction rather than by a copied value (verified: 11px vs 11px). Storyline page: under the title row, with the teacher-gated editor pencil. Completion card: under the story title, showing the EFFECTIVE (usually inherited) entry. The link carries `event.stopPropagation()` because these lines sit inside clickable storyline cards |
+| **live-verified against an ISOLATED store** | `LESSONS_FILE=<copy>`, so the user's own data was never touched. Landing card shows `Erik Meinhardt · CC BY-SA` on its own 11px line with a working link; the storyline editor round-trips (`Randall Munroe` persisted and the line repainted); the completion card shows the INHERITED entry for a chapter with no `source` of its own |
+| **guards** | `unit-provenance-inherit.test.js`, six sections: equality (blanks vs absence, and a real difference in each of the four fields), inheritance (own wins / inherit / empty is not a value), both routes enforcing the rule, the savedList whitelist, client rendering (clickable, DOI-expanded, escaped, non-propagating), and all three surfaces plus the editor's POST body. **Nine mutations red** |
+
 ## ✅ v89_ai — the running-jobs badge updates when a job STARTS
 
 User report: *"the hourglass icon shows a little superscript with the number of running jobs. However,

@@ -79,13 +79,22 @@ console.log('  upsert createdBy stamp + schema 30 write / >=29 read: OK');
 
 // ── 3. Route contract + list projection ───────────────────────────────────────
 {
-  const route = server.slice(server.indexOf("url.pathname === '/api/topic-source'"),
-                             server.indexOf("url.pathname === '/api/lessons/save-meta'"));
+  // ⚠️ v89_aj: bounded by the NEXT route rather than by a named one further down — the
+  // storyline-source route was inserted between this route and save-meta, and the old slice
+  // silently grew to span both, so every assertion below was reading two routes at once.
+  const _at = server.indexOf("url.pathname === '/api/topic-source'");
+  const route = server.slice(_at, server.indexOf("\n    if (M ===", _at + 10));
   assert.ok(/findSavedById\(body\.id\)/.test(route) && !/findSaved\(body\.(topic|oldTopic)/.test(route),
     'topic-source resolves by stable id ONLY (no name fallback — same-name topics are legal)');
   assert.ok(/const source = sanitizeTopicSource\(body\.source\);/.test(route), 'route stores the SANITIZED source');
-  assert.ok(/if \(source\) saved\.source = source; else delete saved\.source;/.test(route),
+  // ⚠️ v89_aj SUPERSEDES the exact one-liner this pinned. The CLAIM is unchanged — a null result
+  // still clears the field and an empty object is never stored — but the condition gained the
+  // inheritance rule: an entry EQUAL to the storyline's is also cleared, because a duplicate would
+  // silently detach the chapter from later storyline-level edits.
+  assert.ok(/else delete saved\.source;/.test(route),
     'null result CLEARS the field (never an empty object in storage)');
+  assert.ok(/sourcesEqual\(source, _sl && _sl\.source\)/.test(route),
+    '...and so does an entry identical to the one it would inherit (v89_aj)');
   // v82_h: the inline stamp was pulled into a shared stampUpdated() helper (server.js), which
   // guarantees updatedAt strictly advances even across two saves in the same wall-clock
   // millisecond — the root cause of a flake e2e-lesson-edit-roundtrip reconfirmed three releases

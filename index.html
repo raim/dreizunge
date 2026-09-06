@@ -2102,6 +2102,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <button class="spk-ico" id="comp-story-explorer-btn" onclick="event.stopPropagation();toggleTextExplorer()" title="Text explorer — tap any word for its grammar" style="flex:none">🔍</button>
       <button class="spk-ico" id="comp-story-spk" onclick="event.stopPropagation();speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud" style="flex:none">💬</button>
     </summary>
+    <!-- v89_aj (user): source/provenance on the progress/completion card, "in the top row (story
+         title), in smaller font below the title". Directly under the header row it belongs to, above
+         the story text. Same `.storyline-title-sub` class as the other two surfaces. -->
+    <div id="comp-story-prov" class="storyline-title-sub" style="display:none;white-space:normal;padding:2px 0 0"></div>
     <!-- v74_l: NOT italic, and larger. This panel is the reward for finishing the chapter and the
          thing the learner is meant to actually READ — a long italic run at 13px reads as a caption,
          which is what it looked like in the play-test screenshots. 15px upright, same line-height
@@ -2391,6 +2395,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <button class="sl-screen-share" id="sl-screen-walk-btn" onclick="walkStorylineFromScreen()" title="" style="display:none">▶</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
       </div>
+      <!-- v89_aj (user): source/provenance, shown "on the story page … in the top row (story title),
+           in smaller font below the title". Reuses `.storyline-title-sub`, so it is the same font as
+           the chapter-count/date line by construction rather than by a copied pixel value. Hidden
+           until there is something to show; the pencil beside it is teacher-gated. -->
+      <!-- ⚠️ NOT `sl-screen-prov` — that id already belongs to the provenance/stats FOOTER further
+           down (provLineForChapters, which aggregates the chapters' own sources and createdBy).
+           A duplicate id made getElementById return THIS node to that renderer too, silently
+           breaking the footer; the e2e's own ordering assertion caught it. -->
+      <div id="sl-screen-src" class="storyline-title-sub" style="display:none;white-space:normal;padding:0 0 4px"></div>
       <!-- The popover. Each row is the ORIGINAL button plus a label filled in at open time from that
            button's own `title` attribute — so the labels are always exactly the strings
            _applyUIStrings already set, in whatever UI language, and this costs ZERO new ui.json
@@ -9539,7 +9552,17 @@ async function loadSavedList(){
           <span style="font-size:18px">${titleIcon}</span>
           <div style="min-width:0">
             <div class="storyline-title-text">${escHtml(titleText)}</div>
-            <div class="storyline-title-sub">${(()=>{ const first=byIdAll[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>
+            <div class="storyline-title-sub">${(()=>{ const first=byIdAll[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>${(()=>{
+              // v89_aj (user): "If an entry exists, we want to show it more prominently, author and
+              // URL should be shown and clickable on the main page in the story fields, same font as
+              // the number of chapters and edited date entries, on a separate line below the title."
+              // Same class, so it IS the same font by construction rather than by a copied value.
+              // The CARD represents the storyline, so it shows the STORYLINE's entry — not chapter
+              // 1's, which may legitimately differ and would then misdescribe the whole set.
+              // `matchSl` is the storyline this chain resolved to, already in scope here.
+              const _p = provCompactHtml((matchSl && matchSl.source) || null);
+              return _p ? `<div class="storyline-title-sub">${_p}</div>` : '';
+            })()}
           </div>
          </span>`
       : `<span class="storyline-title" style="flex:1;cursor:pointer" onclick="event.stopPropagation();showStoryline(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
@@ -12394,6 +12417,8 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         + '<div id="sum-qc-panel" style="display:none;margin:0 16px 12px;font-size:12px;border-top:1.5px solid var(--gray-mid);padding-top:10px"></div>'
         + '</div>';
   APP._slScreen._summaryQcSlId = chainId; // for the QC handlers
+  // v89_aj: the storyline's own source line + its editor pencil, under the title row.
+  try { renderSlProv(); } catch(_) {}
 
   // v88_ai: the chapter management row (re-order / split / add-existing), teacher-only. Directly
   // above the chapter cards it acts on, and below the summary — the user's own placement.
@@ -13564,6 +13589,97 @@ function toggleSlSummary(chainId) {
 // two renderers cannot drift on formatting), the storyline screen (aggregated over chapters),
 // and the chapter page (full mode adds the note + the ✎ editor). The <user> part ships INERT
 // per the roadmap: it becomes a link once login exists.
+// ── Source / provenance, inherited from the storyline (v89_aj) ───────────────
+// User ruling: "we usually want to edit this on story level. The entry is inherited on chapter level
+// and a chapter level entry in lessons.json is only required if it differs from the inherited
+// story-level provenance field."
+//
+// So the chapter's own `source` means "this chapter DIFFERS"; its absence means "inherit". Every
+// read goes through here — reading `d.source` directly is how a surface would show nothing for a
+// chapter that inherits a perfectly good storyline entry. Mirrors the server's `effectiveSource`.
+function _provStorylineFor(chapterId){
+  if (!chapterId) return null;
+  return (APP.storylines || []).find(sl => sl && Array.isArray(sl.chapters)
+    && sl.chapters.indexOf(chapterId) !== -1) || null;
+}
+function provEffective(d){
+  if (!d) return null;
+  const own = d.source;
+  if (own && Object.keys(own).length) return own;
+  const sl = d.chapters ? d : _provStorylineFor(d.id);   // a storyline passed directly, or a chapter
+  const inh = sl && sl.source;
+  return (inh && Object.keys(inh).length) ? inh : null;
+}
+// The compact one-liner the user asked for: author and URL, clickable, no label prefix — it sits
+// under a title where the context is already obvious. Returns '' when there is nothing to show, so
+// a caller can concatenate it without testing first.
+// Paints one of the compact provenance lines. `el` is hidden entirely when there is nothing to
+// show — an empty bar under a title reads as a rendering fault.
+function renderProvInto(elId, src, editCall){
+  const el = document.getElementById(elId); if (!el) return;
+  const html = provCompactHtml(src);
+  if (!html && !editCall) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  const pencil = editCall
+    ? ` <button class="ico-btn" style="font-size:11px;padding:0 3px" title="${escAttr(t('prov.edit_title'))}" onclick="event.stopPropagation();${escAttr(editCall)}">\u270e</button>`
+    : '';
+  if (!html && editCall) { el.innerHTML = pencil; el.style.display = ''; return; }
+  el.innerHTML = html + pencil;
+  el.style.display = '';
+}
+
+// ── The storyline-level editor (v89_aj, user request) ────────────────────────
+// "Source/provenance editing currently lives on chapter-level, however we usually want to edit this
+// on story level. Please add a full editor for this on the storyline page."
+//
+// Deliberately the SAME four fields, the SAME inline shape and the SAME `prov.*` strings as
+// `openProvEdit`'s chapter editor — a second look-and-feel for the same four values is how the two
+// would drift. ZERO new ui.json keys.
+function openSlProvEdit(){
+  const sl = APP._slScreen; if (!sl) return;
+  const el = document.getElementById('sl-screen-src'); if (!el) return;
+  const cur = ((APP.storylines || []).find(x => x && x.id === sl.chainId) || {}).source || {};
+  const inp = (id, cap) => `<input id="slprov-in-${id}" placeholder="${escAttr(t('prov.' + id))}" value="${escAttr(cur[id] || '')}" maxlength="${cap}" style="flex:1;min-width:110px;font-size:12px;font-family:'Nunito',sans-serif;padding:3px 6px;border:1px solid var(--gray-mid);border-radius:5px">`;
+  el.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:2px 0 6px">
+    ${inp('author', 120)}${inp('licence', 80)}${inp('url', 300)}${inp('note', 500)}
+    <button class="ico-btn" style="font-size:12px;font-weight:800" onclick="saveSlProvEdit(this)">${escHtml(t('prov.save'))}</button>
+    <button class="ico-btn" style="font-size:12px" onclick="renderSlProv()">${escHtml(t('dialog.cancel'))}</button>
+  </div>`;
+  el.style.display = '';
+}
+async function saveSlProvEdit(btn){
+  const sl = APP._slScreen; if (!sl || !sl.chainId) return;
+  const v = id => (document.getElementById('slprov-in-' + id)?.value || '').trim();
+  const source = { author: v('author'), licence: v('licence'), url: v('url'), note: v('note') };
+  if (btn) btn.disabled = true;
+  try {
+    const r = await fetch('/api/storyline-source', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slId: sl.chainId, source }) });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Failed');
+    if (j.url_dropped) showToast(t('prov.url_dropped'));
+    // Refresh the storyline list so every surface reads the new value from ONE place, and reload the
+    // chapter list too: the server may have cleared chapter entries that merely repeated this one.
+    try { const sr = await fetch('/api/storylines'); APP.storylines = await sr.json(); } catch(_) {}
+    try { await loadSavedList(); } catch(_) {}
+    renderSlProv();
+  } catch(e) { showToast('⚠ ' + String(e.message || '').slice(0, 60)); if (btn) btn.disabled = false; }
+}
+function renderSlProv(){
+  const sl = APP._slScreen;
+  const rec = sl ? (APP.storylines || []).find(x => x && x.id === sl.chainId) : null;
+  renderProvInto('sl-screen-src', rec && rec.source,
+    (typeof STATIC_LESSONS === 'undefined' && _canEdit()) ? 'openSlProvEdit()' : null);
+}
+
+function provCompactHtml(src){
+  const b = _provSrcBits(src, null);
+  if (!b) return '';
+  const txt = escHtml(b.label);
+  return b.href
+    ? `<a href="${escAttr(b.href)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${txt}</a>`
+    : txt;
+}
+
 function _provSrcBits(src, sourceFile){
   if (src) {
     const doi = src.url && /^(doi:)?10\./i.test(src.url) ? src.url.replace(/^doi:/i,'') : null;
@@ -23421,6 +23537,9 @@ function _renderCompStory(){
   const full = showingSource ? _xlate : _story;
   const _lbl = document.getElementById('comp-story-panel-lbl');
   if (_lbl) _lbl.textContent = d.topic || '';
+  // v89_aj: provenance under the story title. EFFECTIVE, not `d.source` — a chapter with no entry
+  // of its own inherits its storyline's, which is the normal case under the user's ruling.
+  try { renderProvInto('comp-story-prov', provEffective(d), null); } catch(_) {}
   const _el = document.getElementById('comp-story-text');
   if (_el) {
     // v80_w: the SHARED body renderer, so this card and the question panel colour the same story the

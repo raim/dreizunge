@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_ai` cut
+# Session prompt — written at the `v89_aj` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_ai`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_aj`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -26,6 +26,15 @@ half-applied rename (a function replaced before its three call sites were remove
 died. **A rename deletes the callers FIRST, or lands as one atomic edit.** There is no window in
 which a dangling reference is merely "not finished yet". A SERVER edit is not live — start your own
 instance on another port to verify, and **kill it by PID** (`pkill -f "node server.js"` matches
+
+⚠️⚠️ **AND POINT IT AT A COPY OF THE STORE: `LESSONS_FILE=/tmp/x.json PORT=3461 node server.js`.**
+Starting a second instance on the default store is **silently destructive**, and it cost the user
+real work at the `v89_aj` cut. Both processes hold the WHOLE store in memory and `saveStore` writes
+all of it, so it is last-write-wins over the entire file: a test server started at 10:13 held a
+snapshot from 10:12, the user's server translated three more chapters, and the next write from the
+TEST server reverted all three. It was reported as "the batch only translated the first three
+chapters" and looked exactly like a product bug — the user diagnosed it, not me.
+⚠️ `v89_ad`'s atomic writes do NOT help here: `rename(2)` prevents a TORN read, not a LOST UPDATE.
 theirs too).
 
 ---
@@ -387,6 +396,15 @@ contain no quotes). Grep: `on[a-z]*="[^"]*\${JSON.stringify` — zero at this cu
   never touch it. ⚠️ The new test HUNG (printed ALL PASSED, never exited) on a stub that never
   settled — registered in `run.js` that hangs the whole suite; found by instrumenting `setTimeout`.
 
+- **`v89_aj`** — source/provenance is edited on the STORYLINE and inherited by its chapters (user
+  ruling). A chapter entry exists only when it DIFFERS; an equal one is deleted, and setting the
+  storyline frees chapter entries that now repeat it — a duplicate is not inert, it detaches that
+  chapter from every later storyline edit. Shown on three surfaces (landing card, storyline page,
+  completion card), author + URL clickable. **ZERO `ui.json` keys** — `prov.*` was already
+  translated. ⚠️ Chapter `source` had to join the savedList whitelist (the FOURTH instance of that
+  trap). ⚠️ A duplicate element id silently broke the neighbouring provenance footer; an existing
+  e2e caught it.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -417,8 +435,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 356 checks
-node test/run.js --quick                  → expect 295
+node test/run.js                          → expect 357 checks
+node test/run.js --quick                  → expect 296
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -451,7 +469,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **355 topics, 99 storylines, 33 languages, 766 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ai'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_aj'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing
