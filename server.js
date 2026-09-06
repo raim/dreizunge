@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_ad';
+const APP_VERSION  = 'v89_ae';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -723,10 +723,27 @@ function reloadUI() {
   } catch(e) { console.warn('  ui.json reload skipped (parse error):', e.message); }
 }
 let _uiWatcher = null;
+// ⚠️ v89_ae: re-arms on EVERY event, not just after our own saveUI.
+//
+// `fs.watch(path)` follows the INODE on Linux, and the common way to save a file is to write a
+// temp and rename over it — which is what `sed -i`, VS Code, and vim in its default configuration
+// all do. Measured: an in-place edit reloads fine; the FIRST rename-based edit reloads (the watch
+// sees the rename); every edit after that is silently ignored, because the watch is still holding
+// the inode that was replaced.
+//
+// That is a PRE-EXISTING gap — `v89_ad` only made `saveUI` re-arm after the server's own writes —
+// and it lands squarely on the user, who hand-translates this file. Symptom: you edit ui.json,
+// the app picks it up once, and every later edit does nothing until the server restarts.
+// Re-arming inside the callback covers both shapes. Closing and reopening a watch raises no event
+// of its own, so this cannot feed itself.
 function _watchUI() {
   try { if (_uiWatcher) _uiWatcher.close(); } catch(_) {}
-  try { _uiWatcher = fs.watch(UI_FILE, () => { setTimeout(reloadUI, 100); }); }
-  catch(_) { _uiWatcher = null; }
+  try {
+    _uiWatcher = fs.watch(UI_FILE, () => {
+      setTimeout(reloadUI, 100);
+      setTimeout(_watchUI, 120);   // after reloadUI has read it, re-attach to whatever is there now
+    });
+  } catch(_) { _uiWatcher = null; }
 }
 _watchUI();
 

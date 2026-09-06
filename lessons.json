@@ -41,40 +41,6 @@
       }
     },
     {
-      "id": "sl_1758031306",
-      "title": "Hub Domburg",
-      "titleAuto": false,
-      "icon": "🚌",
-      "chapters": [
-        "tp_17885199795390000039"
-      ],
-      "lang": "nl",
-      "srcLang": "de",
-      "createdAt": "2026-09-04T11:09:14.135Z",
-      "updatedAt": "2026-09-04T11:21:52.572Z",
-      "tokenUsage": {
-        "totalPromptTokens": 491,
-        "totalCompletionTokens": 108,
-        "tokensByType": {
-          "retitle": 252,
-          "summary": 347
-        }
-      },
-      "summary": "Die Geschichte stellt den Flex-Verkehr am Hub Domburg vor und erklärt die einfache Nutzung dieser mobilen Transportoption. Reisende können ihre Fahrten bequem über eine App oder telefonisch bei der Vervoercentrale buchen und dabei Start- sowie Zielpunkt angeben. Nach dem Einsteigen in das Fahrzeug erfolgt die Bezahlung der Fahrt ebenfalls digital oder direkt im Flex, wodurch das Reisen durch Zeeland flexibel und effizient gestaltet wird.",
-      "summaryMeta": {
-        "type": "storyline_summary",
-        "model": "qwen3.6:35b-a3b",
-        "attempts": null,
-        "valid": 1,
-        "rejected": 0,
-        "rejectReasons": null,
-        "promptTokens": 256,
-        "completionTokens": 91,
-        "ms": 179814,
-        "at": "2026-09-04T11:21:52.572Z"
-      }
-    },
-    {
       "id": "sl_143869450",
       "title": "Wandelnde Grenzen",
       "titleAuto": false,
@@ -378,7 +344,7 @@
       "lang": "en",
       "srcLang": "ja",
       "createdAt": "2026-08-28T13:20:55.800Z",
-      "updatedAt": "2026-08-31T17:20:29.192Z",
+      "updatedAt": "2026-09-06T07:15:32.212Z",
       "tokenUsage": {
         "totalPromptTokens": 1287,
         "totalCompletionTokens": 2239,
@@ -696,7 +662,7 @@
         }
       ],
       "storyboardScheme": "classic",
-      "thumbMode": "storyboard"
+      "thumbMode": "images"
     },
     {
       "id": "sl_1732342260",
@@ -1719,12 +1685,13 @@
       "lang": "sr",
       "srcLang": "de",
       "createdAt": "2026-08-22T19:59:01.531Z",
-      "updatedAt": "2026-08-22T20:02:46.197Z",
+      "updatedAt": "2026-09-06T07:24:33.197Z",
       "tokenUsage": {
-        "totalPromptTokens": 214,
-        "totalCompletionTokens": 71,
+        "totalPromptTokens": 966,
+        "totalCompletionTokens": 1472,
         "tokensByType": {
-          "summary": 285
+          "summary": 285,
+          "storyboard": 2153
         }
       },
       "summary": "Die Geschichte handelt von zwei sturen Ziegenböcken, die sich auf einer sehr schmalen Brücke begegnen. Da keiner der beiden bereit ist, zurückzuweichen, beginnen sie zu kämpfen. Am Ende fallen beide in den Fluss und verlieren ihren Kampf. Die Erzählung dient zudem dem Training des kyrillischen Alphabets.",
@@ -1739,7 +1706,278 @@
         "completionTokens": 71,
         "ms": 21800,
         "at": "2026-08-22T20:02:46.197Z"
-      }
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Zwei Ziegen treffen sich auf einer schmalen Brücke.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#81b29a\"/><rect x=\"20\" y=\"60\" width=\"60\" height=\"10\" fill=\"#9e9e9e\"/><circle cx=\"35\" cy=\"50\" r=\"10\" fill=\"#faf7f0\"/><rect x=\"25\" y=\"55\" width=\"20\" height=\"15\" fill=\"#faf7f0\"/><circle cx=\"65\" cy=\"50\" r=\"10\" fill=\"#8d6e63\"/><rect x=\"55\" y=\"55\" width=\"20\" height=\"15\" fill=\"#8d6e63\"/></svg></g><g data-chapter=\"1\"><title>Sie streiten und rammen mit den Hörnern.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#81b29a\"/><rect x=\"20\" y=\"60\" width=\"60\" height=\"10\" fill=\"#9e9e9e\"/><circle cx=\"40\" cy=\"50\" r=\"10\" fill=\"#faf7f0\"/><rect x=\"30\" y=\"55\" width=\"20\" height=\"15\" fill=\"#faf7f0\"/><circle cx=\"60\" cy=\"50\" r=\"10\" fill=\"#8d6e63\"/><rect x=\"50\" y=\"55\" width=\"20\" height=\"15\" fill=\"#8d6e63\"/><polyline points=\"45,50 55,50\" fill=\"none\" stroke=\"#e07a5f\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g data-chapter=\"1\"><title>Beide fallen in den Fluss.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#457b9d\"/><rect x=\"20\" y=\"60\" width=\"60\" height=\"10\" fill=\"#9e9e9e\"/><circle cx=\"35\" cy=\"80\" r=\"10\" fill=\"#faf7f0\"/><rect x=\"25\" y=\"85\" width=\"20\" height=\"15\" fill=\"#faf7f0\"/><circle cx=\"65\" cy=\"80\" r=\"10\" fill=\"#8d6e63\"/><rect x=\"55\" y=\"85\" width=\"20\" height=\"15\" fill=\"#8d6e63\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 3,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 752,
+        "completionTokens": 1401,
+        "ms": 331735,
+        "at": "2026-09-06T07:24:33.197Z",
+        "storyStyle": "neutral"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Zwei Ziegen treffen sich auf einer schmalen Brücke.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "leaf"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 60,
+              "w": 60,
+              "h": 10,
+              "fill": "stone"
+            },
+            {
+              "type": "line",
+              "x1": 20,
+              "y": 90,
+              "x2": 20,
+              "stroke": "stone",
+              "sw": 4
+            },
+            {
+              "type": "line",
+              "x1": 80,
+              "y": 90,
+              "x2": 80,
+              "stroke": "stone",
+              "sw": 4
+            },
+            {
+              "type": "circle",
+              "cx": 35,
+              "cy": 50,
+              "r": 10,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 25,
+              "y": 55,
+              "w": 20,
+              "h": 15,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 65,
+              "cy": 50,
+              "r": 10,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 55,
+              "y": 55,
+              "w": 20,
+              "h": 15,
+              "fill": "earth"
+            }
+          ]
+        },
+        {
+          "caption": "Sie streiten und rammen mit den Hörnern.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "leaf"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 60,
+              "w": 60,
+              "h": 10,
+              "fill": "stone"
+            },
+            {
+              "type": "line",
+              "x1": 20,
+              "y": 90,
+              "x2": 20,
+              "stroke": "stone",
+              "sw": 4
+            },
+            {
+              "type": "line",
+              "x1": 80,
+              "y": 90,
+              "x2": 80,
+              "stroke": "stone",
+              "sw": 4
+            },
+            {
+              "type": "circle",
+              "cx": 40,
+              "cy": 50,
+              "r": 10,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 55,
+              "w": 20,
+              "h": 15,
+              "fill": "paper"
+            },
+            {
+              "type": "line",
+              "x1": 40,
+              "y": 30,
+              "x2": 30,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 60,
+              "cy": 50,
+              "r": 10,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 50,
+              "y": 55,
+              "w": 20,
+              "h": 15,
+              "fill": "earth"
+            },
+            {
+              "type": "line",
+              "x1": 60,
+              "y": 30,
+              "x2": 70,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "polyline",
+              "points": [
+                [
+                  45,
+                  50
+                ],
+                [
+                  55,
+                  50
+                ]
+              ],
+              "stroke": "accent",
+              "sw": 3
+            }
+          ]
+        },
+        {
+          "caption": "Beide fallen in den Fluss.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 70,
+              "w": 100,
+              "h": 30,
+              "fill": "water"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 60,
+              "w": 60,
+              "h": 10,
+              "fill": "stone"
+            },
+            {
+              "type": "line",
+              "x1": 20,
+              "y": 90,
+              "x2": 20,
+              "stroke": "stone",
+              "sw": 4
+            },
+            {
+              "type": "line",
+              "x1": 80,
+              "y": 90,
+              "x2": 80,
+              "stroke": "stone",
+              "sw": 4
+            },
+            {
+              "type": "circle",
+              "cx": 35,
+              "cy": 80,
+              "r": 10,
+              "fill": "paper"
+            },
+            {
+              "type": "rect",
+              "x": 25,
+              "y": 85,
+              "w": 20,
+              "h": 15,
+              "fill": "paper"
+            },
+            {
+              "type": "circle",
+              "cx": 65,
+              "cy": 80,
+              "r": 10,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 55,
+              "y": 85,
+              "w": 20,
+              "h": 15,
+              "fill": "earth"
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y": 75,
+              "x2": 40,
+              "stroke": "white",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 60,
+              "y": 75,
+              "x2": 70,
+              "stroke": "white",
+              "sw": 2
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
     },
     {
       "id": "sl_1835515392",

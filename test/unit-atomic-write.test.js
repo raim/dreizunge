@@ -15,7 +15,6 @@ const assert = require('assert');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { execFileSync } = require('child_process');
 const ROOT = path.join(__dirname, '..');
 const { writeFileAtomic } = require(path.join(ROOT, 'atomic-write'));
 
@@ -164,35 +163,65 @@ console.log('  credential mode is applied before the swap, and no temp debris re
 }
 console.log('  every durable store in server.js and learners.js writes atomically: OK');
 
-// ── 5. ⚠️ The ui.json watcher is RE-ARMED after each write ──────────────────────────────────────
+async function main() {
+// ── 5. ⚠️ The ui.json watcher survives a file REPLACEMENT — driven, not read ────────────────────
 // The one place where making a write safe breaks something else. `fs.watch(path)` follows the INODE
-// on Linux, and an atomic write REPLACES the file — so without re-arming, the watcher ends up
-// pointed at a file nobody will write again and the user's own hand edits to ui.json would silently
-// stop hot-reloading. Proven by watching a real file across a real atomic replace.
+// on Linux and an atomic write REPLACES the file, so a watch established beforehand ends up holding
+// an inode nobody will write again.
+//
+// ⚠️ It is not only the server's own writes. `sed -i`, VS Code and vim's default all save by writing
+// a temp and renaming over it — and the user HAND-TRANSLATES this file. Measured before `v89_ae`:
+// an in-place edit reloads, the FIRST rename-based edit reloads, and every edit after that is
+// silently ignored. That is the symptom to protect against: you edit ui.json, it is picked up once,
+// and nothing happens again until the server restarts.
+//
+// This section runs the REAL `_watchUI` lifted out of server.js against a real file. A source-level
+// check that the function contains a re-arm could not fail for the thing that actually matters.
 {
+  const srv = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
+  const at = srv.indexOf('function _watchUI()');
+  assert.ok(at > -1, 'server.js defines a re-armable UI watcher');
+  let d = 0, i = srv.indexOf('{', at);
+  for (; i < srv.length; i++) { if (srv[i] === '{') d++; else if (srv[i] === '}') { d--; if (!d) { i++; break; } } }
+  const watchSrc = srv.slice(at, i);
+
   const file = path.join(TMP, 'ui.json');
   fs.writeFileSync(file, '{"en":{"a":"1"}}');
-  let fired = 0;
-  let w = fs.watch(file, () => { fired++; });
-  writeFileAtomic(file, '{"en":{"a":"2"}}');          // replaces the inode
-  execFileSync('sleep', ['0.3']);
-  fired = 0;
-  fs.writeFileSync(file, '{"en":{"a":"3"}}', 'utf8');  // an "external hand edit"
-  execFileSync('sleep', ['0.3']);
-  const staleWatchSaw = fired;
-  try { w.close(); } catch (_) {}
-  assert.strictEqual(staleWatchSaw, 0,
-    '⚠️ (documents WHY the re-arm exists) a watch established before an atomic replace is DEAD — ' +
-    'it saw nothing. If this ever becomes non-zero the platform changed and the re-arm may be ' +
-    'redundant, but it is still not wrong.');
-  // And the server really does re-arm, at both the setup and the write.
-  const srv = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
-  assert.ok(/function _watchUI\(\)/.test(srv), 'server.js has a re-armable UI watcher');
-  const saveUI = srv.slice(srv.indexOf('function saveUI('), srv.indexOf('let uiStrings'));
-  assert.ok(/_watchUI\(\);/.test(saveUI),
-    '⚠️ saveUI re-arms the watcher after replacing ui.json — without this, a hand edit stops ' +
-    'hot-reloading and nothing tells the user');
-}
-console.log('  the ui.json watcher survives an atomic replace, because saveUI re-arms it: OK');
+  let reloads = 0;
+  const api = new Function('fs', 'UI_FILE', 'reloadUI',
+    'let _uiWatcher = null;\n' + watchSrc + '\nreturn { _watchUI, close: () => { try { _uiWatcher.close(); } catch(_){} } };'
+  )(fs, file, () => { try { JSON.parse(fs.readFileSync(file, 'utf8')); reloads++; } catch (_) {} });
+  api._watchUI();
 
-console.log('unit-atomic-write: ALL PASSED');
+  // ⚠️ A REAL await. `execFileSync('sleep')` blocks the event loop, so the watcher's own
+  // setTimeout never fires and every reload count reads 0 — the first draft of this section
+  // failed for exactly that reason and looked like a broken watcher.
+  const settle = () => new Promise(r => setTimeout(r, 400));
+  const body = '{"en":{"a":"1"}}';
+  const renameEdit = async () => { fs.writeFileSync(file + '.new', body, 'utf8'); fs.renameSync(file + '.new', file); await settle(); };
+
+  fs.writeFileSync(file, body, 'utf8'); await settle();      // in-place
+  const afterInPlace = reloads;
+  assert.ok(afterInPlace > 0, 'an in-place edit reloads (sanity: the watcher is armed at all)');
+
+  await renameEdit();
+  const afterFirst = reloads;
+  assert.ok(afterFirst > afterInPlace, 'the first rename-based edit reloads');
+
+  await renameEdit();
+  assert.ok(reloads > afterFirst,
+    '⚠️ and so does the SECOND — this is the whole assertion. Before v89_ae the watch was holding ' +
+    'the replaced inode and every edit after the first was silently ignored, which for a file the ' +
+    'user hand-translates means their edits stop being picked up with nothing to indicate it.');
+  api.close();
+
+  // And saveUI re-arms too, so the server's OWN atomic write does not orphan the watch either.
+  const saveUI = srv.slice(srv.indexOf('function saveUI('), srv.indexOf('let uiStrings'));
+  assert.ok(/_watchUI\(\);/.test(saveUI), 'saveUI re-arms after replacing ui.json');
+}
+console.log('  the ui.json watcher survives repeated rename-based edits, not just the first: OK');
+
+}
+main().then(() => {
+  console.log('unit-atomic-write: ALL PASSED');
+}).catch(e => { console.error(e); process.exit(1); });

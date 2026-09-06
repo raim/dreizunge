@@ -2635,6 +2635,34 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_ae — ui.json hot-reload survives more than one hand edit
+
+Found while verifying `v89_ad` against the user's own restarted server, by asking a question about
+THEIR workflow rather than about the code: they hand-translate `ui.json`, so does an edit made the
+way an editor actually saves still hot-reload? **ZERO `ui.json` keys, one behaviour fixed.**
+
+⚠️ **PRE-EXISTING, and `v89_ad` only covered half of it.** `fs.watch(path)` follows the INODE on
+Linux. `v89_ad` made `saveUI` re-arm after the SERVER's own atomic write — but the common way for
+anything else to save a file is write-temp-then-rename, which is what **`sed -i`, VS Code and vim in
+its default configuration all do**. Measured on a real file with the real watcher shape:
+
+```
+in-place edit      → reloads: 1
+1st rename edit    → reloads: 4
+2nd rename edit    → reloads: 4    ⚠️ WATCH IS DEAD
+```
+
+So the app picked up the user's first hand edit and then silently ignored every one after it, until
+the server restarted or happened to write `ui.json` itself. Nothing indicated this had happened —
+the symptom is "my translation didn't show up", which reads as the translation being wrong.
+
+| | |
+|---|---|
+| **the fix** | `_watchUI` re-arms inside its OWN callback, not only from `saveUI`. Closing and reopening a watch raises no event of its own, so it cannot feed itself. After: `1 / 4 / 7` — the second rename-based edit reloads |
+| **⚠️ the guard is DRIVEN, not read** | `unit-atomic-write.test.js` §5 lifts the real `_watchUI` out of `server.js` and runs it against a real file through a real in-place edit and two real renames. A source-level check that the function "contains a re-arm" could not fail for the thing that matters |
+| **⚠️ and the first draft of that guard failed for the wrong reason** | It settled with `execFileSync('sleep', …)`, which **blocks the event loop** — so the watcher's own `setTimeout(reloadUI, 100)` never ran, every reload count read 0, and it looked like a broken watcher. Replaced with a real `await`; the file's section 5 is now async. Worth remembering: a synchronous sleep in a test that is waiting on a TIMER measures nothing |
+| **guards** | §5 rewritten as above (in-place reloads, 1st rename reloads, **2nd rename reloads** — that last one is the whole assertion), plus the source check that `saveUI` re-arms. Two mutations red: removing the in-callback re-arm reproduces the pre-`v89_ae` gap exactly; removing the reload entirely also goes red. 10/10 stable |
+
 ## ✅ v89_ad — the flake audit's real finding: the tests were never flaky, the WRITER was
 
 User instruction: *"do the flake audit"* — `unit-ui-journeys` and `unit-word-progress`, carried as
