@@ -124,10 +124,67 @@ console.log('  every converted route has a polling client caller: OK');
   const line = client.slice(at, client.indexOf(';', at));
   for (const kind of ['job', 'book'])
     assert.ok(new RegExp(`'${kind}'`).test(line), `kind='${kind}' can be cancelled — it has a server-side job`);
+  // `sync` no longer exists (v89_am) and is kept here deliberately: the rule is about ANY kind
+  // without a server-side job, so a kind that cannot occur is still the right thing to be safe about.
   for (const kind of ['sync', 'tutor', 'draft'])
     assert.ok(!new RegExp(`'${kind}'`).test(line),
       `kind='${kind}' still cannot — no server-side job to cancel, so a button would be a lie`);
 }
 console.log('  the popover offers cancel exactly for the kinds that have a server job: OK');
+
+// ── 5. ⚠️ The five v88_al routes are awaited as jobs at EVERY call site ─────────────────────────
+// Inherited from `unit-jobs-sync-inflight.test.js` §5 when `v89_am` deleted the dead `kind:'sync'`
+// registry that file otherwise tested. Kept because its value never depended on that registry: this
+// is a claim about a SET of call sites, which no single rendered state can observe, and a tenth
+// caller added later without the poller is exactly what should fail here.
+//
+// ⚠️ That section had itself been RE-SCOPED once, at `v88_al`, from the OPPOSITE claim — it used to
+// assert every caller was inside a `_jobsTracked(...)` wrapper. Both halves are asserted below: the
+// poller is present AND the superseded wrapper is absent, because a one-sided check would miss a
+// half-migrated call site.
+{
+  const routes = ['/api/storyline-retitle', '/api/storyline-title', '/api/storyline-summary',
+                  '/api/retranslate-story', '/api/writing-feedback'];
+  let total = 0;
+  for (const route of routes) {
+    let from = 0, hits = 0;
+    for (;;) {
+      const at = client.indexOf(`fetch('${route}'`, from);
+      if (at < 0) break;
+      hits++; total++;
+      const before = client.slice(Math.max(0, at - 400), at);
+      assert.ok(before.includes('_jobAwait('),
+        `${route} at offset ${at} is awaited as a JOB (_jobAwait), not left blocking`);
+      assert.ok(!before.includes('_jobsTracked('),
+        `${route} at offset ${at} does not go through the deleted sync-row wrapper`);
+      from = at + 1;
+    }
+    assert.ok(hits > 0, `found at least one caller of ${route}`);
+  }
+  assert.ok(total >= 9, `non-vacuity: all nine known call sites are covered (found ${total})`);
+  console.log(`  the five v88_al routes are awaited as jobs at every call site (${total}): OK`);
+}
+
+// ── 6. ⚠️ The dead sync path is GONE, not merely unused ─────────────────────────────────────────
+// `v89_am` removed `_jobsTracked`, `_jobsInflight` and the `kind:'sync'` branch. Asserted so the
+// cleanup cannot be silently re-introduced — and because a half-removal (the registry gone but the
+// branch left, or vice versa) would be worse than either state.
+{
+  assert.ok(!/^(?!\s*\/\/).*_jobsTracked\s*\(/m.test(client.replace(/^\s*\/\/.*$/gm, '')),
+    'no _jobsTracked function or call survives outside comments');
+  assert.ok(!/_jobsInflight/.test(client.replace(/^\s*\/\/.*$/gm, '')),
+    'and no _jobsInflight registry');
+  const at = client.indexOf('function _jobsEffectiveList');
+  // ⚠️ Comments stripped first: the function's own note explains that the kind:'sync' branch was
+  // removed, and the word appears there. Matching raw source would fail on the very comment that
+  // documents the removal — a guard tripping over its own explanation.
+  const body = client.slice(at, client.indexOf('\n}', at)).replace(/^\s*\/\/.*$/gm, '');
+  assert.ok(!/'sync'/.test(body), "and _jobsEffectiveList emits no kind:'sync' rows");
+  // ⚠️ Non-vacuity: the TUTOR synthetic entry must still be there. It is a different thing — its
+  // source of truth is _tutorState.busy, and it is the only synthetic row carrying a `link`.
+  assert.ok(/'__tutor__'/.test(body) && /_tutorState\.busy/.test(body),
+    'the tutor synthetic entry SURVIVES — it was never part of the sync registry');
+}
+console.log('  the dead sync path is removed, and the tutor entry is not: OK');
 
 console.log('unit-job-coverage: ALL PASSED');

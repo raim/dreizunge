@@ -327,7 +327,6 @@ run('unit: the card edit popover — library storyline + chapter cards (v88_am)'
 run('unit: item W follow-up — analyzeChaptersRun() batch curator trigger (v86_p)', 'node', [path.join(__dirname, 'unit-analyze-chapters-run.test.js')]);
 run('unit: lesson-set card story display — language flags + text explorer (v86_ad)', 'node', [path.join(__dirname, 'unit-lesson-set-story-explorer.test.js')]);
 run('unit: jobs popover — tutor synthetic entry + stacking-context fix (item U follow-up)', 'node', [path.join(__dirname, 'unit-jobs-popover.test.js')]);
-run('unit: synchronous LLM routes are visible in the jobs popover (item AT, v88_b)', 'node', [path.join(__dirname, 'unit-jobs-sync-inflight.test.js')]);
 run('unit: unfinished-project drafts — client-side half (item R)', 'node', [path.join(__dirname, 'unit-drafts.test.js')]);
 run('unit: unfinished-project drafts — comic upload flow, client-side half (item R follow-up)', 'node', [path.join(__dirname, 'unit-drafts-comic.test.js')]);
 

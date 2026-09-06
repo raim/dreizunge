@@ -123,10 +123,9 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   `v88_h` deliberately did NOT change it: altering four test files on one file's evidence is how a
   cleanup becomes a regression. `roadmap_v88.md`'s `v88_h` entry carries the deterministic probe.
 - **Item D** (Tier 2 image-coordinate highlighting) — buildable, wants its own design pass first.
-- **⚠️ `_jobsTracked` and the whole `kind:'sync'` popover path have NO CALLERS** since `v88_al`.
-  Superseded, not broken, and marked as such in its own comment. Deleting it means removing
-  `_jobsInflight` and the `sync` branch of `_jobsEffectiveList`/`_jobsRenderList` and re-scoping the
-  tests that pin them — a purely internal cleanup, deliberately left for its own release.
+- ~~`_jobsTracked` / the `kind:'sync'` popover path~~ — **DELETED at `v89_am`.** The surviving claim
+  (all five `v88_al` routes awaited as jobs at every call site) moved into `unit-job-coverage`; the
+  tutor synthetic entry is untouched and was never part of it.
 - **Offline mode hides controls SILENTLY** on the storyline and lesson-set pages — `#offline-note`
   exists only on the generation screen, which is why a backend outage reads as broken buttons.
   Offered at `v87_p` and not taken up; small, and would have saved two user reports.
@@ -2635,6 +2634,25 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_am — the dead `kind:'sync'` path is deleted
+
+Carried as an explicit follow-up since `v88_al`, and its own comment said so in place: *"THIS
+FUNCTION NOW HAS NO CALLERS… Deliberately NOT deleted in this release… a purely internal cleanup with
+its own risk, landed in a release whose subject is a user-visible behaviour change."* **ZERO
+`ui.json` keys, zero behaviour change.**
+
+Removed: `_jobsTracked`, `_jobsInflight`/`_jobsInflightSeq`, and the `kind:'sync'` branch of
+`_jobsEffectiveList`. Confirmed dead first — the only surviving references in `index.html` were the
+definition and its own comments.
+
+| | |
+|---|---|
+| **⚠️ the TUTOR entry is NOT part of this** | It looks like a sibling and is not. Its source of truth is `_tutorState.busy` — a flag that already exists, is set from two places, survives a re-render, and is the only synthetic row carrying a `link`. `v88_b`'s own comment records that it was deliberately never migrated onto the registry. `_jobsEffectiveList` keeps it and says why |
+| **the surviving CLAIM was moved, not dropped** | `unit-jobs-sync-inflight.test.js` §5 asserted the five `v88_al` routes are awaited as jobs at **every** call site — nine of them. That never depended on the registry: it is a claim about a SET of call sites, which no rendered state can observe. Moved into `unit-job-coverage.test.js`, where the rest of that question now lives; the file was then deleted. ⚠️ That section had itself been re-scoped once, at `v88_al`, from the OPPOSITE claim (every caller inside a `_jobsTracked` wrapper), so both halves are asserted: the poller present AND the wrapper absent |
+| **the comments were cleaned too** | Deleting the code left three paragraphs describing a mechanism that no longer exists. Replaced by one short history block ending in the rule that outlives it: **any future blocking route uses `runAsJob` + `_jobAwait`, not a client-side row** |
+| **⚠️ `sync` is KEPT in two cancel-button guards on purpose** | They assert a kind with no server-side job never gets a cancel button. The rule is about ANY such kind, so a kind that can no longer occur is still the right thing to be safe about — annotated so a later reader does not "tidy" it away as dead |
+| **guards** | `unit-job-coverage.test.js` §6: the registry, the wrapper and the `'sync'` branch are gone — asserted with comments stripped first, because the function's own note explains the removal and a raw match would trip over its own explanation. **Three mutations red**, including the one that matters most for a deletion: **removing the TUTOR entry as well.** Without it §6 would only be saying "nothing is there", which an over-zealous cleanup would also satisfy |
 
 ## ✅ v89_al — item V: multiple images, each its own panel
 

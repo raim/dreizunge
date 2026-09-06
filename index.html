@@ -24772,33 +24772,15 @@ async function _jobsFetchAndRender(){
 // (_tutorState.busy), so it's folded in here as a SYNTHETIC entry rather than teaching the server
 // about a request shape (streaming, no persisted id) the generic job store was never built for.
 // User-requested follow-up to item U ("a tutor job should also be part of the jobs popover").
-// item AT (v88_b, user-reported: "Storyline title re-generation did not appear in the running job
-// popover. It should."). MEASURED cause, and it generalises well past the report:
-// POST /api/storyline-retitle is FULLY SYNCHRONOUS — it awaits generateChapterMeta() /
-// generateStorylineTitle() inline and returns the result, never calling newJob(). So there is
-// nothing for GET /api/jobs to aggregate, and the popover is not failing to SHOW the job; the job
-// does not exist. `/api/storyline-title`, `/api/storyline-summary`, `/api/retranslate-story` and
-// `/api/writing-feedback` have the IDENTICAL shape — five long, blocking, model-backed routes, all
-// invisible, of which retitle is merely the one the user happened to sit and wait on.
-//
-// Fixed CLIENT-side rather than by converting five routes to jobs, following the precedent the
-// tutor entry below already set for exactly this situation (a real request the server's job store
-// was never built to represent). The tutor's one-off is generalised into a registry any awaited
-// call can join — see _jobsTracked(). Converting the routes themselves is the other option and is
-// the right one IF item AU (per-job cancellation) is ever taken, because a cancel button needs a
-// server-side job to cancel; it is recorded in item AT's own roadmap entry so that decision is not
-// re-derived.
-//
-// ⚠️ The tutor entry is deliberately NOT migrated onto this registry. Its source of truth is
-// _tutorState.busy — a flag that already exists, is set from two places, and survives a re-render —
-// and it is the only entry carrying a `link`. Re-expressing it as a registration would add a
-// second, weaker source for state that is already correct.
-const _jobsInflight = new Map();   // synthetic id -> { label, step }
-let _jobsInflightSeq = 0;
-// Wraps ONE awaited call so it is visible in the popover for exactly as long as it is in flight.
-// try/finally, not a then/catch pair: a route that throws (offline, 500, a JSON parse failure) must
-// still remove its entry, or a failed re-title would leave a phantom job running forever — which is
-// a worse bug than the invisible one this item exists to fix.
+// ⚠️ HISTORY, kept short because the mechanism it described is gone (v89_am). item AT (`v88_b`,
+// user-reported: "Storyline title re-generation did not appear in the running job popover")
+// diagnosed five long, blocking, model-backed routes that never called `newJob()` — so the popover
+// was not failing to SHOW the job, the job did not exist. `v88_b` fixed it CLIENT-side with an
+// in-flight registry (`_jobsTracked`, `kind:'sync'`); `v88_al` then converted all five to real jobs
+// on the user's ruling, because a `sync` row can never carry a cancel button — it has no
+// server-side job id for POST /api/jobs/cancel to look up. That left the registry with no callers,
+// and `v89_am` removed it. **Any future blocking route uses `runAsJob` + `_jobAwait`, not a
+// client-side row.**
 // ── v88_al: ONE poller for every route that became a cancellable job ─────────────────────────────
 // User ruling: "let's convert all five together behind one poller." `_jobsTracked` made a blocking
 // route VISIBLE (v88_b) but could never make it CANCELLABLE — a `sync` row has no server-side job id
@@ -24843,36 +24825,15 @@ async function _jobAwait(r, opts){
   }
 }
 
-// ⚠️ v88_al: THIS FUNCTION NOW HAS NO CALLERS, and that is stated here so nobody mistakes it for
-// load-bearing. All five routes it wrapped (`/api/retranslate-story`, `/api/storyline-title`,
-// `/api/storyline-summary`, `/api/storyline-retitle`, `/api/writing-feedback`) became real jobs and
-// use `_jobAwait` instead, which is what finally makes them CANCELLABLE — the thing a `sync` row
-// could never be, since it has no server-side job id.
-//
-// Deliberately NOT deleted in this release. Removing it means removing `_jobsInflight` and the
-// `kind:'sync'` branch of `_jobsEffectiveList`/`_jobsRenderList` too, and re-scoping the tests that
-// pin them — a purely internal cleanup with its own risk, landed in a release whose subject is a
-// user-visible behaviour change. It is superseded, not broken: any future blocking route should use
-// `runAsJob` + `_jobAwait` rather than this. Carried as an explicit follow-up.
-async function _jobsTracked(label, fn, step){
-  const id = '__sync' + (++_jobsInflightSeq) + '__';
-  _jobsInflight.set(id, { label: label || '', step: step || null });
-  try{ _jobsUpdateBadgeAndList(); }catch(_){}
-  try{ return await fn(); }
-  finally{
-    _jobsInflight.delete(id);
-    try{ _jobsUpdateBadgeAndList(); }catch(_){}
-  }
-}
 function _jobsEffectiveList(){
-  const sync = _jobsInflight.size
-    ? [..._jobsInflight].map(([id, e]) => ({ id, kind: 'sync', label: e.label, status: 'running',
-        step: e.step, error: null, link: null, createdAt: Date.now() }))
-    : [];
-  if(!_tutorState.busy && !sync.length) return _jobsLastList;
-  return [...(_tutorState.busy ? [{ id: '__tutor__', kind: 'tutor', label: t('tutor.title'), status: 'running',
-    step: t('tutor.thinking'), error: null, link: { type: 'tutor' }, createdAt: Date.now() }] : []),
-    ...sync, ..._jobsLastList];
+  // v89_am: the `kind:'sync'` branch is gone with `_jobsTracked` — see that removal's own note. The
+  // TUTOR entry stays and is deliberately NOT a registry entry: its source of truth is
+  // `_tutorState.busy`, a flag that already exists, is set from two places, survives a re-render,
+  // and is the only synthetic entry carrying a `link`.
+  if(!_tutorState.busy) return _jobsLastList;
+  return [{ id: '__tutor__', kind: 'tutor', label: t('tutor.title'), status: 'running',
+            step: t('tutor.thinking'), error: null, link: { type: 'tutor' }, createdAt: Date.now() },
+          ..._jobsLastList];
 }
 // Re-renders the badge + (if open) the list from CURRENT STATE, no network round trip — the tutor
 // hook below calls this the instant _tutorState.busy flips, so the popover reacts immediately

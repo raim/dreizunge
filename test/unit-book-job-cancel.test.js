@@ -51,6 +51,9 @@ async function main() {
 }
 // ⚠️ And the kinds that genuinely have no server-side job must STILL be excluded — the fix widens
 // the rule by exactly one kind, it does not remove it.
+// ⚠️ v89_am deleted the `sync` kind entirely, and it is KEPT in this list on purpose: the rule is
+// "a kind with no server-side job gets no cancel button", and an unknown kind arriving from anywhere
+// must still fall on the safe side of it. `tutor` and `draft` are the two that really occur.
 for (const kind of ['sync', 'tutor', 'draft']) {
   const C = client([{ id:'x', kind, label:'x', status:'running', step:'' }]);
   assert.ok(!/jobs-row-cancel/.test(C.run(`_jobsRenderList(); document.getElementById('jobs-pop-list').innerHTML`)),
