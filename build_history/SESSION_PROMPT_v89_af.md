@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_ae` cut
+# Session prompt — written at the `v89_af` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_ae`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_af`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -339,6 +339,17 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   Found by asking a question about their WORKFLOW while verifying `v89_ad` on their restarted
   server, not by reading code.
 
+- **`v89_af`** — two user reports. **(1)** Storyboard generation is a real, cancellable JOB; it had
+  been awaiting its generator and answering 200, so the app's LONGEST model call had no popover row.
+  ⚠️ `v88_ag`'s "all EIGHT formerly-blocking routes" missed it because it is reached from the
+  storyline screen, not a lesson card — and BOTH client callers needed converting, not just the
+  reported one. **(2)** The false "Ollama unreachable" on wlan loss: **the network was never the
+  cause.** Ollama is loopback-only, `localhost` resolves in 3ms, and 360 probes during live wlan
+  flapping gave zero failures. The box swaps (llama-server 22.4GB, `free` 0, 11.4M pages in) and the
+  wlan drops from **DHCP timeouts** (1564 in one boot) — both are the machine stalling. A TIMEOUT is
+  no longer read as proof Ollama is gone (`pingFailureIsHard`), the background ping gets 15s instead
+  of 2s, and the offline line now names the reason.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -369,8 +380,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 352 checks
-node test/run.js --quick                  → expect 291
+node test/run.js                          → expect 353 checks
+node test/run.js --quick                  → expect 292
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -403,7 +414,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **352 topics, 98 storylines, 33 languages, 766 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ae'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_af'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

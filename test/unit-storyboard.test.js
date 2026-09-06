@@ -182,7 +182,20 @@ assert.ok(/addTokenUsage\(sl, _mTok, 'storyboard'\)/.test(server),
   'storyboard tokens accumulate on the STORYLINE (v59 decision: storyline-level artefact)');
 assert.ok(/sl\.storyboard = storyboard;\s*sl\.storyboardMeta = storyboardMeta;/.test(server),
   'persists the stamp beside the storyboard');
-assert.ok(/return json\(res, 200, \{ storyboard, scheme: usedScheme \}\);/.test(server), 'route returns a plain string to the client');
+// v89_af: the route became a cancellable JOB (user report: storyboard generation had no popover
+// row). The CLAIM is unchanged — the client receives the storyboard as a plain SVG string, not a
+// wrapped object — only the delivery moved from an inline 200 into the job's payload, which
+// `_jobAwait` hands back verbatim. Re-pointed rather than dropped.
+assert.ok(/return \{ storyboard, scheme: usedScheme \};/.test(server),
+  'the job resolves with a plain storyboard string for the client');
+// ⚠️ Matched on the OLD shape exactly (`{ storyboard, scheme: usedScheme }`), not on the prefix
+// `json(res, 200, { storyboard` — that broader pattern also catches `/storyline-storyboard/scheme`,
+// a DIFFERENT route which makes no model call, re-composes stored panels instantly and is correct
+// to answer inline. A guard that fails on a route it was never about is worse than none.
+assert.ok(!/return json\(res, 200, \{ storyboard, scheme: usedScheme \}\)/.test(server),
+  'and the old blocking 200 is gone from the GENERATE route, not merely accompanied');
+assert.ok(/return json\(res, 200, \{ storyboard: svg, scheme \}\)/.test(server),
+  '(and the instant re-colour route still answers inline, as it should — no model call to wait on)');
 
 // ── 7b. DELETE route + client toggle-menu wiring (v55_e) ──────────────────────
 // DELETE /api/storyline-storyboard removes svg+meta, needs NO backend (you can always remove a

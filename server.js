@@ -8,7 +8,7 @@ const fs    = require('fs');
 const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
 const { createSkillRegistry, resolveSkill, withRegisteredSkill, withSkillAlias, withoutSkillAlias } = require('./skill-registry.js');
-const { CANCELLED, callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, release: releaseOllamaModel,
+const { CANCELLED, callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, lastPingFailure, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
         setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens,
         stripRaw, extractJSON, extractArray, salvageArray,
@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_ae';
+const APP_VERSION  = 'v89_af';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -6739,12 +6739,22 @@ async function boot() {
       return Number.isFinite(v) && v >= 250 ? v : dflt;
     };
     const _RECHECK_OFFLINE_MS = _envMs('BACKEND_RECHECK_OFFLINE_MS', 15000);
+    // Overridable for the same reason as the intervals above: an operator on a slow or memory-tight
+    // box has a real need to loosen these, and the e2e needs to tighten them.
+    const _PING_TIMEOUT_MS     = _envMs('BACKEND_PING_TIMEOUT_MS', 15000);
+    const _SOFT_FAILS_TO_OFFLINE = _envMs('BACKEND_SOFT_FAILS', 4);
     const _RECHECK_ONLINE_MS  = _envMs('BACKEND_RECHECK_ONLINE_MS', 60000);
     let _pingFails = 0;
     const _scheduleBackendRecheck = () => {
       const t = setTimeout(async () => {
         try {
-          const up = await pingOllama();
+          // ⚠️ v89_af: 15s, not the default 2s. This re-check has NOBODY WAITING on it — it runs on a
+          // 60-second timer in the background — so a tight timeout buys nothing and costs a false
+          // offline. On the reporting user's machine `llama-server` sits at 22.4GB with `free` at 0
+          // and 11.4M pages swapped in, and under that pressure a loopback request can miss 2s
+          // easily. (Their wlan drops for the same reason: 1564 `ip-config-unavailable` events in
+          // one boot is DHCP timing out, not signal loss. The two reports were siblings.)
+          const up = await pingOllama({ timeoutMs: _PING_TIMEOUT_MS });
           if (up) {
             _pingFails = 0;
             if (active !== 'ollama') {
@@ -6753,10 +6763,25 @@ async function boot() {
               // Warm the model as the startup path does, but never block the poll loop on it.
               warmupOllama().catch(() => {});
             }
-          } else if (active === 'ollama' && ++_pingFails >= 2) {
-            active = 'none';
-            _pingFails = 0;
-            console.log('  ⚠ Ollama unreachable (2 checks) — offline mode until it returns.');
+          } else if (active === 'ollama') {
+            // ⚠️ A REFUSAL and a TIMEOUT are not the same observation, and treating them alike is
+            // what produced the reported false offline. ECONNREFUSED/EHOSTUNREACH means nothing is
+            // listening — that is proof. A timeout on a box that is swapping means the machine
+            // stalled, which is not evidence that Ollama went anywhere. So a stall needs more
+            // consecutive misses before we believe it.
+            const f = lastPingFailure() || {};
+            const hard = pingFailureIsHard(f.code);
+            const need = hard ? 2 : _SOFT_FAILS_TO_OFFLINE;
+            if (++_pingFails >= need) {
+              active = 'none';
+              _pingFails = 0;
+              // ⚠️ Say WHY. The old line named neither the reason nor the timing, which is exactly
+              // why the user could only ask "why does that happen?" and nobody could answer it.
+              console.log(`  ⚠ Ollama unreachable (${need} checks, last: ${f.code || 'unknown'}` +
+                `${f.ms != null ? ' after ' + f.ms + 'ms' : ''}) — offline mode until it returns.`);
+              if (!hard) console.log('     (a timeout, not a refused connection — if this machine is ' +
+                'swapping, Ollama is probably alive and merely stalled.)');
+            }
           }
         } catch (e) { /* a re-check must never take the server down */ }
         _scheduleBackendRecheck();
@@ -10272,18 +10297,37 @@ http.createServer(async (req, res) => {
       // Stories / srcLang / majority-style derivation moved into _storyboardForStoryline (v68.1),
       // shared with the book-job storyboard post-pass so the two callers cannot drift.
       const _sbT0 = Date.now();
-      try {
-        const { storyboard, scheme: usedScheme } = await _storyboardForStoryline(slId, topicData, scheme);
-        return json(res, 200, { storyboard, scheme: usedScheme });
-      } catch(e) {
-        // v55_b: a synchronous ~30-min call MUST NOT fail silently on the server console — the
-        // toast is the only other witness and the tab may be long closed. (A dead Ollama runner
-        // lands here as a network error; keep_alive is -1, so an empty `ollama ps` afterwards
-        // means Ollama/its runner DIED, not that it finished and unloaded.)
-        console.error(`  ✗ Storyline storyboard FAILED after ${((Date.now() - _sbT0) / 1000).toFixed(0)}s: ${e.message}`);
-        console.error('────────────────────────────────────────────────────\n');
-        return json(res, 500, { error: e.message });
-      }
+      // ⚠️ v89_af (user report: "storyboard generation doesn't show up in job popover"). This route
+      // AWAITED the generator and answered 200 when it finished, registering no job at all — its own
+      // comment below called it "a synchronous ~30-min call". So the longest model call in the app
+      // had no row in the popover, no progress line and no cancel button.
+      //
+      // Exactly the defect `v88_ag` fixed for `/api/story-qc` and `/api/summary-qc`, which were
+      // found the same way — by a user noticing a QC click showed nothing. The roadmap recorded that
+      // line as "all EIGHT formerly-blocking model routes are now listed"; this one was never in
+      // that count, because it is reached from the storyline screen rather than from a lesson card.
+      //
+      // `link` gives the popover row its "open →" button, the same as the extraction job's.
+      return runAsJob(res, {
+        label: `Storyboard for "${String(slId).slice(0, 50)}"`,
+        link: { type: 'storyline', id: slId },
+      }, async (jobId) => {
+        jobStep(jobId, `[${OLLAMA_MODEL}] Generating storyboard (${topicData.length} chapter(s))\u2026`);
+        try {
+          const { storyboard, scheme: usedScheme } = await _storyboardForStoryline(slId, topicData, scheme);
+          return { storyboard, scheme: usedScheme };
+        } catch(e) {
+          // v55_b: a long call MUST NOT fail silently on the server console — the toast is the only
+          // other witness and the tab may be long closed. (A dead Ollama runner lands here as a
+          // network error; keep_alive is -1, so an empty `ollama ps` afterwards means Ollama/its
+          // runner DIED, not that it finished and unloaded.)
+          if (String(e && e.message) !== CANCELLED) {
+            console.error(`  ✗ Storyline storyboard FAILED after ${((Date.now() - _sbT0) / 1000).toFixed(0)}s: ${e.message}`);
+            console.error('────────────────────────────────────────────────────\n');
+          }
+          throw e;
+        }
+      });
     }
 
     // Re-colour an existing storyboard (v55_r). NO model call and no backend requirement: the
@@ -11011,6 +11055,24 @@ async function shutdown(signal) {
 // just be four extra round trips against a backend that may already be gone.
 // Reads the CURRENT values, not the boot-time ones: /api/models can change them at runtime (see
 // the setters around line 336), and it is the models actually loaded that need freeing.
+// ⚠️ v89_af — the distinction the reported false-offline turned on (user: "I still get these
+// messages when the laptop loses its wlan connection. Why does that happen, it shouldn't need wlan,
+// right?"). They were right, and the answer was not the network:
+//
+//   HARD  ECONNREFUSED / EHOSTUNREACH / ENOTFOUND — nothing is listening. That is PROOF Ollama is
+//         gone, and two checks is plenty of evidence.
+//   SOFT  a TIMEOUT, or anything else — the request went out and no answer came back in time. On a
+//         machine that is swapping (measured on the reporter's: llama-server at 22.4GB, `free` 0,
+//         11.4M pages swapped in) that says the MACHINE stalled, not that Ollama went anywhere.
+//         Their wlan was dropping for the same reason — 1564 `ip-config-unavailable` events in one
+//         boot is DHCP timing out, not signal loss.
+//
+// A named function rather than an inline ternary because it is the whole fix: as an expression
+// buried in the loop, a mutation flattening it to `true` left the suite GREEN.
+function pingFailureIsHard(code) {
+  return code === 'ECONNREFUSED' || code === 'EHOSTUNREACH' || code === 'ENOTFOUND';
+}
+
 function configuredModels() {
   // ⚠️ EVERY role belongs here. A role that is missing is a model this server can LOAD and never
   // FREE — which defeats the whole point of the idle release on a machine where RAM is the

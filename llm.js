@@ -68,8 +68,8 @@ function callLLM(model, system, userMsg, maxTokens, opts) {
   return Promise.reject(new Error(`Unknown LLM_BACKEND: ${BACKEND}`));
 }
 
-function ping() {
-  if (BACKEND === 'ollama') return _pingOllama();
+function ping(opts) {
+  if (BACKEND === 'ollama') return _pingOllama(opts);
   return Promise.resolve(false);
 }
 
@@ -320,19 +320,44 @@ function _listOllamaModels() {
   });
 }
 
-function _pingOllama() {
+// ⚠️ v89_af: a ping now RECORDS WHY it failed, and a TIMEOUT is not the same answer as a REFUSAL.
+//
+// User report: "I still get these messages when the laptop that runs server.js loses its wlan
+// connection. Why does that happen, it shouldn't need wlan, right?" — they are right, it does not.
+// Measured on their machine: Ollama listens on 127.0.0.1 ONLY, `localhost` resolves from
+// /etc/hosts in 3ms with `files` first in nsswitch, and 360 probes across three minutes of live
+// wlan flapping produced ZERO failures (worst DNS 3ms, worst HTTP 10ms). Inference load does not
+// starve it either — 34 probes during a real generation, worst 45ms.
+//
+// What the machine DOES show: `llama-server` resident at 22.4GB, `free` at 0, and 11.4M pages
+// swapped in / 17.8M out. Under that pressure everything stalls for seconds at a time — which is
+// also why the wlan drops: 1564 `ip-config-unavailable` events this boot, i.e. DHCP timing out,
+// not signal loss. **The two symptoms are siblings, not cause and effect.**
+//
+// So the old code's mistake was conflating two very different observations. ECONNREFUSED is proof
+// Ollama is gone. A 2-second timeout, on a box that swaps, is proof of nothing at all — and it was
+// enough to flip the server into offline mode.
+let _lastPingFail = null;   // { code, ms, at } — what the last failed ping actually hit
+function lastPingFailure() { return _lastPingFail; }
+
+function _pingOllama(opts) {
+  const timeoutMs = (opts && opts.timeoutMs) || 2000;
+  const t0 = Date.now();
   return new Promise(resolve => {
+    const fail = (code) => { _lastPingFail = { code, ms: Date.now() - t0, at: new Date().toISOString() }; resolve(false); };
     try {
       const u = new URL('/api/tags', OLLAMA_HOST);
       const lib = u.protocol === 'https:' ? https : http;
       const req = lib.request(
         { hostname: u.hostname, port: u.port || 11434, path: u.pathname, method: 'GET' },
-        res => { res.resume(); resolve(res.statusCode < 500); }
+        res => { res.resume();
+          if (res.statusCode < 500) { _lastPingFail = null; resolve(true); }
+          else fail('HTTP' + res.statusCode); }
       );
-      req.setTimeout(2000, () => { req.destroy(); resolve(false); });
-      req.on('error', () => resolve(false));
+      req.setTimeout(timeoutMs, () => { req.destroy(); fail('TIMEOUT'); });
+      req.on('error', (e) => fail((e && e.code) || 'ERROR'));
       req.end();
-    } catch(_) { resolve(false); }
+    } catch(e) { fail((e && e.code) || 'THREW'); }
   });
 }
 
@@ -518,4 +543,4 @@ function modelCapabilities(model) {
   });
 }
 
-module.exports = { CANCELLED, callLLM, modelCapabilities, capabilitiesReset, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout, setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens };
+module.exports = { CANCELLED, callLLM, modelCapabilities, capabilitiesReset, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout, setNumThread, getNumThread, setNumCtxMax, getNumCtxMax, estimateCtxTokens, lastPingFailure };

@@ -13368,10 +13368,12 @@ async function _applyPostGenFeatures(finalJob, opts){
       const topicNames = chapterIds.map(id => byId.get(id)?.topic).filter(Boolean);
       if(topicNames.length){
         setGenStatus('running', `🎬 ${t('storyboard.title')}`);
-        const r = await fetch('/api/storyline-storyboard', { method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ slId: sl.id, topics: topicNames }) });
-        const data = await r.json();
-        if(r.ok && data.storyboard && Array.isArray(APP.storylines)){
+        // Same conversion as genStorylineStoryboard's — the post-generation pass has to poll too,
+        // or it reads a 202 {jobId} as a missing storyboard and silently drops it.
+        const data = await _jobAwait(await fetch('/api/storyline-storyboard',
+          { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ slId: sl.id, topics: topicNames }) }), { every: 2000 });
+        if(data && data.storyboard && Array.isArray(APP.storylines)){
           const idx = APP.storylines.findIndex(s=>s.id===sl.id);
           if(idx>=0) APP.storylines[idx].storyboard = data.storyboard;
         }
@@ -13895,12 +13897,15 @@ async function genStorylineStoryboard() {
   const btn = document.getElementById('sl-screen-storyboard-btn');
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   try {
-    const r = await fetch('/api/storyline-storyboard', {
+    // v89_af: a real, cancellable JOB now (user report: "storyboard generation doesn't show up in
+    // job popover"). `_jobAwait` polls and hands back the same payload the route used to return
+    // inline, so everything below is unchanged. A CANCEL comes back as null — the user's own act,
+    // not an error, so it is not toasted as one.
+    const data = await _jobAwait(await fetch('/api/storyline-storyboard', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slId: sl.chainId, topics: sl.topics })
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'Failed');
+    }), { every: 2000 });
+    if (!data) return;
     const svg = data.storyboard;
     const chainId = sl.chainId;
     // Update the in-screen strip (server-validated SVG string — safe to inject).

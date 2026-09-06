@@ -168211,12 +168211,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v89_ae', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v89_af', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"b79554156365","lessons.json":"29ba5fdf0fd4","ui.json":"4a402c56f092","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"016a5cc0e38b","analysis-corrections.json":"e64c06e5700a","build-static.js":"811abf3b5152"};
+  APP.buildSources = {"index.html":"4037ad406533","lessons.json":"29ba5fdf0fd4","ui.json":"4a402c56f092","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"016a5cc0e38b","analysis-corrections.json":"e64c06e5700a","build-static.js":"811abf3b5152"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -171573,10 +171573,12 @@ async function _applyPostGenFeatures(finalJob, opts){
       const topicNames = chapterIds.map(id => byId.get(id)?.topic).filter(Boolean);
       if(topicNames.length){
         setGenStatus('running', `🎬 ${t('storyboard.title')}`);
-        const r = await fetch('/api/storyline-storyboard', { method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ slId: sl.id, topics: topicNames }) });
-        const data = await r.json();
-        if(r.ok && data.storyboard && Array.isArray(APP.storylines)){
+        // Same conversion as genStorylineStoryboard's — the post-generation pass has to poll too,
+        // or it reads a 202 {jobId} as a missing storyboard and silently drops it.
+        const data = await _jobAwait(await fetch('/api/storyline-storyboard',
+          { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ slId: sl.id, topics: topicNames }) }), { every: 2000 });
+        if(data && data.storyboard && Array.isArray(APP.storylines)){
           const idx = APP.storylines.findIndex(s=>s.id===sl.id);
           if(idx>=0) APP.storylines[idx].storyboard = data.storyboard;
         }
@@ -172100,12 +172102,15 @@ async function genStorylineStoryboard() {
   const btn = document.getElementById('sl-screen-storyboard-btn');
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   try {
-    const r = await fetch('/api/storyline-storyboard', {
+    // v89_af: a real, cancellable JOB now (user report: "storyboard generation doesn't show up in
+    // job popover"). `_jobAwait` polls and hands back the same payload the route used to return
+    // inline, so everything below is unchanged. A CANCEL comes back as null — the user's own act,
+    // not an error, so it is not toasted as one.
+    const data = await _jobAwait(await fetch('/api/storyline-storyboard', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slId: sl.chainId, topics: sl.topics })
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'Failed');
+    }), { every: 2000 });
+    if (!data) return;
     const svg = data.storyboard;
     const chainId = sl.chainId;
     // Update the in-screen strip (server-validated SVG string — safe to inject).

@@ -2635,6 +2635,52 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_af — storyboard runs as a job, and a stalled machine is no longer read as a dead Ollama
+
+Two user reports, one release. **ZERO `ui.json` keys.**
+
+### 1. *"storyboard generation doesn't show up in job popover"*
+
+`/api/storyline-storyboard` **awaited** `_storyboardForStoryline` and answered 200 when it finished —
+no job, no progress line, no cancel. Its own comment called it *"a synchronous ~30-min call"*, so the
+**longest model call in the app was the one with no row anywhere**.
+
+⚠️ Exactly the defect `v88_ag` fixed for `/api/story-qc` and `/api/summary-qc`, found the same way —
+a user noticing a click showed nothing. That release's write-up says *"all EIGHT formerly-blocking
+model routes are now listed"*; this route was never in that count, because it is reached from the
+**storyline screen** rather than from a lesson card. The enumeration was of the wrong set.
+
+| | |
+|---|---|
+| **the conversion** | `runAsJob` with a `label` and a `link: {type:'storyline'}` (which is what gives the popover row its "open →" button), plus a `jobStep` naming the model and the chapter count. Validation stays OUTSIDE the job — `v88_al`'s rule: a 503/400/404 answers the REQUEST, and turning it into a failed job makes a malformed call look like a model failure |
+| **⚠️ BOTH client callers, not just the reported one** | `genStorylineStoryboard()` is the button. The post-generation pass (`opts.storyboard`) calls the SAME route, and left unconverted it would have read the 202 `{jobId}` as a response with no `storyboard` field and **silently dropped the result** — the exact half-conversion `v88_aj` warns about. Both go through `_jobAwait` now; the DELETE route is untouched (no model call) |
+| **live-verified end to end** | Real storyline, real server: `POST → 202 {jobId}`; `GET /api/jobs` shows `kind:"job"`, `status:"running"`, the label, the link and the step `[qwen3.6:35b-a3b] Generating storyboard (2 chapter(s))…`; cancel returns `stopped:true` and the job settles `cancelled`. `canCancel` is derived client-side from `kind==='job' && running`, so the popover really will draw the button |
+
+### 2. *"I still get these messages when the laptop loses its wlan connection… it shouldn't need wlan, right?"*
+
+**They are right, and the network was never the cause.** What I ruled out, by measuring on their own
+machine rather than reasoning:
+
+- **Ollama listens on `127.0.0.1` only** — nothing about it is routable.
+- `localhost` resolves from `/etc/hosts` (nsswitch is `files` first) in **3ms**; `dns` is never consulted.
+- **360 probes across three minutes of live wlan flapping: ZERO failures**, worst DNS 3ms, worst HTTP 10ms.
+- Inference load does not starve it either: 34 probes during a real generation, worst **45ms**.
+- Not suspend/resume — the journal shows no suspend at all.
+
+⚠️ **What the machine does show**: `llama-server` resident at **22.4GB**, `free` at **0**, and
+**11.4M pages swapped in / 17.8M out**. And the wlan failures are **1564 `ip-config-unavailable`
+events in one boot** — that is **DHCP timing out, not signal loss**. So the two symptoms are
+**siblings, not cause and effect**: the machine stalls, DHCP misses its deadline and the wlan drops,
+and the 2-second Ollama ping misses its deadline and the server declares itself offline.
+
+| | |
+|---|---|
+| **the actual defect** | The re-check treated **a timeout and a refused connection as the same observation**. `ECONNREFUSED`/`EHOSTUNREACH`/`ENOTFOUND` is proof nothing is listening. A timeout on a swapping box is proof of nothing — and two of them, 60 seconds apart, flipped the whole server into offline mode |
+| **the fix** | `pingFailureIsHard(code)` — a NAMED function, and that matters: as an inline ternary the decision was invisible to a source check, and **a mutation flattening it to `true` (restoring the reported bug exactly) left the suite GREEN**. A hard refusal still needs 2 checks; a soft stall needs `BACKEND_SOFT_FAILS` (4). The background re-check also gets its own `BACKEND_PING_TIMEOUT_MS` (15s, was 2s) — nobody is waiting on a 60-second background timer, so a tight timeout buys nothing and costs a false offline |
+| **and it now SAYS why** | The old line was just *"Ollama unreachable (2 checks)"* — naming neither the reason nor the timing, which is precisely why the user could ask "why does that happen?" and nobody could answer. It now prints the code and the elapsed ms, and adds a plain-language line when the failure was a timeout rather than a refusal |
+| **guards** | `unit-storyboard-job.test.js`. §1-2 the route and BOTH callers. §3 the loop's wiring **plus the lifted `pingFailureIsHard` driven over 9 codes**. §4 BEHAVIOURAL: a real dead port reports `ECONNREFUSED`, a real accept-then-say-nothing server reports `TIMEOUT` after its full budget, and a real answering server clears the recorded failure — the three cases the whole distinction rests on. **Nine mutations red, two of them only after a first pass came back green** |
+| **⚠️ the same trap as `v89_ae`, twice in two releases** | §4's first draft used `execFileSync` to run its probes, which **blocks the parent's event loop** — so the stub server could not accept while the child probed, and the live-server case failed and looked like a broken ping. The refused and stalled cases passed only by accident: the kernel refuses a dead port and completes a handshake into the backlog without the process running. A synchronous call in a test whose subject needs the event loop measures nothing |
+
 ## ✅ v89_ae — ui.json hot-reload survives more than one hand edit
 
 Found while verifying `v89_ad` against the user's own restarted server, by asking a question about
