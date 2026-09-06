@@ -104,6 +104,10 @@ for (const t of lessons.topics) {
 
 // ── 6. The backfill script's safety rails cover translation too ──────────────
 const mig = fs.readFileSync(path.join(ROOT, 'backfill-provenance.js'), 'utf8');
+// ⚠️ v90_b: this line says the function EXISTS and nothing more — replacing its body with a
+// constant left the whole suite green. What it actually WRITES (user-provided / generated /
+// skipped-same-model / unknown, and nothing at all for a topic with no story) is now run in
+// `unit-provenance-migration.test.js` §4.
 assert.ok(/function stampTranslationMeta\(t\)/.test(mig), 'translation stamping is a function');
 assert.ok(/if \(t\.translationMeta\) \{ skippedTranslation\+\+; return false; \}/.test(mig),
   'idempotent: never re-stamps a translationMeta it already wrote');

@@ -164,6 +164,11 @@ for (const t of withModels) {
 }
 
 // ── 8. The migration script's safety rails ──────────────────────────────────
+// ⚠️ v90_b: everything in this section is SOURCE TEXT, and it was the ONLY thing standing behind
+// the migration — the audit replaced `classifyOrigin` and `flagValue` with constants and all 360
+// checks stayed green. These regexes are kept because they pin INTENT next to the corpus claims
+// above, but the rails themselves are now proven by RUNNING the script, in
+// `unit-provenance-migration.test.js`. If you weaken one of these, look there too.
 const mig = fs.readFileSync(path.join(ROOT, 'backfill-provenance.js'), 'utf8');
 assert.ok(/if \(!WRITE\) \{[^}]*dry run/.test(mig), 'dry run is the default');
 assert.ok(/copyFileSync\(FILE, FILE \+ '\.bak'\)/.test(mig), 'a .bak is written before saving');

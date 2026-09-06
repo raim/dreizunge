@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_b` cut
+# Session prompt — written at the `v90_c` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_b`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_c`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -68,7 +68,7 @@ current one) carries the protocol, the open items and the RULES, but none of tha
 the end (job audit, item V, the `kind:'sync'` deletion) all landed. **Ask the user what they want
 next** — that is the right first move here.
 
-⚠️ **THE USER WAS TRANSLATING `ui.json` BY HAND ACROSS THE v90, v90_a AND v90_b CUTS** and will commit it themselves.
+⚠️ **THE USER WAS TRANSLATING `ui.json` BY HAND ACROSS THE WHOLE v90 LINE SO FAR** and will commit it themselves.
 Do not touch that file until `git log ui.json` shows their commit, and do not trust any translated
 count in this document until then.
 
@@ -89,24 +89,23 @@ a clean wlan off/on, so the fix is UNTESTED against the real thing. The original
 `ip-config-unavailable` (DHCP timing out, 1564 times in one boot), which a clean toggle does not
 reproduce. If it recurs, the monitor shape is in `roadmap_v90.md`'s `v89_af` entry.
 
-⚠️ **THE `v90_b` MUTATION AUDIT WAS A SAMPLE, AND IT LEFT A NAMED REMAINDER.** 17 mutations, 9 of
-them survived the whole suite, 7 guard files repaired. The static screen that picked the targets
-found **16** test files whose only claim about some function is that it EXISTS; nine of those
-functions are now actually run. The ones still guarded by name alone, if someone wants to continue:
+⚠️ **THE MUTATION AUDIT IS FINISHED, AND ITS OWN TO-DO LIST WAS 57% WRONG.** `v90_b` sampled 17
+mutations (9 survived, 7 guard files repaired) and left a table of seven more "guarded by name
+alone". `v90_c` worked that table: **four were false positives.** `showComplete`, `callLLM`,
+`sourceFingerprint` and `fixMetaSource` are all properly guarded — `fixMetaSource` by
+`unit-meta-source-heal`, which boots a server against a synthetic unhealed store and never mentions
+the function by name. `_renderCompStoryboard` was an ABSENCE guard the scan misread.
 
-| file | the function it only names |
-|---|---|
-| `unit-learner-nav` | `howComplete`, `_renderCompStoryboard` |
-| `unit-story-stamp` | `fixMetaSource`, `classifyOrigin`, `flagValue` |
-| `unit-reasoning-model-safety` | `callLLM` |
-| `unit-static-freshness` | `sourceFingerprint` |
-| `unit-translation-stamp` | `stampTranslationMeta` |
-| `unit-intro-script` | `scriptLessonAvailableForSet` (mutation CAUGHT elsewhere — lower priority) |
+**If you continue this work, take the correction with the method.** A static "names a function,
+never calls it" screen produces SUSPECTS. Three of the four were cleared only by the FULL-SUITE
+tier; the cheap middle tier (run every test that mentions the symbol) cleared none of them, because
+the guards that catch them are named after the behaviour rather than the function. **Do not publish
+a suspect list as a to-do again** — that is what this block is correcting.
 
-Reproduce the method from the `v90_b` roadmap entry: mutate the app, **rebuild `docs/`** so the
-parity and freshness guards cannot fire on the byte change instead of the defect, run the named
-guard, then the full suite for anything still green. And note the screen's blind spot — it cannot
-see a guard that runs the RIGHT function on a fixture where every branch answers the same.
+The protocol that works, in order: mutate the app, **rebuild `docs/`** (or parity and freshness fire
+on the byte change instead of the defect), run the named guard, then the whole suite. Nine of 17 and
+three of 7 survived everything; those were real. And note the blind spot neither tier sees: a guard
+that runs the RIGHT function on a fixture where every branch answers the same.
 
 ## Orient yourself, in this order
 
@@ -127,8 +126,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 360 checks
-node test/run.js --quick                  → expect 299
+node test/run.js                          → expect 361 checks
+node test/run.js --quick                  → expect 300
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -161,7 +160,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **355 topics, 99 storylines, 33 languages, 737 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_b'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_c'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

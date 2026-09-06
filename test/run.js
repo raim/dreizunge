@@ -133,6 +133,7 @@ run('unit: learner accounts + server-side state (v65)', 'node', [path.join(__dir
 run('unit: TLS warning predicates + wiring (v70_b)', 'node', [path.join(__dirname, 'unit-tls-transport.test.js')]);
 run('unit: lesson-id integrity (v67.1)', 'node', [path.join(__dirname, 'unit-lesson-id-integrity.test.js')]);
 run('unit: provenance-stamp source heal (v68.1)', 'node', [path.join(__dirname, 'unit-meta-source-heal.test.js')]);
+run('unit: the provenance migration RUN, not read (v90_b audit)', 'node', [path.join(__dirname, 'unit-provenance-migration.test.js')]);
 run('unit: student-mode flagging + flag-mode stamps (v68.1)', 'node', [path.join(__dirname, 'unit-student-flags.test.js')]);
 run('unit: deterministic PDF/text-upload cleanup (v68.1)', 'node', [path.join(__dirname, 'unit-pdf-cleanup.test.js')]);
 run('unit: sentence-based PDF chunking (v70_k)', 'node', [path.join(__dirname, 'unit-pdf-chunking.test.js')]);

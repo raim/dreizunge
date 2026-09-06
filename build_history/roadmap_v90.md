@@ -2695,6 +2695,47 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_c — the audit's remainder: 3 of the 7 were real, and the migration script is now RUN
+
+User: *"go ahead with the remaining seven"* — the follow-up list `v90_b` left in the session prompt.
+**ZERO `ui.json` keys.** No app behaviour changed; every edit is in `test/`.
+
+Seven mutations, one per named target, same protocol as `v90_b` (targeted guard → every test that
+names the symbol → the whole suite for anything still green).
+
+### ⚠️ FOUR OF THE SEVEN WERE FALSE POSITIVES — and the correction matters more than the list
+
+| target | verdict |
+|---|---|
+| `showComplete` | **CAUGHT** by four tests that never name it |
+| `callLLM` (the reasoning-safety delegation) | **CAUGHT** by `unit-story-context` |
+| `sourceFingerprint` | **CAUGHT** by `unit-static-freshness` — but only once `docs/` is rebuilt, which is the only state in which the defect exists at all |
+| `fixMetaSource` | **CAUGHT** by `unit-meta-source-heal`, which boots a server against a synthetic UNHEALED store. A proper end-to-end guard that my screen could not see, because it never mentions the function by name |
+| `_renderCompStoryboard` | **not a finding at all** — it is an ABSENCE guard (the renderer was deleted in `v81_q` and must stay deleted). The scan read "asserts about a function it never runs" and could not tell a removal guard from an existence-only one |
+| `scriptLessonAvailableForSet` | **not a finding** — that block already reasons explicitly about why a count is a bad proxy, and `v90_b`'s own mutation of it was caught |
+
+**The lesson is about the screen, not the guards.** A static screen that says "this file names a
+function and never calls it" produces a list of SUSPECTS, and the suspect list here was 57% noise.
+Three of the four were cleared only by the FULL-SUITE tier — the cheap middle tier (run every test
+that mentions the symbol) cleared none of them, because the guards that catch them are named after
+the behaviour, not after the function. **A screen's output is not a finding until the whole suite has
+been given its chance to disagree.** The `v90_b` prompt published that suspect list as a to-do; this
+entry corrects it.
+
+### The three that were real — all in `backfill-provenance.js`
+
+| | |
+|---|---|
+| **what survived** | `classifyOrigin` → a constant, `flagValue` → a constant, `stampTranslationMeta` → `false`. **All 360 checks green for each.** The script could have started labelling every story's origin identically, silently swallowing a `--resolve`, and writing no translation stamps at all |
+| **why the guards were text** | `unit-story-stamp` §8 and `unit-translation-stamp` §4 assert this script as source: the string `copyFileSync(FILE, FILE + '.bak')` appears, the string `dry run` appears, `function flagValue(flag, i)` is declared. There was a reason — the script does `const data = JSON.parse(fs.readFileSync(FILE))` at MODULE SCOPE and `FILE` is `path.join(__dirname, 'lessons.json')` with no env override, so it cannot be `require`d in a test without running against the real corpus |
+| **and it is not dead code** | It still takes `--write`, `--verify`, `--resolve`, `--assume` and `--set-model`. Its rails are what stand between a re-run and a corrupted `lessons.json` |
+| **the harness** | `unit-provenance-migration.test.js` **copies the script into a temp directory beside a synthetic store** and runs it as a subprocess, so `__dirname` does the rest. No change to the script was needed to make it testable — which is worth saying, because "add an env override so it can be tested" would have edited a migration to suit its test |
+| **what is now proven by running it** | dry run is the default and touches nothing; `--write` takes the `.bak` from the PRE-run bytes; five origins come out **distinguishable** (`file-upload` carries its `sourceFile`, `user-pasted` does not, `dialect-rewrite`, `generated`, `unknown`) and an uploaded story is credited to `(user-provided)`, never to a model; four translation stamps likewise; a second run says *"nothing to do"* and does not reformat the file; an existing stamp is never re-derived; a malformed `--resolve`/`--set-model`/`--assume` exits 2 **and writes nothing**; an untagged model name or an unstampable topic refuses the write **all-or-nothing**; and `--verify` ignores rows the script itself wrote |
+| **⚠️ one ordering fact worth pinning** | A single-model label backfills `generationStats.models` on the STORY path, before the translation stamp runs — so such a row's `translationMeta.model` is the recorded label, not `(unknown)`. I predicted `(unknown)` writing the test and the script said otherwise; the assertion now records the real order |
+| **mutations** | 8 red: the three constants above, plus the `.bak` taken AFTER the write (a worthless backup), a dry run that writes anyway, a write that proceeds past unstamped topics, `--verify` counting its own output as evidence, and an existing stamp being re-derived |
+
+Suite: **361 full / 300 quick** (one new file).
+
 ## ✅ v90_b — a mutation audit of the SUITE: two guards were testing themselves, nine more proved empty
 
 User: *"go ahead with the vacuous-guard mutation audit"*. **ZERO `ui.json` keys** (the user was still
