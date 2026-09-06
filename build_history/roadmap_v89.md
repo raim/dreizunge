@@ -116,8 +116,9 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   product — reproduced 3-in-25 with a churning corpus, 0-in-25 through an atomic writer. **Four for
   four**: every examined "known flake" label was hiding a real defect. All seven durable-store
   writes now go through `atomic-write.js`.
-- **⚠️ THREE test files share `unit-observations-log`'s defective driver shape** —
-  `unit-question-nav`, `unit-inflection-speak-lang`, `unit-tap-word` all branch on `if (btns.length)`
+- **⚠️ TWO test files share `unit-observations-log`'s defective driver shape** (was three; re-checked
+  at the `v89_ag` cut and **`unit-inflection-speak-lang` no longer has it**) —
+  `unit-question-nav` and `unit-tap-word` still branch on `if (btns.length)`
   before considering `ex.type`. `unit-question-nav` is the most exposed but measured 14/14 clean, so
   `v88_h` deliberately did NOT change it: altering four test files on one file's evidence is how a
   cleanup becomes a regression. `roadmap_v88.md`'s `v88_h` entry carries the deterministic probe.
