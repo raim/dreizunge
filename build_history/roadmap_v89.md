@@ -2636,6 +2636,28 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_ai — the running-jobs badge updates when a job STARTS
+
+User report: *"the hourglass icon shows a little superscript with the number of running jobs. However,
+this is not shown automatically when starting a job, I need to click the hourglass / open the job
+popover once to update. It should be shown w/o clicking."* **ZERO `ui.json` keys.**
+
+⚠️ **The old behaviour was deliberate, and its reasoning is still right.** `refreshJobsPill()` ran once
+per screen change, and the 3s poll ran **only while the popover was open** — the codebase's own
+"per-feature pollers only run while relevant" convention. A standing interval for a count nobody is
+looking at really is waste.
+
+**But polling was never the answer.** The client KNOWS the moment a job starts: it has just been
+handed the `{jobId}`. So the badge is bumped at that instant. No new timer, no change to the polling
+policy — one extra `GET /api/jobs` per job STARTED.
+
+| | |
+|---|---|
+| **`_jobsBump()`** | An immediate re-read, plus ONE 4s follow-up so a job that finishes in a second or two does not leave the count stale until the next navigation. Two cheap checks, not a loop |
+| **⚠️ five call sites, because `_jobAwait` is not the only starter** | `_jobAwait` covers the whole `runAsJob` family in one place. FOUR others run their own pollers and never touch it — comic extract, comic detect, the PDF book job and the comic book job. Missing one would have left exactly the reported symptom on that path alone, which is the hardest kind of half-fix to notice |
+| **guards** | `unit-jobs-badge-live.test.js`: §1 starting a job through the REAL `_jobAwait` re-reads `/api/jobs` and the badge reads `1` with no popover interaction; §2 the count is right and a FINISHED job is not counted (non-vacuity — without it, "2" would only prove something rendered); §3 all four independent starters bump, asserted per starter; §4 **an idle client issues NO requests**, i.e. this did not quietly become a standing poller. **Five mutations red** |
+| **⚠️ my own test hung, and that is a finding not a nuisance** | It printed ALL PASSED and then never exited — a 100-second `_jobAwait` poll timer left pending by a stub that never settled. Registered in `run.js` that would have hung the WHOLE SUITE, which is precisely what `_qcPoll`'s own comment records happening once before. Found by instrumenting `setTimeout` to list still-pending timers rather than by guessing. ⚠️ It also took two attempts because a `pkill -f "unit-jobs-badge-live"` matched the shell command that CONTAINED that string and killed the edit mid-flight — a self-inflicted wound worth remembering |
+
 ## ✅ v89_ah — the text-analysis token popover can actually save
 
 User report, on `tp_17886338472190000441`: *"editing text analysis individually didn't work, save had

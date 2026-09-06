@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_ah` cut
+# Session prompt — written at the `v89_ai` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_ah`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_ai`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -380,6 +380,13 @@ by interpolation. Two instances, both shipped, both invisible in the source (the
 contain no quotes). Grep: `on[a-z]*="[^"]*\${JSON.stringify` — zero at this cut. And assert on
 `getAttribute(...)`, never on the raw markup containing a substring.
 
+- **`v89_ai`** — the running-jobs badge updates when a job STARTS (user report), instead of at the
+  next navigation or on opening the popover. ⚠️ The old policy (no standing interval) is INTACT and
+  still right — the client simply bumps the count at the moment it receives a `{jobId}`. Five call
+  sites: `_jobAwait` covers the whole `runAsJob` family, and four starters run their own pollers and
+  never touch it. ⚠️ The new test HUNG (printed ALL PASSED, never exited) on a stub that never
+  settled — registered in `run.js` that hangs the whole suite; found by instrumenting `setTimeout`.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -410,8 +417,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 355 checks
-node test/run.js --quick                  → expect 294
+node test/run.js                          → expect 356 checks
+node test/run.js --quick                  → expect 295
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -444,7 +451,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **355 topics, 99 storylines, 33 languages, 766 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ah'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ai'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

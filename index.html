@@ -4732,7 +4732,7 @@ async function comicExtractPanels(){
         continuedFrom: _continueFromRef()})});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(status) status.textContent=''; showToast(t('form.image_extract_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
-    _startComicExtractJob(data.jobId);
+    _startComicExtractJob(data.jobId); _jobsBump();   // v89_ai: its own poller, so it misses _jobAwait's bump
   }catch(e){
     if(status) status.textContent='';
     showToast(t('form.image_extract_failed')+': '+e.message);
@@ -5080,7 +5080,7 @@ async function translateStorylineGenerate(){
     // already excludes the former, but a stale form could still send it.
     if(!r.ok){ showToast('⚠ '+(data.error||r.status)); return; }
     _pdfBookId=data.bookId;
-    _pollBookJob(data.bookId);
+    _pollBookJob(data.bookId); _jobsBump();           // v89_ai: book jobs live in their own store
     _applyLessonCardUI();
   }catch(e){ showToast('⚠ '+e.message); }
 }
@@ -5219,7 +5219,7 @@ async function comicCreateChapter(){
     // generation draft the instant it's superseded" moment as the PDF flow's own pdfGenerateAll().
     discardComicDraft();
     _applyLessonCardUI();   // item AL part 2: a book job is running — the shared start button withdraws
-    _pollComicBookJob(_comicBookId);
+    _pollComicBookJob(_comicBookId); _jobsBump();     // v89_ai
   }catch(e){
     if(status) status.textContent='';
     showToast(t('form.image_create_failed')+': '+e.message);
@@ -5301,7 +5301,7 @@ async function comicDetectPanels(){
       body:JSON.stringify({image:APP_COMIC.dataUrl})});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ if(status) status.textContent=''; showToast(t('form.image_detect_failed')+': '+(data.error||r.status)); if(btn) btn.disabled=false; return; }
-    _startComicDetectJob(data.jobId);
+    _startComicDetectJob(data.jobId); _jobsBump();    // v89_ai
   }catch(e){
     if(status) status.textContent='';
     showToast(t('form.image_detect_failed')+': '+e.message);
@@ -24423,6 +24423,25 @@ async function refreshJobsPill(){
   const btn = document.getElementById('jobs-pill'); if(btn) btn.title = t('jobs.title');
   await _jobsFetchAndRender();
 }
+// ⚠️ v89_ai (user report: "the hourglass icon shows a superscript with the number of running jobs.
+// However, this is not shown automatically when starting a job, I need to click the hourglass once
+// to update").
+//
+// The badge refreshed on screen change (`show()`) or on the 3s poll that runs ONLY while the popover
+// is open — a deliberate choice, and the reasoning behind it is still right: a standing interval for
+// a count nobody is looking at is waste, and this codebase's convention is per-feature pollers that
+// run only while relevant.
+//
+// But polling was never the answer here. The client KNOWS the moment it starts a job — it has just
+// received the `{jobId}`. So the badge is bumped at that instant instead. No new timer, no change to
+// the polling policy: one extra GET /api/jobs per job STARTED.
+//
+// A short follow-up tick catches the other end: a job that finishes in a second or two would
+// otherwise leave the count stale until the next navigation. Two cheap checks, not a loop.
+function _jobsBump(){
+  try { _jobsFetchAndRender(); } catch(_) {}
+  try { setTimeout(() => { try { _jobsFetchAndRender(); } catch(_) {} }, 4000); } catch(_) {}
+}
 async function _jobsFetchAndRender(){
   try{
     const r = await fetch('/api/jobs');
@@ -24486,6 +24505,9 @@ async function _jobAwait(r, opts){
   // A route that answered with a payload rather than a job (an unconverted sibling, a cached
   // short-circuit) is handed straight back, so this helper is safe to put in front of either.
   if (!jobId) return started;
+  // v89_ai: a real job just started — show it in the badge now rather than at the next navigation.
+  // Here rather than at each call site: this is the ONE place every runAsJob-backed route passes.
+  _jobsBump();
   // ⚠️ 500ms, not the 2s the background pollers use: three of these five sit in front of a control
   // the user is WATCHING (a title, a summary, a translation) and one is in the learner's exercise
   // flow. The conversion must not make them feel slower than the blocking version it replaces.

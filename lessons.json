@@ -13687,7 +13687,7 @@
             },
             {
               "target": "riesenfrei",
-              "source": "vast and free",
+              "source": "free of giants",
               "skillId": null,
               "skillProposal": {
                 "proposedId": "de:vocab:riesenfrei",
@@ -13697,7 +13697,8 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-06T10:40:24.704Z"
             },
             {
               "target": "dank",
@@ -13772,7 +13773,7 @@
             },
             {
               "target": "dass das Land dank ihr riesenfrei ist",
-              "source": "that the country is vast and free thanks to it",
+              "source": "that the country is free of giants thanks to it",
               "words": [
                 "dass",
                 "das",
@@ -13781,7 +13782,8 @@
                 "ihr",
                 "riesenfrei",
                 "ist"
-              ]
+              ],
+              "editedAt": "2026-09-06T10:40:24.704Z"
             }
           ],
           "skillIds": [],
@@ -13843,7 +13845,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:44:07.219Z",
-      "updatedAt": "2026-09-06T10:03:41.113Z",
+      "updatedAt": "2026-09-06T10:40:24.707Z",
       "createdBy": "admin"
     },
     {
