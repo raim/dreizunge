@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_ag` cut
+# Session prompt — written at the `v89_ah` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_ag`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_ah`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -366,6 +366,20 @@ show `ip-config-unavailable` (DHCP timing out, 1564 times), whereas the manual t
 `user-requested` deactivate. The reproduction probably needs the flapping/DHCP-failure shape, not a
 clean off/on. `scratchpad/watch.js` in that session's notes is the monitor to re-run.
 
+- **`v89_ah`** — the text-analysis token popover can actually SAVE (user report). ⚠️ Never a logic
+  error: `JSON.stringify`'s double quotes closed the double-quoted `onclick`, the handler truncated
+  to `_teSaveCorrection(` and threw SyntaxError on every click. ⚠️⚠️ **`v88_ai` fixed this exact bug
+  on the ▤ button next door and never swept for the second instance** — and `unit-text-explorer`'s
+  guard asserted the UNESCAPED form, i.e. **it pinned the defect as correct**. Every other test drove
+  the FUNCTION, never the BUTTON. Second defect alongside: the dismiss fired on ANY click, so the
+  first click into a field killed the editor — and because three empty fields are the route's CLEAR
+  gesture, a save then DELETED the correction. The blue line is not a bug (`.te-tok-reviewed`).
+
+⚠️ **A CLASS WORTH SWEEPING AGAIN when anything new is wired inline:** an `on*="…"` attribute built
+by interpolation. Two instances, both shipped, both invisible in the source (the ids happened to
+contain no quotes). Grep: `on[a-z]*="[^"]*\${JSON.stringify` — zero at this cut. And assert on
+`getAttribute(...)`, never on the raw markup containing a substring.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -396,8 +410,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 354 checks
-node test/run.js --quick                  → expect 293
+node test/run.js                          → expect 355 checks
+node test/run.js --quick                  → expect 294
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -430,7 +444,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **355 topics, 99 storylines, 33 languages, 766 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ag'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ah'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

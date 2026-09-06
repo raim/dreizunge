@@ -14,13 +14,27 @@
       "lang": "de",
       "srcLang": "en",
       "createdAt": "2026-09-06T09:02:32.748Z",
-      "updatedAt": "2026-09-06T09:24:42.234Z",
+      "updatedAt": "2026-09-06T09:25:47.174Z",
       "tokenUsage": {
-        "totalPromptTokens": 826,
-        "totalCompletionTokens": 104,
+        "totalPromptTokens": 1474,
+        "totalCompletionTokens": 200,
         "tokensByType": {
-          "retitle": 930
+          "retitle": 930,
+          "summary": 744
         }
+      },
+      "summary": "Markus faces a critical moment during his exam when his laptop and Wi-Fi suddenly fail, triggering panic until he successfully plugs in his USB drive to access offline notes. After enduring the tension of the silent lecture hall, he experiences relief as the test concludes, leaving him with lingering physical signs of stress amidst a gray campus sky. Later, Markus retreats to the cafeteria to review his handwritten sketches and formulas, finding focus and order through careful corrections despite the surrounding noise and rain.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 648,
+        "completionTokens": 96,
+        "ms": 64836,
+        "at": "2026-09-06T09:25:47.174Z"
       }
     },
     {
@@ -13613,8 +13627,8 @@
         "rejectReasons": null,
         "promptTokens": 81,
         "completionTokens": 19,
-        "ms": 563719,
-        "at": "2026-09-05T22:19:04.491Z",
+        "ms": 24074,
+        "at": "2026-09-06T10:03:41.113Z",
         "origin": "generated",
         "source": "re-translated after a manual story edit"
       },
@@ -13801,8 +13815,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1195,
-        "totalCompletionTokens": 410,
+        "totalPromptTokens": 1276,
+        "totalCompletionTokens": 429,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13812,7 +13826,7 @@
           }
         ],
         "tokensByType": {
-          "translation": 100
+          "translation": 200
         }
       },
       "comicPanels": [
@@ -13829,7 +13843,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:44:07.219Z",
-      "updatedAt": "2026-09-05T22:19:04.491Z",
+      "updatedAt": "2026-09-06T10:03:41.113Z",
       "createdBy": "admin"
     },
     {
@@ -14151,14 +14165,14 @@
         "valid": 1,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 105,
+        "promptTokens": 85,
         "completionTokens": 25,
-        "ms": 55485,
-        "at": "2026-09-05T18:23:59.124Z",
+        "ms": 12417,
+        "at": "2026-09-06T10:12:03.145Z",
         "origin": "generated",
-        "source": "recorded at generation"
+        "source": "re-translated after a manual story edit"
       },
-      "storyTranslation": "A large sign was erected by the government at the border as a deterrent:  \nGIANTS ARE NOT WELCOME HERE.",
+      "storyTranslation": "Thus, as a deterrent, the government erected a large sign at the border.  \nGiants are not welcome here.",
       "userStory": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT\nRIÉSEN SINd HIER NICHT WILLKOMMEN",
       "continuedFrom": "Fear of the Giants",
       "continuedFromId": "tp_17886321781240000163",
@@ -14379,8 +14393,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1706,
-        "totalCompletionTokens": 533,
+        "totalPromptTokens": 1791,
+        "totalCompletionTokens": 558,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14390,7 +14404,8 @@
           }
         ],
         "tokensByType": {
-          "story_qc": 557
+          "story_qc": 557,
+          "translation": 110
         }
       },
       "comicPanels": [
@@ -14406,7 +14421,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:23:59.125Z",
-      "updatedAt": "2026-09-05T22:08:37.287Z",
+      "updatedAt": "2026-09-06T10:12:03.145Z",
       "createdBy": "admin",
       "aiStory": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT\nRIÉSEN SINd HIER NICHT WILLKOMMEN",
       "storyQcBy": "translategemma:12b",
@@ -14446,14 +14461,14 @@
         "valid": 1,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 111,
-        "completionTokens": 23,
-        "ms": 43592,
-        "at": "2026-09-05T18:16:18.123Z",
+        "promptTokens": 90,
+        "completionTokens": 22,
+        "ms": 11718,
+        "at": "2026-09-06T10:11:50.321Z",
         "origin": "generated",
-        "source": "recorded at generation"
+        "source": "re-translated after a manual story edit"
       },
-      "storyTranslation": "Because you believe that you look delicious, you live in constant fear that the giants will come to devour you.",
+      "storyTranslation": "Because they believe they look delicious, they live in constant fear that the giants will come to devour them.",
       "userStory": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRISSEN",
       "continuedFrom": "The Knucklehead Nation",
       "continuedFromId": "tp_17886319318190000082",
@@ -14657,8 +14672,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1716,
-        "totalCompletionTokens": 563,
+        "totalPromptTokens": 1806,
+        "totalCompletionTokens": 585,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14668,7 +14683,8 @@
           }
         ],
         "tokensByType": {
-          "story_qc": 561
+          "story_qc": 561,
+          "translation": 112
         }
       },
       "comicPanels": [
@@ -14684,7 +14700,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:16:18.124Z",
-      "updatedAt": "2026-09-06T06:24:22.422Z",
+      "updatedAt": "2026-09-06T10:11:50.321Z",
       "createdBy": "admin",
       "aiStory": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRISSEN",
       "storyQcBy": "translategemma:12b",
@@ -14724,14 +14740,14 @@
         "valid": 1,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 86,
-        "completionTokens": 16,
-        "ms": 9918,
-        "at": "2026-09-05T18:12:11.818Z",
+        "promptTokens": 77,
+        "completionTokens": 15,
+        "ms": 6817,
+        "at": "2026-09-06T10:11:38.334Z",
         "origin": "generated",
-        "source": "recorded at generation"
+        "source": "re-translated after a manual story edit"
       },
-      "storyTranslation": "There is a land where the heads of all people are like dumplings.",
+      "storyTranslation": "There is a land where the heads of all people resemble dumplings.",
       "userStory": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN",
       "lessons": [
         {
@@ -14944,8 +14960,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1638,
-        "totalCompletionTokens": 510,
+        "totalPromptTokens": 1715,
+        "totalCompletionTokens": 525,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14955,7 +14971,8 @@
           }
         ],
         "tokensByType": {
-          "story_qc": 528
+          "story_qc": 528,
+          "translation": 92
         }
       },
       "comicPanels": [
@@ -14971,7 +14988,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:12:11.820Z",
-      "updatedAt": "2026-09-05T21:54:06.763Z",
+      "updatedAt": "2026-09-06T10:11:38.334Z",
       "createdBy": "admin",
       "aiStory": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN",
       "storyQcBy": "translategemma:12b",

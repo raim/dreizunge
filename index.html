@@ -24193,7 +24193,28 @@ async function _teSaveCorrection(cid, si, occ, surface){
   const sentences = (entry && entry.data && entry.data.sentences) || [];
   const sentenceText = String(((sentences[si] || {}).text) || '');
   if (!sentenceText) { showToast(t('text_explorer.error', { error: 'sentence not found' })); return; }
-  const val = id => (document.getElementById(id)?.value || '').trim();
+  // ⚠️ v89_ah: "the fields are gone" and "the user emptied the fields" are NOT the same gesture, and
+  // conflating them is destructive. Three empty strings is the route's documented CLEAR — the way
+  // back to the model's own analysis — so a save that cannot find its inputs would DELETE the
+  // correction rather than fail. That is precisely what the old dismiss handler caused, and it is
+  // why the reported symptom was "no effect" rather than an error.
+  //
+  // lib-dom auto-vivifies a getElementById miss, so `?.value` is not enough to tell the cases apart
+  // in tests either; the check is on the element being a real input with a string value.
+  // The real precondition is "the editor is still open". Checking the INPUTS is not enough: a
+  // getElementById miss returns null in a browser but an auto-vivified stub in the DOM test harness,
+  // whose `.value` is a perfectly good empty string — so a fields-only check is exactly the kind of
+  // guard that cannot fail where it most needs to. `_teWordPopEl` is tracked by reference and is
+  // null the moment the popover is dismissed, in both.
+  const el = id => document.getElementById(id);
+  const missing = (!_teWordPopEl ? ['popover'] : [])
+    .concat(['te-edit-lemma', 'te-edit-form', 'te-edit-sense']
+      .filter(id => { const e = el(id); return !e || typeof e.value !== 'string'; }));
+  if (missing.length) {
+    showToast(t('text_explorer.error', { error: 'editor fields not found' }));
+    return;
+  }
+  const val = id => (el(id).value || '').trim();
   try {
     const r = await fetch('/api/analysis-correction/' + encodeURIComponent(cid), {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -24219,6 +24240,10 @@ async function _teSaveCorrection(cid, si, occ, surface){
 // WRONG element). Keeping the reference makes the dismiss exact and the popover observable.
 let _teWordPopEl = null;
 function _teCloseWordPop(){
+  // v89_ah: drop the outside-click/Escape listeners with the node they belong to. The old handler
+  // was `{once:true}` and so removed itself; these are not, because they must survive the clicks
+  // that land INSIDE the popover.
+  if (_teWordPopOff) { try { _teWordPopOff(); } catch (_) {} _teWordPopOff = null; }
   if (_teWordPopEl) { try { _teWordPopEl.remove(); } catch (_) {} }
   _teWordPopEl = null;
 }
@@ -24255,12 +24280,30 @@ function _teShowWordPopover(ev, el){
     // "Clearing all three and saving removes the correction" is the documented way back to the
     // model's own analysis — see the route's own comment. Said here in the UI, using the existing
     // unresolved string, rather than as a fourth button.
+    // ⚠️ v89_ah — THE reported bug ("save had no effect"), and it was never a logic error: the
+    // handler was syntactically broken in the MARKUP. `JSON.stringify` emits DOUBLE quotes, and this
+    // was interpolated straight into a double-quoted onclick attribute, so the browser parsed
+    //
+    //     onclick="_teSaveCorrection(" tp_178…",0,0,"riesenfrei")"=""
+    //
+    // — the handler truncated to `_teSaveCorrection(`, which throws SyntaxError on every click, and
+    // the remainder became a garbage attribute name. Nothing was ever sent to the server. A
+    // surface, not a `surface`, is the reason this survived: the chapter id and the word both
+    // happen to contain no quotes of their own, so nothing looked wrong in the source.
+    //
+    // ⚠️ It survived testing because the tests call `_teSaveCorrection(...)` DIRECTLY. Driving the
+    // function proves nothing about the button that is supposed to call it — `v89_x`'s own lesson,
+    // repeated here. The guard added with this fix asserts on the RENDERED attribute.
+    //
+    // The call is built once and escaped as an attribute value, the same way every other
+    // dynamically-built onclick in this file passes its strings.
+    const saveCall = `_teSaveCorrection(${JSON.stringify(String(ds.cid))},${Number(ds.si) || 0},`
+      + `${Number(ds.occ) || 0},${JSON.stringify(String(ds.surface || ''))})`;
     rows.push(`<div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">`
       + `<button type="button" class="modal-btn secondary" style="padding:4px 10px;font-size:12px"`
       + ` onclick="_teCloseWordPop()">${escHtml(t('dialog.cancel'))}</button>`
       + `<button type="button" class="modal-btn primary" style="padding:4px 10px;font-size:12px"`
-      + ` onclick="_teSaveCorrection(${JSON.stringify(String(ds.cid))},${Number(ds.si) || 0},`
-      + `${Number(ds.occ) || 0},${JSON.stringify(String(ds.surface || ''))})">${escHtml(t('prov.save'))}</button></div>`);
+      + ` onclick="${escAttr(saveCall)}">${escHtml(t('prov.save'))}</button></div>`);
   } else {
     if (ds.lemma) rows.push(`<div><span style="opacity:.6">${escHtml(t('text_explorer.lemma'))}:</span> ${escHtml(ds.lemma)}</div>`);
     if (ds.form) rows.push(`<div><span style="opacity:.6">${escHtml(t('text_explorer.form'))}:</span> ${escHtml(ds.form)}</div>`);
@@ -24277,8 +24320,38 @@ function _teShowWordPopover(ev, el){
   if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 8;
   pop.style.left = Math.max(8, x) + 'px';
   pop.style.top = Math.max(8, y) + 'px';
-  setTimeout(() => document.addEventListener('click', () => _teCloseWordPop(), { once: true }), 0);
+  // ⚠️ v89_ah (user report: "editing text analysis individually didn't work, save had no effect").
+  //
+  // This was `document.addEventListener('click', () => _teCloseWordPop(), {once:true})` — dismiss on
+  // ANY click, with no check for where the click landed. That was CORRECT while the popover was
+  // read-only, which it was until `v88_ad` gave it three inputs and a Save button. Nobody updated
+  // the dismiss, so the editable popover was unusable in the way that is hardest to report: the
+  // very first click INTO a field removed it.
+  //
+  // ⚠️ And the failure was worse than a disappearing popover. If a click did reach Save, the fields
+  // were already gone — `document.getElementById('te-edit-lemma')` returns null, `val()` yields ''
+  // for all three, and the route reads "all three empty" as its documented CLEAR gesture. So the
+  // save did not merely fail; it DELETED the correction. "Save had no effect" is exactly what that
+  // looks like from outside.
+  //
+  // Both other popovers in this file already did it right (`_modelPopOutside`, and the language
+  // picker's own `h(e)`): test `contains(e.target)` first. Same shape here, plus Escape, and both
+  // listeners are removed together so nothing leaks onto the next popover.
+  setTimeout(() => {
+    const onDoc = (e) => { if (!pop.contains(e.target)) _teCloseWordPop(); };
+    const onEsc = (e) => { if (e.key === 'Escape') _teCloseWordPop(); };
+    document.addEventListener('click', onDoc);
+    document.addEventListener('keydown', onEsc);
+    _teWordPopOff = () => {
+      document.removeEventListener('click', onDoc);
+      document.removeEventListener('keydown', onEsc);
+    };
+  }, 0);
 }
+// Removes whatever listeners the currently-open popover installed. Kept beside `_teWordPopEl` for
+// the same reason that reference exists: the popover is a dynamic node, and its teardown has to be
+// exact rather than best-effort.
+let _teWordPopOff = null;
 
 // ── Persistent tutor widget (v62) ────────────────────────────────────────────
 // ONE floating widget, reachable from every screen, holding ONE continuous thread. The thread

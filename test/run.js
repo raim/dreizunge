@@ -175,6 +175,7 @@ run('unit: the two QC functions merged into one engine \u2014 parity with pre-me
 run('unit: durable stores are written atomically \u2014 the flake audit\u2019s real finding (v89_ad)', 'node', [path.join(__dirname, 'unit-atomic-write.test.js')]);
 run('unit: storyboard runs as a job; a stall is not an absence (v89_af)', 'node', [path.join(__dirname, 'unit-storyboard-job.test.js')]);
 run('unit: a running book job can be cancelled from the popover (v89_ag)', 'node', [path.join(__dirname, 'unit-book-job-cancel.test.js')]);
+run('unit: the text-analysis token popover can actually save (v89_ah)', 'node', [path.join(__dirname, 'unit-te-popover-save.test.js')]);
 run('unit: every model role has a picker row; vision filtered by capability (v89_w)', 'node', [path.join(__dirname, 'unit-model-picker-roles.test.js')]);
 run('unit: the mic waits for the readout; no didn-not-catch toast (v89_x)', 'node', [path.join(__dirname, 'unit-speech-readout-race.test.js')]);
 run('unit: a failed chapter-title post-pass is visible (v89_y)', 'node', [path.join(__dirname, 'unit-title-failed-marker.test.js')]);

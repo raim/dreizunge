@@ -2636,6 +2636,37 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v89_ah — the text-analysis token popover can actually save
+
+User report, on `tp_17886338472190000441`: *"editing text analysis individually didn't work, save had
+no effect. Second, editing via the text analysis table (icon ▤) worked, but left a blue line left of
+the edited word."* **ZERO `ui.json` keys.** One real defect, one non-defect, and a guard that had been
+pinning the defect as correct.
+
+### ⚠️ It was never a logic error — the handler was broken in the MARKUP
+
+`JSON.stringify` emits DOUBLE quotes, and the Save button interpolated them straight into a
+double-quoted `onclick`. The browser parsed:
+
+```html
+onclick="_teSaveCorrection(" tp_178…",0,0,"riesenfrei")"=""
+```
+
+The handler truncated to `_teSaveCorrection(` — **SyntaxError on every click** — and the remainder
+became a garbage attribute name. Nothing was ever sent to the server. Confirmed in a real browser by
+reading the button's own `outerHTML`, then fixed with `escAttr(saveCall)` and verified end to end:
+type → Save → the correction really lands (`reviewed:true`) and the popover closes.
+
+| | |
+|---|---|
+| **⚠️⚠️ THE SAME BUG WAS FIXED AT `v88_ai`, ON THE BUTTON NEXT DOOR** | That entry's own comment: *"the cause was ESCAPING… the ids were interpolated with JSON.stringify, which yields DOUBLE quotes — inside a double-quoted onclick attribute those close the attribute, so the handler was the fragment before them and the click did nothing."* It fixed `_teOpenCuratorTable`'s ▤ button and **never swept for the second instance**, which `v88_ad` had added a few hundred lines away. "Where else is this question asked?" was not asked. A sweep at this cut finds **zero** remaining instances |
+| **⚠️ and the same TEST mistake, twice** | `v88_ai`'s comment also records *"my guard had asserted the markup merely CONTAINED `_teOpenCuratorTable` — a substring present in the broken version too, which is why a test passed over a button that could not work."* `unit-text-explorer` then asserted the popover's innerHTML contained `_teSaveCorrection("tp_te1",0,0,"landschap")` — the **UNESCAPED** form, i.e. it required exactly the broken markup. **The guard was pinning the defect.** Re-pointed to read `getAttribute('onclick')` (which decodes entities as a browser does) and to `new Function(...)` the result, so "the browser can actually run this" is the claim. Mutation-confirmed: it now goes red on the unescaped form |
+| **⚠️ every existing test drove the FUNCTION, never the BUTTON** | Which is why a full green suite meant nothing here. `v89_x` learned this ("driving a helper directly proved nothing about the caller") and it repeated. The new file asserts on the RENDERED attribute only |
+| **a second, independent defect found on the way** | The dismiss was `document.addEventListener('click', () => _teCloseWordPop(), {once:true})` — fire on ANY click, no containment test. Correct while the popover was read-only; `v88_ad` added three inputs and a Save button and never updated it, so **the first click INTO a field removed the editor**. Both other popovers in the file already test `contains(e.target)` (`_modelPopOutside`, the language picker's `h(e)`). Now the same, plus Escape, with both listeners torn down in `_teCloseWordPop` |
+| **⚠️ and that failure mode was DESTRUCTIVE** | Three empty strings is the route's documented CLEAR gesture. So a save whose fields had vanished would **delete** the correction rather than fail. `_teSaveCorrection` now refuses when the editor is not open — gated on `_teWordPopEl`, not on the inputs, because a `getElementById` miss returns null in a browser but an auto-vivified stub in lib-dom, so a fields-only check is exactly the guard that cannot fail where it matters |
+| **the blue line is NOT a bug** | `.te-tok-reviewed{border-left:2px solid var(--blue)}` — `v88_ad`'s marker for "a human curated this token", so curation is visible rather than silently indistinguishable from the model's own output. It persists after a restart because the correction persists, which is the feature working. Left as is; it is undiscoverable without a legend, which is a separate (and key-costing) question for the user |
+| **guards** | `unit-te-popover-save.test.js`: §1 the rendered onclick is complete, PARSES, and carries the right four arguments; §2 a surface containing a quote and an apostrophe still yields a runnable handler with the value intact; §3 a save with no open editor sends NOTHING; §4 the dismiss checks containment and tears its listeners down. **Five mutations red**, including the reported bug reproduced exactly |
+
 ## ✅ v89_ag — a running story/book job can be cancelled from the popover
 
 User report: *"creating a story has no cancel/open buttons in the job popover."* **ZERO `ui.json`

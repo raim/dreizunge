@@ -854,9 +854,23 @@ const TOPIC = { topic: 'T', id: 'tp_te1', lang: 'de', srcLang: 'en',
       'the popover renders all three fields as inputs in the live build');
     assert.ok(pop.includes(UI.en['prov.save']), 'with a Save button (reusing prov.save — no new key)');
     assert.ok(pop.includes(UI.en['dialog.cancel']), 'and a Cancel (reusing dialog.cancel)');
-    assert.ok(pop.includes('_teSaveCorrection("tp_te1",0,0,"landschap")'),
-      'and Save is wired to the exact correction key this token was rendered with (got: '
-        + (pop.match(/_teSaveCorrection\([^)]*\)/) || [''])[0] + ')');
+    // ⚠️ v89_ah: read through the PARSED DOM, not the raw markup. This asserted that the innerHTML
+    // literally contained `_teSaveCorrection("tp_te1",0,0,"landschap")` — i.e. it required the
+    // UNESCAPED form, which is precisely the broken markup the user reported: those double quotes
+    // close the double-quoted onclick attribute, the handler truncates to `_teSaveCorrection(`, and
+    // every click throws SyntaxError. So this guard was pinning the defect as correct.
+    // `getAttribute` decodes entities exactly as a browser does, which is the form the JS parser
+    // actually receives — and it is the only form worth asserting on.
+    const saveOnclick = C.run(`(function(){
+      if (!_teWordPopEl) return '';
+      var bs = [].slice.call(_teWordPopEl.querySelectorAll('button'));
+      var b = bs.filter(function(x){ return (x.getAttribute('onclick')||'').indexOf('_teSaveCorrection') > -1; })[0];
+      return b ? b.getAttribute('onclick') : '';
+    })()`);
+    assert.strictEqual(saveOnclick, '_teSaveCorrection("tp_te1",0,0,"landschap")',
+      'and Save is wired to the exact correction key this token was rendered with');
+    assert.doesNotThrow(() => new Function('_teSaveCorrection', saveOnclick)(() => {}),
+      'and the handler the browser receives actually PARSES — the broken form threw SyntaxError');
     // ⚠️ The dismiss-on-next-click listener would have closed the editor the instant a curator
     // clicked into a field. This is the assertion for that, at the layer it is observable.
     const guard = C.run(`(_teWordPopEl && _teWordPopEl.getAttribute) ? _teWordPopEl.getAttribute('onclick') : 'NONE'`);
