@@ -16,6 +16,7 @@ const { CANCELLED, callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping:
 const { AsyncLocalStorage } = require('async_hooks');
 const { buildExport } = require('./export-lessons');
 const LEARNERS = require('./learners');
+const { writeFileAtomic } = require('./atomic-write');
 // PLAN §7.0 CP5: read-only consumption of CP3's curriculum plan (see cp5ShadowFor below). Requiring
 // curriculum-plan.js from HERE is the opposite direction of the constraint its own file header
 // documents — that file must never require server.js (it would bind a port as a side effect of an
@@ -285,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_ac';
+const APP_VERSION  = 'v89_ad';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -547,7 +548,7 @@ function saveStore(s) {
       ? { schemaVersion: SCHEMA_VERSION, storylines: s.storylines || [], topics: s.topics || [], flags: s.flags || {},
           ...(s.settings ? { settings: s.settings } : {}) }
       : s; // legacy passthrough (shouldn't happen after migration)
-    fs.writeFileSync(STORAGE_FILE, JSON.stringify(out, null, 2), 'utf8');
+    writeFileAtomic(STORAGE_FILE, JSON.stringify(out, null, 2));
   } catch(e) {
     const hint = e.code === 'EACCES' ? ' — fix with: chmod u+w ' + STORAGE_FILE : '';
     console.error('Could not write lessons.json:', e.message + hint);
@@ -572,7 +573,7 @@ function loadSkillRegistry() {
 function saveSkillRegistry(registry) {
   if (!registry) throw new Error('skills registry is unavailable');
   const out = { schemaVersion: 1, skills: registry.entries };
-  fs.writeFileSync(SKILLS_FILE, JSON.stringify(out, null, 2) + '\n', 'utf8');
+  writeFileAtomic(SKILLS_FILE, JSON.stringify(out, null, 2) + '\n');
 }
 
 // ── item R: unfinished-project drafts ──────────────────────────────────
@@ -641,7 +642,7 @@ function applyExtractionToDraft(draftId, panels) {
 
 function saveDrafts(drafts) {
   try {
-    fs.writeFileSync(DRAFTS_FILE, JSON.stringify({ schemaVersion: 1, drafts }, null, 2) + '\n', 'utf8');
+    writeFileAtomic(DRAFTS_FILE, JSON.stringify({ schemaVersion: 1, drafts }, null, 2) + '\n');
   } catch (e) {
     console.error('Could not write drafts.json:', e.message);
   }
@@ -701,8 +702,14 @@ function loadUI() {
 let _uiWriteAt = 0;   // timestamp of our own ui.json write, so the watcher ignores it
 function saveUI(ui) {
   _uiWriteAt = Date.now();   // mark our own write so the watcher doesn't reload it
-  try { fs.writeFileSync(UI_FILE, JSON.stringify(ui, null, 2), 'utf8'); }
+  try { writeFileAtomic(UI_FILE, JSON.stringify(ui, null, 2)); }
   catch(e) { console.warn('Could not write ui.json:', e.message); }
+  // ⚠️ v89_ad: an atomic write REPLACES the file, and `fs.watch(path)` follows the INODE on Linux —
+  // so the watcher below is now pointed at a file nobody will ever write again, and the user's own
+  // hand edits to ui.json would silently stop hot-reloading. Re-armed after every write. This is the
+  // one place where making a write safe breaks something else, and it is exactly why this change
+  // could not be a blind sweep of writeFileSync call sites.
+  _watchUI();
 }
 let uiStrings = loadUI();
 // Hot-reload ui.json on external edits (mirrors the prompts.json watcher). The
@@ -715,9 +722,13 @@ function reloadUI() {
     if (next && typeof next === 'object' && next.en) { uiStrings = next; console.log('  ui.json reloaded'); }
   } catch(e) { console.warn('  ui.json reload skipped (parse error):', e.message); }
 }
-try {
-  fs.watch(UI_FILE, () => { setTimeout(reloadUI, 100); });
-} catch(_) {}
+let _uiWatcher = null;
+function _watchUI() {
+  try { if (_uiWatcher) _uiWatcher.close(); } catch(_) {}
+  try { _uiWatcher = fs.watch(UI_FILE, () => { setTimeout(reloadUI, 100); }); }
+  catch(_) { _uiWatcher = null; }
+}
+_watchUI();
 
 // `jobId` is OPTIONAL: this is called both from the background job below (which wants progress and
 // cancellation) and from `ensureUIForLang` on a plain language switch (which has no job and must
@@ -1012,7 +1023,7 @@ function writeAnalysisChapter(chapterId, record) {
   store.chapters[chapterId] = record;
   store.generatedAt = new Date().toISOString();
   store.chapterCount = Object.keys(store.chapters).length;
-  fs.writeFileSync(ANALYSIS_STORE_FILE, JSON.stringify(store, null, 2), 'utf8');
+  writeFileAtomic(ANALYSIS_STORE_FILE, JSON.stringify(store, null, 2));
 }
 // v86_ac (user-requested "force re-analyze," e.g. after a prompt fix like v86_aa/v86_ab): removes
 // ONE chapter's cached CP2 result so the next /api/analyze-chapter call re-runs it from scratch,
@@ -1025,7 +1036,7 @@ function deleteAnalysisChapter(chapterId) {
   store.schemaVersion = 1;
   store.generatedAt = new Date().toISOString();
   store.chapterCount = Object.keys(store.chapters).length;
-  fs.writeFileSync(ANALYSIS_STORE_FILE, JSON.stringify(store, null, 2), 'utf8');
+  writeFileAtomic(ANALYSIS_STORE_FILE, JSON.stringify(store, null, 2));
   return true;
 }
 // The GET route's own read path (item W step 3) — same absent -> available:false shape as
@@ -7545,8 +7556,9 @@ async function _runRecreateJob(jobId, startId, opts) {
     // Trade-off, deliberate: this writes the WHOLE store to disk once per lesson instead of once per
     // chapter — more disk I/O during a large multi-type run, in exchange for never losing already-
     // finished work to a later type's failure or an external interruption. `saveStore` is a plain
-    // synchronous `fs.writeFileSync`, so no ordering/race concern from calling it more often in this
-    // already-sequential (`for`/`await`) loop.
+    // synchronous write (since `v89_ad`, a temp-file write plus an atomic rename), so no
+    // ordering/race concern from calling it more often in this already-sequential (`for`/`await`)
+    // loop — and, unlike before, no window where an interruption leaves a torn `lessons.json`.
     const persistLesson = (lesson) => {
       newLessons.push(lesson); recreated++;
       topic.lessons = [...(topic.lessons || []), lesson];

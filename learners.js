@@ -18,6 +18,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { writeFileAtomic } = require('./atomic-write');
 
 const LEARNERS_FILE = process.env.LEARNERS_FILE || path.join(__dirname, 'learners.json');
 const SCHEMA = 1;
@@ -37,8 +38,12 @@ function load() {
 }
 function save() {
   try {
-    fs.writeFileSync(LEARNERS_FILE, JSON.stringify(store, null, 2), 'utf8');
-    // Best-effort: keep the credential store off other users' prying eyes on shared machines.
+    // ⚠️ 0600 goes on the TEMP file, not after the rename: rename preserves the temp's mode, so
+    // writing 0644 and chmod-ing afterwards would publish credentials for the width of that window.
+    writeFileAtomic(LEARNERS_FILE, JSON.stringify(store, null, 2), { mode: 0o600 });
+    // Best-effort and now REDUNDANT for files this function created (the mode rides in on the temp
+    // above) — kept for the file that already existed at 0644 from before `v89_ad`, which the
+    // rename would otherwise never correct.
     try { fs.chmodSync(LEARNERS_FILE, 0o600); } catch (_) {}
   } catch (e) {
     console.error('Could not write learners.json:', e.message);

@@ -1,11 +1,11 @@
-# Session prompt — written at the `v89_ac` cut
+# Session prompt — written at the `v89_ad` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v89_ac`**. `roadmap_v89.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v89_ad`**. `roadmap_v89.md` was cut at
 `v89` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -320,6 +320,18 @@ handed shipped too. **Ask the user what they want next** — that is the right f
   by tests**: the picker rendered invisibly behind the comic review card (z-index 300 vs its 400),
   and a flagged heavy verdict showed no warning. **2 `ui.json` keys.** 23 mutations red.
 
+- **`v89_ad`** — **the flake audit is DONE, and the tests were never the problem.**
+  `unit-ui-journeys`/`unit-word-progress` measure 40/40 standalone, 60/60 under seeded shuffles,
+  15/15 under 8-way CPU load. The failures were TORN READS of `lessons.json`: `fs.writeFileSync` on
+  a 10MB file is a truncate plus many `write()` calls, so a concurrent reader can see a prefix —
+  reproduced 3-in-25 with a churning corpus, 0-in-25 through an atomic writer. ⚠️ **The severe half
+  is not the tests**: a crash in that window truncates the corpus, and there is NO backup anywhere
+  in this project — same exposure on `learners.json`, `ui.json`, `drafts.json`,
+  `canonical-analysis.json`. All seven live-server writes now go through `atomic-write.js`.
+  ⚠️ Two traps: `fs.watch` follows the INODE (so `saveUI` re-arms the watcher, or hand edits stop
+  hot-reloading), and `rename` preserves the TEMP's mode (so 0600 goes on the temp). **Four for
+  four** — every examined "known flake" label was hiding a real defect.
+
 `roadmap_v89.md`'s **"🆕 THE SHORT LIST"** at the top of `# ⚠️ OPEN AT THE v89 CUT` is the reconciled
 open list, and it is the one to read: every line in it was cross-checked against `roadmap_v88.md`'s
 shipped section at this cut, and **three items the previous prompt still carried as open turned out
@@ -327,10 +339,6 @@ to be stale and were dropped**. Do not re-derive it from older prompts.
 
 **The shortest paths to value if the user has no preference:**
 - **Item `V`** (multi-image upload) — fully specified, unblocked, no decision needed.
-- **⭐ Finish the flake audit** — `unit-ui-journeys` and `unit-word-progress` are the last two
-  UNVERIFIED files. ⚠️ Every "known flake" examined so far has been WRONG: three for three
-  (`v87_i` a `Math.random()` in the product, `v88_h` a test driver on a proxy, `v88_ak` a guard
-  counting log entries as sweeps). **Instrument the failing assertion; do not re-confirm the label.**
 - **Delete the superseded `kind:'sync'` popover path** — `_jobsTracked` and `_jobsInflight` have had
   NO callers since `v88_al` and are marked as such in place. Removing them means re-scoping the tests
   that pin them; deliberately left for its own release.
@@ -354,8 +362,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 351 checks
-node test/run.js --quick                  → expect 290
+node test/run.js                          → expect 352 checks
+node test/run.js --quick                  → expect 291
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -388,7 +396,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **352 topics, 99 storylines, 33 languages, 766 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ac'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v89_ad'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

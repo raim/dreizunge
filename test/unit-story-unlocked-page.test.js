@@ -24,11 +24,25 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
 // A chapter with PREP lessons and at least one story-gated lesson after them, so "the story
 // unlocks while work remains" is a state this chapter can actually be in.
 const isPost = L => L && (L.type === 'comprehension' || L.type === 'error_hunt' || L.type === 'ai_error_hunt');
-const TOPIC = store.topics.find(t =>
+
+// ⚠️ v89_ad: CANDIDATES, not a `find()`. This structural predicate says a chapter has prep lessons
+// and a story-gated one — it does NOT say that completing the prep leaves work behind, which is the
+// state every section here depends on. `find()` took the first chapter that merely LOOKED right, so
+// when the live server added chapters the selection moved to one where `_firstUnfinishedLessonIdx`
+// came back -1 and the file failed 15 of 15 runs — deterministically, which is never the documented
+// flakiness (`v87_o`'s rule). Confirmed by re-running against `git show HEAD:lessons.json`, where it
+// passes.
+//
+// §6 below already learned exactly this ("`find()`-ing one chapter and hoping is how this section
+// broke on the first data drop") and sweeps for its own fixture. The file-wide TOPIC never did. It
+// does now: the real state is MEASURED through the real helpers, and the pick is whichever chapter
+// actually produces it (rule 32 — guard the enumeration, not the instance you happened to get).
+const CANDIDATES = store.topics.filter(t =>
   (t.story || '').length > 100 &&
   (t.lessons || []).some(L => L && !L._hidden && !isPost(L) && !L.type) &&
   (t.lessons || []).some(isPost));
-assert.ok(TOPIC, 'the corpus has a chapter with prep lessons AND a story-gated lesson');
+assert.ok(CANDIDATES.length, 'the corpus has a chapter with prep lessons AND a story-gated lesson');
+let TOPIC = null;
 
 const SAVED = store.topics.map(t => ({ id: t.id, topic: t.topic, lang: t.lang, srcLang: t.srcLang,
   story: t.story, lessons: t.lessons,
@@ -36,7 +50,8 @@ const SAVED = store.topics.map(t => ({ id: t.id, topic: t.topic, lang: t.lang, s
 
 // Seed a learner who has completed every PREP lesson (so the story gate is open) but not the
 // story-gated ones (so work remains in the chapter).
-function atUnlock(opts) {
+function atUnlock(opts) { return _atUnlockFor(TOPIC, opts); }
+function _atUnlockFor(TOPIC, opts) {
   opts = opts || {};
   const C = loadClient({ quiet: true });
   C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)}; true;`, 'seed');
@@ -67,6 +82,26 @@ function atUnlock(opts) {
     showComplete(${opts.review ? 'true' : ''}); true;`, 'render');
   return C;
 }
+// Pick the fixture by MEASURING the state, not by trusting the shape. Driven through the real
+// `_atUnlockFor`, so what is asserted below is what was verified here.
+{
+  const tried = [];
+  for (const cand of CANDIDATES) {
+    let ok = false;
+    try {
+      const C = _atUnlockFor(cand, {});
+      ok = C.run(`storyUnlocked(APP.lessonData)`) === true
+        && C.run(`_firstUnfinishedLessonIdx(APP.lessonData)`) >= 0;
+    } catch (_) { ok = false; }
+    tried.push(cand.id);
+    if (ok) { TOPIC = cand; break; }
+  }
+  assert.ok(TOPIC,
+    'no chapter in the corpus reaches "story gate OPEN, work still left" — every section in this ' +
+    'file needs that state, so if this fires the fixture requirement has to be reconsidered rather ' +
+    `than the assertions loosened. Tried ${tried.length} candidate(s).`);
+}
+
 // The chapter's first story-gated lesson — section 6 needs it by index.
 const GATED_IDX = (TOPIC.lessons || []).findIndex(isPost);
 

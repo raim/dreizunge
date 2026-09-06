@@ -110,12 +110,12 @@ in the carried sections further down and, where noted, in the older roadmaps.*
   uploaded image gets a whole-image panel (the act `AM` already performs for one), the panel list
   stays editable, and `comicCreateChapter()`'s one-chapter-per-panel formation (`v85_p`) is confirmed
   correct. Mostly a question of the DRAFT shape holding more than one page.
-- **⭐ Finish the flake audit.** `unit-ui-journeys` and `unit-word-progress` remain **UNVERIFIED**
-  (12/12 each is far too few runs to clear them). ⚠️ Both inherited "known flake" labels that have
-  been examined so far turned out to be WRONG — `unit-tap-word` was a `Math.random()` in the PRODUCT
-  (`v87_i`), `unit-observations-log` was a test driver branching on a proxy (`v88_h`), and
-  `e2e-idle-release` was a guard counting log entries as sweeps (`v88_ak`). **Three for three.**
-  Instrument the failing assertion; do not re-confirm the label.
+- ~~Finish the flake audit~~ — **DONE at `v89_ad`.** `unit-ui-journeys` and `unit-word-progress` are
+  **not flaky**: 40/40 standalone each, 60/60 under seeded shuffles, 15/15 under 8-way CPU load. The
+  failures were TORN READS of `lessons.json` caused by a non-atomic `fs.writeFileSync` in the
+  product — reproduced 3-in-25 with a churning corpus, 0-in-25 through an atomic writer. **Four for
+  four**: every examined "known flake" label was hiding a real defect. All seven durable-store
+  writes now go through `atomic-write.js`.
 - **⚠️ THREE test files share `unit-observations-log`'s defective driver shape** —
   `unit-question-nav`, `unit-inflection-speak-lang`, `unit-tap-word` all branch on `if (btns.length)`
   before considering `ex.type`. `unit-question-nav` is the most exposed but measured 14/14 clean, so
@@ -2634,6 +2634,32 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_ad — the flake audit's real finding: the tests were never flaky, the WRITER was
+
+User instruction: *"do the flake audit"* — `unit-ui-journeys` and `unit-word-progress`, carried as
+"known flakes — `buildExercises` corpus-sampling randomness" since the `v88` line.
+**ZERO `ui.json` keys.**
+
+⚠️ **FOUR FOR FOUR.** Every "known flake" this project has actually examined turned out to be a real
+defect the label was hiding — `v87_i` a `Math.random()` in the PRODUCT, `v88_h` a test driver
+branching on a proxy, `v88_ak` a guard counting log entries as sweeps, and now this. **The label was
+wrong again, and this time the defect risks the user's whole corpus.**
+
+| | |
+|---|---|
+| **the measurement, before any code** | 40/40 standalone each. 60/60 for `unit-word-progress` under seeded shuffles (a real mulberry32 PRNG, so the orderings are plausible). 15/15 each under 8-way CPU load — the `e2e-idle-release` shape. Clean every way that was tried. **The files are not flaky.** |
+| **⚠️ a probe of mine produced a FALSE ALARM, and saying so is the point** | Forcing `Math.random` to a CONSTANT (0 / 0.5 / 0.9999) made `unit-word-progress` §6 fail deterministically (`meinen 2/3`, `aufessen 1/2`). Tempting, and wrong: a constant `random` makes `shuffle` change which items get SELECTED, not just their order, so it explores permutations a fair shuffle cannot produce. 60 real seeds all pass. Recorded because the adversarial-extremes technique is worth reusing and its failure mode is worth knowing |
+| **⚠️ a claim of mine was WRONG and is corrected here** | While explaining the item I said neither file calls `buildExercises` — from grepping the test sources. They reach it INDIRECTLY, through the product: instrumenting `Math.random` inside the sandbox counted **54,991** calls for `unit-ui-journeys` and **448,081** for `unit-word-progress`, every one of them `shuffle` inside `mk`/`wV`/`mkLMcq`/`pick`/`buildSynonymsExercises`. For these two files the label's stated MECHANISM was real; only its conclusion was wrong |
+| **the actual cause, reproduced** | The one condition never tried: `lessons.json` being rewritten while the test reads it — which is what the user's own live server does all day, and what really happened during a `--quick` run earlier in this same session (the corpus moved 348→350→351 mid-run and `unit-word-progress` failed). With a churning corpus in an isolated copy: **3 failures in 25 runs**, all `SyntaxError: Unterminated string in JSON`. Same churn rate through an ATOMIC writer: **0 of 25**. Then re-run through the REAL `saveStore` lifted from `server.js`: **0 of 25** |
+| **⚠️ the far more serious half** | `fs.writeFileSync` on a 10MB file is a truncate followed by many `write()` calls. A torn READ is the mild consequence. A crash in that window — SIGKILL, OOM, power cut — leaves a **partial `lessons.json`**, and **there is no backup anywhere in this project**. 352 topics, 99 storylines. The same window covered `learners.json` (credentials, rewritten on EVERY answered question), `ui.json` (hand-translated into five languages), `drafts.json` (item R's whole durability story) and `canonical-analysis.json` (minutes of CP2 time per sentence) |
+| **it was already known, and worked around** | `reloadUI`'s own comment says a parse error is *"skipped rather than blanking the strings (e.g. mid-write)"*. A reader defending itself against a torn file is the symptom; nobody had gone to the writer |
+| **the fix** | `atomic-write.js` — write to `FILE.tmp<pid>`, then `rename(2)`, which is atomic within a filesystem. The temp is the target path plus a suffix, so it can never land on another filesystem (the one way rename stops being atomic). All **seven** durable-store writes converted: `STORAGE_FILE`, `SKILLS_FILE`, `DRAFTS_FILE`, `UI_FILE`, `ANALYSIS_STORE_FILE` ×2 in `server.js`, and `LEARNERS_FILE` in `learners.js`. The one-shot maintenance scripts are deliberately left alone — a human runs them one at a time and re-runs on failure |
+| **⚠️ the trap this could not have been a blind sweep for** | `fs.watch(path)` follows the INODE on Linux, and an atomic write REPLACES the file. Converting `saveUI` without more would have left the watcher pointed at a file nobody writes again, and **the user's own hand edits to `ui.json` would have silently stopped hot-reloading**. `_watchUI()` is now re-armable and is called after every write |
+| **⚠️ and a security detail** | `rename` preserves the TEMP file's mode, so `learners.json`'s 0600 has to be set on the temp — writing 0644 and chmod-ing after the swap would publish the credential store for the width of that window |
+| **⚠️ a SECOND, unrelated red found by the same run — and it was deterministic** | `unit-story-unlocked-page` failed **15 of 15**, which is never the documented flakiness (`v87_o`'s rule: a deterministic failure is a different animal). `git show HEAD:lessons.json` isolated it in one command — it PASSES against the committed corpus. Its file-wide fixture was a `find()` on a STRUCTURAL predicate ("has prep lessons and a story-gated one") that never checked the state every section actually needs: that completing the prep leaves work behind. The live server added chapters, the selection moved to one where `_firstUnfinishedLessonIdx` returned -1, and the file died. ⚠️ **§6 of that same file had already learned this exact lesson** — *"`find()`-ing one chapter and hoping is how this section broke on the first data drop"* — and sweeps for its own fixture; the file-wide pick never did. It now MEASURES the state through the real helpers and takes whichever chapter produces it. 12/12 after, 0/15 before; the mutation that restores "take the first candidate" goes red |
+| **⚠️ MY OWN NEW TEST WAS FLAKY, 4 of 12** | Caught by measuring it rather than by trusting a single green run. §1 `SIGKILL`s its writer process, which legitimately cannot clean up its temp file — and §3's debris check scanned the whole TEMP DIRECTORY, so it caught that orphan. The over-broad assertion was the bug, not the writer: the TARGET file was always intact, and a stale temp is exactly what the explicit chmod defends. Scoped to the file under test: 20/20 |
+| **guards** | `unit-atomic-write.test.js`, asserted at the BEHAVIOUR layer: §1 races a real reader against a real writer process on a 3MB file and requires zero torn reads — **with a non-vacuity arm that requires the OLD writer to actually be caught**, so a machine too fast to race fails loudly instead of passing hollow. §2 a failed write leaves the previous good file intact, and (its own section) cleans the temp on a failed RENAME. §3 the credential mode survives a STALE 0644 temp. §4 no bare `fs.writeFileSync` survives in either live-server file. §5 proves a pre-replace watch really is dead, which is WHY §5's source check on the re-arm matters. **Seven mutations red — after two came back GREEN and were fixed**: the chmod and the debris cleanup were both unreachable in the cases I first wrote |
 
 ## ✅ v89_ac — ONE QC engine, two modes, and a picker in front of every QC button
 

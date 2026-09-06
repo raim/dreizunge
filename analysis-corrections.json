@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "chapters": {
+    "tp_17886338472190000441": {
+      "corrections": [
+        {
+          "sentenceText": "Freilich hat sich die Regierung damit gebrüstet, dass das Land dank ihr riesenfrei ist",
+          "surface": "riesenfrei",
+          "occurrence": 0,
+          "lemma": "riesenfrei",
+          "form": "adjective; positive degree",
+          "sense": "free of giants",
+          "correctedAt": "2026-09-05T22:07:34.500Z"
+        }
+      ]
+    }
+  },
+  "generatedAt": "2026-09-05T22:07:34.500Z",
+  "chapterCount": 1
+}
