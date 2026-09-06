@@ -86,4 +86,52 @@ console.log('  an empty probe falls back to the full list, and the active value 
 }
 console.log('  exactly the three granted ui.json keys, en only, all used: OK');
 
-console.log('unit-model-picker-roles: ALL PASSED');
+// ── modelCapabilities actually probes, parses and caches ─────────────────────────
+// ⚠️ v90_b: the check above was `/function modelCapabilities\(model\)/.test(llmSrc)` — the function
+// is declared. Replacing its whole body with `return {}` left all 360 checks green, and an empty
+// answer here is indistinguishable from "this model has no vision", so the picker would have shown
+// an EMPTY vision row with nothing to explain why. It is exported from llm.js; point it at a stub
+// and read what it returns. Async, so it runs last and carries the closing line.
+(async () => {
+  const http = require('http');
+  const calls = [];
+  const srv = http.createServer((q, r) => {
+    let b = ''; q.on('data', c => b += c);
+    q.on('end', () => {
+      calls.push({ path: q.url, body: JSON.parse(b) });
+      const model = JSON.parse(b).model;
+      r.writeHead(200, { 'Content-Type': 'application/json' });
+      if (model === 'garbage') return r.end('not json at all');
+      if (model === 'nocaps')  return r.end(JSON.stringify({ details: {} }));
+      r.end(JSON.stringify({ capabilities: ['completion', 'vision'] }));
+    });
+  });
+  await new Promise(res => srv.listen(0, '127.0.0.1', res));
+  process.env.OLLAMA_HOST = 'http://127.0.0.1:' + srv.address().port;
+  const { modelCapabilities, capabilitiesReset } = require(path.join(ROOT, 'llm.js'));
+
+  capabilitiesReset();
+  const caps = await modelCapabilities('qwen2.5vl:7b');
+  assert.deepStrictEqual(caps, ['completion', 'vision'], 'the capabilities array is read from /api/show');
+  assert.strictEqual(calls.length, 1, 'one probe');
+  assert.strictEqual(calls[0].path, '/api/show', 'against the /api/show endpoint');
+  assert.deepStrictEqual(calls[0].body, { model: 'qwen2.5vl:7b' }, 'naming the model asked about');
+
+  await modelCapabilities('qwen2.5vl:7b');
+  assert.strictEqual(calls.length, 1, 'a repeat answer comes from the cache, not a second round trip');
+  capabilitiesReset();
+  await modelCapabilities('qwen2.5vl:7b');
+  assert.strictEqual(calls.length, 2, 'and capabilitiesReset() really clears it');
+
+  // ⚠️ the documented rule: unreadable == UNKNOWN == [], never "assume capable". A guess here puts a
+  // text model in the vision picker, which is the failure the picker exists to prevent.
+  assert.deepStrictEqual(await modelCapabilities('garbage'), [], 'unparseable answer → unknown, not capable');
+  assert.deepStrictEqual(await modelCapabilities('nocaps'), [], 'no capabilities field → unknown, not capable');
+
+  await new Promise(res => srv.close(res));
+  capabilitiesReset();
+  assert.deepStrictEqual(await modelCapabilities('dead-host'), [], 'an unreachable backend → unknown, not capable');
+
+  console.log('  modelCapabilities probes /api/show, caches, and treats unreadable as unknown: OK');
+  console.log('unit-model-picker-roles: ALL PASSED');
+})();

@@ -16,9 +16,22 @@ assert.ok(!html.includes('inp.value.trim().split(/\\s+/).filter(Boolean)'),
   'inline word-array split still present');
 console.log('  source-shape checks: OK');
 
-// 2) Behavior — reimplement and check the contract the call sites relied on.
-const splitWords = s => String(s == null ? '' : s).trim().split(/\s+/).filter(Boolean);
-const wordCount = s => splitWords(s).length;
+// 2) Behavior — run the REAL helpers out of index.html.
+//
+// ⚠️ v90_b: this block used to open with "reimplement and check the contract the call sites relied
+// on", and it did exactly that: it defined its own `splitWords`/`wordCount` two lines below and
+// asserted against the COPY. Every assertion here was about the test file agreeing with itself —
+// the app's helpers were never called, so no change to them could ever turn this red. Found by the
+// mutation audit, which also found the same shape in unit-model-picker. Lift the real source.
+const extract = (name) => {
+  const at = html.indexOf('function ' + name + '(');
+  assert.ok(at >= 0, 'missing fn ' + name);
+  const b = html.indexOf('{', at); let d = 0, i = b;
+  for (; i < html.length; i++) { if (html[i] === '{') d++; else if (html[i] === '}') { d--; if (!d) { i++; break; } } }
+  return html.slice(at, i);
+};
+const { splitWords, wordCount } = new Function(
+  extract('splitWords') + '\n' + extract('wordCount') + '\nreturn { splitWords, wordCount };')();
 
 assert.strictEqual(wordCount('one two three'), 3);
 assert.strictEqual(wordCount('  leading and   collapsed   spaces '), 4);

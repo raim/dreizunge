@@ -33,9 +33,48 @@ assert.strictEqual(storylineThemeKey(null), 'existing', 'missing topic → exist
 assert.strictEqual(storylineThemeKey({ storyStyle: 'zzz-unknown' }), 'neutral', 'unknown style → neutral fallback');
 
 // It's applied to the storyline screen when it opens.
-assert.ok(/function applyStorylineTheme\(firstTopic\)/.test(html), 'applyStorylineTheme defined');
-assert.ok(/#storyline-screen \.sl-screen/.test(html), 'theme targets the storyline screen container');
-assert.ok(/linear-gradient\(180deg/.test(html), 'uses a top-down (180deg) gradient');
 assert.ok(/_renderStorylineScreen\([^)]*\);\s*applyStorylineTheme\(firstTopic\);/.test(html), 'applied on open');
+
+// ⚠️ v90_b: everything above this line about the APPLYING half used to be three source regexes —
+// "the function is defined", "the selector string appears", "the string linear-gradient(180deg
+// appears". Emptying applyStorylineTheme's body to `return;` left ALL 360 checks green: the theme
+// silently stopped being applied and nothing in the suite noticed, because a defined function and a
+// present string are not a painted background. Found by the mutation audit. Run the function.
+{
+  const applyStorylineTheme = new Function('document', 'STORY_THEME_GRADIENTS', 'storylineThemeKey',
+    extract('applyStorylineTheme') + '\nreturn applyStorylineTheme;');
+  const mkDoc = (el) => ({ querySelector: (sel) => {
+    assert.strictEqual(sel, '#storyline-screen .sl-screen', 'themes the storyline screen container');
+    return el;
+  } });
+
+  const el = { style: {} };
+  applyStorylineTheme(mkDoc(el), STORY_THEME_GRADIENTS, storylineThemeKey)({ storyStyle: 'funny' });
+  const [fa, fb] = STORY_THEME_GRADIENTS.funny;
+  assert.strictEqual(el.style.background, `linear-gradient(180deg, ${fa} 0%, ${fb} 100%)`,
+    'a styled chapter paints its own top-down gradient');
+
+  // the fallbacks the resolver promises actually reach the element
+  const el2 = { style: {} };
+  applyStorylineTheme(mkDoc(el2), STORY_THEME_GRADIENTS, storylineThemeKey)({});
+  const [ea, eb] = STORY_THEME_GRADIENTS.existing;
+  assert.strictEqual(el2.style.background, `linear-gradient(180deg, ${ea} 0%, ${eb} 100%)`,
+    'an uploaded story paints the "existing" gradient');
+
+  const el3 = { style: {} };
+  applyStorylineTheme(mkDoc(el3), STORY_THEME_GRADIENTS, storylineThemeKey)({ storyStyle: 'zzz-unknown' });
+  const [na, nb] = STORY_THEME_GRADIENTS.neutral;
+  assert.strictEqual(el3.style.background, `linear-gradient(180deg, ${na} 0%, ${nb} 100%)`,
+    'an unknown style paints the neutral gradient');
+
+  // non-vacuity: the three cases must not all be the same string, or the assertions above would
+  // hold for any constant the function happened to write.
+  assert.strictEqual(new Set([el.style.background, el2.style.background, el3.style.background]).size, 3,
+    'the three themes are distinguishable (this file cannot pass on a constant)');
+
+  // no container on screen → no throw, nothing painted
+  applyStorylineTheme({ querySelector: () => null }, STORY_THEME_GRADIENTS, storylineThemeKey)({ storyStyle: 'funny' });
+  console.log('  applyStorylineTheme actually paints the resolved gradient onto the container: OK');
+}
 
 console.log('unit-storyline-theme: ALL PASSED');

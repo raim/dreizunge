@@ -173,4 +173,49 @@ const { _stripDiacriticsCase, buildDiacriticIndex, checkDiacritics } = M.exports
   console.log('  parity: server and client fold the same distinct-codepoint letters');
 }
 
-console.log('unit-diacritic-qc: ALL PASSED');
+// ── 8. The adjudicator's own verdict logic ──────────────────────────────────
+// ⚠️ v90_b: §5 above checks this function as SOURCE TEXT — the prompt says "MISSPELLING of", the
+// default-OK line reads a certain way. The mutation audit replaced the whole body with a constant
+// and all 360 checks stayed green: every diacritic candidate would have been waved through and the
+// checker would have gone silent without one test noticing. §5's regexes stay (they pin the
+// question being asked); this runs the answer parsing.
+(async () => {
+  const asked = [];
+  // ext() above drops the leading `async` (it slices from the word `function`), and the body has an
+  // await in it — so this one is lifted with its keyword intact.
+  const extAsync = (name) => {
+    const at = server.indexOf('async function ' + name);
+    assert.ok(at > -1, `server.js defines async function ${name}`);
+    const b = server.indexOf('{', at); let d = 0, i = b;
+    for (; i < server.length; i++) { if (server[i] === '{') d++; else if (server[i] === '}') { d--; if (!d) break; } }
+    return server.slice(at, i + 1);
+  };
+  const mk = (reply) => new Function('langName', 'callLLMQC',
+    extAsync('qcCheckDiacriticCandidate') + '\nreturn qcCheckDiacriticCandidate;')(
+    (l) => 'LANG(' + l + ')',
+    async (system, user, max) => { asked.push({ system, user, max }); return { text: reply }; });
+
+  assert.deepStrictEqual(await mk('FIX')('naturliche', 'natürliche', 'de'),
+    { ok: false, sug: 'natürliche' }, 'FIX means the word is a typo, and names the correction');
+  assert.deepStrictEqual(await mk('OK')('souffle', 'soufflé', 'fr'),
+    { ok: true }, 'OK leaves a real minimal pair alone');
+
+  // the default-OK rule §5 pins in source, exercised: anything unclear must NOT flag
+  for (const junk of ['', '   ', 'maybe', 'OKAY sure', 'I think it is a misspelling', null]) {
+    assert.deepStrictEqual(await mk(junk)('a', 'á', 'es'), { ok: true },
+      `an unclear reply (${JSON.stringify(junk)}) defaults to OK, never to a flag`);
+  }
+  // …and case/whitespace from a real model still decides, or the check goes silent in practice
+  assert.strictEqual((await mk('fix')('a', 'á', 'es')).ok, false, 'a lowercase verdict still decides');
+  assert.strictEqual((await mk('  FIX\n')('a', 'á', 'es')).ok, false, 'and so does a padded one');
+
+  // the question actually put to the model carries both spellings and the language name
+  await mk('OK')('inizio', 'iniziò', 'it');
+  const last = asked[asked.length - 1];
+  assert.ok(last.system.includes('"inizio"') && last.system.includes('"iniziò"'),
+    'both spellings reach the model');
+  assert.ok(last.system.includes('LANG(it)'), 'and the language is named, not left as a code');
+  assert.strictEqual(last.user, 'inizio / iniziò', 'the pair is the user turn');
+  console.log('  the adjudicator flags on FIX, and on nothing else: OK');
+  console.log('unit-diacritic-qc: ALL PASSED');
+})();

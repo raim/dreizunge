@@ -301,4 +301,72 @@ assert.deepStrictEqual(outP[0].lessons[0].vocab[1].userFlag, { mine: 1 }, 'user 
 console.log('  pre-existing (baked) signals excluded; only user-added exported: OK');
 console.log('  story pencil + summary edit wiring: OK');
 
+// ── The three helpers this file used to check only by NAME ───────────────────────
+// ⚠️ v90_b: `_starNoteHtml`, `_staticSoftDelete` and `downloadUserFlaggedLessons` were asserted
+// here as source text — "the function is defined", "it takes a storylineId argument". The mutation
+// audit gutted each body in turn and the whole 360-check suite stayed green: the good-example note
+// stopped rendering, the delete candidate stopped toggling, and the scoped download silently
+// exported EVERYTHING. A declared function is not a working one; run them.
+{
+  // 1. the star / delete notes actually render (and only when the signal is there)
+  const notes = new Function('t', extract('_starNoteHtml') + '\n' + extract('_delNoteHtml') +
+    '\nreturn { _starNoteHtml, _delNoteHtml };')((k) => 'T:' + k);
+  assert.ok(/ee-star-note/.test(notes._starNoteHtml({ userRating: { at: 'x' } })),
+    'a rated item renders the good-example note');
+  assert.ok(/T:editor\.good_example/.test(notes._starNoteHtml({ userRating: { at: 'x' } })),
+    'and localizes it through t()');
+  assert.strictEqual(notes._starNoteHtml({}), '', 'an unrated item renders nothing');
+  assert.strictEqual(notes._starNoteHtml(null), '', 'and a missing item does not throw');
+  assert.ok(/ee-del-note/.test(notes._delNoteHtml({ userDelete: { at: 'x' } })),
+    'a delete candidate renders its own note');
+  assert.strictEqual(notes._delNoteHtml({ userRating: { at: 'x' } }), '',
+    'the two notes are not interchangeable (a rating is not a deletion)');
+
+  // 2. the soft delete toggles rather than destroys, and marks the topic dirty
+  {
+    const marked = [];
+    const soft = new Function('STATIC_LESSONS', '_markStaticEdited',
+      extract('_staticSoftDelete') + '\nreturn _staticSoftDelete;')([], () => marked.push(1));
+    const item = { target: 'Hund' };
+    assert.strictEqual(soft(item), true, 'handled in the static build');
+    assert.ok(item.userDelete && item.userDelete.at, 'first call marks the item as a delete candidate');
+    assert.strictEqual(item.target, 'Hund', 'and does NOT destroy it — the maintainer still confirms');
+    assert.strictEqual(marked.length, 1, 'the edit pill is prompted');
+    soft(item);
+    assert.ok(!('userDelete' in item), 'a second call un-marks it (it is a toggle)');
+    assert.strictEqual(soft(null), false, 'no item → not handled');
+    // live build: the helper must decline so the real delete path runs
+    const live = new Function('_markStaticEdited',
+      extract('_staticSoftDelete') + '\nreturn _staticSoftDelete;')(() => {});
+    assert.strictEqual(live({ target: 'x' }), false, 'in the LIVE build it declines and changes nothing');
+  }
+
+  // 3. the download passes its scope through instead of quietly exporting everything
+  {
+    const seen = [];
+    const mkDl = (payload) => {
+      const clicked = [];
+      const doc = { createElement: () => ({ click: () => clicked.push(1) }),
+                    body: { appendChild(){}, removeChild(){} } };
+      const fn = new Function('_flaggedExportPayload', 'Blob', 'URL', 'document', '_revealSubmitLink',
+        extract('downloadUserFlaggedLessons') + '\nreturn downloadUserFlaggedLessons;')(
+        (sid) => { seen.push(sid); return payload; },
+        function () { return {}; },
+        { createObjectURL: () => 'blob:x', revokeObjectURL(){} },
+        doc, () => {});
+      return { fn, clicked };
+    };
+    const full = mkDl({ payload: { storylines: [] }, count: 3, scopeTitle: 'Der Wald' });
+    full.fn('sl_123');
+    assert.deepStrictEqual(seen, ['sl_123'],
+      'the storyline scope reaches the payload builder — not null, not undefined');
+    assert.strictEqual(full.clicked.length, 1, 'and a scoped download actually fires');
+
+    const empty = mkDl({ payload: { storylines: [] }, count: 0, scopeTitle: '' });
+    empty.fn();
+    assert.strictEqual(empty.clicked.length, 0, 'nothing to export → no empty file is handed over');
+  }
+  console.log('  star/delete notes, soft delete and the scoped download actually do their work: OK');
+}
+
 console.log('unit-static-flags: ALL PASSED');

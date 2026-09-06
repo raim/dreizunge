@@ -12,7 +12,21 @@
 const { boot, get, assert, sleep } = require('./lib');
 const http = require('http');
 
-const PING_PORT = 19731;   // nothing listens here when the server starts
+// ⚠️ v90_b: this was the literal 19731 — the ONLY hardcoded port left in the suite; every other
+// test that needs one binds :0 and reads back what the kernel gave it. A fixed port makes this file
+// the one test that cannot run twice at once: a second copy either fails to bind here, or (worse)
+// boots its server against the FIRST copy's fake backend and then fails §1's "starts offline"
+// premise for a reason that has nothing to do with the code. Found while mutation-testing the suite
+// in parallel, where it was the only test that went red for every unrelated mutation. Ask the kernel
+// for a free port and release it — the same pattern unit-inflection-label-backfill already uses.
+let PING_PORT = 0;
+async function reservePort() {
+  const net = require('net');
+  return new Promise(res => {
+    const s = net.createServer();
+    s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => res(p)); });
+  });
+}
 
 function startFakeBackend(port) {
   return new Promise(resolve => {
@@ -37,6 +51,7 @@ const canGenerate = async sport => {
 };
 
 (async () => {
+  PING_PORT = await reservePort();
   // OLLAMA_HOST points at a dead port, so startup detection must land on offline — the exact state
   // the user was stuck in.
   // A fast cadence so the loop is exercised in seconds. Without it §4 below is VACUOUS — its wait

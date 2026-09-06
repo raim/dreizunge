@@ -63,6 +63,7 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
   for (const k of ['models.threads', 'models.threads_hint', 'models.threads_set', 'models.threads_auto']) {
     assert.ok(UI.en[k], `en string ${k} exists`);
   }
+
 }
 
 // ── 4. Reveal text (v71_q) ─────────────────────────────────────────────────
@@ -115,4 +116,56 @@ const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
     'no language renders the author line and the origin line as the same word (the v71_q defect)');
 }
 
+// ⚠️ Runs LAST and inside an async IIFE: switchThreads is async, this file is CommonJS with no
+// top-level await, and the final ALL PASSED line must not print before these assertions settle.
+(async () => {
+// ⚠️ v90_b: everything above about the CLIENT half is source text — the control is wired, the
+// handler is declared, the parse line reads a certain way. `switchThreads` could stop sending
+// what the learner typed and every one of those regexes would still match: the mutation
+// `n = 1` at the top of its body left all 360 checks green. Run it against a stub fetch and read
+// the request that actually goes out.
+const _ext = (name) => {
+  const at = html.indexOf(name); assert.ok(at >= 0, 'missing fn ' + name);
+  const b = html.indexOf('{', at); let d = 0, i = b;
+  for (; i < html.length; i++) { if (html[i] === '{') d++; else if (html[i] === '}') { d--; if (!d) { i++; break; } } }
+  return html.slice(at, i);
+};
+const runThreads = async (typed, reply = { active: { numThread: 7 } }) => {
+  const sent = [];
+  const fetchStub = async (url, opts) => { sent.push({ url, body: JSON.parse(opts.body) });
+    return { ok: true, json: async () => reply }; };
+  const APP = { info: {} }; const toasts = [];
+  const fn = new Function('fetch', 'APP', 't', 'showToast',
+    _ext('async function switchThreads(n)') + '\nreturn switchThreads;')(
+    fetchStub, APP, (k) => k, (m) => toasts.push(m));
+  await fn(typed);
+  return { sent, APP, toasts };
+};
+
+{
+  const r = await runThreads('6');
+  assert.strictEqual(r.sent.length, 1, 'a typed thread count posts once');
+  assert.strictEqual(r.sent[0].url, '/api/models', 'to the models endpoint');
+  assert.deepStrictEqual(r.sent[0].body, { numThread: 6 }, 'carrying the number the learner typed');
+}
+{
+  const r = await runThreads('   ');   // cleared field = auto
+  assert.deepStrictEqual(r.sent[0].body, { numThread: 0 }, 'a cleared field posts 0 (auto), not NaN');
+  const r0 = await runThreads('', { active: { numThread: 0 } });
+  assert.deepStrictEqual(r0.toasts, ['models.threads_auto'], 'and reports auto rather than "set"');
+}
+{
+  const r = await runThreads('-2');
+  assert.deepStrictEqual(r.sent, [], 'a negative count is refused before any request goes out');
+  const bad = await runThreads('abc');
+  assert.deepStrictEqual(bad.sent, [], 'and so is a non-number');
+}
+{
+  const r = await runThreads('6');
+  assert.strictEqual(r.APP.info.ollamaNumThread, 7, "the server's answer, not the typed value, updates APP.info");
+  assert.deepStrictEqual(r.toasts, ['models.threads_set'], 'and the confirmation names the set case');
+}
+console.log('  switchThreads sends what was typed, refuses what is not a count: OK');
+
 console.log('unit-model-settings: ALL PASSED');
+})();

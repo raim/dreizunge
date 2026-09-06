@@ -76,21 +76,85 @@ assert.ok(/LOW_RESOURCE_TARGET_LANGS = new Set\(\['lb'\]\)/.test(html), 'low-res
   const mw = html.slice(html.indexOf('function modelSuitabilityWarning'), html.indexOf('function modelSuitabilityWarning') + 900);
   assert.ok(/isTranslategemmaModel\(APP\.info\.ollamaLessonModel\)/.test(mw), 'checks the lessons role');
   assert.ok(/uploaded/.test(mw) && /ollamaModel/.test(mw), 'skips the story role when the learner uploaded a story');
-  // Replay the helper logic to confirm the decision table.
-  const isTG = m => /translategemma/i.test(String(m || ''));
-  const LR = new Set(['lb']);
+  // ⚠️ v90_b: what stood here called itself "replay the helper logic" and was not a replay — it
+  // defined its OWN copy of the decision table, four lines of it, and asserted against the copy.
+  // The app's modelSuitabilityWarning was never called, so emptying its body to `return ''` left
+  // all 360 checks green while the warning silently stopped firing. Found by the mutation audit
+  // (the same shape turned up in unit-word-count). Lift the REAL function and run it.
+  const _mwSrc = html.slice(html.indexOf('const LOW_RESOURCE_TARGET_LANGS'),
+                            html.indexOf('async function doGenerate('));
+  const _mkWarn = new Function('APP', 't', 'localizedLangName',
+    _mwSrc + '\nreturn modelSuitabilityWarning;');
+  // t() is stubbed to echo its key, so the returned string names the roles branch that was taken —
+  // the assertions below read the app's decision, not a re-statement of it.
   const warn = (lang, uploaded, story, lessons) => {
-    if (!LR.has(lang)) return '';
-    const sb = !uploaded && !isTG(story), lb = !isTG(lessons);
-    if (!sb && !lb) return '';
-    return (sb && lb) ? 'story+lessons' : (lb ? 'lessons' : 'story');
+    const APP = { info: { backend: 'ollama', ollamaModel: story, ollamaLessonModel: lessons }, uiLang: 'en' };
+    const t = (k, vars) => (k === 'models.warn.weak' ? vars.roles : k);
+    const out = _mkWarn(APP, t, () => lang)(lang, uploaded);
+    return out === '' ? '' : ({ 'models.warn.roles_story_lessons': 'story+lessons',
+                                'models.warn.roles_lessons': 'lessons',
+                                'models.warn.roles_story': 'story' }[out] || ('UNMAPPED:' + out));
   };
   assert.strictEqual(warn('lb', false, 'qwen2.5:7b', 'qwen2.5:7b'), 'story+lessons', 'lb + qwen both → warn story+lessons');
   assert.strictEqual(warn('lb', false, 'translategemma', 'translategemma'), '', 'lb + translategemma both → no warning');
   assert.strictEqual(warn('lb', true, 'qwen2.5:7b', 'qwen2.5:7b'), 'lessons', 'lb uploaded → only lessons matters');
   assert.strictEqual(warn('de', false, 'qwen2.5:7b', 'qwen2.5:7b'), '', 'major target → no warning');
+  assert.strictEqual(warn('lb', false, 'qwen2.5:7b', 'translategemma'), 'story', 'weak story model alone → story');
+  // the backend gate — a branch the hand-written copy did not have at all
+  {
+    const t = (k, vars) => (k === 'models.warn.weak' ? vars.roles : k);
+    const off = _mkWarn({ info: { backend: 'lmstudio', ollamaModel: 'qwen2.5:7b', ollamaLessonModel: 'qwen2.5:7b' } },
+                        t, () => 'lb')('lb', false);
+    assert.strictEqual(off, '', 'a non-ollama backend is never warned about (the model names are not ours)');
+  }
 }
 // It fires at generate time, non-blocking.
 assert.ok(/const _w = modelSuitabilityWarning\(APP\.lang,/.test(html), 'warning computed inside doGenerate from APP.lang');
 assert.ok(/if\(_w\) showToast\(_w\)/.test(html), 'warning shown as a non-blocking toast');
-console.log('  timeout input + switchTimeout + suitability warning: OK');
+
+// ── switchTimeout actually sends the seconds it was given ────────────────────────
+// ⚠️ v90_b: the three checks above are source text — the input is wired, the function is declared,
+// and the strings `timeoutMs: ms` and `parseFloat(sec)*1000` appear near it. None of them runs the
+// conversion: the mutation `sec = 999` at the top of the body left all 360 checks green, so the
+// learner's timeout would have been silently replaced by a constant. Run it against a stub fetch.
+// Async, and therefore LAST — this file is CommonJS with no top-level await, so the closing log
+// lives inside the IIFE rather than printing before these assertions have settled.
+(async () => {
+  const _ext = (name) => {
+    const at = html.indexOf(name); assert.ok(at >= 0, 'missing fn ' + name);
+    const b = html.indexOf('{', at); let d = 0, i = b;
+    for (; i < html.length; i++) { if (html[i] === '{') d++; else if (html[i] === '}') { d--; if (!d) { i++; break; } } }
+    return html.slice(at, i);
+  };
+  const run = async (typed, reply = { active: { timeoutMs: 45000 } }, ok = true) => {
+    const sent = []; const toasts = []; const APP = { info: {} };
+    const fetchStub = async (url, opts) => { sent.push({ url, body: JSON.parse(opts.body) });
+      return { ok, json: async () => reply }; };
+    const fn = new Function('fetch', 'APP', 't', 'showToast',
+      _ext('async function switchTimeout(sec)') + '\nreturn switchTimeout;')(
+      fetchStub, APP, (k) => k, (m) => toasts.push(m));
+    await fn(typed);
+    return { sent, toasts, APP };
+  };
+
+  const r = await run('90');
+  assert.strictEqual(r.sent.length, 1, 'a typed timeout posts once');
+  assert.strictEqual(r.sent[0].url, '/api/models', 'to the models endpoint');
+  assert.deepStrictEqual(r.sent[0].body, { timeoutMs: 90000 }, 'seconds converted to ms, not a constant');
+
+  const half = await run('2.5');
+  assert.deepStrictEqual(half.sent[0].body, { timeoutMs: 2500 }, 'a fractional value is not truncated to seconds');
+
+  const bad = await run('abc');
+  assert.deepStrictEqual(bad.sent, [], 'a non-number never reaches the server');
+
+  assert.strictEqual(r.APP.info.ollamaTimeoutMs, 45000,
+    "the server's answer, not the typed value, updates APP.info");
+  assert.deepStrictEqual(r.toasts, ['models.timeout_set'], 'and it confirms');
+
+  const failed = await run('90', { error: 'nope' }, false);
+  assert.deepStrictEqual(failed.toasts, ['nope'], "a rejected change reports the server's reason");
+
+  console.log('  switchTimeout converts and sends the value it was given: OK');
+  console.log('  timeout input + switchTimeout + suitability warning: OK');
+})();

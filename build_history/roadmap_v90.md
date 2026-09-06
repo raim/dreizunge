@@ -2695,6 +2695,41 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_b — a mutation audit of the SUITE: two guards were testing themselves, nine more proved empty
+
+User: *"go ahead with the vacuous-guard mutation audit"*. **ZERO `ui.json` keys** (the user was still
+translating; the file was not touched). No app behaviour changed — every edit here is to `test/`.
+
+The standing rule says *mutation-test every guard you write*. It had never been applied BACKWARDS, to
+the guards already standing. This does that, and the suite came out worse than expected.
+
+### Method
+
+A static screen first, over all 355 test files: which guards assert against **app source text** with
+no execution at all (166 files do somewhere), and — the sharper cut — which assert *that a function
+EXISTS* and never run it (**16 files**). Then 17 semantic mutations of the real behaviour behind
+those claims: each applied to `index.html` / `server.js` / `llm.js`, `docs/` rebuilt so the parity
+and freshness guards could not fire on the byte change instead of the defect, then the named guard,
+then **the whole 360-check suite** for anything still green.
+
+| | |
+|---|---|
+| **the headline** | **9 of the 17 mutations survived the ENTIRE suite.** A gutted `applyStorylineTheme`, a `switchTimeout` that ignores the seconds it was handed, a `switchThreads` that posts a constant, a `modelSuitabilityWarning` that never warns, a `modelCapabilities` that answers `{}`, a `downloadUserFlaggedLessons` that ignores its storyline scope, a `_starNoteHtml` that renders nothing, a `_staticSoftDelete` that deletes nothing, and a diacritic adjudicator that waves every candidate through — **all 360 checks green for every one of them** |
+| **⚠️⚠️ TWO GUARDS WERE ASSERTING AGAINST THEIR OWN RE-IMPLEMENTATION** | `unit-model-picker` said *"Replay the helper logic to confirm the decision table"* and then **defined its own four-line copy** of `modelSuitabilityWarning` and asserted on the copy. `unit-word-count` said *"Behavior — reimplement and check the contract"* and did exactly that: its own `splitWords`/`wordCount`, then **12 assertions about the test file agreeing with itself**. The app's functions were never called. Neither block could fail for any change to the app — proven by running the pre-fix `unit-word-count` against two real defects (`filter(Boolean)` dropped, `wordCount` returning `length \|\| 1`): **GREEN both times**, RED both times after the repair |
+| **⚠️ the only hardcoded port in 355 test files** | `e2e-backend-recheck` pinned `PING_PORT = 19731`. It surfaced because it was the ONE test that went red for every unrelated mutation while suites ran in parallel — a second copy either fails to bind, or boots its server against the first copy's fake backend and then fails its own "starts offline" premise for a reason that has nothing to do with the code. Measured both ways: two concurrent copies, fixed port → one dies; ephemeral port → both pass. Now asks the kernel for a free port, the pattern `unit-inflection-label-backfill` already used |
+| **what was repaired** | Seven guard files now RUN what they used to name: `unit-storyline-theme` (paints and compares three distinguishable gradients), `unit-model-picker` (the real warning function + a backend-gate branch its hand-written copy could not express, and `switchTimeout` against a stub `fetch`), `unit-model-settings` (`switchThreads` — sends what was typed, refuses a negative or a non-number before any request goes out), `unit-static-flags` (star/delete notes, the soft-delete TOGGLE, and that the storyline scope reaches the payload builder), `unit-model-picker-roles` (`modelCapabilities` against a stub `/api/show` — parses, caches, `capabilitiesReset()` clears, and unreadable stays UNKNOWN rather than "assume capable"), `unit-diacritic-qc` (the adjudicator flags on `FIX` and on nothing else, including a lowercase verdict), `unit-word-count` (the real helpers) |
+| **each repair mutation-tested** | 21 further mutations against the NEW blocks, all red — including every one of the nine original survivors, plus the sharper ones the old guards could never have reached: painting a constant gradient, a wrong selector, swapped role keys, a dropped backend gate, a soft delete that stops being a toggle, a cache that stops caching, an unreachable host reported as vision-capable, and `.toUpperCase()` dropped so a model replying lowercase `fix` is silently ignored |
+| **⚠️ what this does NOT claim** | 17 mutations is a sample, not a proof. The static screen found **16** files whose only claim about a function is that it exists; nine are repaired here and the rest are named in the session prompt. And the screen cannot see the larger class — guards that run the right function on a fixture where every branch gives the same answer |
+
+### The rule this earns
+
+**"Replay the logic" must mean LIFT the logic.** A test that retypes the function it is checking has
+inverted itself: it now asserts that the test file is self-consistent, and the app is free to drift
+away underneath it. Both offenders announced what they were doing in a comment directly above the
+copy, and both read as thorough — four and twelve assertions, real edge cases, sensible names. The
+tell is not the wording, it is whether the app's own bytes are ever executed. `extract()` +
+`new Function` is a two-line lift and the suite already uses it in dozens of files.
+
 ## ✅ v90_a — the savedList projection is now a decision, not an accident (and a `v89_aj` claim corrected)
 
 User: *"go ahead with #1"* — the `savedList` projection differential, recommended because it is the
