@@ -133,8 +133,11 @@ console.log('  onUseComicCb(): turning off clears drawn panels and the uploaded 
     JSON.stringify({ boxes: APP_COMIC.boxes })`));
   assert.strictEqual(r.boxes.length, 1, 'a real drag (start top-left, end bottom-right) commits exactly one box');
   // canvas is half natural size (scale factor 2 on both axes): CSS (100,50)->(200,150) => natural (200,100)->(400,300)
-  assert.deepStrictEqual(r.boxes[0], { x1: 200, y1: 100, x2: 400, y2: 300 },
-    'box coordinates are scaled from CSS/canvas pixels to NATURAL image pixels');
+  // v89_al (item V): the box gained `page` — which page it was drawn on. Kept as an EXACT
+  // comparison rather than relaxed to a subset: the coordinate scaling is the claim, and a subset
+  // check would stop noticing a stray extra field, which is how a shape drifts.
+  assert.deepStrictEqual(r.boxes[0], { x1: 200, y1: 100, x2: 400, y2: 300, page: 0 },
+    'box coordinates are scaled from CSS/canvas pixels to NATURAL image pixels, on the active page');
 }
 console.log('  pointer drawing: a real drag commits one box, correctly scaled to natural image pixels: OK');
 
@@ -147,7 +150,7 @@ console.log('  pointer drawing: a real drag commits one box, correctly scaled to
     _comicPointerMove({ preventDefault:function(){}, clientX:100, clientY:100 });
     _comicPointerEnd({ preventDefault:function(){}, clientX:100, clientY:100 });
     JSON.stringify({ boxes: APP_COMIC.boxes })`));
-  assert.deepStrictEqual(r.boxes[0], { x1: 100, y1: 100, x2: 300, y2: 300 },
+  assert.deepStrictEqual(r.boxes[0], { x1: 100, y1: 100, x2: 300, y2: 300, page: 0 },
     'a reversed drag (bottom-right to top-left) still normalizes to x1<x2, y1<y2');
 }
 console.log('  pointer drawing: a reversed-direction drag still normalizes into a valid box: OK');
@@ -250,7 +253,10 @@ console.log('  resize: grabbing a corner handle resizes the box, not a new draw,
     JSON.stringify({ boxes: APP_COMIC.boxes })`));
   assert.strictEqual(r.boxes.length, 2, 'a drag far from any handle still draws a brand-new second box');
   assert.deepStrictEqual(r.boxes[0], { x1: 0, y1: 0, x2: 50, y2: 50 }, 'the existing box is untouched');
-  assert.deepStrictEqual(r.boxes[1], { x1: 300, y1: 300, x2: 400, y2: 400 }, 'the new box is the fresh drag');
+  // v89_al: a NEWLY DRAWN box carries the page it was drawn on. The seeded box above does NOT —
+  // worth keeping exactly so: it shows the drawing code tags what it CREATES and never
+  // rewrites a box it did not.
+  assert.deepStrictEqual(r.boxes[1], { x1: 300, y1: 300, x2: 400, y2: 400, page: 0 }, 'the new box is the fresh drag');
 }
 console.log('  resize: a drag away from any handle still draws a new box, existing ones untouched: OK');
 
@@ -449,7 +455,7 @@ console.log('  _comicDownscaleDims(): correct scale math, both orientations, no-
     comicUseWholeImageAsPanel();
     JSON.stringify({ boxes: APP_COMIC.boxes })`));
   assert.strictEqual(r.boxes.length, 1, 'exactly one box is created');
-  assert.deepStrictEqual(r.boxes[0], { x1: 0, y1: 0, x2: 800, y2: 500 },
+  assert.deepStrictEqual(r.boxes[0], { x1: 0, y1: 0, x2: 800, y2: 500, page: 0 },
     'the box spans the ENTIRE image, in natural pixels');
 }
 console.log('  comicUseWholeImageAsPanel(): one box spanning the whole image: OK');
@@ -464,7 +470,7 @@ console.log('  comicUseWholeImageAsPanel(): one box spanning the whole image: OK
     comicUseWholeImageAsPanel();
     JSON.stringify({ boxes: APP_COMIC.boxes })`));
   assert.strictEqual(r.boxes.length, 1, 'the two pre-existing boxes are REPLACED, not appended to');
-  assert.deepStrictEqual(r.boxes[0], { x1: 0, y1: 0, x2: 800, y2: 500 });
+  assert.deepStrictEqual(r.boxes[0], { x1: 0, y1: 0, x2: 800, y2: 500, page: 0 });
 }
 console.log('  comicUseWholeImageAsPanel(): replaces any existing boxes, does not append: OK');
 

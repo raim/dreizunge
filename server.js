@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v89_ak';
+const APP_VERSION  = 'v89_al';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8749,13 +8749,33 @@ http.createServer(async (req, res) => {
         // the expected case, same "generous but real cap" reasoning as every other upload limit in
         // this file (comic-extract's 30-image cap, split-chapters' 400-paragraph cap).
         if (dataUrl.length > 8_000_000) return json(res, 400, { error: 'Image too large for a draft.' });
+        // ⚠️ item V (v89_al): the EXTRA pages (page 0 travels as `dataUrl` above). Capped the same
+        // way and for the same reason as `dataUrl` — a hostile or accidental body must not be able
+        // to park an unbounded blob in the drafts file. 30 pages matches the extraction route's own
+        // 30-image cap, so a draft can never hold more than one run could process.
+        const pagesIn = Array.isArray(body.comic.pages) ? body.comic.pages.slice(0, 30) : [];
+        const pages = [];
+        for (const p of pagesIn) {
+          const du = (p && typeof p.dataUrl === 'string') ? p.dataUrl : '';
+          if (!du || du.length > 8_000_000) continue;   // skip a bad page, keep the rest
+          pages.push({ dataUrl: du,
+            naturalW: Math.max(0, Math.min(20000, parseInt(p && p.naturalW, 10) || 0)),
+            naturalH: Math.max(0, Math.min(20000, parseInt(p && p.naturalH, 10) || 0)) });
+        }
         comic = {
           dataUrl,
+          ...(pages.length ? { pages } : {}),
           naturalW: Math.max(0, Math.min(20000, parseInt(body.comic.naturalW, 10) || 0)),
           naturalH: Math.max(0, Math.min(20000, parseInt(body.comic.naturalH, 10) || 0)),
           boxes: boxesIn.map(b => ({
             x1: Math.max(0, parseInt(b && b.x1, 10) || 0), y1: Math.max(0, parseInt(b && b.y1, 10) || 0),
             x2: Math.max(0, parseInt(b && b.x2, 10) || 0), y2: Math.max(0, parseInt(b && b.y2, 10) || 0),
+            // ⚠️ item V (v89_al): the page this box belongs to. It HAS to be listed in this
+            // whitelist — the comment below records `description` being dropped here for exactly
+            // this reason (item AN, the THIRD instance), and a stripped `page` is worse than it
+            // looks: every box would silently collapse onto page 0 and be cropped from the wrong
+            // image on resume.
+            page: Math.max(0, parseInt(b && b.page, 10) || 0),
             // ⚠️ item AN (v88_d) — a THIRD instance of the same data loss, found by reading this
             // whitelist while wiring item AO, not from a report. `description` (v87_l's
             // image-description fallback) was NEVER listed here, so every autosave through this

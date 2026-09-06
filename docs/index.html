@@ -1584,7 +1584,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             delete or reorder panels afterward.
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-            <input type="file" id="comic-file-input" accept="image/png,image/jpeg" style="display:none" onchange="onComicFileChosen(this)">
+            <input type="file" id="comic-file-input" accept="image/png,image/jpeg" multiple style="display:none" onchange="onComicFileChosen(this)">
             <button type="button" id="comic-choose-btn" onclick="document.getElementById('comic-file-input').click()"
               style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="comic-choose-lbl">🖼️ Upload an image</span></button>
             <!-- v86_c (user-requested): `capture="environment"` opens the device camera DIRECTLY on a
@@ -1612,6 +1612,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🔄 <span id="comic-rotate-lbl">Rotate</span></button>
             <button type="button" id="comic-detect-btn" onclick="comicDetectPanels()"
               style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">🔍 <span id="comic-detect-lbl">Detect comic panels</span></button>
+            <!-- item V (v89_al): one button per uploaded page, shown only when there are two or
+                 more. Reuses .split-mode-btn, the same pill the PDF split-mode row uses — zero new
+                 CSS and the same visual language for "pick one of these". -->
+            <div id="comic-page-strip" style="display:none;gap:4px;flex-wrap:wrap;margin:0 0 6px"></div>
             <!-- v86_d (user-requested, item J): a single box spanning the whole image — for a lone
                  illustration or a one-panel comic, drawing/auto-detecting a box around the whole page
                  is pure friction. Same row/timing as auto-detect (shown once an image is loaded). -->
@@ -4126,7 +4130,25 @@ async function doDialectImport(){
 // handle) — { i, startX, startY (canvas-space pointer position at pointer-down), orig (the box's own
 // x1/y1/x2/y2 at pointer-down) } — mutually exclusive with both `resizing` and `drawing`. See
 // _comicHitBox()/_comicPointerStart() for how the three are told apart.
-const APP_COMIC = { dataUrl: null, naturalW: 0, naturalH: 0, boxes: [], drawing: null, resizing: null, moving: null };
+// ── item V (v89_al): MULTIPLE images, treated as multiple panels ─────────────
+// User: "Allow multiple photos/images to be loaded and treated like multiple panels in the
+// image-based story-generation pipeline." Ruling (roadmap short list): each uploaded image gets a
+// whole-image panel, and the panel list stays editable. `comicCreateChapter()` already forms ONE
+// CHAPTER PER PANEL (`v85_p`), so N images become N chapters without touching that.
+//
+// ⚠️ THE SEAM: `dataUrl`/`naturalW`/`naturalH` still mean "the ACTIVE page", so every one of the
+// ~20 canvas, hit-test, draw, resize and move call sites keeps working unchanged — they always see
+// exactly one image, as they always did. `pages` is the new part; switching pages swaps the active
+// three and redraws. A box carries `page` (index into `pages`, default 0), which is what makes
+// cropping correct for a box that is not on the page currently displayed.
+const APP_COMIC = { dataUrl: null, naturalW: 0, naturalH: 0, boxes: [], drawing: null, resizing: null, moving: null,
+                    pages: [], pageIdx: 0 };
+// The page a box belongs to. Old drafts and every pre-item-V box have no `page` at all, and page 0
+// is exactly right for them — one page is what those drafts had.
+function _comicBoxPage(b){ const n = (b && b.page) | 0; return n >= 0 ? n : 0; }
+// Boxes on the page currently displayed. The drawing surface only ever shows one page, so hit-tests
+// and the overlay must not see the others — otherwise a box from page 2 would be draggable on page 1.
+function _comicPageBoxes(){ return APP_COMIC.boxes.filter(b => _comicBoxPage(b) === (APP_COMIC.pageIdx | 0)); }
 // item R follow-up (roadmap_v87.md): the comic upload's own draft id, SEPARATE from the PDF flow's
 // _draftId — the two upload flows already keep independent job ids (_pdfBookId/_comicBookId), the
 // same precedent applies here rather than risking one flow's discard/resume touching the other's.
@@ -4195,9 +4217,85 @@ function onUseComicCb(){
 // (checked against the real fixtures this session's own live comic-detect probe used) while keeping
 // the base64 payload a small fraction of a raw phone photo's.
 const _COMIC_MAX_DIM = 1600;
+// ── item V (v89_al): loading N pages ─────────────────────────────────────────
+// Read + downscale ONE file into a page record, offscreen. The single-file path below is left
+// bit-for-bit alone: that flow carries most of this feature's test surface and several past bugs
+// (`v85_u` the resize observer, `v86_c` the duplicated listeners, `v88_c` item AM), so the multi
+// path is added BESIDE it rather than by generalising it and hoping.
+//
+// The `img` is kept on the page and starts loading here, which is what lets `_comicCropDataUrl`
+// stay synchronous for a box on a page that is not currently displayed.
+function _comicLoadPage(file){
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onerror = () => reject(new Error('could not read file'));
+    r.onload = () => {
+      const raw = String(r.result || '');
+      const im = new Image();
+      im.onerror = () => reject(new Error('could not decode image'));
+      im.onload = () => {
+        const dims = _comicDownscaleDims(im.naturalWidth, im.naturalHeight, _COMIC_MAX_DIM);
+        const c = dims ? document.createElement('canvas') : null;
+        const ctx = c && c.getContext && c.getContext('2d');
+        if (!dims || !ctx) {
+          // No downscale needed, or no 2D canvas (also this harness's stub): keep the original
+          // rather than lose the page — the same fallback the single-file path already takes.
+          return resolve({ dataUrl: raw, naturalW: im.naturalWidth, naturalH: im.naturalHeight, img: im });
+        }
+        c.width = dims.cw; c.height = dims.ch;
+        ctx.drawImage(im, 0, 0, dims.cw, dims.ch);
+        const resized = c.toDataURL('image/jpeg', 0.88);
+        const rim = new Image();
+        rim.onload = rim.onerror = () => resolve({ dataUrl: resized, naturalW: dims.cw, naturalH: dims.ch, img: rim });
+        rim.src = resized;
+      };
+      im.src = raw;
+    };
+    r.readAsDataURL(file);
+  });
+}
+// Make page `i` the one on screen. Everything downstream — canvas sizing, hit-tests, redraw — reads
+// the ACTIVE three fields, so swapping them is all it takes; no other call site changes.
+function _comicSetPage(i){
+  const pages = APP_COMIC.pages || [];
+  const n = Math.max(0, Math.min(pages.length - 1, i | 0));
+  const p = pages[n]; if (!p) return;
+  APP_COMIC.pageIdx = n;
+  APP_COMIC.dataUrl = p.dataUrl; APP_COMIC.naturalW = p.naturalW; APP_COMIC.naturalH = p.naturalH;
+  const img = document.getElementById('comic-draw-img');
+  if (img) {
+    // Re-sizing the canvas must wait for the new image, exactly as the upload path does.
+    img.onload = () => { _comicSetupCanvas(); _comicRedraw(); };
+    img.src = p.dataUrl;
+  }
+  _comicRenderPageStrip();
+  try { _comicRenderList(); } catch(_) {}
+}
+// One button per page. Hidden entirely for a single page, so the ordinary one-photo upload looks
+// exactly as it did — this control only earns its space once there is something to switch between.
+function _comicRenderPageStrip(){
+  const el = document.getElementById('comic-page-strip'); if (!el) return;
+  const pages = APP_COMIC.pages || [];
+  if (pages.length < 2) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.innerHTML = pages.map((p, i) => {
+    const on = i === (APP_COMIC.pageIdx | 0);
+    const n = APP_COMIC.boxes.filter(b => _comicBoxPage(b) === i).length;
+    return `<button type="button" class="split-mode-btn${on ? ' on' : ''}" onclick="_comicSetPage(${i})"`
+      + ` title="${escAttr((p.name || '') + (n ? ` — ${n}` : ''))}">${i + 1}${n > 1 ? ` (${n})` : ''}</button>`;
+  }).join('');
+  el.style.display = 'flex';
+}
+
 function _comicFinishSetup(img, status){
   APP_COMIC.naturalW=img.naturalWidth; APP_COMIC.naturalH=img.naturalHeight;
   comicClearPanels();   // a new image invalidates any boxes drawn over the old one
+  // v89_al: a single upload REPLACES the page set, matching what comicClearPanels just did to the
+  // boxes. `pages` is populated even for one image so every read (cropping, the draft, the strip)
+  // has one shape to deal with rather than "pages, or the legacy active-image fields".
+  APP_COMIC.pages = [{ dataUrl: APP_COMIC.dataUrl, naturalW: APP_COMIC.naturalW,
+                       naturalH: APP_COMIC.naturalH, img: null }];
+  APP_COMIC.pageIdx = 0;
+  try { _comicRenderPageStrip(); } catch(_) {}
   document.getElementById('comic-draw-wrap').style.display='';
   const detectRow=document.getElementById('comic-detect-row'); if(detectRow) detectRow.style.display='flex';
   if(status) status.textContent='';
@@ -4218,9 +4316,45 @@ function _comicFinishSetup(img, status){
   // draft keeps its own panels untouched. Both of onComicFileChosen()'s branches — downscaled and
   // not — end up here, so one call covers the whole upload path.
   //
-  // Also the per-image act item V needs: the user's ruling is "if multiple images are uploaded,
+  // Also the per-image act item V needs. The user's ruling: "if multiple images are uploaded,
   // mark all images as one panel, but still allow the user to modify, add and resort panels."
+  // ⚠️ CLARIFIED BY THE USER at the v89_al cut: that means "mark EACH image as a panel" — N images
+  // give N panels — NOT "merge all images into one panel". The original phrasing reads both ways and
+  // the wrong reading would collapse a whole upload into a single chapter.
   comicUseWholeImageAsPanel();
+}
+// ── item V (v89_al): N files -> N pages, each with its own whole-image panel ──
+// User's ruling, recorded verbatim in _comicFinishSetup's own comment: "if multiple images are
+// uploaded, mark all images as one panel, but still allow the user to modify, add and resort
+// panels." So each page arrives with exactly one box covering it, and every existing panel control
+// (draw, resize, move, delete, reorder, auto-detect) keeps working on whichever page is shown.
+//
+// Sequential, not Promise.all: these are multi-megabyte decodes and a canvas resize each, and the
+// status line is meant to count up. A file that fails to decode is SKIPPED with the rest kept —
+// losing four good pages because the fifth was a broken JPEG would be the worse failure.
+async function _comicAddFiles(files, status){
+  const first = (APP_COMIC.pages || []).length === 0;
+  let added = 0, failed = 0;
+  for (let i = 0; i < files.length; i++) {
+    if (status) status.textContent = `loading ${i + 1}/${files.length}…`;
+    try {
+      const p = await _comicLoadPage(files[i]);
+      p.name = files[i].name || '';
+      APP_COMIC.pages.push(p);
+      // The whole-image panel this feature is defined by, tagged with its own page.
+      APP_COMIC.boxes.push({ x1: 0, y1: 0, x2: p.naturalW, y2: p.naturalH, page: APP_COMIC.pages.length - 1 });
+      added++;
+    } catch(_) { failed++; }
+  }
+  if (status) status.textContent = failed ? `⚠ ${added} added, ${failed} could not be read` : '';
+  if (!added) return;
+  const wrap = document.getElementById('comic-draw-wrap'); if (wrap) wrap.style.display = '';
+  const detectRow = document.getElementById('comic-detect-row'); if (detectRow) detectRow.style.display = 'flex';
+  if (first) { _comicWatchImageResize(); }
+  _comicSetPage(0);
+  _comicRenderList();
+  _comicSyncGenerateBtn();
+  try { _comicDraftSaveDebounced(); } catch(_) {}
 }
 // Pure sizing math, split out so it's testable without a real Image/canvas decode. Returns null
 // when no resize is needed (already within budget), else the target {cw,ch} — Math.round on each
@@ -4234,6 +4368,11 @@ function _comicDownscaleDims(w, h, maxDim){
 function onComicFileChosen(input){
   const f=input.files&&input.files[0]; if(!f) return;
   const status=document.getElementById('comic-upload-status');
+  // ⚠️ item V (v89_al): more than one file takes its own path, which APPENDS pages. One file keeps
+  // the original path untouched, byte for byte — including item AM's whole-image pre-select and
+  // comicClearPanels()'s "a new image invalidates the old boxes", which is right for a REPLACEMENT
+  // and wrong for an addition.
+  if (input.files && input.files.length > 1) { _comicAddFiles([...input.files], status); return; }
   const r=new FileReader();
   r.onload=()=>{
     APP_COMIC.dataUrl=String(r.result||'');
@@ -4364,6 +4503,7 @@ function _comicHitHandle(x, y){
   const sx=canvas.width/(APP_COMIC.naturalW||1), sy=canvas.height/(APP_COMIC.naturalH||1);
   for(let i=APP_COMIC.boxes.length-1; i>=0; i--){
     const b=APP_COMIC.boxes[i];
+    if(_comicBoxPage(b) !== (APP_COMIC.pageIdx|0)) continue;   // v89_al: not on this page
     for(const handle of _COMIC_HANDLES){
       const p=_comicHandleXY(b, handle, sx, sy);
       if(Math.abs(x-p.x)<=_COMIC_HANDLE_HIT && Math.abs(y-p.y)<=_COMIC_HANDLE_HIT) return {i,handle};
@@ -4380,6 +4520,7 @@ function _comicHitBox(x, y){
   const sx=canvas.width/(APP_COMIC.naturalW||1), sy=canvas.height/(APP_COMIC.naturalH||1);
   for(let i=APP_COMIC.boxes.length-1; i>=0; i--){
     const b=APP_COMIC.boxes[i];
+    if(_comicBoxPage(b) !== (APP_COMIC.pageIdx|0)) continue;   // v89_al: not on this page
     if(x>=b.x1*sx && x<=b.x2*sx && y>=b.y1*sy && y<=b.y2*sy) return i;
   }
   return null;
@@ -4468,7 +4609,8 @@ function _comicPointerEnd(e){
   // A click/tap with no real drag produces a degenerate box — ignore it rather than store a
   // zero-area "panel" the extraction step would have nothing to crop.
   if(x2-x1<8 || y2-y1<8){ _comicRedraw(); return; }
-  APP_COMIC.boxes.push({x1,y1,x2,y2});
+  // v89_al: a box belongs to the page it was drawn on.
+  APP_COMIC.boxes.push({x1,y1,x2,y2,page:APP_COMIC.pageIdx|0});
   _comicRedraw(); _comicRenderList();
 }
 function _comicPointerCancel(){ APP_COMIC.drawing=null; APP_COMIC.resizing=null; APP_COMIC.moving=null; _comicRedraw(); }
@@ -4479,7 +4621,11 @@ function _comicRedraw(){
   const ctx=canvas.getContext('2d'); if(!ctx) return;   // no 2D canvas support (or a test harness stub)
   ctx.clearRect(0,0,canvas.width,canvas.height);
   const sx=canvas.width/(APP_COMIC.naturalW||1), sy=canvas.height/(APP_COMIC.naturalH||1);
+  // ⚠️ item V (v89_al): only the ACTIVE page's boxes are drawn — a box from another page has
+  // coordinates in that page's space and would render as a stray rectangle here. The index `i` stays
+  // the GLOBAL one so the badge number and colour match the panel's row in the list below.
   APP_COMIC.boxes.forEach((b,i)=>{
+    if(_comicBoxPage(b) !== (APP_COMIC.pageIdx|0)) return;
     const x=b.x1*sx, y=b.y1*sy, w=(b.x2-b.x1)*sx, h=(b.y2-b.y1)*sy;
     const color=_COMIC_COLORS[i%_COMIC_COLORS.length];
     ctx.strokeStyle=color; ctx.lineWidth=3; ctx.strokeRect(x,y,w,h);
@@ -4600,7 +4746,13 @@ async function _comicDraftSaveNow(){
         // Coordinates + extracted text only — never a pre-cropped image per box, matching
         // APP_COMIC's own shape (a box crops from the ONE page image on demand, see
         // _comicCropDataUrl's own comment).
-        boxes: APP_COMIC.boxes.map(b=>({x1:b.x1, y1:b.y1, x2:b.x2, y2:b.y2, text: b.text||null})),
+        boxes: APP_COMIC.boxes.map(b=>({x1:b.x1, y1:b.y1, x2:b.x2, y2:b.y2, page: _comicBoxPage(b), text: b.text||null})),
+        // ⚠️ item V (v89_al): the EXTRA pages. `dataUrl` above stays the first page, so a draft
+        // written by this build still resumes correctly on an older one (it sees one page, which is
+        // what it always saw) — and `_comicDraftSaveDebounced`'s own scoping comment, "one draft
+        // holds ONE page", is now out of date and says so. Page 0 is NOT repeated here: it already
+        // travels as `dataUrl`, and a 1600px page is ~1MB of base64 that would otherwise be sent twice.
+        pages: (APP_COMIC.pages||[]).slice(1).map(p=>({ dataUrl:p.dataUrl, naturalW:p.naturalW, naturalH:p.naturalH })),
       },
     };
     const r = await fetch('/api/drafts', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
@@ -4627,12 +4779,27 @@ async function _resumeComicDraftFrom(d){
   if(d.lessonFormat){ APP.lessonFormat = d.lessonFormat; restoreFormatSelect(); }
   const cb=document.getElementById('use-comic-cb'); if(cb && !cb.checked){ cb.checked=true; onUseComicCb(); }
   APP_COMIC.dataUrl = d.comic.dataUrl;
-  APP_COMIC.boxes = (d.comic.boxes||[]).map(b=>({ x1:b.x1||0, y1:b.y1||0, x2:b.x2||0, y2:b.y2||0, text: b.text||undefined }));
+  // v89_al: `page` rides with each box. A draft written before item V has none, and 0 is exactly
+  // right for those — one page is what they had.
+  APP_COMIC.boxes = (d.comic.boxes||[]).map(b=>({ x1:b.x1||0, y1:b.y1||0, x2:b.x2||0, y2:b.y2||0,
+                                                  page:(b.page|0)||0, text: b.text||undefined }));
   APP_COMIC.drawing = null; APP_COMIC.resizing = null; APP_COMIC.moving = null;
+  // Page 0 is `dataUrl` (its dimensions are read from the <img> below, as they always were); the
+  // rest ride in `pages`. Their offscreen images start loading now so cropping stays synchronous.
+  APP_COMIC.pageIdx = 0;
+  APP_COMIC.pages = [{ dataUrl: d.comic.dataUrl, naturalW: 0, naturalH: 0, img: null }]
+    .concat((d.comic.pages||[]).map(p => {
+      const im = new Image(); im.src = p.dataUrl || '';
+      return { dataUrl: p.dataUrl || '', naturalW: p.naturalW|0, naturalH: p.naturalH|0, img: im };
+    }));
   const img = document.getElementById('comic-draw-img');
   await new Promise(resolve => {
     img.onload = () => {
       APP_COMIC.naturalW = img.naturalWidth; APP_COMIC.naturalH = img.naturalHeight;
+      // v89_al: page 0's dimensions were not stored (it travels as `dataUrl`), so they are taken
+      // from the decoded image here — the same place they have always come from.
+      if (APP_COMIC.pages[0]) { APP_COMIC.pages[0].naturalW = img.naturalWidth; APP_COMIC.pages[0].naturalH = img.naturalHeight; }
+      try { _comicRenderPageStrip(); } catch(_) {}
       const wrap=document.getElementById('comic-draw-wrap'); if(wrap) wrap.style.display='';
       const detectRow=document.getElementById('comic-detect-row'); if(detectRow) detectRow.style.display='flex';
       _comicSetupCanvas();
@@ -4658,7 +4825,12 @@ async function _resumeComicDraftFrom(d){
 // with the whole-image shortcut, not add a redundant giant box alongside smaller ones.
 function comicUseWholeImageAsPanel(){
   if(!(APP_COMIC.naturalW>0) || !(APP_COMIC.naturalH>0)) return;   // no image loaded yet
-  APP_COMIC.boxes=[{x1:0,y1:0,x2:APP_COMIC.naturalW,y2:APP_COMIC.naturalH}];
+  // v89_al: replaces the boxes on the ACTIVE page only. Replacing the whole list would silently
+  // delete every other page's panels, which for a multi-page upload is most of the user's work —
+  // and the button says "use whole image", singular.
+  const _pi = APP_COMIC.pageIdx | 0;
+  APP_COMIC.boxes = APP_COMIC.boxes.filter(b => _comicBoxPage(b) !== _pi)
+    .concat([{x1:0,y1:0,x2:APP_COMIC.naturalW,y2:APP_COMIC.naturalH,page:_pi}]);
   APP_COMIC.drawing=null;
   _comicRedraw(); _comicRenderList();
 }
@@ -4680,12 +4852,30 @@ function _comicPanels(){ return APP_COMIC.boxes.map(b=>({...b})); }
 // natural-pixel bounds. Returns a full data: URL — the server strips the `data:...;base64,` prefix
 // itself (see _comicExtractPrompt's caller, server.js), so the client never has to know Ollama's
 // bare-base64 requirement.
+// ⚠️ item V (v89_al): crops from the box's OWN page. Before this it always cropped whatever was on
+// screen, which is correct for one page and silently wrong the moment there are several — every
+// panel would have been extracted from the page the user happened to be looking at.
+//
+// Kept SYNCHRONOUS, because all three callers are (`comicOpenReview` is not even async). That is
+// what the per-page offscreen `img` is for: it is created and started loading the moment a page is
+// added, long before anything is extracted. Two fallbacks, in order of how much they can be trusted:
+//   • a WHOLE-PAGE box needs no canvas at all — the page's own dataUrl already IS that crop, which
+//     is also the dominant shape for this feature (one image, one panel);
+//   • otherwise the offscreen image, else the displayed one if this box is on the active page.
 function _comicCropDataUrl(box){
-  const img=document.getElementById('comic-draw-img');
+  const pi = _comicBoxPage(box);
+  const page = (APP_COMIC.pages || [])[pi] || null;
+  const W = (page ? page.naturalW : APP_COMIC.naturalW) || 0;
+  const H = (page ? page.naturalH : APP_COMIC.naturalH) || 0;
+  const whole = W > 0 && H > 0 && box.x1 <= 0 && box.y1 <= 0 && box.x2 >= W && box.y2 >= H;
+  if (whole && page && page.dataUrl) return page.dataUrl;
+  let src = (page && page.img && page.img.naturalWidth) ? page.img : null;
+  if (!src && pi === (APP_COMIC.pageIdx | 0)) src = document.getElementById('comic-draw-img');
+  if (!src) { if (page && page.dataUrl) return page.dataUrl; src = document.getElementById('comic-draw-img'); }
   const c=document.createElement('canvas');
   c.width=Math.max(1,box.x2-box.x1); c.height=Math.max(1,box.y2-box.y1);
   const ctx=c.getContext('2d');
-  ctx.drawImage(img, box.x1, box.y1, c.width, c.height, 0, 0, c.width, c.height);
+  ctx.drawImage(src, box.x1, box.y1, c.width, c.height, 0, 0, c.width, c.height);
   return c.toDataURL('image/jpeg', 0.92);
 }
 
@@ -169431,12 +169621,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v89_ak', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v89_al', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"d19ca02668f2","lessons.json":"07f4ada5bac9","ui.json":"4a402c56f092","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"016a5cc0e38b","analysis-corrections.json":"e64c06e5700a","build-static.js":"811abf3b5152"};
+  APP.buildSources = {"index.html":"ae60b278c097","lessons.json":"07f4ada5bac9","ui.json":"4a402c56f092","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"016a5cc0e38b","analysis-corrections.json":"e64c06e5700a","build-static.js":"811abf3b5152"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

@@ -106,10 +106,10 @@ here. **Nothing is owed**: the `v88` line closed every item it was handed. The f
 in the carried sections further down and, where noted, in the older roadmaps.*
 
 **Buildable now, no decision needed:**
-- **Item `V`** (multi-image upload) — FULLY SPECIFIED by the user's ruling and unblocked. Each
-  uploaded image gets a whole-image panel (the act `AM` already performs for one), the panel list
-  stays editable, and `comicCreateChapter()`'s one-chapter-per-panel formation (`v85_p`) is confirmed
-  correct. Mostly a question of the DRAFT shape holding more than one page.
+- ~~Item `V` (multi-image upload)~~ — **DONE at `v89_al`.** Each uploaded image becomes its own
+  whole-image panel; `comicCreateChapter()`'s one-chapter-per-panel formation carries the rest. The
+  user CLARIFIED the ambiguous ruling ("mark all images as one panel" means **each** image is a
+  panel). The draft holds N pages.
 - ~~Finish the flake audit~~ — **DONE at `v89_ad`.** `unit-ui-journeys` and `unit-word-progress` are
   **not flaky**: 40/40 standalone each, 60/60 under seeded shuffles, 15/15 under 8-way CPU load. The
   failures were TORN READS of `lessons.json` caused by a non-atomic `fs.writeFileSync` in the
@@ -2635,6 +2635,33 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions
 lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v89_al — item V: multiple images, each its own panel
+
+User: *"Allow multiple photos/images to be loaded and treated like multiple panels in the
+image-based story-generation pipeline."* Open since the `v86` line. **ZERO `ui.json` keys.**
+
+⚠️ **The ruling's wording was ambiguous and the user CLARIFIED it at this cut.** The recorded ruling
+read *"if multiple images are uploaded, mark all images as one panel"* — which parses both as "mark
+EACH image as a panel" and as "merge all images into ONE panel". The user's clarification: **each
+image is a panel.** N images give N panels. The wrong reading would have collapsed a whole upload
+into a single chapter, so the clarification is now attached to every place that quotes the sentence.
+
+`roadmap_v88.md` had also flagged a second ambiguity — "each image is a panel" and "each image is a
+chapter" coincide today and diverge the moment several panels are drawn on one of several images —
+and told a later session to **settle it before building**. Settled: images become PANELS.
+`comicCreateChapter()` already forms one chapter per panel (`v85_p`), so three panels drawn on one
+page correctly give three chapters from that page.
+
+| | |
+|---|---|
+| **⚠️ THE SEAM, and why this was affordable at all** | `dataUrl`/`naturalW`/`naturalH` still mean **the ACTIVE page**, so all ~20 canvas, hit-test, redraw, resize and move call sites are untouched — they still see exactly one image, as they always did. What is new is `APP_COMIC.pages`, `pageIdx`, and a `page` on each box. Switching pages swaps the active three and redraws |
+| **⚠️ cropping follows the BOX, not the screen** | `_comicCropDataUrl` cropped from the displayed image — correct for one page, silently wrong for several: every panel would have been extracted from whichever page the user happened to be looking at. It now resolves the box's own page. Kept SYNCHRONOUS (all three callers are, and `comicOpenReview` is not even async) via a per-page offscreen `Image` started at load time, with a whole-page box short-circuiting to that page's own dataUrl — which is also the dominant shape here |
+| **the single-file path is byte-for-byte unchanged** | It carries most of this region's test surface and several past bugs (`v85_u` the resize observer, `v86_c` duplicated listeners, `v88_c` item AM), so the multi path was added BESIDE it rather than by generalising it and hoping. One file still REPLACES (`comicClearPanels` + item AM's whole-image pre-select); several files APPEND |
+| **⚠️ "use whole image" now acts on the ACTIVE page only** | It replaced the entire box list, which for a multi-page upload would delete every other page's panels — most of the user's work — behind a button that says "use whole image", singular |
+| **the draft** | Boxes carry `page`; the EXTRA pages ride in `comic.pages` while page 0 stays `dataUrl`, so a draft written here still resumes on an older build and a ~1MB page is not sent twice. ⚠️ Both the per-box `page` and `pages` had to be added to the SERVER's draft whitelist — the projection where `description` was silently dropped once already (item AN). A stripped `page` is worse than it looks: every box would collapse onto page 0 and be cropped from the wrong image on resume. Capped at 30 pages, matching the extraction route's own image cap, and an oversized page is skipped rather than failing the whole draft |
+| **live-verified** | Three real canvas-generated JPEGs of different sizes (600×400, 500×700, 900×300) through the REAL handler: three pages, three whole-image panels each at its own page's size, page strip visible. Cropping all three while page 0 is displayed gives `600x400 / 500x700 / 900x300`, and the same after switching to page 2 — identical. A partial box drawn on page 2 crops to `200x150` from either view. Draft round trip: 2 extra pages stored, all four box pages preserved, all three pages and the strip back after a real resume |
+| **guards** | `unit-comic-multi-image.test.js`, five sections. **Eight mutations red** — including "crop from the displayed page", which is the pre-item-V behaviour. ⚠️ The hit-test mutation first came back GREEN: the fixture's two boxes gave the same answer either way, and only a point inside BOTH (the scan runs last-first, so an unfiltered hit-test returns the other page's box) can tell them apart |
 
 ## ✅ v89_ak — the job-coverage audit: the enumeration, not another instance
 
