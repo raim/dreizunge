@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_m` cut
+# Session prompt — written at the `v90_n` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_m`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_n`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -117,10 +117,20 @@ the IPv4 literal, and a loopback NAME pins `family: 4`. **If it ever recurs, che
 and its TIMING first**: `ECONNREFUSED` in single-digit milliseconds is a local refusal and the wlan
 is innocent; a real network fault gives `ETIMEDOUT`/`EHOSTUNREACH` and takes seconds.
 
-⚠️ **Two things that log showed and `v90_l` did NOT fix**, both worth measuring now that the cause
-is gone: a lesson retries 3× IMMEDIATELY, so all three attempts land inside one fault (chapter 2 of
-3 died exactly that way), and every `✓ reachable again` triggers a real model warm-up, which is
-expensive when the transitions are spurious.
+✅ **BOTH THINGS THAT LOG SHOWED AND `v90_l` DID NOT FIX ARE NOW CLOSED (`v90_n`) — one was real,
+one dissolved on measurement. Do not re-derive either.**
+- **The retry WAS real, and worse than described.** Not "immediate": attempts begin at **2ms, 807ms,
+  1611ms, giving up after 1615ms**. The conclusion held anyway — 1.6s does not outlast an interface
+  stall. Now exponential AND split hard-vs-soft (`pingFailureIsHard`, the same predicate
+  `_scheduleBackendRecheck` uses): a refused connection waits **5s then 15s (a 20s window)**, a bad
+  generation still **800ms then 2.4s**. ⚠️ Fell out of it: **`withRetry` was RETRYING CANCELS** —
+  1606ms of sleeping after the user pressed stop, and the error stopped `=== CANCELLED`.
+- **The warm-up is NOT expensive — measured at 565/565/602ms**, three runs, *while a 3-chapter book
+  job was running*. `llm.js` sends `keep_alive: -1`, so `ollama ps` shows the model pinned
+  `UNTIL: Forever` and it is never evicted; the "warm-up" finds it loaded and is a 1-token round
+  trip. **No code change.** ⚠️ The concern would be real if the model were ever evicted (something
+  else running `ollama stop`, or a competing model pushing it out) — it is configuration-dependent,
+  not impossible.
 
 ✅ **THE SUITE AUDIT IS COMPLETE — FIVE PASSES, AND NOTHING IS OWED FROM IT.**
 
@@ -223,8 +233,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 366 checks
-node test/run.js --quick                  → expect 303
+node test/run.js                          → expect 367 checks
+node test/run.js --quick                  → expect 304
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -257,7 +267,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **359 topics, 100 storylines, 33 languages, 743 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_m'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_n'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

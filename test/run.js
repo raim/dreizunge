@@ -279,6 +279,7 @@ run('unit: my-story generation plumbing (v50)', 'node', [path.join(__dirname, 'u
 run('unit: dialect glossary importer (M1, deterministic)', 'node', [path.join(__dirname, 'unit-dialect-glossary.test.js')]);
 run('unit: dialect TTS approximate detection (M1)', 'node', [path.join(__dirname, 'unit-dialect-tts.test.js')]);
   run('unit: dialect import panel toggle (M1)', 'node', [path.join(__dirname, 'unit-dialect-panel.test.js')]);
+  run('unit: lesson retry — cancel, and hard-vs-soft backoff (v90_n)', 'node', [path.join(__dirname, 'unit-lesson-retry.test.js')]);
   run('unit: dialect story generator + gate (M2)', 'node', [path.join(__dirname, 'unit-dialect-story.test.js')]);
   run('unit: dialect mute + no-lang prompt', 'node', [path.join(__dirname, 'unit-dialect-mute.test.js')]);
 run('unit: no-keyboard glyph ordering (v48)', 'node', [path.join(__dirname, 'unit-no-keyboard.test.js')]);

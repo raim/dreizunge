@@ -292,7 +292,13 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
     if (opts && typeof opts.onRequest === 'function') {
       try { opts.onRequest(() => { aborted = true; req.destroy(); }); } catch (_) {}
     }
-    req.on('error', e => reject(aborted ? new Error(CANCELLED) : new Error('Ollama network: ' + e.message)));
+    // ⚠️ v90_n: the original error's `code` is PRESERVED onto the wrapper. It used to be dropped,
+    // so `ECONNREFUSED` reached callers as message text only and every layer above had to regex for
+    // it — which is why server.js's retry could not tell "the backend is down" from "the model
+    // answered badly" and waited the same 800ms for both. Purely additive: nothing read `.code` on
+    // these errors before, so no existing branch changes.
+    req.on('error', e => reject(aborted ? new Error(CANCELLED) : Object.assign(
+      new Error('Ollama network: ' + e.message), e.code ? { code: e.code } : {})));
     req.setTimeout(timeoutMs, () => { req.destroy(); reject(new Error('Ollama timeout')); });
     req.write(body); req.end();
   });
@@ -509,7 +515,13 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
     if (opts && typeof opts.onRequest === 'function') {
       try { opts.onRequest(() => { aborted = true; req.destroy(); }); } catch (_) {}
     }
-    req.on('error', e => reject(aborted ? new Error(CANCELLED) : new Error('Ollama network: ' + e.message)));
+    // ⚠️ v90_n: the original error's `code` is PRESERVED onto the wrapper. It used to be dropped,
+    // so `ECONNREFUSED` reached callers as message text only and every layer above had to regex for
+    // it — which is why server.js's retry could not tell "the backend is down" from "the model
+    // answered badly" and waited the same 800ms for both. Purely additive: nothing read `.code` on
+    // these errors before, so no existing branch changes.
+    req.on('error', e => reject(aborted ? new Error(CANCELLED) : Object.assign(
+      new Error('Ollama network: ' + e.message), e.code ? { code: e.code } : {})));
     req.write(body); req.end();
   });
 }

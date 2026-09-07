@@ -287,7 +287,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_m';
+const APP_VERSION  = 'v90_n';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -3327,15 +3327,69 @@ function _qcLessonUserFlagged(tp, ls) {
 }
 
 // ── Retry helper ──────────────────────────────────────────────────────
-async function withRetry(label, fn, retries = 3, delay = 800) {
+// v90_n, both halves MEASURED on the shipped code rather than reasoned about:
+//
+// 1. ⚠️ A CANCEL WAS RETRIED. There was no `CANCELLED` re-throw here, although eighteen other sites
+//    in this file have one. Measured: pressing stop during lesson generation spent **1606ms**
+//    sleeping through two further attempts, and the error that finally surfaced was
+//    `"Lesson 3 failed after 3 attempts: LLM call cancelled"` — which no longer `=== CANCELLED`.
+//    The final job STATUS survived only because `jobFailOrCancel`'s second disjunct checks
+//    `j.status === 'cancelled'`, which `/api/jobs/cancel` happens to set before it aborts; the
+//    message test alone would have recorded a deliberate cancel as a failure. `_callLLM`'s own
+//    "already cancelled: do not START another call" checkpoint is what kept attempts 2 and 3 from
+//    issuing fresh generation requests, so the cost was the delay and a misleading log, not model
+//    work — but the retry loop must not depend on another layer's guard to be correct.
+//
+// 2. ⚠️ THE BACKOFF WAS FLAT AND TOO SHORT TO OUTLAST A FAULT. `roadmap_v90.md` recorded this as
+//    "a lesson retries 3× IMMEDIATELY". Measured, it is not immediate — attempts begin at
+//    **2ms, 807ms and 1611ms, giving up after 1615ms** — but the conclusion held: against an
+//    interface or DHCP stall lasting seconds, all three attempts land inside the SAME fault and the
+//    chapter dies. That is exactly how chapter 2 of 3 was lost.
+//    A REFUSED CONNECTION AND A BAD ANSWER ARE NOT THE SAME FAILURE and must not wait the same
+//    time: a malformed generation may well succeed on an immediate retry, whereas nothing that
+//    happens in 800ms can make a refused socket start listening. So a hard connection failure gets
+//    the long backoff and everything else keeps roughly today's timing. This is the same
+//    hard-vs-soft distinction `_scheduleBackendRecheck` already makes, using the same named
+//    predicate (`pingFailureIsHard`) rather than a second, drifting copy of the rule.
+//    ⚠️ It only works because `llm.js` now PRESERVES `err.code` when it wraps a network error; it
+//    used to build a fresh `Error` from the message alone and the code was lost.
+const _retryEnvMs = (name, dflt) => {
+  const v = parseInt(process.env[name] || '', 10);
+  return Number.isFinite(v) && v >= 0 ? v : dflt;
+};
+// Overridable for the same reason the backend-recheck timings are: an operator on a flaky link has
+// a real reason to widen these, and a test needs to collapse them to run in milliseconds.
+const RETRY_SOFT_BASE_MS = _retryEnvMs('LESSON_RETRY_SOFT_MS', 800);
+const RETRY_HARD_BASE_MS = _retryEnvMs('LESSON_RETRY_HARD_MS', 5000);
+const RETRY_BACKOFF = 3;
+
+// The delay BEFORE attempt `i+1`, given what attempt `i` failed with.
+function retryDelayMs(err, attempt) {
+  const code = err && err.code;
+  const base = pingFailureIsHard(code) ? RETRY_HARD_BASE_MS : RETRY_SOFT_BASE_MS;
+  return base * Math.pow(RETRY_BACKOFF, attempt - 1);
+}
+
+async function withRetry(label, fn, retries = 3) {
   let lastErr;
   for (let i = 1; i <= retries; i++) {
     console.log(`    ${label} attempt ${i}…`);
     try { return await fn(); }
     catch(e) {
+      // ⚠️ A cancel is not a failure and must never be retried — the same one-liner eighteen other
+      // call sites in this file carry, and re-throwing the ORIGINAL error keeps `msg === CANCELLED`
+      // true for every downstream test of it.
+      if (String(e && e.message) === CANCELLED) throw e;
       console.warn(`    Attempt ${i} failed: ${e.message}`);
       lastErr = e;
-      if (i < retries) await new Promise(r => setTimeout(r, delay));
+      if (i < retries) {
+        const wait = retryDelayMs(e, i);
+        if (wait) {
+          console.log(`    …waiting ${wait}ms before attempt ${i + 1}`
+            + (pingFailureIsHard(e && e.code) ? ` (${e.code} — the backend is down, not slow)` : ''));
+          await new Promise(r => setTimeout(r, wait));
+        }
+      }
     }
   }
   throw new Error(`${label} failed after ${retries} attempts: ${lastErr.message}`);

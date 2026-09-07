@@ -2935,6 +2935,109 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_n — the two loose ends `v90_l` left: one was real and worse than described, one dissolved
+
+The `v90_l` write-up flagged two things its IPv6 fix did not address, "both worth measuring now that
+the cause is gone". Measured. **ZERO `ui.json` keys.**
+
+### ⚠️ THE WARM-UP CONCERN DISSOLVED — MEASURED, NOT ARGUED, AND NO CODE CHANGED
+
+The claim: *"every `✓ reachable again` triggers a real model warm-up, which is expensive when the
+transitions are spurious."* **It costs 565 / 565 / 602 ms** — three runs of the exact call
+`warmup()` makes (`_callOllama(model, '', 'hi', 1, {think:false})`), and taken *while the user's own
+3-chapter book job was running and competing for the CPU*.
+
+Why it is cheap: **`llm.js` sends `keep_alive: -1` on every generation call**, so `ollama ps` reports
+both models pinned **`UNTIL: Forever`** (`expires_at: 2318-12-18`) and nothing is ever evicted. The
+"warm-up" therefore finds the model already loaded and is a 1-token round trip. The concern was about
+a design in which a warm-up reloads 22GB; that is not what this configuration does.
+
+⚠️ **It is configuration-dependent, not impossible** — if something else ran `ollama stop`, or a
+competing model pushed this one out, the reload cost would be real. Recorded so the next session
+neither re-derives it nor "fixes" a 600ms call.
+
+### ⚠️ THE RETRY WAS REAL — AND THE WRITE-UP UNDERSTATED IT IN ONE DIRECTION, OVERSTATED IT IN ANOTHER
+
+*"A lesson retries 3× IMMEDIATELY"* is not what the code did. Measured on the shipped `withRetry`:
+attempts begin at **2ms, 807ms and 1611ms, giving up after 1615ms** — a flat 800ms gap, not zero.
+**The conclusion held regardless**: 1.6 seconds does not outlast an interface or DHCP stall, so all
+three attempts land inside the SAME fault and the chapter dies. That is how chapter 2 of 3 was lost.
+
+**A refused connection and a bad answer are not the same failure and must not wait the same time.**
+A malformed generation may well succeed on an immediate retry; nothing that happens in 800ms can make
+a refused socket start listening. So the backoff is now exponential AND split, reusing
+`pingFailureIsHard` — the SAME named predicate `_scheduleBackendRecheck` already uses, rather than a
+second copy of the rule that could drift from it:
+
+| failure | before | after |
+|---|---|---|
+| hard (`ECONNREFUSED`/`EHOSTUNREACH`/`ENOTFOUND`) | 800ms, 800ms — **1.6s window** | 5s, 15s — **20s window** |
+| soft (bad JSON, empty response, `ETIMEDOUT`) | 800ms, 800ms | 800ms, 2.4s — **3.2s window** |
+
+⚠️ **`ETIMEDOUT` is deliberately SOFT.** A timeout on a swapping box is not evidence the backend went
+anywhere — the same distinction, for the same reason, that `v89_af` built into the re-check loop.
+
+Both bases are env-overridable (`LESSON_RETRY_SOFT_MS`, `LESSON_RETRY_HARD_MS`) in the idiom this
+file already uses for the backend timings: an operator on a flaky link has a real reason to widen
+them, and the guard collapses them to 0ms so it exercises control flow without ever waiting on a timer.
+
+### ⚠️⚠️ AND IT FELL OUT THAT `withRetry` WAS RETRYING CANCELS
+
+Not in the brief, found while reading the function. There was **no `CANCELLED` re-throw**, although
+**eighteen other sites in `server.js` carry one**. Measured on the shipped code: pressing stop during
+lesson generation spent **1606ms** sleeping through two further attempts, and the error that finally
+surfaced was `"Lesson 3 failed after 3 attempts: LLM call cancelled"` — which **no longer
+`=== CANCELLED`**.
+
+What limited the damage, and why neither is a reason to leave it:
+- The final job STATUS was still correct, but only because `jobFailOrCancel` checks
+  `j.status === 'cancelled'` as well as the message, and `/api/jobs/cancel` happens to set that
+  status *before* it aborts. **The message test alone would have recorded a deliberate stop as a
+  failure**, and a retry loop must not depend on another layer's ordering to be correct.
+- Attempts 2 and 3 did not issue fresh generation requests, because `_callLLM`'s own "already
+  cancelled: do not START another call" checkpoint (`v88_l`) caught them. So the cost was 1.6s and a
+  misleading log, not model work — again, someone else's guard.
+
+### The guard — `test/unit-lesson-retry.test.js`, five sections. `withRetry` had NO test at all before
+
+⚠️ **Timings are asserted from the COMPUTED SCHEDULE, never by sleeping through one** (`v89` rule 16:
+a synchronous wait on a timer measures nothing). `retryDelayMs` is a pure function of
+`(error, attempt)`, so the schedule is checkable directly; the one section that runs the loop
+collapses both bases to 0ms through the env overrides.
+
+⚠️ **§2 asserts the PROPERTY, not the constants** — "the hard window must be ≥10s" and "the delay
+must grow" — so retuning 5s/15s does not falsely redden it, while flattening the schedule does.
+
+**Six mutations red**, including a meta-mutation on the guard's own structure.
+
+### ⚠️⚠️ A MUTATION THAT "SURVIVED" WAS A BROKEN MUTATION, NOT A VACUOUS GUARD — `v89` RULE 1 AGAIN
+
+The first sweep reported the `CANCELLED` re-throw deletion as SURVIVING. It had not. The mutation
+was `s.replace(line, '', 1)` on the whole file, and **that exact line occurs SIX times in
+`server.js`** — so it deleted a DIFFERENT function's re-throw and left `withRetry`'s in place. The
+guard was fine; the evidence was not. Re-scoped to the function body (with the span asserted at
+1009 chars before editing, per `v89` rule 1) it fails immediately: *"a cancel is attempted ONCE, not
+retried (made 3)"*.
+**The rule generalises past roadmap edits to MUTATION TESTING: an unbounded search used to locate an
+edit is wrong even when the edit is a deletion of one line, and a surviving mutant must be confirmed
+to have actually landed before it is believed.**
+
+### ⚠️ AND THE GUARD'S OWN FIRST DRAFT HAD THE VACUOUS SHAPE BUILT INTO IT
+
+Its five sections were originally chained through `.then` callbacks, each calling the next, with
+`ALL PASSED` printed by the last. A missed hand-off would have skipped every later section **and
+still exited 0**. Restructured to one linear `async` main with a `ran` counter asserted to be 5 at
+the end; mutation 6 removes one `ran++` and the file now fails with *"every section ran (only 4 of 5
+did)"*.
+
+### Also fixed: `llm.js` was discarding `err.code`
+
+Both network-error sites built a fresh `Error` from the message alone, so `ECONNREFUSED` reached
+every caller as text and nothing above could branch on it — which is why the retry could not tell a
+down backend from a bad generation. The code is now carried onto the wrapper. **Purely additive**:
+nothing read `.code` on these errors before, so no existing branch changes. ⚠️ The guard asserts
+**both** sites, because patching one is a silent half-fix.
+
 ## ✅ v90_m — scrape a story straight from a URL, scoped to schema.org `NewsArticle`
 
 The feature teed up at the `v90_k` cut and costed in *"SCRAPE A STORY STRAIGHT FROM A URL"* above.
