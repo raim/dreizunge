@@ -2695,6 +2695,27 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_i — the last English label in that menu, and a table that keeps it that way
+
+User: *"go ahead and add the key for the QC button"* — the one title `v90_h` left English because no
+existing key fitted. **ONE granted `ui.json` key.**
+
+`qc.story_btn` = `"Proofread with QC model"`, the exact string the button already carried, so nothing
+changes for an English reader. Named for its sibling and **inserted directly after it in `ui.json`**,
+so a translator meets the pair together: `qc.summary_btn` "Proofread summary with QC model" and
+`qc.story_btn` "Proofread with QC model". One-line diff.
+
+⚠️ **The guard now walks the MENU, not a list of four.** `unit-storyline-edit-menu` §7 reads
+`_EDIT_MENUS['ls-story'].rows` and fails if any row's button is not in its table of `t()`-backed
+titles — so a sixth control added to this menu with a hardcoded title cannot repeat `v90_g`, where
+four English tooltips became four English labels the moment they moved. The "already translated in
+20+ languages" half stays scoped to the four REUSED keys: holding a freshly granted key to it would
+go red on a string the user has not translated yet.
+
+Two mutations red: the QC title losing its `t()` wiring, and a sixth row joining the menu with no key.
+
+Suite: **364 full / 302 quick**, 741 `en` keys.
+
 ## ✅ v90_h — the menus read English in every language, and a stamp claimed what the record did not
 
 User: *"the text 'Re-translate (after fixing the story text)' is not in ui.json? We can delete the

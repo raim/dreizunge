@@ -312,15 +312,33 @@ try {
     const UIJ = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
     // The wiring is source-pinned: applyUIStrings sweeps the DOM with an element-scoped
     // querySelectorAll, which this harness does not model, so the function cannot be run here.
-    for (const [id, key] of [['ls-story-explorer-btn', 'text_explorer.toggle_title'],
-                             ['ls-story-analyze-btn', 'gen.post_gen_analysis_lbl'],
-                             ['story-repair-toggle-btn', 'lesson.edit_story'],
-                             ['story-retranslate-btn', 'models.translation']]) {
+    // ⚠️ EVERY button in this menu, not four of five. The fifth (🔍 QC) was left English at v90_h
+    // because no existing key fitted, and the user granted one key for it at v90_i — so the table
+    // is the place that says "all of them", and a sixth button added to this menu with a hardcoded
+    // title fails here rather than shipping an English row into every language.
+    const REUSED = { 'ls-story-explorer-btn': 'text_explorer.toggle_title',
+                     'ls-story-analyze-btn': 'gen.post_gen_analysis_lbl',
+                     'story-repair-toggle-btn': 'lesson.edit_story',
+                     'story-retranslate-btn': 'models.translation' };
+    const GRANTED = { 'story-qc-btn': 'qc.story_btn' };
+    for (const [id, key] of Object.entries({ ...REUSED, ...GRANTED })) {
       assert.ok(new RegExp(`_setAttr\\('${id}',\\s*'title',\\s*t\\('${key.replace(/\./g, '\\.')}'\\)`).test(html),
         `${id}'s title comes from t('${key}')`);
       assert.ok(UIJ.en[key] && UIJ.en[key].trim(), `${key} exists in en`);
+    }
+    // …and the four REUSED ones really were already translated, which is the claim that they cost
+    // nothing. The granted one is new and en-only until the next translation pass, so it is not
+    // held to that — asserting otherwise would go red on a key the user has not translated yet.
+    for (const key of Object.values(REUSED)) {
       const translated = Object.keys(UIJ).filter(l => l !== 'en' && UIJ[l][key]).length;
       assert.ok(translated > 20, `${key} is already translated (${translated} languages) — no new key`);
+    }
+    // every row in the menu is covered above — the check that keeps this table honest
+    const menuRows = JSON.parse(loadClient({ quiet: true }).run(
+      "JSON.stringify(_EDIT_MENUS['ls-story'].rows)"));
+    for (const id of menuRows) {
+      assert.ok(REUSED[id] || GRANTED[id],
+        `${id} is in the story menu and must have a t()-backed title listed here`);
     }
     // ⚠️ and the parenthetical the user asked to drop is gone from the ATTRIBUTE. Scanning the
     // whole file for the phrase fired on the source's own comment, which QUOTES the user's request

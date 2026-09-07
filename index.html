@@ -3333,6 +3333,10 @@ function applyUIStrings() {
   _setAttr('ls-story-explorer-btn', 'title', t('text_explorer.toggle_title'));
   _setAttr('ls-story-analyze-btn',  'title', t('gen.post_gen_analysis_lbl'));
   _setAttr('story-repair-toggle-btn', 'title', t('lesson.edit_story'));
+  // v90_i: the one title in this row that had NO existing key — `qc.summary_btn` is the summary's
+  // version of the same sentence and the story's never got one. Named for that pair, and holding
+  // the exact English the button already carried, so nothing visible changes for an en reader.
+  _setAttr('story-qc-btn',          'title', t('qc.story_btn'));
   // The user's own instruction for this one: "we can delete the '(after fixing the story text)'
   // part and just re-use an existing 'Translate' ui entry". `models.translation` is that entry —
   // and it is the SAME string retranslateStory already labels this call with in the jobs popover,

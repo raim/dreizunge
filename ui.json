@@ -563,6 +563,7 @@
     "qc.none": "none",
     "qc.none_selected": "No corrections selected — tick at least one, or Discard",
     "qc.summary_btn": "Proofread summary with QC model",
+    "qc.story_btn": "Proofread with QC model",
     "qc.summary_accepted": "Summary corrections applied",
     "models.pill_hint": "Click to choose models",
     "storyboard.scheme": "🎨 Colour scheme",
