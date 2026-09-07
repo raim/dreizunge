@@ -11,7 +11,7 @@
 'use strict';
 const assert = require('assert');
 const path = require('path');
-const { fnRange, ifSites } = require(path.join(__dirname, '..', 'tools', 'branch-mutation.js'));
+const { fnRange, ifSites, discover } = require(path.join(__dirname, '..', 'tools', 'branch-mutation.js'));
 
 // ── 1. fnRange keeps `async`, or every mutant of an async function is skipped as unparseable ─────
 {
@@ -81,6 +81,24 @@ const { fnRange, ifSites } = require(path.join(__dirname, '..', 'tools', 'branch
   const server = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
   const q = fnRange(server, 'qcCheckDiacriticCandidate');
   assert.ok(server.slice(q[0], q[1]).startsWith('async function'), 'and an async server function keeps its keyword');
+}
+
+// ── 5. ⚠️ discover() must know EVERY name the suite gives its extraction helper ──────────────────
+// v90_e: the helper is called `ext` in most files, `extract` in many, and `lift` in a few. The
+// probe's first version knew the first two, so it attributed `qcProse` to `unit-qc-correct` alone
+// and scored it 0/16 — while `unit-qc-unify-parity` had been lifting and running it the whole time
+// under `lift(`. **A missed helper name inflates the zeros**, which is the direction that wastes a
+// session chasing a guard that is already there.
+{
+  const found = discover(1);
+  const byName = (n) => found.find(f => f.fn === n);
+  const qc = byName('qcProse');
+  assert.ok(qc, 'qcProse is discovered at all');
+  assert.ok(qc.tests.includes('unit-qc-unify-parity.test.js'),
+    'and the file that lifts it with `lift(NEW, ...)` is among its guards — not just the `ext(` ones');
+  // …and the common shapes still work, so widening the pattern did not break them
+  assert.ok(byName('_provSrcBits'), 'an `ext(client, "name")` lift is still discovered');
+  assert.ok(found.length > 50, `and the sweep still has a population to work on (${found.length})`);
 }
 
 console.log('  branch-mutation probe: async slices, real conditions only, and it still finds them: OK');

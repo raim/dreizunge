@@ -85,4 +85,103 @@ console.log('  non-destruction: clean prose untouched, paragraphs kept, idempote
 }
 console.log('  wiring: lossless toggle, PDF-only default, re-split on toggle, i18n: OK');
 
+// ── 4. …and the toggle RUN, not read (v90_e) ─────────────────────────────────
+//
+// ⚠️ §3 above pins `_applyUploadCleanup` as source text — the string
+// `on ? cleanExtractedText(_pdfOrig.text) : _pdfOrig.text` appears in it. The branch-mutation probe
+// flipped all four of its conditions, both ways, and this file stayed green (0/8); so did the whole
+// --quick suite. "Lossless both ways" is the user-visible promise of the 🧹 checkbox, and it was
+// guarded by a regex over the line that implements it.
+{
+  // The module-level upload state lives in the sandbox, so it can be read back after each call.
+  const mkApply = (checked) => {
+    const fn = new Function('document', 'console', 'startState', `
+      let _pdfOrig = startState.orig, _pdfRawText = startState.raw, _pdfPages = startState.pages;
+      let _lastCleanStats = null;
+      ${ext('cleanExtractedText')}
+      ${ext('_applyUploadCleanup')}
+      return { run: _applyUploadCleanup,
+               state: () => ({ raw: _pdfRawText, pages: _pdfPages, stats: _lastCleanStats }) };`);
+    return (startState) => {
+      const logged = [];
+      const m = fn({ getElementById: (id) => (id === 'pdf-cleanup-cb' ? { checked } : null) },
+                   { log: (...a) => logged.push(a.join(' ')) }, startState);
+      m.logged = logged;
+      return m;
+    };
+  };
+  const messy = ['Ein Satz der über', 'zwei Zeilen läuft.', '', '7', '', 'Und noch einer.'].join('\n');
+  const orig = { text: messy, pages: [messy, 'Seite zwei hier.'] };
+
+  // ON: the full text and every page are cleaned
+  {
+    const m = mkApply(true)({ orig, raw: null, pages: null });
+    m.run();
+    const st = m.state();
+    assert.strictEqual(st.raw, clean(messy), 'with the box ticked the full text is the cleaned text');
+    assert.notStrictEqual(st.raw, messy, '(and cleaning this fixture really does change it)');
+    assert.deepStrictEqual(st.pages, orig.pages.map(clean), 'and each page is cleaned SEPARATELY');
+  }
+  // ⚠️ OFF: the pristine extraction comes back byte for byte. This is the lossless half, and the
+  // reason `_pdfOrig` is kept at all — a toggle that could not undo itself would be a one-way edit.
+  {
+    const m = mkApply(false)({ orig, raw: 'stale', pages: ['stale'] });
+    m.run();
+    const st = m.state();
+    assert.strictEqual(st.raw, messy, 'unticking restores the pristine text exactly');
+    assert.deepStrictEqual(st.pages, orig.pages, 'and the pristine pages');
+    assert.notStrictEqual(st.pages, orig.pages,
+      '⚠️ as a COPY — handing out the pristine array itself would let a later edit destroy the original');
+  }
+  // an upload with no per-page split (plain .txt) leaves the page array null rather than inventing one
+  {
+    for (const checked of [true, false]) {
+      const m = mkApply(checked)({ orig: { text: messy }, raw: null, pages: ['stale'] });
+      m.run();
+      assert.strictEqual(m.state().pages, null, `checked=${checked}: no pages in, no pages out`);
+    }
+  }
+  // nothing uploaded yet: the call is a no-op, and specifically does NOT wipe the current text
+  {
+    const m = mkApply(true)({ orig: null, raw: 'whatever is on screen', pages: ['p'] });
+    m.run();
+    assert.strictEqual(m.state().raw, 'whatever is on screen', 'no upload → nothing is touched');
+    assert.deepStrictEqual(m.state().pages, ['p']);
+  }
+  // ⚠️ The console report is the FEATURE, not debug noise: v69_p added it on a user request,
+  // because the pass runs silently in the browser and "the only evidence was the text looking
+  // different". Nothing asserted it, so all four of its branches survived the probe.
+  {
+    const on = mkApply(true)({ orig, raw: null, pages: null });
+    on.run();
+    const said = on.logged.join('\n');
+    assert.ok(/Text cleanup \(no LLM\)/.test(said), 'a cleaning run says it ran');
+    // ⚠️ The counts must be the FULL TEXT's, not the last page's. `_fullStats` is captured BETWEEN
+    // the full-text clean and the per-page map for exactly that reason — the per-page calls
+    // overwrite `_lastCleanStats` on their way past. Reading them off the end of the run (3 → 3
+    // here, the second page) is the shape of the bug that ordering prevents.
+    const w = (x) => String(x).split(/\s+/).filter(Boolean).length;
+    assert.ok(new RegExp(`${w(messy)} → ${w(clean(messy))} words`).test(said),
+      `the report carries the FULL text's before/after counts (${w(messy)} → ${w(clean(messy))})`);
+    assert.strictEqual(on.state().stats.wordsIn, w('Seite zwei hier.'),
+      '(and the run really does leave the LAST PAGE\'s stats behind — so the line above is not ' +
+      'trivially the same number)');
+    assert.ok(/line\(s\) rejoined/.test(said) && /junk line\(s\) removed/.test(said),
+      'and what it did to get there');
+    assert.ok(/to 2 page\(s\) separately/.test(said), 'naming the page count when the upload has pages');
+
+    const noPages = mkApply(true)({ orig: { text: messy }, raw: null, pages: null });
+    noPages.run();
+    assert.ok(!/page\(s\) separately/.test(noPages.logged.join('\n')),
+      'a plain-text upload does not claim to have cleaned pages it does not have');
+
+    const off = mkApply(false)({ orig, raw: null, pages: null });
+    off.run();
+    const offSaid = off.logged.join('\n');
+    assert.ok(/cleanup off/.test(offSaid), 'and switching it off says THAT, rather than saying nothing');
+    assert.ok(!/words/.test(offSaid), 'without pretending it counted anything');
+  }
+  console.log('  _applyUploadCleanup: cleans on, restores the pristine copy off, copies the pages, says what it did: OK');
+}
+
 console.log('unit-pdf-cleanup: ALL PASSED');

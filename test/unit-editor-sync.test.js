@@ -158,4 +158,68 @@ assert.strictEqual(sw.synonyms[0].w, 'riesig', 'syn category word synced');
 assert.strictEqual(sw.synonyms[0].g, 'huge', 'syn category gloss synced');
 console.log('  synonyms editor sync (incl. context sentence): OK');
 
+// ── _editorReadInputsMath, with a document that actually serves its inputs (v90_e) ──
+//
+// ⚠️ It is compiled into buildSync() above and dispatched through the registry, so it RUNS on every
+// math fixture — against a `document` whose getElementById answers only 'lesson-editor'. `numInp`
+// is therefore always null and the body is a no-op: the branch-mutation probe flipped all six of
+// its conditions, both ways, and this file stayed green (0/6). Escalated to the whole --quick
+// suite: still nothing. A math lesson could have silently stopped saving its numbers and operators.
+{
+  const mathDoc = (numbers, checkedOps) => ({
+    getElementById: (id) => {
+      if (id === 'math-numbers-input-3') return numbers === null ? null : { value: numbers };
+      const m = /^math-op-3-(\d+)$/.exec(id);
+      if (m) return { checked: checkedOps.includes(String.fromCharCode(Number(m[1]))) };
+      return null;
+    },
+  });
+  const readMath = (doc) => new Function('document',
+    extract('_editorReadInputsMath') + '\nreturn _editorReadInputsMath;')(doc);
+
+  {
+    const ls = {};
+    readMath(mathDoc('3 7  12', ['+', '÷']))(ls, 3);
+    assert.deepStrictEqual(ls.numbers, [3, 7, 12], 'the typed numbers are parsed, collapsed whitespace and all');
+    assert.deepStrictEqual(ls.mathOps, ['+', '÷'],
+      'and exactly the ticked operators — keyed by char code, so ÷ and × survive the round trip');
+  }
+  {
+    const ls = {};
+    readMath(mathDoc('  4  0 -2 abc 9 ', ['^']))(ls, 3);
+    assert.deepStrictEqual(ls.numbers, [4, 9],
+      'zero, negatives and non-numbers are dropped rather than written into the lesson');
+    assert.deepStrictEqual(ls.mathOps, ['^']);
+  }
+  // ⚠️ EMPTY MEANS "LEAVE IT ALONE", not "clear it". These fields have existing values on an edit,
+  // and a sync that wrote [] over them would silently empty a working lesson.
+  {
+    const ls = { numbers: [1, 2], mathOps: ['+'] };
+    readMath(mathDoc('   ', []))(ls, 3);
+    assert.deepStrictEqual(ls.numbers, [1, 2], 'an empty number field leaves the stored numbers untouched');
+    assert.deepStrictEqual(ls.mathOps, ['+'], 'and no ticked operator leaves the stored operators untouched');
+    readMath(mathDoc('abc xyz', []))(ls, 3);
+    assert.deepStrictEqual(ls.numbers, [1, 2], 'a field of pure junk is the same case');
+  }
+  // no inputs on the page at all (a non-math editor) — nothing written, nothing thrown
+  {
+    const ls = {};
+    readMath(mathDoc(null, []))(ls, 3);
+    assert.deepStrictEqual(ls, {}, 'a missing input writes nothing at all');
+    readMath({ getElementById: () => null })(ls, 3);
+    assert.deepStrictEqual(ls, {}, 'and a document that answers nothing does not throw');
+  }
+  // the operator ids really are the shared ones the editor renders
+  {
+    const asked = [];
+    const ls = {};
+    readMath({ getElementById: (id) => { asked.push(id); return null; } })(ls, 3);
+    assert.ok(asked.includes('math-numbers-input-3'), 'the number field is addressed by lesson index');
+    for (const op of ['+', '-', '×', '÷', '^']) {
+      assert.ok(asked.includes('math-op-3-' + op.charCodeAt(0)), `the ${op} checkbox is asked for`);
+    }
+  }
+  console.log('  _editorReadInputsMath: parses, filters, and leaves an empty field alone: OK');
+}
+
 console.log('unit-editor-sync: ALL PASSED');

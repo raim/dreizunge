@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_d` cut
+# Session prompt — written at the `v90_e` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_d`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_e`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -89,33 +89,45 @@ a clean wlan off/on, so the fix is UNTESTED against the real thing. The original
 `ip-config-unavailable` (DHCP timing out, 1564 times in one boot), which a clean toggle does not
 reproduce. If it recurs, the monitor shape is in `roadmap_v90.md`'s `v89_af` entry.
 
-⚠️ **THE SUITE AUDIT RAN IN THREE PASSES AND THE THIRD LEFT A REAL, RANKED LIST.**
+⚠️ **THE SUITE AUDIT RAN IN FOUR PASSES. WHAT IS LEFT IS NAMED AND SMALL.**
 
 - `v90_b` — 17 mutations of app behaviour; 9 survived the whole suite; 7 guard files repaired. Two
   guards were asserting against their own re-implementation.
-- `v90_c` — the seven it left over; **four were false positives.** A static "names a function, never
-  calls it" screen produces SUSPECTS, and three of the four were cleared only by the FULL-SUITE tier.
-  **Do not publish a suspect list as a to-do again.**
-- `v90_d` — the blind spot both missed: guards that RUN the right code on a fixture that cannot
-  disagree. `tools/branch-mutation.js` measured 86 functions / 1000 mutants: **46% caught, 14 scored
-  zero.** Two clusters repaired (`_splitLongUnit`, the provenance renderers).
+- `v90_c` — the seven it left over; **four were false positives.**
+- `v90_d` — the blind spot: guards that RUN the right code on a fixture that cannot disagree.
+  `tools/branch-mutation.js`, 86 functions / 1000 mutants, 46% caught, 14 zeros.
+- `v90_e` — those zeros. Three were caught elsewhere; five repaired; **four remain.**
 
-**To continue, run the probe — do not work from a copied list:**
+**THE FOUR THAT REMAIN**, all confirmed against `--quick`, all large orchestration functions whose
+branches are screen transitions and DOM assembly — they need journey-level fixtures, not the
+lift-and-drive pattern the other repairs used:
+
+| function | score | lifting guard |
+|---|---|---|
+| `doDialectImport` | 0/20 | `unit-dialect-panel` |
+| `renderEx` | 0/20 | `unit-student-flags` |
+| `startLesson` | 0/10 | `unit-drill`, `unit-learner-nav` |
+| `goLessonSet` | 0/10 | `unit-drill` |
+
+⚠️ **TWO LESSONS FROM THE AUDIT THAT COST TIME, IN THE ORDER THEY BIT:**
+
+1. **A missed extraction-helper name INFLATES the zeros.** `v90_d` scored `qcProse` 0/16 because the
+   probe knew `ext`/`extract` but not `lift`; `unit-qc-unify-parity` had been running it all along.
+   Fixed and guarded, but check `discover()`'s pattern before trusting a new zero.
+2. **Do not guess which other test covers a function.** `v90_d` wrote that `renderEx`/`startLesson`/
+   `goLessonSet` were "almost certainly" covered by `smoke-render`. It is in `--quick`. It caught
+   none of them.
+
+To continue, re-run the probe rather than working from the table above:
 
 ```
 node tools/branch-mutation.js --discover --out /tmp/res.json --max 10
 ```
 
-Read `roadmap_v90.md`'s `v90_d` entry FIRST for what a zero does and does not mean, and for the
-equivalent-mutant caveat. The largest untouched zeros were `doDialectImport` (0/20),
-`onUseDialectCb` (0/16), `qcProse` (0/16), `_renderCompStory` (0/14) and `_buildGlobalTtsSelectors`
-(0/14). `renderEx`, `startLesson`, `goLessonSet` and `loadSaved` also scored zero but are probably
-covered by `smoke-render` and the journey tests, which never name them — **escalate to the full suite
-before believing any of them.**
-
-⚠️ **RUN THE PROBE ON A COPY.** It rewrites real source files thousands of times. Writes go through
-temp+rename, but a concurrent reader can still catch a MUTATED file — the user hit exactly that
-during `v90_d` and reported it as two unexplained `--quick` failures. Set `MUT_ROOT` to the copy.
+⚠️ **RUN IT ON A COPY** (`MUT_ROOT`): it rewrites real source files thousands of times, and while
+writes are temp+rename, a concurrent reader still sees a MUTATED file. And when escalating a mutant
+to the suite, **rebuild `docs/` first or subtract `unit-static-freshness`** — every `index.html`
+mutant reddens it for the byte change, not the defect.
 
 ## Orient yourself, in this order
 
@@ -170,7 +182,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **355 topics, 99 storylines, 33 languages, 737 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_d'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_e'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

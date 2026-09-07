@@ -171,6 +171,100 @@ console.log('  heavy still throws on an empty answer, where light hands back the
 }
 console.log('  the two modes are genuinely different behaviours, not a cosmetic flag: OK');
 
+// ── 5. The ERROR path, which is contract and was never asserted (v90_e) ─────────────────────────
+//
+// ⚠️ Found by the branch-mutation probe: nine of qcProse's sixteen branch mutants survived this
+// file, and all nine live here — the cancel re-throw, the heavy-surfaces / light-retries asymmetry,
+// the attempt counter, the script-pin gate and the empty-input throw. Every one of them is a
+// deliberate decision with a comment in server.js explaining it, and none of them had a test. The
+// parity fixtures above cannot reach them: a captured RETURN VALUE cannot record a throw.
+{
+  // A builder of its own, because these cases need what the parity one deliberately does not give:
+  // a stub that can THROW, a call counter, and a scriptPinNote that leaves a visible mark.
+  const calls = [];
+  const mk = (behave, pin) => {
+    const deps = ['callLLMQC', 'langName', 'PROMPTS', 'fillPrompt', 'stripRaw', 'buildGenMeta',
+                  'scriptPinNote', 'OLLAMA_QC_MODEL', 'getRequestTimeout', 'CANCELLED', 'console'];
+    const body = lift(NEW, 'qcProse') + '\n' + lift(NEW, 'qcModeSpec') + '\n'
+      + lift(NEW, 'classifyStoryQc') + '\n' + lift(NEW, '_qcCorruption') + '\n'
+      + lift(NEW, 'storyDiffSentences') + '\n' + lift(NEW, 'splitSentences') + '\n'
+      + lift(NEW, '_wordLev') + '\n' + lift(NEW, 'textNormaliseChanges') + '\n'
+      + lift(NEW, '_surfaceKey') + '\n' + lift(NEW, '_lev') + '\n' + lift(NEW, '_lines') + '\n'
+      + lift(NEW, 'shoutedRun') + '\nconst QC_MODES = ["light","heavy"];'
+      + '\nconst QC_MAX_CHANGED_RATIO = 0.5;\nconst QC_MAX_WORD_EDIT_RATIO = 0.5;'
+      + '\nreturn { qcProse, qcModeSpec };';
+    return new Function(...deps, body)(
+      // the shape callLLMQC really returns — a bare string here makes every reply read as EMPTY,
+      // which is a different branch than the one under test
+      async (sys, user) => { calls.push({ sys, user });
+        return { text: behave(calls.length), promptTokens: 11, completionTokens: 22 }; },
+      (c) => ({ de: 'German', sr: 'Serbian' })[c] || c,
+      PROMPTS,
+      (t, v) => String(t).replace(/\{(\w+)\}/g, (_, k) => (v[k] !== undefined ? v[k] : '{' + k + '}')),
+      (x) => String(x), (o) => o,
+      pin || (() => ''),
+      'translategemma:12b', () => 60000, 'CANCELLED', { log(){}, warn(){} });
+  };
+  const spec = mk(() => '').qcModeSpec;
+  const qc = (behave, pin) => mk(behave, pin).qcProse;
+  const reset = () => { calls.length = 0; };
+  const boom = () => { throw new Error('connection reset'); };
+  const cancel = () => { throw new Error('CANCELLED'); };
+
+  // ── a CANCEL propagates and is never retried (v88_k: a cancel is not a failure) ──
+  reset();
+  await assert.rejects(() => qc(cancel)('Ein Satz hier.', 'de', { mode: 'light' }), /CANCELLED/,
+    'light re-throws a cancel instead of swallowing it into a "left unchanged" result');
+  assert.strictEqual(calls.length, 1,
+    '⚠️ and does NOT retry it — a cancelled job that retries twice more is a job that ignores cancel');
+
+  // ── a REAL failure: heavy surfaces it, light retries and then gives the input back ──
+  reset();
+  await assert.rejects(() => qc(boom)('Ein Satz hier.', 'de', { mode: 'heavy', kind: 'story' }),
+    /connection reset/, 'heavy surfaces a model error to its caller');
+  assert.strictEqual(calls.length, 1, 'heavy takes one shot');
+
+  reset();
+  const soft = await qc(boom)('Ein Satz hier.', 'de', { mode: 'light' });
+  assert.strictEqual(soft.failed, true, 'light does NOT throw — it reports failure');
+  assert.strictEqual(soft.corrected, 'Ein Satz hier.',
+    '⚠️ and hands the input back untouched: this mode runs unattended inside the extraction job, ' +
+    'where a throw would cost the panel its transcription');
+  assert.ok(/connection reset/.test(String(soft.note)), 'the reason is carried, not swallowed');
+  assert.strictEqual(calls.length, spec('light').attempts,
+    `and it retried exactly as many times as the mode spec allows (${calls.length}) — no more, and ` +
+    'not once: an unattended job that gives up on the first blip loses text it could have had');
+
+  // ── the retry carries FEEDBACK naming what was wrong, or the second attempt is the first again ──
+  reset();
+  const fed = await qc((n) => (n === 1 ? 'Ein Satz hier. Und noch einer.' : 'Ein Satz hier.'))(
+    'Ein Satz hier.', 'de', { mode: 'light' });
+  assert.strictEqual(fed.corrected, 'Ein Satz hier.', 'a rejected first attempt is followed by an accepted one');
+  assert.ok(/REJECTED/.test(calls[1].user), 'the retry tells the model its previous answer was rejected');
+  assert.ok(/words/.test(calls[1].user), 'and names the actual problem (a word count that changed)');
+
+  // ── the script pin is HEAVY + STORY only (v79_f) ──
+  const PIN = '[[SCRIPT-PIN]]';
+  const pinned = () => PIN;
+  for (const [mode, kind, want] of [['heavy', 'story', true], ['heavy', 'summary', false],
+                                    ['light', 'text', false], ['light', 'story', false]]) {
+    reset();
+    try { await qc(() => 'Ein Satz hier.', pinned)('Ein Satz hier.', 'sr', { mode, kind }); } catch (_) {}
+    assert.strictEqual(calls[0].sys.includes(PIN), want,
+      `${mode}/${kind}: the script pin is ${want ? 'present' : 'absent'} — light cannot change a ` +
+      'word at all, so it has nothing to transliterate with');
+  }
+
+  // ── empty input is refused outright, in both modes ──
+  for (const mode of ['light', 'heavy']) {
+    reset();
+    await assert.rejects(() => qc(() => 'x')('   \n  ', 'de', { mode }), /empty text/,
+      `${mode}: whitespace-only input is refused before the model is called`);
+    assert.strictEqual(calls.length, 0, `${mode}: and no request goes out for it`);
+  }
+}
+console.log('  the error path: cancel propagates, heavy throws, light degrades, pin is heavy+story: OK');
+
 console.log('unit-qc-unify-parity: ALL PASSED');
 }
 main().catch(e => { console.error(e); process.exit(1); });

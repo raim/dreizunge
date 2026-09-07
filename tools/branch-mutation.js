@@ -88,8 +88,15 @@ function ifSites(body) {
 function discover(minIfs) {
   const files = fs.readdirSync(path.join(ROOT, 'test')).filter(f => f.endsWith('.test.js'));
   const map = new Map();
-  const pats = [/\bex(?:t|tract|tAsync)?\(\s*(?:html|server|client|llm|builder|src|bstatic)\s*,\s*['"]([\w$]+)['"]/g,
-                /\bex(?:t|tract|tAsync)?\(\s*['"](?:async function |function )?([\w$]+)['"]/g];
+  // ⚠️ v90_e: the helper is not always called `ext`. The suite also uses `extract`, `extAsync` and
+  // `lift` (two shapes: `lift(name)` and `lift(src, name)`), and MISSING ONE INFLATES THE ZEROS —
+  // v90_d attributed `qcProse` to `unit-qc-correct` alone and scored it 0/16, while
+  // `unit-qc-unify-parity` was lifting and running it the whole time under `lift(`. `fn(` and
+  // `grab(` look like helpers and are not: `fn` is what the built function is usually assigned TO,
+  // and `grab` is a selector helper. unit-branch-mutation-tool pins the `lift` case.
+  const H = '(?:ext|extract|extAsync|lift)';
+  const pats = [new RegExp('\\b' + H + '\\(\\s*(?:html|server|client|llm|builder|src|bstatic|NEW|OLD)\\s*,\\s*[\'"]([\\w$]+)[\'"]', 'g'),
+                new RegExp('\\b' + H + '\\(\\s*[\'"](?:async function |function )?([\\w$]+)[\'"]', 'g')];
   for (const f of files) {
     const s = fs.readFileSync(path.join(ROOT, 'test', f), 'utf8');
     for (const re of pats) for (const m of s.matchAll(re)) {

@@ -202,4 +202,117 @@ console.log('  delegation + shared mapping between click, framing and lock resol
 }
 console.log('  render-site hooks live+static, prompt chapter field, i18n key: OK');
 
-console.log('unit-storyboard-nav: ALL PASSED');
+// ── 7. The two functions this file only NAMED, now run (v90_e) ──────────────
+//
+// ⚠️ `_sbPanelChapter` and `_sbChapterTarget` above are lifted and driven; `_sbMarkCurrentPanels`
+// and `openStoryboardChapter` were only sliced and regexed — "it mentions `_sbPanelChapter`", "it
+// calls `loadSaved`". The branch-mutation probe flipped every condition in both, both ways, and
+// this file stayed green: 0/8 and 0/6. Escalated to the whole --quick suite: nothing else caught
+// them either. The framing could have marked every panel, or none, or stopped clearing the previous
+// one; the click could have landed on the wrong chapter — all with a green suite.
+//
+// Async (openStoryboardChapter is), so it runs last and carries the closing line.
+(async () => {
+  // A DOM small enough to read: an <svg> holding N <g> panels, each with one <rect> frame.
+  const mkBoard = (dataChapters, opts) => {
+    const o = opts || {};
+    const groups = dataChapters.map((dataChapter, i) => {
+      const frame = (o.frameless || []).includes(i) ? null : { style: {} };
+      return {
+        tagName: 'g', _i: i, _frame: frame,
+        getAttribute: (k) => (k === 'data-chapter' ? dataChapter : null),
+        querySelector: (sel) => (sel === ':scope > rect' ? frame : null),
+      };
+    });
+    const children = o.stray ? [...groups, { tagName: 'text', querySelector: () => null }] : groups;
+    return { groups, wrap: { querySelector: (sel) => (sel === 'svg' ? { children } : null) } };
+  };
+  const framed = (b) => b.groups.filter(g => g._frame && g._frame.style.stroke === 'var(--blue)').map(g => g._i);
+
+  const mark = new Function(ext(client, '_sbPanelChapter') + '\n' + ext(client, '_sbMarkCurrentPanels') +
+    '\nreturn _sbMarkCurrentPanels;')();
+
+  // 6 panels over 3 chapters → two panels each, and the frame follows the chapter.
+  {
+    const b = mkBoard([null, null, null, null, null, null]);
+    mark(b.wrap, 2, 3);
+    assert.deepStrictEqual(framed(b), [2, 3], 'chapter 2 of 3 frames its own two panels');
+    assert.strictEqual(b.groups[2]._frame.style.strokeWidth, '3', 'and the frame is actually thickened');
+    // ⚠️ moving on must CLEAR the old frame, or every chapter ever visited stays highlighted
+    mark(b.wrap, 3, 3);
+    assert.deepStrictEqual(framed(b), [4, 5], 'moving to chapter 3 reframes…');
+    assert.strictEqual(b.groups[2]._frame.style.stroke, '', '…and unframes what chapter 2 had');
+    assert.strictEqual(b.groups[2]._frame.style.strokeWidth, '', 'the width is cleared too, not just the colour');
+  }
+  // an explicit data-chapter wins over the positional mapping, and a STALE one is clamped
+  {
+    const b = mkBoard(['3', '1', '99']);
+    mark(b.wrap, 3, 3);
+    assert.deepStrictEqual(framed(b), [0, 2],
+      'data-chapter is honoured, and a value past the chapter count clamps to the last chapter');
+  }
+  // nothing to do, and nothing thrown
+  {
+    const b = mkBoard([null, null]);
+    mark(b.wrap, 0, 2);
+    assert.deepStrictEqual(framed(b), [], 'chapter 0 (no current chapter) frames nothing at all');
+    mark(null, 1, 2);                                  // no wrapper
+    mark({ querySelector: () => null }, 1, 2);         // a wrapper with no svg yet
+  }
+  // a panel group with no <rect>, and a non-<g> child, are both skipped rather than throwing
+  {
+    const b = mkBoard([null, null, null], { frameless: [1], stray: true });
+    mark(b.wrap, 2, 3);
+    assert.deepStrictEqual(framed(b), [], 'the only panel for chapter 2 here has no frame — nothing marked, nothing thrown');
+    mark(b.wrap, 1, 3);
+    assert.deepStrictEqual(framed(b), [0], 'and its neighbours still frame normally');
+  }
+  console.log('  _sbMarkCurrentPanels: frames the current chapter, clears the last, survives a gappy board: OK');
+
+  // ── openStoryboardChapter: where a click actually lands ──
+  const opened = [];
+  const mkOpen = (APP) => new Function('APP', 'loadSaved', 'encTopic',
+    ext(client, '_sbChapterTarget') + '\n' + ext(client, 'openStoryboardChapter') +
+    '\nreturn openStoryboardChapter;')(APP, (x) => opened.push(x), (t) => 'enc:' + t);
+  const mkApp = () => ({
+    storylines: [{ id: 'sl_1', chapters: ['tp_a', 'tp_b', 'tp_c'] }],
+    savedList: [{ id: 'tp_a', topic: 'A' }, { id: 'tp_b', topic: 'B' }, { id: 'tp_c', topic: 'C' }],
+  });
+  {
+    const APP = mkApp();
+    opened.length = 0;
+    await mkOpen(APP)('sl_1', 2);
+    assert.deepStrictEqual(opened, ['tp_b'], 'clicking chapter 2 opens the SECOND chapter, by id');
+    assert.deepStrictEqual(APP._slScreen.topics, ['A', 'B', 'C'],
+      'and the storyline context is set in chapter order, so the header names the right storyline');
+    assert.strictEqual(APP._slScreen.chainId, 'sl_1');
+
+    opened.length = 0;
+    await mkOpen(mkApp())('sl_1', 99);
+    assert.deepStrictEqual(opened, ['tp_c'], 'a click past the last chapter clamps to it rather than doing nothing');
+    opened.length = 0;
+    await mkOpen(mkApp())('sl_1', 0);
+    assert.deepStrictEqual(opened, ['tp_a'], 'and below the first clamps up');
+  }
+  // a chapter with no id falls back to its ENCODED topic name (the pre-id addressing scheme)
+  {
+    opened.length = 0;
+    await mkOpen({ storylines: [{ id: 'sl_2', chapters: ['y'] }],
+                   savedList: [{ topic: 'Käse & Co' }] })('sl_2', 1);
+    assert.deepStrictEqual(opened, [], 'a chapter that cannot be looked up by id is not in the chain at all');
+  }
+  // the refusals — each must leave NO storyline context behind
+  for (const [label, app, chain] of [
+    ['an unknown storyline', mkApp(), 'sl_nope'],
+    ['chapters missing from savedList', { storylines: [{ id: 'sl_1', chapters: ['gone'] }], savedList: [] }, 'sl_1'],
+    ['a storyline with no chapters', { storylines: [{ id: 'sl_1', chapters: [] }], savedList: [] }, 'sl_1'],
+  ]) {
+    opened.length = 0;
+    await mkOpen(app)(chain, 1);
+    assert.deepStrictEqual(opened, [], `${label}: nothing is opened`);
+    assert.ok(!app._slScreen, `${label}: and no storyline context is left behind`);
+  }
+  console.log('  openStoryboardChapter: opens the clicked chapter, clamps, refuses what it cannot resolve: OK');
+
+  console.log('unit-storyboard-nav: ALL PASSED');
+})();

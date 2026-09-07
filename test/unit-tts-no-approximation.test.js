@@ -210,4 +210,125 @@ const DE = { name: 'Anna', lang: 'de-DE', localService: true };
 }
 
 console.log('  tts: one resolver, refuses wrong-language voices, conservative while loading, pill state: OK');
+// ── _buildGlobalTtsSelectors, RUN (v90_e) ────────────────────────────────────
+//
+// ⚠️ This file already checks that the builder calls `refreshTtsVoiceState()` and that it does not
+// rank voices itself — both as source text. The branch-mutation probe flipped all seven of its
+// conditions, both ways, and this file stayed green (0/14); so did the whole --quick suite. The
+// menu that chooses which voice reads a lesson aloud could have opened empty, opened on the wrong
+// voice, or stopped hiding itself when there is nothing to choose, and nothing would have said so.
+{
+  const VOICES = {
+    de: [{ name: 'Anna', lang: 'de-DE', localService: true },
+         { name: 'Conrad', lang: 'de-DE', localService: false },
+         { name: 'Katja', lang: 'de-AT', localService: true }],
+    one: [{ name: 'Anna', lang: 'de-DE', localService: true }],
+    none: [],
+  };
+  const mk = (o) => {
+    const opt = o || {};
+    const els = {};
+    const mkSel = () => ({ innerHTML: '', value: '', style: {} });
+    const want = opt.selectors === false ? []
+               : opt.selectors === 'lang-only' ? ['tts-lang-select-ls']
+               : ['tts-lang-select-ls', 'tts-voice-select-ls'];
+    for (const id of want) els[id] = mkSel();
+    const timers = [], listeners = [];
+    const store = opt.store || {};
+    const APP = { lang: 'de', ttsLang: opt.ttsLang || null, lessonData: opt.lessonData || null };
+    const LANGS = opt.langs === false ? {} : {
+      de: { tts: 'de-DE', name: 'German', flag: 'DE' },
+      it: { tts: 'it-IT', name: 'Italian', flag: 'IT' },
+      at: { tts: 'de-DE', name: 'Austrian', flag: 'AT' },   // SAME tts code as German → deduped
+    };
+    const f = new Function('APP', 'LANGS', 'document', 'speechSynthesis', 'localStorage',
+      'setTimeout', 'refreshTtsVoiceState', '_ttsRankVoices',
+      ext(client, '_buildGlobalTtsSelectors') + '\nreturn _buildGlobalTtsSelectors;');
+    let refreshed = 0;
+    const fn = f(APP, LANGS,
+      { getElementById: (id) => els[id] || null },
+      { getVoices: () => (opt.voices || VOICES.de),
+        addEventListener: (ev, cb, o2) => listeners.push({ ev, cb, o2 }) },
+      { getItem: (k) => (k in store ? store[k] : null) },
+      (cb, ms) => timers.push(ms),
+      () => { refreshed++; },
+      new Function(ext(client, '_ttsRankVoices') + '\nreturn _ttsRankVoices;')());
+    fn();
+    return { els, timers, listeners, APP, refreshed: () => refreshed };
+  };
+
+  // ── it waits rather than rendering an empty menu ──
+  assert.deepStrictEqual(mk({ langs: false }).timers, [300], 'no languages loaded yet → retry, do not build');
+  assert.deepStrictEqual(mk({ selectors: false }).timers, [200], 'selectors not in the DOM yet → retry');
+  {
+    const m = mk({ voices: VOICES.none });
+    assert.deepStrictEqual(m.timers, [], 'no voices is not a timer case…');
+    assert.strictEqual(m.listeners[0].ev, 'voiceschanged', '…it waits for the browser to report them');
+    assert.deepStrictEqual(m.listeners[0].o2, { once: true }, 'once, so the handler does not pile up');
+    assert.strictEqual(m.els['tts-lang-select-ls'].innerHTML, '', 'and nothing is rendered meanwhile');
+  }
+
+  {
+    // ⚠️ A HALF-BUILT DOM: the language select exists but the voice select does not (a partial
+    // render, or a markup change that renames one of the two). The early "neither is there yet"
+    // retry does not fire — one of them IS there — so the per-id guard is the only thing between
+    // this and a TypeError on `vsel.innerHTML`.
+    const m = mk({ selectors: 'lang-only' });
+    assert.deepStrictEqual(m.timers, [], 'it does not schedule a retry — one selector is present');
+    assert.strictEqual(m.els['tts-lang-select-ls'].innerHTML, '',
+      'and it renders NOTHING rather than half a menu, or throwing');
+  }
+
+  // ── the language menu: one entry per distinct tts code, active language first ──
+  {
+    const m = mk({});
+    const html = m.els['tts-lang-select-ls'].innerHTML;
+    const codes = [...html.matchAll(/value="([^"]+)"/g)].map(x => x[1]);
+    assert.deepStrictEqual(codes, ['de-DE', 'it-IT'],
+      'de-DE appears ONCE though two languages carry it, and the active language leads the list');
+    assert.strictEqual(m.els['tts-lang-select-ls'].value, 'de-DE', 'and the menu opens on it');
+  }
+  {
+    // a lesson in another language wins over APP.lang, and a saved choice wins over both
+    const byLesson = mk({ lessonData: { lang: 'it' } });
+    assert.strictEqual([...byLesson.els['tts-lang-select-ls'].innerHTML.matchAll(/value="([^"]+)"/g)][0][1], 'it-IT',
+      'the lesson being read decides the active language, not the browsing language');
+    assert.strictEqual(mk({ ttsLang: 'it-IT' }).els['tts-lang-select-ls'].value, 'it-IT',
+      "and the learner's own saved choice is what the menu opens on");
+  }
+
+  // ── the voice menu ──
+  {
+    const m = mk({});
+    const vsel = m.els['tts-voice-select-ls'];
+    assert.ok(/Anna/.test(vsel.innerHTML) && /Conrad/.test(vsel.innerHTML), 'every ranked voice is offered');
+    assert.ok(/Conrad ☁/.test(vsel.innerHTML), 'a cloud voice is marked as one');
+    assert.ok(!/Anna ☁/.test(vsel.innerHTML), 'and a local voice is not');
+    assert.strictEqual(vsel.style.display, '', 'the menu is shown when there is a choice');
+    assert.strictEqual(m.APP._ttsVoiceName, vsel.value, 'and APP agrees with what the menu shows');
+  }
+  {
+    const saved = mk({ store: { imp3_voice_de_DE: 'Conrad', 'imp3_voice_de-DE': 'Conrad' } });
+    assert.strictEqual(saved.els['tts-voice-select-ls'].value, 'Conrad',
+      'a previously chosen voice is preselected');
+    const stale = mk({ store: { 'imp3_voice_de-DE': 'Ghost' } });
+    assert.notStrictEqual(stale.els['tts-voice-select-ls'].value, 'Ghost',
+      '⚠️ but a saved voice the system no longer has is NOT preselected — the menu would show a ' +
+      'name that cannot speak');
+    assert.strictEqual(stale.APP._ttsVoiceName, stale.els['tts-voice-select-ls'].value,
+      'and APP follows the fallback rather than the ghost');
+  }
+  {
+    // one voice: nothing to choose, so the menu hides — but the voice is still the active one
+    const m = mk({ voices: VOICES.one });
+    assert.strictEqual(m.els['tts-voice-select-ls'].style.display, 'none', 'a single voice hides the menu');
+    assert.strictEqual(m.APP._ttsVoiceName, 'Anna', 'and is still adopted as the voice to use');
+  }
+
+  // ── and the pill/auto-mute is re-evaluated every time (v55_z) ──
+  assert.strictEqual(mk({}).refreshed(), 1, 'a successful build refreshes the voice state exactly once');
+  assert.strictEqual(mk({ langs: false }).refreshed(), 0, 'a run that only scheduled a retry does not');
+  console.log('  _buildGlobalTtsSelectors: waits, dedupes, preselects, hides when there is no choice: OK');
+}
+
 console.log('unit-tts-no-approximation: ALL PASSED');

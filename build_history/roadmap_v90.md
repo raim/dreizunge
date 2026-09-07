@@ -2695,6 +2695,56 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_e — the remaining zeros: five repaired, three were never gaps, and the probe itself was wrong once
+
+User: *"go ahead with the remaining zeros"* — the fourteen functions `v90_d` measured at 0 caught.
+**ZERO `ui.json` keys.** No app behaviour changed; every edit is in `test/` and `tools/`.
+
+### ⚠️⚠️ FIRST, A CORRECTION TO `v90_d`'s OWN NUMBERS
+
+`tools/branch-mutation.js` discovers which tests lift a function by looking for the extraction
+helper — and it only knew `ext`, `extract` and `extAsync`. **The suite also uses `lift`.** So
+`qcProse` was attributed to `unit-qc-correct` alone and scored **0/16**, while
+`unit-qc-unify-parity` had been lifting and running it the whole time. Re-measured with the right
+guards it was **7/16**, never zero.
+
+**A missed helper name inflates the zeros** — the direction that wastes a session chasing a guard
+that is already there. The pattern is now `(?:ext|extract|extAsync|lift)`, pinned by
+`unit-branch-mutation-tool` §5 (mutation: drop `lift` → red). `fn(` and `grab(` look like helpers
+and are deliberately NOT in the list: `fn` is what the built function is usually assigned *to*, and
+`grab` is a selector helper.
+
+### Every zero escalated to the whole `--quick` suite before being called a gap
+
+The `v90_c` rule, applied. ⚠️ **One representative mutant each, and every `index.html` mutant also
+reddens `unit-static-freshness`** (the file's hash moves and `docs/` is not rebuilt) — that one
+failure is subtracted throughout, and it names `index.html` as the stale file in every case.
+
+| | |
+|---|---|
+| **caught elsewhere — not gaps at all (3)** | `onUseDialectCb` (by `unit-comic-panel-ui`), `_renderCompStory` (by `unit-story-translation-toggle` **and** `unit-text-explorer`), and `qcProse` once its real guard was attributed to it |
+| **⚠️ MY OWN v90_d PREDICTION WAS WRONG** | That entry guessed `renderEx`, `startLesson`, `goLessonSet` and `loadSaved` were "almost certainly" covered by `smoke-render` and the journey tests. `smoke-render` IS in `--quick`, and it caught **none** of them. The guess was reasonable and it was wrong; the measurement is what settles it |
+
+### Five repaired, each mutation-tested afterwards
+
+| function | before | after | what was unguarded |
+|---|---|---|---|
+| `qcProse` | 7/16 | **15/16** | the entire ERROR path: a cancel must propagate and never retry (`v88_k`), heavy surfaces a model error while light retries and hands the input back untouched (deliberate — light runs unattended inside the extraction job, where a throw costs the panel its transcription), the retry feedback naming what was wrong, the script pin being heavy+story only (`v79_f`), and empty input refused before any request goes out. A captured RETURN VALUE cannot record a throw, which is why the parity fixtures could not reach any of it |
+| `_sbMarkCurrentPanels` | 0/8 | **8/8** | that the current chapter's panels are framed, that a stale `data-chapter` is clamped, and — the one that matters — that moving on CLEARS the previous frame. Without it every chapter ever visited stays highlighted |
+| `openStoryboardChapter` | 0/6 | **4/6** | that a click opens the chapter that was clicked, clamps above and below, and refuses an unresolvable storyline without leaving a storyline context behind. The two survivors are a mutually-masking defensive pair — `!chaps.length` and `!target.chapter` each catch what the other would let through, so neither is individually killable |
+| `_editorReadInputsMath` | 0/6 | **6/6** | it was compiled into the sync harness and dispatched on every math fixture — against a `document` that answers only `lesson-editor`, so the body was a no-op. Now: numbers parsed and filtered (0, negatives, junk dropped), operators keyed by char code so `×` and `÷` survive, and **an empty field LEAVES THE STORED VALUE ALONE** rather than writing `[]` over a working lesson |
+| `_applyUploadCleanup` | 0/8 | **7/8** | "lossless both ways" is the 🧹 checkbox's whole promise and was guarded by a regex over the line implementing it. Now: unticking restores the pristine text byte for byte and the pages as a COPY, a plain-text upload keeps `pages` null, and the console report — added on a user request in `v69_p` because "the only evidence was the text looking different" — is asserted, ⚠️ **including that its counts are the FULL TEXT's and not the last page's**, which is exactly what `_fullStats`' capture position between the two cleans exists to guarantee |
+| `_buildGlobalTtsSelectors` | 0/14 | **13/14** | the menu that picks the reading voice. Now: it waits (retry, or `voiceschanged` once) instead of rendering an empty menu, one entry per distinct TTS code with the active language leading, a saved voice preselected **unless the system no longer has it**, the voice menu hidden when there is nothing to choose while `APP._ttsVoiceName` is still adopted, a half-built DOM rendering nothing rather than throwing, and the pill state refreshed exactly once per successful build |
+
+### Still open, and why they are a different job
+
+`doDialectImport` (0/20), `renderEx` (0/20), `startLesson` (0/10), `goLessonSet` (0/10) — all
+confirmed gaps against `--quick`. They are large orchestration functions whose branches are about
+screen transitions and DOM assembly, so guarding them means journey-level fixtures rather than the
+lift-and-drive pattern used above. Worth doing; not worth pretending it is the same task.
+
+Suite: **362 full / 301 quick** (unchanged — no new files).
+
 ## ✅ v90_d — the blind spot: guards that run the right code on a fixture that cannot disagree
 
 User: *"the blind spot next: guards passing on same-answer fixtures"* — the limitation `v90_b` and
