@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_i` cut
+# Session prompt — written at the `v90_j` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_i`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_j`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -151,6 +151,22 @@ its title comes from `t()`. Four did not at `v90_g` and were given existing keys
 walks `_EDIT_MENUS['ls-story'].rows` and fails if a row has no `t()`-backed title listed, so a sixth
 button cannot repeat this.
 
+⚠️ **AN i18n AUDIT WAS RUN AND ITS HEADLINE NUMBERS ARE NOT TRUSTWORTHY YET.** A scan found "143
+distinct hardcoded user-visible English strings" in `index.html`. **Roughly half of the
+`title=`/`placeholder=` hits are first-paint FALLBACKS** that `applyUIStrings` overwrites — measured:
+28 covered vs 31 bare among ID'd attributes — and the `>text<` class was never filtered that way at
+all (50 element ids are `_setText`-driven). `v90_j` proved the point the hard way: the six library
+sort labels were listed as hardcoded and are in fact keyed and translated in 32 languages.
+**Re-derive per category before quoting a number or spending a key.** The scanners are in the
+`v90_j` scratch work; the method is: exclude every id that `_setAttr`/`_setText` writes.
+
+⚠️ **`build-static.js` RE-IMPLEMENTS CLIENT FUNCTIONS, AND THAT HAS NOW COST THREE RELEASES.**
+`v90_j` is the latest: the whole library sort was dead in `docs/` because its handlers lived above
+`@static-exclude-start` and the static `loadSavedList` had its own ordering. When a client behaviour
+must exist in both builds, MOVE it below `@static-exclude-end` and call it from both — do not teach
+the copy. And guard it against `docs/index.html`, not against `index.html`: every check that missed
+this one was driving the source.
+
 ## Orient yourself, in this order
 
 1. **This file**, whole.
@@ -204,7 +220,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **355 topics, 99 storylines, 33 languages, 741 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_i'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_j'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

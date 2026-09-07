@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_i';
+const APP_VERSION  = 'v90_j';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8316,9 +8316,13 @@ http.createServer(async (req, res) => {
         ...(l._titleFailed ? { _titleFailed: true } : {}),
         // item AR (v88_j): ONE pre-summed scalar for the library's token sort. ⚠️ It HAS to ride in
         // this whitelist projection: `generationStats` is not otherwise sent, so a token sort built
-        // without this works in the STATIC build (which ships whole topics and has the field for
-        // free) and silently does nothing LIVE — the exact `v74_i`/`v79_n` failure the comments
-        // above and below this line both record. Summed here rather than shipping the whole
+        // without this silently does nothing LIVE — the exact `v74_i`/`v79_n` failure the comments
+        // above and below this line both record.
+        // ⚠️ CORRECTED at v90_j: this comment used to add "…works in the STATIC build (which ships
+        // whole topics and has the field for free)". It does not. A stored topic carries
+        // `generationStats`, never a `tokens` scalar — that scalar is COMPUTED right here — so
+        // static got 0 for free, not the field, and its token sort compared a column of zeros.
+        // Measured: 0 of 355 baked topics had it. `_libSortInto` now falls back to the same sum. Summed here rather than shipping the whole
         // `generationStats` block, which is far larger and whose other fields nothing in the list
         // reads. Omitted when zero, like every other optional field here, so the payload is
         // unchanged for a topic that never metered anything.

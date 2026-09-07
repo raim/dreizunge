@@ -604,14 +604,20 @@ async function loadSavedList() {
 
 
 
+  // ⚠️ v90_j: THE SHARED SORT. This used to be a hardcoded "newest first" plus, when no language
+  // filter was set, a second re-sort that grouped by target language — so APP.libSort and
+  // APP.libSortDir were ignored entirely and the page's own sort controls did nothing. Both are
+  // now honoured by calling the ONE implementation the live build uses (index.html, below the
+  // static-exclude-end marker). The header rule comes back with it: a flag header claims the list
+  // is grouped by that language, so it is emitted only when the chosen key IS a language key.
+  //
+  // NOTE: no backticks in this comment — it lives inside a template literal (a trap this project
+  // has recorded before).
+  // Still needed by the card renderer below (it stamps each chain's newest date), so it keeps its
+  // own definition here rather than riding out of the sorter.
   const newestOf=chain=>chain.reduce((b,id)=>{const d=byIdAll[id]?.updatedAt||byIdAll[id]?.generatedAt||'';return d>b?d:b;},'');
-  storylines.sort((a,b)=>newestOf(b).localeCompare(newestOf(a)));
-  const showAllLangs = APP.libFilter==='all';
-  // When showing all languages, group storylines by language
-  if(showAllLangs) storylines.sort((a,b)=>{
-    const la=byIdAll[a[0]]?.lang||'it', lb=byIdAll[b[0]]?.lang||'it';
-    return la.localeCompare(lb) || newestOf(b).localeCompare(newestOf(a));
-  });
+  const _langHdrBy = _libSortInto(storylines, orphans, byIdAll, APP.storylines);
+  const showAllLangs = !!_langHdrBy;
 
   const _slArr2=Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[];
   const slTitles=_slArr2.length
@@ -620,7 +626,7 @@ async function loadSavedList() {
   let html='', _lastLang=null;
   for(const chain of storylines){
     if(showAllLangs){
-      const cl=byIdAll[chain[0]]?.lang||'it';
+      const cl=byIdAll[chain[0]]?.[_langHdrBy]||(_langHdrBy==='srcLang'?'en':'it');
       if(cl!==_lastLang){
         const L=LANGS[cl]||LANGS.it;
         html+='<div class="orphans-hdr">'+L.flag+' '+L.name+'</div>';
@@ -702,9 +708,11 @@ async function loadSavedList() {
   if(orphans.length){
     if(showAllLangs){
       let _oLang=null;
-      orphans.sort((a,b)=>(a.lang||'it').localeCompare(b.lang||'it')||(b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
+      // v90_j: NO second sort here. The shared sorter has already ordered these by the chosen key
+      // and direction; re-sorting by the language CODE undid the reversal and disagreed with the
+      // chain list above, which sorts by the language NAME.
       orphans.forEach(s=>{
-        const sl=s.lang||'it';
+        const sl=s[_langHdrBy]||(_langHdrBy==='srcLang'?'en':'it');
         if(sl!==_oLang){const L=LANGS[sl]||LANGS.it;html+='<div class="orphans-hdr">'+L.flag+' '+L.name+'</div>';_oLang=sl;}
         html+=itemHtml(s,false);
       });

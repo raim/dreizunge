@@ -9404,18 +9404,9 @@ async function switchThreshold(pctStr){
 // item AR (v88_j): the sort control's own onchange. Persists, then re-renders through the ONE list
 // builder — loadSavedList() re-reads and re-sorts, so there is no second ordering path to keep in
 // step with this one.
-function onLibSortChange(){
-  const v = document.getElementById('lib-sort')?.value || 'edited';
-  APP.libSort = ['edited','created','tokens','srclang','lang'].includes(v) ? v : 'edited';
-  try{ localStorage.setItem('imp3_libsort', APP.libSort); }catch(_){}
-  loadSavedList();
-}
-// item AR follow-up (v88_n): flip the direction, persist, re-render through the ONE list builder.
-function onLibSortDirToggle(){
-  APP.libSortDir = APP.libSortDir === 'asc' ? 'desc' : 'asc';
-  try{ localStorage.setItem('imp3_libsortdir', APP.libSortDir); }catch(_){}
-  loadSavedList();
-}
+// v90_j: the two sort handlers MOVED below @static-exclude-end — see _libSortInto. They touch
+// nothing but APP, localStorage and the list builder, and leaving them here meant the static
+// build's markup called two functions that did not exist in its bundle.
 function _populateLibSelects(saved){
   // Update main lang selects to mark active filter state
   const srcSel=document.getElementById('src-lang-select');
@@ -9695,19 +9686,7 @@ async function loadSavedList(){
   // decides WHETHER it is shown, never WHICH of its chapters are. Projecting the chain through the
   // filtered index instead broke a mixed-language storyline three ways at once — see below.
   const byIdAll = Object.fromEntries(saved.filter(l=>l.id).map(l => [l.id, l]));
-  // item AR (v88_j): a chain -> its storyline's OWN token spend. Keyed by the chapter-id list, the
-  // same identity the renderer below recovers a storyline by (`matchSl`), so the two agree by
-  // construction instead of by a second hash. `/api/storylines` returns whole objects, so
-  // `tokenUsage` is already here — only the TOPIC side needed a projection field.
-  const _chainKeyFor = chain => (chain || []).join('|');
-  const _slTokensById = {};
-  (APP.storylines || []).forEach(sl => {
-    const tu = sl && sl.tokenUsage;
-    if (!tu) return;
-    _slTokensById[_chainKeyFor(sl.chapters || [])] =
-      ((tu.totalPromptTokens | 0) + (tu.totalCompletionTokens | 0));
-  });
-
+  // v90_j: the storyline-token index moved into _libSortInto with the rest of the sort.
   let storylines, orphans;
   const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
   const v29chains = slArr.filter(sl => sl.chapters && sl.chapters.length >= 1);
@@ -9770,60 +9749,16 @@ async function loadSavedList(){
   // The flag headers below follow from that rather than being decided separately (see
   // `_langHdrBy`): they are only meaningful while the list is genuinely grouped by the language
   // they name, which is exactly when the chosen key IS that language.
+  // v90_j: the sort itself lives in `_libSortInto`, below the static-exclude-end marker, so the
+  // STATIC build gets the same one. It sorts both lists in place and returns which language the
+  // flag headers may name — see there for why that follows the key.
+  // `newestOf` stays here because the CARD RENDERER below stamps each chain's newest date with it.
   const newestOf = chain => chain.reduce((best, id) => {
     const dt = byIdAll[id]?.updatedAt || byIdAll[id]?.generatedAt || '';
     return dt > best ? dt : best;
   }, '');
-  const madeOf = chain => chain.reduce((best, id) => {
-    const dt = byIdAll[id]?.generatedAt || '';
-    return dt > best ? dt : best;
-  }, '');
-  // The storyline's OWN tokenUsage PLUS its chapters'. `addTokenUsage()` deliberately keeps
-  // storyline-level work (summary, storyboard, retitle, summary-QC) out of the chapters, so the two
-  // are genuinely different numbers and only their sum answers "what did this story cost".
-  const tokensOfTopic = t => (t && t.tokens) | 0;
-  const tokensOf = chain => {
-    const own = _slTokensById[_chainKeyFor(chain)] || 0;
-    return own + chain.reduce((n, id) => n + tokensOfTopic(byIdAll[id]), 0);
-  };
-  const srcOf = chain => byIdAll[chain[0]]?.srcLang || 'en';
-  const tgtOf = chain => byIdAll[chain[0]]?.lang || 'it';
-  const _key = APP.libSort || 'edited';
-  // item AR follow-up (v88_n): -1 reverses the CHOSEN key. v88_u: with the source-language pre-sort
-  // gone, there is no longer a grouping the reversal could disturb, so it applies to the language
-  // keys as well — reversing "my language" now genuinely reverses the list, headers and all.
-  const _dir = APP.libSortDir === 'asc' ? -1 : 1;
-  // A language key sorts by the language's NAME as the learner reads it, not by its two-letter
-  // code: `de`/`nl`/`it` sort as "Deutsch"/"Nederlands"/"Italiano" only by accident, and the flag
-  // headers that follow the sort spell the name out. Falls back to the code when a language is not
-  // in LANGS, so an unknown code still sorts deterministically rather than collapsing to ''.
-  const _langName = c => (LANGS[c] && LANGS[c].name) || c || '';
-  const chainCmp = (a, b) => _dir * (
-    _key === 'tokens'  ? (tokensOf(b) - tokensOf(a))
-  : _key === 'created' ? madeOf(b).localeCompare(madeOf(a))
-  : _key === 'srclang' ? _langName(srcOf(a)).localeCompare(_langName(srcOf(b)))
-  : _key === 'lang'    ? _langName(tgtOf(a)).localeCompare(_langName(tgtOf(b)))
-  :                      newestOf(b).localeCompare(newestOf(a)));
-  // Ties inside a language group still need an order, or the list reshuffles for no reason between
-  // renders. "Last edited, newest first" is the default key and the right tiebreak here too.
-  const _tie = (a, b) => newestOf(b).localeCompare(newestOf(a));
-  storylines.sort((a, b) => chainCmp(a, b) || (APP._libLangKeys.includes(_key) ? _tie(a, b) : 0));
-  // Orphans take the same key, resolved against a single topic rather than a chain.
-  const orphanCmp = (a, b) => _dir * (
-    _key === 'tokens'  ? (tokensOfTopic(b) - tokensOfTopic(a))
-  : _key === 'created' ? (b.generatedAt||'').localeCompare(a.generatedAt||'')
-  : _key === 'srclang' ? _langName(a.srcLang||'en').localeCompare(_langName(b.srcLang||'en'))
-  : _key === 'lang'    ? _langName(a.lang||'it').localeCompare(_langName(b.lang||'it'))
-  :                      (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
-  orphans.sort((a, b) => orphanCmp(a, b) || (APP._libLangKeys.includes(_key)
-    ? (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||'') : 0));
-
-  // ⚠️ v88_u: which language the flag headers name — or NONE. A header saying "Deutsch" over a run
-  // of rows is a claim that the list is grouped by that language, and after this release it is only
-  // grouped that way when the chosen key IS that language. Sorting by token usage and still
-  // stamping source-language headers would emit one header per row wherever the languages
-  // interleave, which is worse than no header at all. So the headers follow the sort.
-  const _langHdrBy = _key === 'srclang' ? 'srcLang' : _key === 'lang' ? 'lang' : null;
+  const _langHdrBy0 = _libSortInto(storylines, orphans, byIdAll, APP.storylines);
+  const _langHdrBy = _langHdrBy0;
   const langOrder = [...new Set(filtered.map(l => l.srcLang || 'en'))];
 
   let html = '';
@@ -10792,6 +10727,107 @@ async function _pollGenBook(bookId, total){
 // @static-exclude-end — static build resumes here. The client engine below
 // (buildPath, play UI, lesson editor, renderers, exercise builders) IS included in
 // docs; define any static-reachable client helper at/after this point.
+// ── The library sort — ONE implementation, both builds (v90_j) ─────────────────────────────────
+//
+// ⚠️ User report: "does the sorting on the main page fully work in static, including the reverse
+// button?" It did not work AT ALL. `onLibSortChange` and `onLibSortDirToggle` were defined above
+// the static-exclude-start marker, so in `docs/index.html` the <select> and the ▼ button called
+// two
+// `undefined` functions — a ReferenceError and nothing else. And `build-static.js` re-implements
+// `loadSavedList`, with its own hardcoded "newest first" that never read APP.libSort. This is the
+// standing "build-static.js re-implements client functions" trap, which has now cost three
+// releases; the fix is the one the project keeps arriving at — move the logic to the shared region
+// and have BOTH callers use it, rather than teaching the copy a new trick.
+//
+// Sorts both lists IN PLACE and returns which language the flag headers may name (or null).
+function _libSortInto(storylines, orphans, byIdAll, slArr) {
+  const _key = APP.libSort || 'edited';
+  // item AR follow-up (v88_n): -1 reverses the CHOSEN key. v88_u: with the source-language pre-sort
+  // gone, there is no longer a grouping the reversal could disturb, so it applies to the language
+  // keys as well — reversing "my language" now genuinely reverses the list, headers and all.
+  const _dir = APP.libSortDir === 'asc' ? -1 : 1;
+  const newestOf = chain => chain.reduce((best, id) => {
+    const dt = byIdAll[id]?.updatedAt || byIdAll[id]?.generatedAt || '';
+    return dt > best ? dt : best;
+  }, '');
+  const madeOf = chain => chain.reduce((best, id) => {
+    const dt = byIdAll[id]?.generatedAt || '';
+    return dt > best ? dt : best;
+  }, '');
+  // item AR (v88_j): a chain -> its storyline's OWN token spend, keyed by the chapter-id list —
+  // the same identity the renderer recovers a storyline by, so the two agree by construction.
+  const _chainKeyFor = chain => (chain || []).join('|');
+  const _slTokensById = {};
+  (Array.isArray(slArr) ? slArr : []).forEach(sl => {
+    const tu = sl && sl.tokenUsage;
+    if (!tu) return;
+    _slTokensById[_chainKeyFor(sl.chapters || [])] =
+      ((tu.totalPromptTokens | 0) + (tu.totalCompletionTokens | 0));
+  });
+  // ⚠️ v90_j: `t.tokens` is a scalar the LIVE /api/lessons projection SUMS; a stored topic has
+  // `generationStats`, not `tokens`. v88_j's own comment beside that projection says the static
+  // build "ships whole topics and has the field for free" — it does not, and measuring said so:
+  // 0 of 355 baked topics carried a `.tokens`, so a token sort in `docs/` compared zeros and left
+  // the list in whatever order it was already in. Fall back to the same sum the projection does,
+  // which needs no new baked field and cannot drift from it.
+  const tokensOfTopic = t => {
+    if (!t) return 0;
+    if (t.tokens != null) return t.tokens | 0;
+    const g = t.generationStats || {};
+    return (g.totalPromptTokens | 0) + (g.totalCompletionTokens | 0);
+  };
+  // The storyline's OWN tokenUsage PLUS its chapters'. addTokenUsage() deliberately keeps
+  // storyline-level work (summary, storyboard, retitle, summary-QC) out of the chapters, so the two
+  // are genuinely different numbers and only their sum answers "what did this story cost".
+  const tokensOf = chain => {
+    const own = _slTokensById[_chainKeyFor(chain)] || 0;
+    return own + chain.reduce((n, id) => n + tokensOfTopic(byIdAll[id]), 0);
+  };
+  const srcOf = chain => byIdAll[chain[0]]?.srcLang || 'en';
+  const tgtOf = chain => byIdAll[chain[0]]?.lang || 'it';
+  // A language key sorts by the language's NAME as the learner reads it, not by its two-letter
+  // code: `de`/`nl`/`it` sort as "Deutsch"/"Nederlands"/"Italiano" only by accident, and the flag
+  // headers that follow the sort spell the name out. Falls back to the code when a language is not
+  // in LANGS, so an unknown code still sorts deterministically rather than collapsing to ''.
+  const _langName = c => (LANGS[c] && LANGS[c].name) || c || '';
+  const chainCmp = (a, b) => _dir * (
+    _key === 'tokens'  ? (tokensOf(b) - tokensOf(a))
+  : _key === 'created' ? madeOf(b).localeCompare(madeOf(a))
+  : _key === 'srclang' ? _langName(srcOf(a)).localeCompare(_langName(srcOf(b)))
+  : _key === 'lang'    ? _langName(tgtOf(a)).localeCompare(_langName(tgtOf(b)))
+  :                      newestOf(b).localeCompare(newestOf(a)));
+  // Ties inside a language group still need an order, or the list reshuffles for no reason between
+  // renders. "Last edited, newest first" is the default key and the right tiebreak here too.
+  const _tie = (a, b) => newestOf(b).localeCompare(newestOf(a));
+  const _isLangKey = (APP._libLangKeys || ['srclang','lang']).includes(_key);
+  storylines.sort((a, b) => chainCmp(a, b) || (_isLangKey ? _tie(a, b) : 0));
+  // Orphans take the same key, resolved against a single topic rather than a chain.
+  const orphanCmp = (a, b) => _dir * (
+    _key === 'tokens'  ? (tokensOfTopic(b) - tokensOfTopic(a))
+  : _key === 'created' ? (b.generatedAt||'').localeCompare(a.generatedAt||'')
+  : _key === 'srclang' ? _langName(a.srcLang||'en').localeCompare(_langName(b.srcLang||'en'))
+  : _key === 'lang'    ? _langName(a.lang||'it').localeCompare(_langName(b.lang||'it'))
+  :                      (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
+  orphans.sort((a, b) => orphanCmp(a, b) || (_isLangKey
+    ? (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||'') : 0));
+  // ⚠️ v88_u: which language the flag headers name — or NONE. A header saying "Deutsch" over a run
+  // of rows is a claim that the list is grouped by that language, and it is only grouped that way
+  // when the chosen key IS that language. Sorting by token usage and still stamping headers would
+  // emit one per row wherever the languages interleave, which is worse than no header at all.
+  return _key === 'srclang' ? 'srcLang' : _key === 'lang' ? 'lang' : null;
+}
+function onLibSortChange(){
+  const v = document.getElementById('lib-sort')?.value || 'edited';
+  APP.libSort = ['edited','created','tokens','srclang','lang'].includes(v) ? v : 'edited';
+  try{ localStorage.setItem('imp3_libsort', APP.libSort); }catch(_){}
+  loadSavedList();
+}
+// item AR follow-up (v88_n): flip the direction, persist, re-render through the ONE list builder.
+function onLibSortDirToggle(){
+  APP.libSortDir = APP.libSortDir === 'asc' ? 'desc' : 'asc';
+  try{ localStorage.setItem('imp3_libsortdir', APP.libSortDir); }catch(_){}
+  loadSavedList();
+}
 // ── home path ──
 // Learner visibility / completion — single source of truth.
 // A teacher-hidden lesson (_hidden) is invisible to a learner in non-teacher mode. When a set

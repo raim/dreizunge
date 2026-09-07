@@ -2695,6 +2695,62 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_j — the library sort did nothing in the static build
+
+User: *"does the sorting on the main page fully work in static, including the reverse button?"*
+**No — it did not work at all**, and every existing check missed it because every existing check
+drives `index.html`. **ZERO `ui.json` keys.**
+
+### What was actually wrong — three layers, each hiding the next
+
+| | |
+|---|---|
+| **the controls were dead** | `onLibSortChange` and `onLibSortDirToggle` were defined ABOVE `@static-exclude-start`, so `docs/index.html` rendered the `<select>` and the ▼ button and neither function existed in its bundle. Every click was a `ReferenceError`. Measured by loading the built artifact: both `typeof` → `'undefined'` |
+| **the static list had its own ordering** | `build-static.js` re-implements `loadSavedList`, with a hardcoded "newest first" that never read `APP.libSort` — plus, whenever no language filter was set, a SECOND re-sort grouping by target language that would have overridden the chosen key even if the handlers had existed. The standing "`build-static.js` re-implements client functions" trap, third time it has cost a release |
+| **⚠️ and the token key would still have compared zeros** | `tokensOfTopic` reads `t.tokens` — a scalar the LIVE `/api/lessons` projection SUMS. A stored topic carries `generationStats`, not `tokens`. **`v88_j`'s own comment beside that projection says the static build "ships whole topics and has the field for free"; it does not**, and measuring settled it: **0 of 355 baked topics carried a `.tokens`**. That comment is corrected in place |
+
+### The fix is the one this project keeps arriving at
+
+`_libSortInto(storylines, orphans, byIdAll, slArr)` moved BELOW `@static-exclude-end`, with the two
+handlers, and **both** list builders call it — rather than teaching the copy a new trick. The token
+sum falls back to `generationStats` when the projected scalar is absent, so it needs no new baked
+field and cannot drift from the projection. `build-static.js` lost its two private sorts, and its
+flag headers now follow the same `v88_u` rule as live: a header claims the list is grouped by that
+language, so it is emitted only when the chosen key IS a language key.
+
+⚠️ Two traps hit on the way, both already in this project's notes: a **backtick inside a comment
+that lives in a template literal** (build-static.js emits its client as a string), and a comment
+line beginning with `// @static-exclude-start`, which `unit-static-markers` counts — it must appear
+on exactly one line.
+
+### The guard drives the BUILT ARTIFACT
+
+`unit-library-sort`'s new section loads `docs/index.html`, seeds `LANGS` (populated by `init()`,
+which the harness neutralises — without it the card renderer throws for reasons unrelated to
+sorting, on any build), and drives the real `loadSavedList` across four keys and both directions.
+
+⚠️ **The token assertion had to be rewritten after mutation-testing.** The first version said "the
+token order differs from the date order", and that **survived** removing the fallback: with every
+chain scoring 0 the comparator returns 0, a stable sort keeps the incoming order, and that order
+happens not to match the date order either. It now computes an ORACLE from the baked corpus — which
+storyline actually spent the most — and asserts that card leads, and that reversing puts the
+smallest spender first. Four mutations red: the static build dropping the shared sort, the token
+fallback removed, the direction ignored, and the reverse handler leaving the bundle.
+
+### ⚠️ AND A CORRECTION TO MY OWN AUDIT, IN THE SAME BREATH
+
+The task was *"fix the sort and key its six labels"*. **The six labels never needed keying.**
+`lib.sort_lbl`, `lib.sort_edited`, `lib.sort_created`, `lib.sort_tokens` and the two reused
+`gen.story_lang_source`/`_target` already exist, are wired in `applyUIStrings`, and are translated
+in **32 languages** — in both builds. The English in the markup is the first-paint FALLBACK.
+
+I had named that exact class — "28 markup literals are only fallbacks, not findings" — in the same
+message where I then listed the sort row as hardcoded. **A scanner's output is not an inventory
+until every category it warns about has been applied to its own list.** The remaining i18n figures
+from that audit should be re-derived the same way before anyone works from them.
+
+Suite: **364 full / 302 quick**, unchanged.
+
 ## ✅ v90_i — the last English label in that menu, and a table that keeps it that way
 
 User: *"go ahead and add the key for the QC button"* — the one title `v90_h` left English because no

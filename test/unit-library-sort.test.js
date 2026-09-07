@@ -283,6 +283,106 @@ async function headers(sortKey) {
     }
 
   } catch (e) { failed = true; console.error(e); }
+
+  // ── The STATIC build sorts too — the same sort (v90_j) ──────────────────────
+  //
+  // ⚠️ User report: "does the sorting on the main page fully work in static, including the reverse
+  // button?" It did not work AT ALL, and every check above missed it because every check above
+  // drives index.html. In docs/index.html:
+  //   • `onLibSortChange` and `onLibSortDirToggle` were `undefined` — both controls were rendered
+  //     and both threw a ReferenceError on click;
+  //   • `build-static.js` re-implements `loadSavedList` with a hardcoded "newest first" that never
+  //     read APP.libSort, plus a second re-sort by target language that would have overridden the
+  //     chosen key anyway;
+  //   • and the token key compared zeros, because `t.tokens` is a scalar the LIVE projection SUMS
+  //     and a stored topic carries `generationStats` instead. 0 of 355 baked topics had it.
+  // So this section drives the BUILT ARTIFACT, not the source.
+  try {
+    const fs2 = require('fs');
+    const path2 = require('path');
+    const docs = path2.join(ROOT, 'docs', 'index.html');
+    if (!fs2.existsSync(docs)) throw new Error('docs/index.html missing — run node build-static.js');
+    const LANGS_ALL = JSON.parse(fs2.readFileSync(path2.join(ROOT, 'languages.json'), 'utf8'));
+    // ⚠️ LANGS is populated by init(), which the harness neutralises, so it is seeded here. Without
+    // it the card renderer throws on `LANGS.it.flag` — for reasons that have nothing to do with
+    // sorting, and it throws identically on a build that predates this change.
+    const orderFor = (key, dir) => {
+      const S = loadClient({ quiet: true, file: 'docs/index.html' });
+      S.run('LANGS = ' + JSON.stringify(LANGS_ALL) + ';'
+          + 'APP.libSort = ' + JSON.stringify(key) + ';'
+          + 'APP.libSortDir = ' + JSON.stringify(dir) + '; loadSavedList();');
+      const html = String(S.document.getElementById('saved-list').innerHTML || '');
+      const ids = (html.match(/id="slgroup-[^"]+"/g) || []);
+      return { ids, S };
+    };
+    // the handlers the markup calls must EXIST in the bundle
+    {
+      const S = loadClient({ quiet: true, file: 'docs/index.html' });
+      for (const fn of ['onLibSortChange', 'onLibSortDirToggle', '_libSortInto']) {
+        assert.strictEqual(S.run('typeof ' + fn), 'function',
+          `${fn} is in the static bundle — the markup calls it on every click`);
+      }
+    }
+    const edited = orderFor('edited', 'desc');
+    assert.ok(edited.ids.length > 5, `the static list really rendered (${edited.ids.length} storylines)`);
+    const cases = { tokens: orderFor('tokens', 'desc'), created: orderFor('created', 'desc'),
+                    lang: orderFor('lang', 'desc'), reversed: orderFor('edited', 'asc') };
+    for (const [name, got] of Object.entries(cases)) {
+      assert.strictEqual(got.ids.length, edited.ids.length, `${name}: the same cards, reordered`);
+      assert.notDeepStrictEqual(got.ids, edited.ids,
+        `${name}: the static list ORDER changes — this is what was broken`);
+    }
+    // ⚠️ NOT an exact mirror, and asserting one was wrong: v88_u's rule is that reversing a
+    // LANGUAGE key swaps the language RUNS while the within-run tiebreak (newest first) stays put —
+    // the live section above states exactly that. What must hold is that the run that led the
+    // forward list now sits at the far end.
+    const revLang = orderFor('lang', 'asc');
+    assert.deepStrictEqual([...revLang.ids].sort(), [...cases.lang.ids].sort(),
+      'reversing keeps the same cards');
+    assert.notDeepStrictEqual(revLang.ids, cases.lang.ids, 'in a different order');
+    const wasFirst = cases.lang.ids[0];
+    assert.ok(revLang.ids.indexOf(wasFirst) > revLang.ids.length / 2,
+      'the card that led the forward list has moved to the far end of the reversed one');
+    // ⚠️ THE TOKEN KEY, against an ORACLE read from the baked corpus — not against "the order is
+    // different from the date order". That weaker check PASSED with the fallback removed: every
+    // chain then scores 0, the comparator returns 0 for every pair, and a stable sort leaves the
+    // incoming order, which happens not to match the date order either. Mutation-testing said so.
+    //
+    // Computing "which storyline spent the most" from the raw corpus is an oracle, not a copy of
+    // the function under test: it answers the user-visible question directly, the way
+    // unit-static-freshness recomputes fingerprints rather than trusting the stamp.
+    {
+      const docsSrc = fs2.readFileSync(docs, 'utf8');
+      const topics = JSON.parse(docsSrc.match(/STATIC_LESSONS\s*=\s*(\[[\s\S]*?\]);\n/)[1]);
+      const sls = JSON.parse(docsSrc.match(/STATIC_STORYLINES\s*=\s*(\[[\s\S]*?\]);\n/)[1]);
+      const byId = Object.fromEntries(topics.filter(t => t.id).map(t => [t.id, t]));
+      const topicTokens = (t) => {
+        if (!t) return 0;
+        if (t.tokens != null) return t.tokens | 0;
+        const g = t.generationStats || {};
+        return (g.totalPromptTokens | 0) + (g.totalCompletionTokens | 0);
+      };
+      const spend = (sl) => {
+        const tu = sl.tokenUsage || {};
+        return (tu.totalPromptTokens | 0) + (tu.totalCompletionTokens | 0)
+             + (sl.chapters || []).reduce((n, id) => n + topicTokens(byId[id]), 0);
+      };
+      const ranked = sls.filter(sl => (sl.chapters || []).some(id => byId[id]))
+                        .map(sl => ({ id: sl.id, n: spend(sl) }))
+                        .sort((a, b) => b.n - a.n);
+      assert.ok(ranked.length > 5 && ranked[0].n > 0, 'the corpus has real token numbers to rank by');
+      assert.ok(ranked[0].n > ranked[ranked.length - 1].n,
+        'and they genuinely differ (this oracle cannot pass on a flat corpus)');
+      assert.strictEqual(cases.tokens.ids[0], 'id="slgroup-' + ranked[0].id + '"',
+        `the biggest spender (${ranked[0].n} tokens) leads the token sort — with the ` +
+        'generationStats fallback gone every chain scores 0 and the list keeps whatever order it had');
+      const revTokens = orderFor('tokens', 'asc');
+      assert.strictEqual(revTokens.ids[0], 'id="slgroup-' + ranked[ranked.length - 1].id + '"',
+        'and reversing it puts the smallest spender first');
+    }
+    console.log(`  the STATIC build honours the key and the direction (${edited.ids.length} storylines): OK`);
+  } catch (e) { failed = true; console.error(e && e.stack || e); }
+
   console.log(failed ? 'unit-library-sort: FAILED' : 'unit-library-sort: ALL PASSED');
   process.exit(failed ? 1 : 0);
 })();
