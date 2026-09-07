@@ -387,6 +387,7 @@ if (!quick) {
   run('e2e: LLM chapter split', 'node', [path.join(__dirname, 'e2e-chapter-split.test.js')]);
   run('e2e: scrape a story from a URL (NewsArticle)', 'node', [path.join(__dirname, 'e2e-fetch-url.test.js')]);
   run('e2e: analysis is deferred until the book job finishes (v90_o)', 'node', [path.join(__dirname, 'e2e-deferred-analysis.test.js')]);
+  run('e2e: cancelling a book job aborts the model (v90_p)', 'node', [path.join(__dirname, 'e2e-book-cancel-aborts.test.js')]);
   run('e2e: re-create storyline lessons', 'node', [path.join(__dirname, 'e2e-recreate.test.js')]);
   run('e2e: comic panel text extraction (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'e2e-comic-extract.test.js')]);
   run('e2e: comic panel image DESCRIPTION — the lazy fallback (user request)', 'node', [path.join(__dirname, 'e2e-comic-describe.test.js')]);

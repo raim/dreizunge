@@ -113,7 +113,12 @@ console.log('  the book kind dispatches to the book route and body; plain jobs a
   let d = 0, i = server.indexOf('{', at);
   for (; i < server.length; i++) { if (server[i] === '{') d++; else if (server[i] === '}') { d--; if (!d) { i++; break; } } }
   const route = server.slice(at, i);
-  assert.ok(/cancelBookJob\(bj\)/.test(route) && /\{ ok: true, stopped \}/.test(route),
+  // ⚠️ RE-SCOPED at `v90_p`, not deleted. This pinned `cancelBookJob(bj)` exactly, and went red when
+  // the route began passing the book id as well (`cancelBookJob(bj, body.bookId)`) so the abort line
+  // can name which book — a signature change, not a behaviour change. The claim worth pinning is
+  // that the route hands the JOB to the named decision and reports `stopped`; the argument count is
+  // not part of it. `\bbj\b` keeps it honest without re-breaking on the next added argument.
+  assert.ok(/cancelBookJob\(\s*bj\b/.test(route) && /\{ ok: true, stopped \}/.test(route),
     '⚠️ the route reports whether it actually stopped a RUNNING job — a bare {ok:true} makes every ' +
     'caller claim success, including for a job that finished a second earlier');
   // ⚠️ DRIVEN. Inline in the route this was invisible: a mutation reporting `stopped: true`

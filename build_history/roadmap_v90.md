@@ -2935,6 +2935,82 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_p — cancelling a BOOK job now actually stops the model, and says so
+
+User: *"i tried to cancel the started bookjob by clicking x in the jobpopover, which recovered the
+draft. but the job seems to be still running."* **They were right, and the ✕ was reporting success
+for something it had not done.** **ZERO `ui.json` keys.**
+
+### What the button actually did
+
+```js
+function cancelBookJob(bj) {
+  if (!bj || bj.status !== 'running') return false;
+  bj.status = 'cancelled';
+  return true;                     // ← and the client toasts "cancelled"
+}
+```
+
+It relabelled, returned `true`, and the route answered `stopped: true`. Three things compounded:
+
+1. **No abort**, unlike `/api/jobs/cancel`, which calls `job.abort()`.
+2. **The chapter had no cancel scope at all.** `_runBookJob` created each chapter's sub-job with a
+   bare `newJob()`, never `runCancellable` — so there was no `abort` to call, **and** `_callLLM`'s own
+   *"already cancelled: do not START another call"* checkpoint (`v88_l`) could not fire either, since
+   it needs `_cancelALS.getStore()`. Every remaining call of that chapter would start normally.
+3. **The flag is read only at the TOP of the chapter loop**, so the whole current chapter — topic
+   info, translation, every lesson — ran to completion before anything noticed.
+
+Confirmed live on the user's own server: book `cancelled`, chapter 1 still `status:"active"` with
+`topicId:null`, and an ESTABLISHED socket from the server to Ollama.
+
+### ⚠️⚠️ THIS IS `v88_k`'s DEFECT RETURNING THROUGH THE FRONT DOOR
+
+`runCancellable`'s own comment in `server.js` already describes it: *"cancelling flipped a status
+while the model ran to completion"*. `v88_k` fixed that for the generic job path. **`v89_ag` then
+added the ✕ for BOOK jobs** — its own comment arguing that dispatching on kind is *"what makes the
+button honest rather than merely present"* — **and pointed it at a route that only relabels.** The
+button was made present without being made true, in the same release that named the distinction.
+
+**The generalisable lesson: adding an AFFORDANCE for a second store is not the same as adding the
+CAPABILITY.** `v89_ag` correctly found that the two stores need two routes, and stopped there — it
+checked that the route existed, not that it did the same job. A capability audit has to follow the
+call all the way down, not to the first correctly-named function.
+
+### The fix
+
+- **`_runBookJob` runs each chapter inside `runCancellable(jobId, …)`.** That registers `job.abort`
+  and puts the chapter in `_cancelALS`, which is what lets the checkpoint stop the NEXT call.
+  ⚠️ The ~200-line body is deliberately **not re-indented**: re-indenting unchanged lines would bury
+  a three-line behavioural change in a 200-line diff, and this file's history is full of large
+  mechanical edits going wrong (`v89` rule 1). The wrapper is the change; the body is byte-identical.
+- **`cancelBookJob(bj, bookId)` aborts the chapter that is actually in flight**, via
+  `jobs.get(bj.chapters[bj.current].jobId).abort`.
+- **A `CANCELLED` re-throw in the chapter catch.** Without it the abort surfaces as a chapter
+  ERROR and overwrites the user's own deliberate stop with a fault. The same one-liner eighteen
+  other sites carry — and the same one `v90_n` had to add to `withRetry`. **That is now twice in one
+  line of work that a missing cancel re-throw turned a deliberate stop into a reported failure.**
+- **A console line, user-requested**, on both sides. Server:
+  `[book …] CANCELLED by user at chapter 1/4 — in-flight model call aborted`. ⚠️ **The ABORT half is
+  the part worth naming**: "cancelled" alone is exactly what the old status-only behaviour would
+  also have printed, and it was false. Client: `[jobs] cancel requested: book … → STOPPED`, so a
+  "nothing happened" report can be told apart from "the button was never wired" without the server log.
+
+### The guard — `test/e2e-book-cancel-aborts.test.js`, five sections, four mutations red
+
+⚠️ **THE STATUS IS NOT ACCEPTABLE EVIDENCE HERE and this file never asserts on it alone** — a status
+is precisely what the bug got right. The fake records `{aborted:true}` when its socket CLOSES, which
+is the only honest proof the request was destroyed rather than relabelled; `e2e-job-cancel` uses the
+same evidence for the same reason. §3 additionally pins that **no NEW model call starts** after the
+cancel, which is the checkpoint half — a mutant that aborts but keeps no scope would pass §2 alone.
+
+⚠️ **A SECOND BROKEN MUTATION, CAUGHT THE SAME WAY AS `v90_n`'s.** Mutation 2 replaced
+`await runCancellable(jobId, async () => {` with `await (async () => {` — **without the invoking
+`()`**, so the body never ran at all and the book "finished" instantly. It went red, but for the
+wrong reason. Re-applied correctly (patching the closing `})();` too) it fails on the socket-close
+assertion, which is what actually proves the cancel scope is load-bearing. **A mutant that goes red
+still has to be read: red for the wrong reason is not evidence.**
+
 ## ✅ v90_o — the analysis post-pass no longer competes with the generation that spawned it, and a scraped article is never cut mid-sentence
 
 Two user reports from one failed book job, plus a correction to `v90_n`'s own write-up.

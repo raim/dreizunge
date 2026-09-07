@@ -287,7 +287,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_o';
+const APP_VERSION  = 'v90_p';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7344,6 +7344,27 @@ async function _runBookJob(bookId, chunks, base) {
     const jobId = newJob();
     bj.chapters[i].jobId = jobId;
     try {
+      // ⚠️⚠️ v90_p — THE CHAPTER RUNS INSIDE A CANCEL SCOPE. It did not, and that made the ✕ on a
+      // book job a LIE: `cancelBookJob` set `bj.status = 'cancelled'`, answered `stopped: true`, and
+      // the model carried on to the end of the chapter — user-reported ("I tried to cancel the
+      // started bookjob by clicking x in the jobpopover… but the job seems to be still running"),
+      // and confirmed on their server with the book marked `cancelled`, chapter 1 still `active`,
+      // and an open socket to Ollama.
+      //
+      // This is EXACTLY the defect `v88_k` fixed for the generic job path — see `runCancellable`'s
+      // own comment at the top of this file: "cancelling flipped a status while the model ran to
+      // completion". `v89_ag` then surfaced the ✕ for book jobs, arguing that dispatching on kind is
+      // "what makes the button honest rather than merely present" — but pointed it at a route that
+      // only relabels, so the button was made present without being made true. A bare `newJob()`
+      // gives nothing to abort; `runCancellable` registers `job.abort` AND puts the chapter in
+      // `_cancelALS`, which is what lets `_callLLM`'s own "already cancelled: do not START another
+      // call" checkpoint fire between this chapter's many calls.
+      //
+      // ⚠️ The body below is deliberately NOT re-indented. Re-indenting ~200 unchanged lines would
+      // bury a three-line behavioural change in a 200-line diff, and this file's history is full of
+      // large mechanical edits going wrong (`v89` rule 1). The wrapper is the change; the body is
+      // byte-identical.
+      await runCancellable(jobId, async () => {
       const parent  = prevRef ? (findSavedById(prevRef) || findSaved(prevRef)) : null;
       const contFrom = parent ? parent.topic : null;
       const generated = !!base.generated;
@@ -7551,7 +7572,19 @@ async function _runBookJob(bookId, chunks, base) {
       // Collected now, run after the book (see _runDeferredAnalyses) — the same call `v77_w` made
       // for lesson QC, for the same reason: it is not urgent, and it loses nothing by waiting.
       if (base.postGenAnalysis) pendingAnalysis.push(saved);
+      });   // end runCancellable — v90_p
     } catch (e) {
+      // ⚠️ A CANCEL IS NOT A FAILURE. Without this the abort surfaces as `CANCELLED` and the chapter
+      // is recorded as an ERROR, overwriting the `cancelled` status the user's own click set and
+      // reporting their deliberate stop as a fault. Same one-liner eighteen other sites in this file
+      // carry, and the same one `v90_n` had to add to `withRetry`.
+      if (String(e && e.message) === CANCELLED) {
+        console.log(`  [book ${bookId}] chapter ${i+1} stopped by cancel`);
+        jobFailOrCancel(jobId, e);
+        bj.chapters[i].status = 'cancelled';
+        bj.status = 'cancelled';
+        break;
+      }
       console.error(`  [book ${bookId}] chapter ${i+1} failed:`, e.message);
       jobFail(jobId, e.message);
       bj.chapters[i].status = 'error';
@@ -10014,8 +10047,9 @@ http.createServer(async (req, res) => {
       // now offers a cancel button here too, and `v88_k`'s own ruling on that button was that
       // telling a learner "cancelled" while the model is still running is precisely the bug to
       // avoid. A caller cannot be honest about an outcome the route will not tell it.
-      const stopped = cancelBookJob(bj);
-      if (stopped) console.log('  Book job cancelled:', body.bookId);
+      // v90_p: the id is passed so the abort line can name the book; cancelBookJob does the
+      // logging now, because it is the only place that knows whether anything was actually aborted.
+      const stopped = cancelBookJob(bj, body.bookId);
       return json(res, 200, { ok: true, stopped });
     }
     if (M === 'POST' && url.pathname === '/api/dialect-story') {
@@ -11388,9 +11422,24 @@ async function shutdown(signal) {
 // the suite GREEN. Only a RUNNING job can be stopped; anything else (already done, already
 // cancelled, or an id that is not a book job at all) must answer false, or the popover claims a
 // cancel that never happened — `v88_k`'s ruling on exactly that button.
-function cancelBookJob(bj) {
+function cancelBookJob(bj, bookId) {
   if (!bj || bj.status !== 'running') return false;
   bj.status = 'cancelled';
+  // ⚠️ v90_p: ABORT THE CHAPTER THAT IS ACTUALLY IN FLIGHT, don't merely relabel the book. Setting
+  // the status alone left the model running to the end of the current chapter, because the loop
+  // only reads the flag at the TOP of each chapter — so on a 4-chapter book a cancel during
+  // chapter 1 still cost a full chapter of generation. `_runBookJob` now runs each chapter under
+  // `runCancellable`, which registers this `abort`; calling it destroys the in-flight request and
+  // makes `_callLLM` refuse to start the next one.
+  const idx = bj.current || 0;
+  const ch = (bj.chapters || [])[idx];
+  const j = ch && ch.jobId ? jobs.get(ch.jobId) : null;
+  let aborted = false;
+  if (j && j.abort) { try { j.abort(); aborted = true; } catch (_) {} }
+  // User request: say it in the console. The ABORT half is the part worth naming — "cancelled" on
+  // its own is what the old status-only behaviour would also have printed, and it was not true.
+  console.log(`  [book ${bookId || '?'}] CANCELLED by user at chapter ${idx + 1}/${(bj.chapters || []).length}`
+    + (aborted ? ' — in-flight model call aborted' : ' — nothing in flight to abort'));
   return true;
 }
 

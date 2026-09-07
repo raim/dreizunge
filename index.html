@@ -25280,6 +25280,12 @@ async function _jobsCancelById(id, kind){
     // this line does not have to guess. `stopped:false` means it found nothing to abort (the job
     // finished between the render and the click, which a 3s poll makes a real race).
     const stopped = !!(data && data.stopped);
+    // v90_p (user request: "there should be a cancel message in the console"). Logged on BOTH
+    // sides deliberately — the server line names whether the in-flight model call was actually
+    // aborted, which is the fact that matters and one only the server knows; this line records
+    // that the click happened and what the server said back, so a "nothing happened" report can be
+    // told apart from "the button was never wired" without reading the server log.
+    console.log(`[jobs] cancel requested: ${kind} ${id} → ${stopped ? 'STOPPED' : 'nothing to stop (already finished?)'}`);
     showToast(stopped ? t('jobs.cancelled') : t('jobs.cancel_too_late'));
   }catch(e){ showToast('⚠ '+e.message); }
   _jobsFetchAndRender();
