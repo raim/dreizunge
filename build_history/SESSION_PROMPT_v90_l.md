@@ -68,6 +68,22 @@ current one) carries the protocol, the open items and the RULES, but none of tha
 the end (job audit, item V, the `kind:'sync'` deletion) all landed. **Ask the user what they want
 next** — that is the right first move here.
 
+🟢 **ONE THING IS TEED UP AND COSTED, IF THEY ASK FOR IT: scrape a story from a URL, scoped to the
+JSON-LD `NewsArticle` class.** The whole diagnosis, the measurements (the user's own Corriere
+article: HTTP 200, a 499-word clean `articleBody`, author/date/publisher for free) and a per-piece
+effort table are in `roadmap_v90.md` → *"SCRAPE A STORY STRAIGHT FROM A URL"*. Roughly a session,
+because chunking, the review card, the wizard, the book job and every provenance field already exist
+— it is a route, a parser, a field and a guard. ⚠️ **Read that section before starting**: it records
+two traps found by measurement (a `tagesschau.de` 404 page carrying a JSON-LD block with no article
+in it; a generic `<p>` fallback pulling 45% furniture that `cleanExtractedText` does NOT remove) and
+**the user must be asked for a key budget — 3 or 4 — before any `en` string is added.**
+
+📌 **A user ACTION is pending, not a code task.** A book job died mid-run on the IPv6 fault `v90_l`
+fixed, having generated chapter 1 of 3. Nothing was lost: `draft_50c237bfa2a47ef7` holds all three
+chunks. The recovery is theirs to do in the UI — resume the draft, **delete chunk 1** (already
+generated), set *"Continue story from"* to that chapter, generate. If `lessons.json` shows that
+chapter's storyline complete, they have done it.
+
 ⚠️ **THE USER WAS TRANSLATING `ui.json` BY HAND ACROSS THE WHOLE v90 LINE SO FAR** and will commit it themselves.
 Do not touch that file until `git log ui.json` shows their commit, and do not trust any translated
 count in this document until then.
