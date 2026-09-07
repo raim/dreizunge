@@ -135,6 +135,7 @@ run('unit: lesson-id integrity (v67.1)', 'node', [path.join(__dirname, 'unit-les
 run('unit: provenance-stamp source heal (v68.1)', 'node', [path.join(__dirname, 'unit-meta-source-heal.test.js')]);
 run('unit: the provenance migration RUN, not read (v90_b audit)', 'node', [path.join(__dirname, 'unit-provenance-migration.test.js')]);
 run('unit: the branch-mutation probe still finds branches (v90_d)', 'node', [path.join(__dirname, 'unit-branch-mutation-tool.test.js')]);
+run('unit: Ollama is reached by IP, not by a name that can resolve to ::1 (v90_l)', 'node', [path.join(__dirname, 'unit-ollama-loopback.test.js')]);
 run('unit: entering a lesson set, starting a lesson, rendering a question (v90_f)', 'node', [path.join(__dirname, 'unit-lesson-entry-journey.test.js')]);
 run('unit: student-mode flagging + flag-mode stamps (v68.1)', 'node', [path.join(__dirname, 'unit-student-flags.test.js')]);
 run('unit: deterministic PDF/text-upload cleanup (v68.1)', 'node', [path.join(__dirname, 'unit-pdf-cleanup.test.js')]);

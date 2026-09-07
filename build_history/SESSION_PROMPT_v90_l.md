@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_k` cut
+# Session prompt — written at the `v90_l` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_k`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_l`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -82,12 +82,19 @@ shows a commit newer than `docs/index.html`** — it is not a finding, and the f
 node build-static.js && node test/run.js --quick
 ```
 
-⚠️ **ONE THING IS GENUINELY UNRESOLVED, and it is not a code defect you can go and fix:** the
-false `⚠ Ollama unreachable` on wlan loss. `v89_af` made the ping tolerant of a stall, but a
-controlled test **did not reproduce the original symptom at all** — the ping stayed at 1-3ms through
-a clean wlan off/on, so the fix is UNTESTED against the real thing. The original failures show
-`ip-config-unavailable` (DHCP timing out, 1564 times in one boot), which a clean toggle does not
-reproduce. If it recurs, the monitor shape is in `roadmap_v90.md`'s `v89_af` entry.
+✅ **THE `⚠ Ollama unreachable` FLAPPING IS SOLVED — it was never the wlan** (`v90_l`). The user's
+own book-job log carried the answer: `ECONNREFUSED ::1:11434`, refused in 1-5ms. `::1` is IPv6
+loopback, Ollama binds `127.0.0.1` only, and the app's default was the NAME `http://localhost:11434`
+— so any call whose resolution landed on `::1` was refused instantly, and which candidate the
+resolver returns first is exactly what changes when an interface goes up or down. The default is now
+the IPv4 literal, and a loopback NAME pins `family: 4`. **If it ever recurs, check the error CODE
+and its TIMING first**: `ECONNREFUSED` in single-digit milliseconds is a local refusal and the wlan
+is innocent; a real network fault gives `ETIMEDOUT`/`EHOSTUNREACH` and takes seconds.
+
+⚠️ **Two things that log showed and `v90_l` did NOT fix**, both worth measuring now that the cause
+is gone: a lesson retries 3× IMMEDIATELY, so all three attempts land inside one fault (chapter 2 of
+3 died exactly that way), and every `✓ reachable again` triggers a real model warm-up, which is
+expensive when the transitions are spurious.
 
 ✅ **THE SUITE AUDIT IS COMPLETE — FIVE PASSES, AND NOTHING IS OWED FROM IT.**
 
@@ -190,8 +197,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 364 checks
-node test/run.js --quick                  → expect 302
+node test/run.js                          → expect 365 checks
+node test/run.js --quick                  → expect 303
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -223,8 +230,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **355 topics, 99 storylines, 33 languages, 741 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_k'`.
+Corpus at this cut: **357 topics, 100 storylines, 33 languages, 741 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_l'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

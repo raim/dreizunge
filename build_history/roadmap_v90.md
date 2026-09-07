@@ -357,6 +357,204 @@ that grew in the `v88` line as eight routes became jobs. A known gap, not an ove
 needs keys plus a client-side lookup for server-minted strings.
 
 
+## 🌍 THE UNLOCALIZED-STRING BACKLOG (re-derived at `v90_k`) — 86 CERTAIN, 60 UNDECIDED
+
+⚠️ **Read the `v90_k` shipped entry before touching this.** The numbers below are the RE-DERIVED
+ones; an earlier pass reported "143 distinct hardcoded strings" and was wrong, because it guessed
+from markup which English literals were first-paint FALLBACKS. **Re-measure the class you are about
+to touch** — the client localizes through at least four idioms and a regex mis-classifies in both
+directions. The oracle: `getElementById` AUTO-VIVIFIES, so an element the DOM harness returns starts
+blank; run `applyUIStrings()` and a value present means it wrote there.
+
+**Nothing here is owed** — no user has asked for it. It is recorded so a tier can be picked and
+costed instead of re-derived. Every line is a string a user reads in English whatever their UI
+language is set to.
+
+### A — markup `title` / `placeholder` with an id, that `applyUIStrings` never writes (35)
+
+| id | attr | English |
+|---|---|---|
+| `bottom-bar-toggle` | title | "Hide bottom bar" |
+| `settings-pill` | title | "Settings" |
+| `mute-pill` | title | "Mute" |
+| `speech-mic-pill` | title | "Speak your answer" |
+| `export-static-btn` | title | "Rebuild docs/index.html" |
+| `teacher-dash-btn` | title | "Teacher dashboard" |
+| `teacher-mode-select` | title | "Unlock all stories" |
+| `static-flag-close-btn` | title | "Dismiss" |
+| `tts-lang-select-landing` | title | "Speech language" |
+| `tts-voice-select-landing` | title | "Voice" |
+| `use-full-chain-row` | title | "Pass the full storyline as context — better continuity, slowe |
+| `topic-input` | placeholder | "e.g. cooking, architecture, medicine…" |
+| `user-story-input-ph` | placeholder | "Paste your story here…" |
+| `user-translation-ph` | placeholder | "Paste the translation here." |
+| `dialect-name-input` | placeholder | "Dialect name (e.g. Osttirol)" |
+| `dialect-input` | placeholder | "a boisl = einige Zeit&#10;Gitsche = Mädchen&#10;bleckfüeßet = |
+| `dialect-attr-input` | placeholder | "Attribution / source (optional, e.g. author + license)" |
+| `btn-topics` | title | "Home" |
+| `lesson-edit-btn` | title | "Edit title" |
+| `lesson-title-input` | placeholder | "Lesson set title…" |
+| `dialect-story-topic` | placeholder | "Story topic (e.g. a day in the mountains)" |
+| `dialect-story-instr` | placeholder | "Instructions (optional), e.g. 'this is a Bavarian-style diale |
+| `dialect-story-btn2` | title | "Write a Standard-German story, then rewrite it into the diale |
+| `story-flag-comment` | placeholder | "Describe what is wrong with the story…" |
+| `sial-diff-lesson-card` | title | "Difficulty" |
+| `math-instr-lc-ph` | placeholder | "🤖 Describe math exercises… (Fibonacci, powers of 2, LaTeX…)" |
+| `tts-lang-select-ls` | title | "Speech language" |
+| `tts-voice-select-ls` | title | "Voice" |
+| `comp-story-explorer-btn` | title | "Text explorer — tap any word for its grammar" |
+| `comp-story-spk` | title | "Read story aloud" |
+| `sl-screen-del-btn` | title | "Delete storyline" |
+| `sl-tag-input` | placeholder | "Tags, semicolon-separated…" |
+| `sl-screen-edit-input` | placeholder | "Storyline title…" |
+| `bmodel-threads` | placeholder | "auto" |
+| `tts-voice-select-main` | title | "Speech variant" |
+
+### B — literals passed to `showToast` / `confirm` / `alert`, where no fallback exists (10)
+
+- "⏳ Resuming book generation…"
+- "✓ docs/index.html rebuilt"
+- "⚠ Summary element not found"
+- "⚠ Open a storyline first"
+- "⛔ Generation stopped"
+- "Could not load: "
+- "Please paste your story (at least 20 characters) before generating."
+- "Could not generate title: "
+- "Clear all lesson results for \"${topic}\"?\\nThis resets all progress for"
+- "Delete the ${label} lesson from \"${d.topic}\"?\\nThis cannot be undone."
+
+### C — markup text with an id that nothing in the source ever writes to (10)
+
+- `acct-signin-btn` — "Sign in"
+- `acct-register-btn` — "Create"
+- `gen-status-text` — "Generating…"
+- `gen-lbl` — "Building your lessons…"
+- `gen-sub` — "Starting…"
+- `dialect-upload-btn` — "📎 Upload"
+- `vocab-mode-opt-reinforce` — "🔁 reinforce vocab"
+- `vocab-mode-opt-neutral` — "○ neutral"
+- `vocab-mode-opt-extend` — "➕ extend vocab"
+- `sial-btn-lesson-card` — "Generate"
+
+### D — literal `title` / `placeholder` / `aria-label` on elements with NO id (31 distinct, 41 occurrences)
+
+`applyUIStrings` addresses elements by id, so it cannot reach any of these.
+
+- "Delete" — title, ×4
+- "Home" — title, ×3
+- "Stop generation" — title, ×3
+- "Edit summary" — title, ×2
+- "Add choice" — title, ×2
+- "Remove choice" — title, ×2
+- "Close" — title, ×1
+- "Import lessons.json" — title, ×1
+- "Refresh" — title, ×1
+- "Continue story" — title, ×1
+- "Edit / rename topic" — title, ×1
+- "Share storyline link" — title, ×1
+- "Delete all chapters in this storyline" — title, ×1
+- "Edited" — title, ×1
+- "Delete lesson" — title, ×1
+- "Re-translate all chapters" — title, ×1
+- "reason (optional)" — placeholder, ×1
+- "Edit the story in the lesson-set screen story editor" — title, ×1
+- "Delete this whole word entry" — title, ×1
+- "context sentence containing the word" — placeholder, ×1
+- "word" — placeholder, ×1
+- "gloss" — placeholder, ×1
+- "Remove" — title, ×1
+- "short reason the answer follows from the story" — placeholder, ×1
+- "use ___ for the blank" — placeholder, ×1
+- "short reason the correct form fits" — placeholder, ×1
+- "the exact word as it appears above" — placeholder, ×1
+- "e.g. plural of 'der Kopf', formed with -e and umlaut" — placeholder, ×1
+- "Tap to hear" — title, ×1
+- "tap to remove" — title, ×1
+
+### The 60 undecided (class C's remainder)
+
+Markup text with an id that SOME code writes to. Deciding each needs reading that writer: a
+hand-check of 27 found roughly half genuinely localized (`fin-title`, `sum-title`,
+`tutor-widget-title`, `flag-strip-label`, `lib-cnt`, `acct-name`, `acct-signout-btn`) and the rest
+not. ⚠️ Two mis-classifications to learn from: a regex called `fin-title` hardcoded (it is written
+`const ttl = getElementById('fin-title'); if (ttl) ttl.textContent = t('finished.title')`, two
+statements apart) and called `topic-name-big` localized (it is assigned the topic NAME — user
+content, not a translatable string).
+
+### Roughly who reads them — judgement, unlike the counts above
+
+- **A learner in normal play (~25):** the generation screen's own progress text ("Building your
+  lessons…", "Generating…", "Starting…"), the bottom-bar / settings / mute / mic pill tooltips, the
+  speech-language and voice selectors on two screens, "Home", the completion card's explorer and
+  read-aloud buttons, `confirm("Clear all lesson results for …")`,
+  `alert("Please paste your story (at least 20 characters)…")`, the three vocab-mode options.
+- **A teacher authoring (~45):** the whole dialect studio, the lesson editor's placeholders ("use ___
+  for the blank", "short reason the correct form fits", "the exact word as it appears above"), the
+  title and tag inputs, "Add choice" / "Remove choice" / "Delete", `confirm("Delete the … lesson…")`.
+- **A maintainer (~10):** "Rebuild docs/index.html", "Import lessons.json", "Teacher dashboard",
+  "✓ docs/index.html rebuilt".
+
+## 🌐 SCRAPE A STORY STRAIGHT FROM A URL (user question, at the `v90_k` cut) — MEASURED, NOT BUILT
+
+User: *"How hard would it be to scrape text directly from a URL, e.g. a newspaper article like
+`corrieredellaltoadige.corriere.it/…/accordo-de-gasperi-gruber-…shtml`?"* Answered by **fetching
+that exact URL** rather than by estimating.
+
+### What the measurement showed
+
+| | |
+|---|---|
+| **the fetch itself is nothing** | `https.get` with a browser `User-Agent` → **HTTP 200, 196 877 bytes**, no dependency, no JS engine. Redirect-following and a size cap are ~40 lines |
+| **⭐ the body is already in the HTML, as structured data** | A `schema.org` **`NewsArticle` JSON-LD block** carries `articleBody` (**3 450 chars / 499 words**), plus `headline`, `author.name` ("Andrea Dalla Serra"), `datePublished` and `publisher.name`. Clean Italian prose, no furniture. That is the whole feature for a site that ships it |
+| **and it maps onto fields that ALREADY exist** | `articleBody` → the story text, then straight into `cleanExtractedText` → `_splitIntoChunks` → the upload flow; `headline` → the topic title; `author.name` → `source.author`; the URL → `source.url`; `publisher`/`datePublished` → `source.note`. The `v89_aj` provenance work built every one of those fields |
+| **⚠️ BUT JSON-LD IS NOT RELIABLE ACROSS SITES** | Probed four more: `en.wikipedia.org` **0** `articleBody`, `derstandard.at` **0**, `bbc.com` **0** (an index page), and a `tagesschau.de` URL 404'd — *and its 404 PAGE still carried a JSON-LD block*, so "a block exists" is not "an article is in it" |
+| **⚠️ AND THE GENERIC FALLBACK IS POOR AS IT STANDS** | Measured on the same page: pulling every `<p>` over 40 characters yields **897 words against the article's real 499** — roughly 45% navigation, section menus and promo teasers. **`cleanExtractedText` does NOT remove it**: that cleaner is tuned for PDF furniture (page numbers, bare dates, bare URLs, short unpunctuated fragments) and this noise is punctuated prose |
+
+### So: how hard
+
+- **The easy 70%, roughly a session:** a `/api/fetch-url` route (fetch, cap, follow redirects), JSON-LD
+  `NewsArticle` extraction, provenance auto-filled, then hand off to the machinery the PDF/paste flow
+  already uses. Works today on Corriere and most schema.org news sites.
+- **The remaining 30% is a different project.** Beating 45% noise generically is the Readability
+  problem — link density and text-to-markup ratio per node — several hundred lines, and this repo has
+  no HTML parser at all.
+- **⭐ The shape that fits this project:** take JSON-LD when it is there; otherwise show the extracted
+  paragraphs in the **review card the comic and PDF flows already have** ("Review extracted text") and
+  let the user drop the furniture. The review stop exists, the user already ruled it should stay, and
+  it converts an unsolved algorithmic problem into two clicks.
+
+
+### ⭐ MEASURED AGAINST THE PDF PATH, ON THE SAME ARTICLE (user, same session)
+
+The user ran a **PDF book job on a "simplified print" of that very page** while this was being
+answered, so the two routes can be compared on identical source material rather than in principle.
+Chapter 1 of 3 (`tp_17887890461640000030`, 171 words — the article's 499 split three ways):
+
+| | PDF path (what shipped) | URL scrape (what it would give) |
+|---|---|---|
+| **the body** | faithful — chapter 1's prose matches the article's opening word for word | identical text, from `articleBody` |
+| **the headline** | ⚠️ lands INSIDE the chapter as body text, and **hard-wrapped mid-sentence**: `"…tutto pronto per l'arrivo di\n\nMattarella: «Alto Adige…"` — the print's line break read as a paragraph break | a separate `headline` field; the body starts at the first real sentence |
+| **the standfirst** | ⚠️ also in the body ("Sabato la cerimonia ufficiale con…") | absent from `articleBody` |
+| **the topic title** | derived by the model from text that already contained the headline | `headline`, exactly as published |
+| **provenance** | `origin: user-pasted`, `model: (user-provided)`, **`source: null`, `sourceFile: null`** — nothing records where it came from | author "Andrea Dalla Serra", the URL, publisher "Corriere della Sera", `datePublished` — every one a field `v89_aj` already built |
+
+**So the difference is not the prose — it is the METADATA and the furniture.** The PDF route loses the
+article's structure (headline and standfirst become chapter 1's first sentences, one of them broken
+mid-phrase) and records no provenance at all, because a printed page carries none. A URL knows who
+wrote the thing, when, and where it lives. That is the argument for the feature, and a stronger one
+than "less clicking".
+
+### ⚠️ Three things to settle before building, none of them technical
+
+1. **Paywalls.** This article's body was fully present; many are truncated server-side, and some sites
+   serve it only to subscribers. The feature will sometimes return three paragraphs and a teaser, and
+   should say so rather than generating a chapter from a stub.
+2. **Copyright and terms of service.** Pulling a newspaper article into a personal learning corpus is
+   a real consideration, and it is the user's call. Worth noting that the machinery to record it
+   HONESTLY already exists: `source.author`, `source.url`, `source.licence`, `source.note` — the
+   `v89_aj` provenance line renders on the landing card, the storyline page and the completion card.
+3. **Live-only.** No server in the static build, so this joins the other backend-gated features.
+
 ## 🆕 CARRIED FORWARD FROM THE v86 LINE, GENUINELY STILL OPEN
 
 *Everything below survived the cut on its merits, not by mechanical carry — each item is restated
@@ -2694,6 +2892,74 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v90_l — the "⚠ Ollama unreachable" flapping was IPv6 loopback, not the wlan
+
+User, pasting a real book-job log: *"the laptop had lost contact to wlan, and it again lead to loss
+of connection to ollama."* Reported across three releases and blamed on the network every time.
+**It was never the network.** **ZERO `ui.json` keys.**
+
+### The line that settled it
+
+```
+⚠ Ollama unreachable (2 checks, last: ECONNREFUSED after 2ms) — offline mode until it returns.
+Translation failed: Ollama network: connect ECONNREFUSED ::1:11434
+```
+
+**`::1` is IPv6 loopback, and the refusal is 1–5ms.** A refusal that fast is the kernel saying
+"nothing is listening here" — it is not a network timeout, and a packet never left the machine.
+Measured on the reporting laptop:
+
+| | |
+|---|---|
+| `ss -ltn` | Ollama listens on **`127.0.0.1:11434` only** — IPv4, no IPv6 socket |
+| `http://::1:11434` | **ECONNREFUSED in 6ms** |
+| `http://127.0.0.1:11434` | **HTTP 200 in 3ms** |
+| the app's default | `http://localhost:11434` — a **NAME**, resolved on every single call |
+
+So every call whose resolution landed on `::1` was refused instantly. **Which candidate the resolver
+returns first is exactly what changes when an interface goes up or down** — which is why it looked
+like the wlan, and why `v89_af`'s controlled wlan toggle honestly reported that it could not
+reproduce the symptom: that test never made the resolver flip.
+
+### The fix takes name resolution out of the hot path
+
+The default is now the IPv4 **literal** in both `llm.js` and `server.js` — nothing to resolve,
+no resolver state left to flap. And because an operator may already have
+`OLLAMA_HOST=http://localhost:11434` in a shell profile, a loopback NAME additionally pins
+`family: 4` on the request. ⚠️ **Only a loopback name**: a real host may legitimately be IPv6-only,
+and forcing IPv4 there would break a working setup to fix one that is not in use.
+
+All **six** request sites in `llm.js` carry the pin. One unpinned site reproduces the entire
+symptom, because the flapping came from `ping()` while the failures came from the generators — two
+different call sites.
+
+### What this explains, in the user's own log
+
+- The **flap**: dozens of unreachable/reachable pairs, alternating as resolution did.
+- **Chapter 2 of 3 failed permanently** — three lesson attempts, all `ECONNREFUSED ::1:11434`, all
+  inside one flap. The retry was immediate, so all three landed on the same broken resolution.
+- Every `✓ reachable again` triggered `Warming up qwen3.6:35b-a3b…` — a real model load, repeatedly,
+  for a fault that was never in the model.
+
+⚠️ **The retry and warm-up behaviour is NOT fixed here** and is worth its own look: an immediate
+3× retry cannot survive a fault that lasts longer than the three attempts take, and re-warming on
+every transition is expensive when transitions are spurious. With the root cause gone they should
+stop firing, which is the argument for fixing the cause first and measuring again before touching
+them.
+
+### The guard reproduces the failure rather than describing it
+
+`unit-ollama-loopback.test.js` binds a server to **IPv4 loopback only**, exactly like Ollama, then
+connects both ways: IPv4 succeeds, IPv6 gives `ECONNREFUSED` **in single-digit milliseconds** — the
+timing that ruled the wlan out — and a loopback NAME with `family: 4` succeeds. It also pins that
+every request site carries the pin and that a real hostname is left alone. Four mutations red: each
+default reverted to `localhost`, one request site losing its pin, and the family pinned for every
+host rather than only loopback names.
+
+**This closes the item `v89_af` recorded as genuinely unresolved.**
+
+Suite: **365 full / 303 quick** (one new file).
 
 ## ✅ v90_k — the i18n audit, re-derived: 86 certain, not 143
 

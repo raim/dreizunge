@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_k';
+const APP_VERSION  = 'v90_l';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -317,7 +317,9 @@ const ANALYSIS_STORE_FILE = process.env.CANONICAL_ANALYSIS_FILE || path.join(__d
 // path, and must never collide with lessons.json's own schema/migration/dedup logic.
 const DRAFTS_FILE = process.env.DRAFTS_FILE || path.join(__dirname, 'drafts.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
-const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
+// v90_l: see llm.js — an IP literal, because `localhost` can resolve to ::1 where Ollama does not
+// listen, and that is what the "⚠ Ollama unreachable" flapping was.
+const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://127.0.0.1:11434';
 // Model roles are runtime-mutable (see setRuntimeModels / GET+POST /api/models) so a user can
 // switch models from the UI without restarting the server. They default from env at startup and
 // are read LIVE at every call site (all ~60 reads), so an override takes effect on the next

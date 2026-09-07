@@ -24,7 +24,20 @@ const https = require('https');
 // prose — the two need different job outcomes ('cancelled' vs 'error') and different logging.
 const CANCELLED = 'LLM call cancelled';
 const BACKEND        = (process.env.LLM_BACKEND || 'ollama').toLowerCase();
-const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
+// ⚠️ v90_l: 127.0.0.1, NOT `localhost`. This is the root of the "⚠ Ollama unreachable" flapping
+// the user reported across three releases and that `v89_af`'s controlled wlan test could not
+// reproduce. The log that settled it says `ECONNREFUSED ::1:11434` — IPv6 loopback — refused in
+// 1-5ms, which is a LOCAL refusal, not a network timeout. Ollama listens on 127.0.0.1 ONLY
+// (measured: `ss -ltn` shows `127.0.0.1:11434`), so whenever the resolver hands back `::1` first —
+// which is exactly what changes when an interface goes up or down — every call is refused
+// instantly. Measured on the reporting machine: `::1:11434` → ECONNREFUSED in 6ms, `127.0.0.1` →
+// HTTP 200 in 3ms. An IP literal takes name resolution out of the hot path entirely, so there is
+// no resolver state left to flap.
+const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://127.0.0.1:11434';
+// …and if an operator (or an older shell profile) sets OLLAMA_HOST to a loopback NAME, pin the
+// address family so the same trap cannot be re-entered through configuration. Only for loopback
+// names: a real hostname may legitimately be IPv6-only.
+const OLLAMA_FAMILY  = /^(localhost|ip6-localhost)$/i.test(new URL(OLLAMA_HOST).hostname) ? 4 : undefined;
 let OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
 // Runtime-adjustable request timeout (larger/slower models — e.g. big models on Swahili word_forms —
 // can exceed the default). Clamped to a sane 30s–60min range. Named *Request* so it never shadows
@@ -250,7 +263,7 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
           ...(Array.isArray(opts?.images) && opts.images.length ? { images: opts.images } : {}) }]
     });
     const req = lib.request({
-      hostname: u.hostname,
+      hostname: u.hostname, family: OLLAMA_FAMILY,
       port: u.port || (u.protocol === 'https:' ? 443 : 80),
       path: u.pathname, method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
@@ -301,7 +314,7 @@ function _listOllamaModels() {
       const u = new URL('/api/tags', OLLAMA_HOST);
       const lib = u.protocol === 'https:' ? https : http;
       const req = lib.request(
-        { hostname: u.hostname, port: u.port || 11434, path: u.pathname, method: 'GET' },
+        { hostname: u.hostname, family: OLLAMA_FAMILY, port: u.port || 11434, path: u.pathname, method: 'GET' },
         res => {
           let d = ''; res.on('data', c => d += c);
           res.on('end', () => {
@@ -349,7 +362,7 @@ function _pingOllama(opts) {
       const u = new URL('/api/tags', OLLAMA_HOST);
       const lib = u.protocol === 'https:' ? https : http;
       const req = lib.request(
-        { hostname: u.hostname, port: u.port || 11434, path: u.pathname, method: 'GET' },
+        { hostname: u.hostname, family: OLLAMA_FAMILY, port: u.port || 11434, path: u.pathname, method: 'GET' },
         res => { res.resume();
           if (res.statusCode < 500) { _lastPingFail = null; resolve(true); }
           else fail('HTTP' + res.statusCode); }
@@ -370,7 +383,7 @@ function _releaseOllama(model) {
       options: { num_predict: 1 }, messages: [{ role: 'user', content: '' }]
     });
     const req = lib.request({
-      hostname: u.hostname,
+      hostname: u.hostname, family: OLLAMA_FAMILY,
       port: u.port || (u.protocol === 'https:' ? 443 : 80),
       path: u.pathname, method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
@@ -444,7 +457,7 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
       messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
     });
     const req = lib.request({
-      hostname: u.hostname, port: u.port || (u.protocol === 'https:' ? 443 : 80),
+      hostname: u.hostname, family: OLLAMA_FAMILY, port: u.port || (u.protocol === 'https:' ? 443 : 80),
       path: u.pathname, method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
     }, res => {
@@ -521,7 +534,7 @@ function modelCapabilities(model) {
   return new Promise((resolve) => {
     const u = new URL('/api/show', OLLAMA_HOST);
     const req = (u.protocol === 'https:' ? require('https') : http).request({
-      hostname: u.hostname, port: u.port, path: u.pathname, method: 'POST',
+      hostname: u.hostname, family: OLLAMA_FAMILY, port: u.port, path: u.pathname, method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
     }, (res) => {
       let d = ''; res.setEncoding('utf8');
