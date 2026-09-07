@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_f';
+const APP_VERSION  = 'v90_g';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -10066,6 +10066,44 @@ http.createServer(async (req, res) => {
         console.log(`  Re-translated "${saved.topic}" (${lang}→${srcLang}): ${storyTranslation.length} chars`);
         return { storyTranslation };
       });
+    }
+
+    // ── v90_g (user): edit an EXISTING translation by hand ───────────────────────────────────────
+    // "allow to edit translations on lesson-set pages (teacher view) … the user gets offered to edit
+    // an existing translation or to use the LLM to re-translate."
+    //
+    // ⚠️ Its own route rather than a `translation` field on /api/save-story, and the reason is that
+    // route's BODY: setting `aiStory` on first save, collapsing the edited text into a single comic
+    // panel's caption, invalidating curator corrections keyed on sentence text, and regenerating the
+    // AI error hunt. Every one of those is about the TARGET story. Running them for a source-language
+    // translation edit would rewrite a comic panel's caption with prose from the other language.
+    //
+    // No LLM, so no `runAsJob` and no backend gate — this is a human typing, and it must work when
+    // the model is down.
+    if (M === 'POST' && url.pathname === '/api/save-translation') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topic, topicId, translation } = body;
+      if ((!topic && !topicId) || typeof translation !== 'string') {
+        return json(res, 400, { error: 'Missing topic/topicId or translation' });
+      }
+      const saved = topicId ? findSavedById(topicId) : findSaved(topic);
+      if (!saved) return json(res, 404, { error: 'Topic not found' });
+      const text = translation.trim();
+      if (!text) return json(res, 400, { error: 'Empty translation' });
+      saved.storyTranslation = text;
+      // The stamp records WHO produced this text and WHERE the value came from — the invariant
+      // unit-translation-stamp §4 asserts over the whole corpus. A hand-edited translation was
+      // written by a person, so it is credited to no model: '(user-provided)' is the same sentinel
+      // backfill-provenance.js uses for a story the user supplied.
+      saved.translationMeta = { ...(saved.translationMeta || {}), type: 'translation',
+        model: '(user-provided)', origin: 'user-provided', source: 'edited by hand',
+        at: new Date().toISOString() };
+      stampUpdated(saved);
+      saveStore(store);
+      console.log(`  Translation edited by hand for "${saved.topic}" (${text.length} chars)`);
+      return json(res, 200, { ok: true, storyTranslation: text });
     }
 
     // ── Direct lesson edit ───────────────────────────────────────────────

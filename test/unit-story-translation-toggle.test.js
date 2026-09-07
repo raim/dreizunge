@@ -255,4 +255,139 @@ console.log('  markup: <details> frame, flags mount points, old toggle ids fully
   console.log('  storyline full-story panel: flags set per-chapter-pair, all-chapters, fallback, 🔊: OK');
 }
 
-console.log('unit-story-translation-toggle: ALL PASSED');
+// ── EDITING the translation, offered by the 🔄 button (v90_g) ────────────────
+//
+// User: "allow to edit translations on lesson-set pages (teacher view). This could be an option of
+// the re-translate button: the user gets offered to edit an existing translation or to use the LLM
+// to re-translate." The editor is the STORY editor with one flag deciding where Save sends the
+// text, so the assertions that matter are: which text it opens on, which route it saves to, and
+// that the flag cannot leak into the next story edit.
+(async () => {
+  const settle = (ms) => new Promise(r => setTimeout(r, ms || 30));
+  const client = (opts) => {
+    const o = opts || {};
+    const C = loadClient({ quiet: true });
+    C.run(`LANGS = ${JSON.stringify(LANGS_JSON)}; UI_STRINGS = ${JSON.stringify(uiJson.en)};
+      globalThis._picked = ${JSON.stringify(o.pick === undefined ? null : o.pick)};
+      globalThis._dialogs = 0; globalThis._retrans = 0; globalThis._posts = []; globalThis._toasts = [];
+      showChoiceDialog = async (spec) => { _dialogs++; globalThis._lastChoices = spec.choices; return _picked; };
+      retranslateStory = async () => { _retrans++; };
+      showToast = (m) => _toasts.push(m);
+      fetch = (url, init) => { _posts.push({ url, body: JSON.parse(init.body) });
+        return Promise.resolve({ ok: ${o.ok === false ? 'false' : 'true'}, status: 200,
+          json: async () => (${JSON.stringify(o.reply || {ok:true})}) }); };
+      APP.info = { canGenerate: ${o.canGenerate === false ? 'false' : 'true'} };
+      APP.lessonData = { id: 'tp_1', topic: 'Eins', lang: 'nl', srcLang: 'de',
+                         story: 'Het huis is groot.',
+                         ${o.noTranslation ? '' : "storyTranslation: 'Das Haus ist gross.',"}
+                         lessons: [] };`);
+    return C;
+  };
+  const body = (C) => C.document.getElementById('story-body');
+
+  // ── with no translation there is nothing to choose between ──
+  {
+    const C = client({ noTranslation: true });
+    await C.run('onRetranslateBtn()');
+    await settle();
+    assert.strictEqual(C.run('_dialogs'), 0, 'no dialog is opened when there is nothing to edit');
+    assert.strictEqual(C.run('_retrans'), 1, 'it goes straight to the model');
+  }
+  // ── with one, the learner is asked, and each answer does its own thing ──
+  {
+    const C = client({ pick: 'regen' });
+    await C.run('onRetranslateBtn()');
+    await settle();
+    assert.strictEqual(C.run('_dialogs'), 1, 'the choice is offered');
+    const labels = JSON.parse(C.run('JSON.stringify(_lastChoices.map(c => c.label))'));
+    assert.strictEqual(labels.length, 2, 'two options');
+    assert.ok(labels.every(l => l && l.length > 2 && !/^translation\./.test(l)),
+      'both are real localized strings, not raw key names');
+    assert.strictEqual(C.run('_retrans'), 1, 'choosing re-translate runs the model');
+    // ⚠️ not `=== 'false'`: this harness leaves contentEditable UNDEFINED until something sets it,
+    // so an equality check here would fail on a never-opened editor, which is the state under test.
+    assert.notStrictEqual(body(C).contentEditable, 'true', 'and opens no editor');
+  }
+  {
+    const C = client({ pick: null });
+    await C.run('onRetranslateBtn()');
+    await settle();
+    assert.strictEqual(C.run('_retrans'), 0, '⚠️ dismissing the dialog does NOTHING — neither branch');
+    assert.notStrictEqual(body(C).contentEditable, 'true', 'and no editor is opened either');
+  }
+  // ── choosing "edit" opens the editor ON THE TRANSLATION, with the panel switched to it ──
+  {
+    const C = client({ pick: 'edit' });
+    await C.run('onRetranslateBtn()');
+    await settle();
+    assert.strictEqual(C.run('_retrans'), 0, 'the model is not called');
+    assert.strictEqual(body(C).contentEditable, 'true', 'the editor is open');
+    assert.strictEqual(String(body(C).innerText).trim(), 'Das Haus ist gross.',
+      '⚠️ seeded with the TRANSLATION — seeding the target story here would save the wrong language ' +
+      'over the translation');
+    assert.strictEqual(C.run('APP._lsStoryLang'), 'source',
+      'and the panel is switched to the language being edited');
+    assert.strictEqual(C.run('APP._lsTextExplorer'), false,
+      'the explorer is off — it marks up the TARGET text and has no place over a translation');
+    assert.strictEqual(C.run("APP._storyEditMode"), 'translation', 'the editor knows which text it holds');
+
+    // Save goes to the translation route, not to /api/save-story
+    C.run("document.getElementById('story-body').innerText = 'Das Haus ist GROSS.';");
+    await C.run('saveStoryEdit()');
+    await settle();
+    const posts = JSON.parse(C.run('JSON.stringify(_posts)'));
+    assert.strictEqual(posts.length, 1, 'one request');
+    assert.strictEqual(posts[0].url, '/api/save-translation',
+      '⚠️ NOT /api/save-story — that route sets aiStory, collapses comic captions and regenerates ' +
+      'the AI hunt, all of which are about the target story');
+    assert.strictEqual(posts[0].body.translation, 'Das Haus ist GROSS.', 'carrying the edited text');
+    assert.strictEqual(posts[0].body.topicId, 'tp_1', 'and identifying the chapter');
+    assert.strictEqual(C.run('APP.lessonData.storyTranslation'), 'Das Haus ist GROSS.',
+      'the in-memory copy is updated so the panel shows the edit at once');
+    assert.strictEqual(body(C).contentEditable, 'false', 'the editor closes');
+    assert.strictEqual(C.run("APP._storyEditMode === undefined"), true,
+      '⚠️ and the mode is cleared — otherwise the NEXT story edit would save into the translation');
+  }
+  // ── a rejected save keeps the editor open and says so ──
+  {
+    const C = client({ pick: 'edit', ok: false, reply: { error: 'nope' } });
+    await C.run('onRetranslateBtn()');
+    await settle();
+    await C.run('saveStoryEdit()');
+    await settle();
+    assert.ok(JSON.parse(C.run('JSON.stringify(_toasts)')).some(x => /nope/.test(x)),
+      "the server's reason is surfaced");
+    assert.strictEqual(C.run('APP.lessonData.storyTranslation'), 'Das Haus ist gross.',
+      'and the stored translation is NOT replaced by an edit the server refused');
+  }
+  // ── the static build has no server: the edit is held in memory and rides the export ──
+  {
+    const C = client({ pick: 'edit', canGenerate: false });
+    await C.run('onRetranslateBtn()');
+    await settle();
+    C.run("document.getElementById('story-body').innerText = 'Statisch bearbeitet.';");
+    await C.run('saveStoryEdit()');
+    await settle();
+    assert.deepStrictEqual(JSON.parse(C.run('JSON.stringify(_posts)')), [], 'nothing is posted');
+    assert.strictEqual(C.run('APP.lessonData.storyTranslation'), 'Statisch bearbeitet.', 'but the edit holds');
+    assert.strictEqual(C.run('APP._dirtyExport'), true, 'and it is marked for the export');
+  }
+  // ── cancelling leaves no trace, and the next STORY edit is a story edit ──
+  {
+    const C = client({ pick: 'edit' });
+    await C.run('onRetranslateBtn()');
+    await settle();
+    C.run('cancelStoryEdit()');
+    assert.strictEqual(C.run("APP._storyEditMode === undefined"), true, 'the mode is cleared on cancel');
+    C.run('toggleStoryRepair()');
+    assert.strictEqual(String(body(C).innerText).trim(), 'Het huis is groot.',
+      '⚠️ so the story editor opens on the STORY — the leak this clearing exists to prevent');
+    await C.run('saveStoryEdit()');
+    await settle();
+    const urls = JSON.parse(C.run('JSON.stringify(_posts.map(p => p.url))'));
+    assert.ok(!urls.includes('/api/save-translation'), 'and saves through the story path');
+  }
+  console.log('  🔄 offers edit-or-regenerate; the editor holds the TRANSLATION and saves to its own route: OK');
+
+  console.log('unit-story-translation-toggle: ALL PASSED');
+})();

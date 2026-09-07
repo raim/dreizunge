@@ -20,8 +20,12 @@ const { loadClient, ROOT } = require('./lib-dom');
 
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 
-// The five that move, and the two that must NOT.
-const IN_POPOVER = ['sl-screen-edit-btn', 'sl-screen-gen-btn', 'sl-screen-summary-btn',
+// The ones that move, and the two that must NOT.
+//
+// ⚠️ v90_g: `sl-screen-summary-btn` LEFT this list — the user moved "generate summary" onto the
+// summary's own edit menu, beside its manual edit and its QC. §1b below asserts where it went, so
+// "no longer in the header" cannot be satisfied by deleting the control outright.
+const IN_POPOVER = ['sl-screen-edit-btn', 'sl-screen-gen-btn',
                     'sl-screen-storyboard-btn', 'sl-screen-qc-btn', 'sl-screen-del-btn'];
 const STAY_IN_HEADER = ['sl-screen-walk-btn', 'share-storyline-btn'];
 
@@ -79,6 +83,22 @@ try {
       + 'the tag editor happened to be open');
     console.log('  the delete button is out of the tag editor, where it was unreachable: OK');
   }
+
+  // ── 1b. …and generate-summary is on the SUMMARY, not gone (v90_g) ──────────────────────────
+  {
+    const popAt = html.indexOf('<div id="sl-screen-edit-pop"');
+    const popEnd = html.indexOf('</div>\n      <!-- v69_r', popAt) > 0
+      ? html.indexOf('</div>\n      <!-- v69_r', popAt) : html.indexOf('\n      <!--', popAt);
+    assert.ok(!html.slice(popAt, popEnd).includes('sl-screen-summary-btn'),
+      'the summary button is no longer in the header popover');
+    // It kept its id, because genStorylineSummary() finds it by id to show ⏳ while it runs.
+    assert.ok(/id="sl-screen-summary-btn"[^>]*>✨/.test(html),
+      'it still exists, with the ✨ icon the user asked for');
+    assert.ok(/_cardEditPopHtml\('sumedit-'/.test(html),
+      'and it is emitted through the summary row\'s own edit menu');
+    assert.ok(/genStorylineSummary\(\)/.test(html), 'still wired to the same handler');
+  }
+  console.log('  generate-summary moved onto the summary\'s own menu, keeping its id and handler: OK');
 
   // ── 3. Behaviour: rows mirror their buttons, and labels come from the buttons' own titles ────
   {
@@ -183,6 +203,102 @@ try {
     assert.ok(/qcBtn\.onclick = \(\) => qcRun\(\{ storylineId: chainId \}, qcBtn\);/.test(html),
       'and the QC button is still wired in _renderStorylineScreen');
     console.log('  every relocated button kept its handler: OK');
+  }
+
+  // ── 5. The registry: three menus now, one mechanism (v90_g) ───────────────
+  //
+  // The user asked for the same pencil on the lesson-set story row and on the chapter-title row
+  // ("same as the edit menus of other levels"). Rather than a second and third copy of this walk,
+  // _slEditMenuSync became _editMenuSync(key) over a registry — so what is asserted here is that
+  // ALL THREE behave the same way, not merely that a table exists.
+  {
+    const C = loadClient({ quiet: true });
+    const keys = JSON.parse(C.run('JSON.stringify(Object.keys(_EDIT_MENUS))')).sort();
+    assert.deepStrictEqual(keys, ['ls-story', 'ls-title', 'sl-screen'],
+      'three menus: the storyline header, the lesson-set story row, the chapter-title row');
+
+    for (const key of keys) {
+      const out = JSON.parse(C.run(`(function(){
+        var M = _EDIT_MENUS[${JSON.stringify(key)}];
+        // Every button explicitly hidden first: this harness does not parse inline style
+        // attributes, so an untouched button reads as visible and the counts below would be
+        // measuring the fixture rather than the code.
+        M.rows.forEach(function(id){ document.getElementById(id).style.display = 'none'; });
+        _editMenuSync(${JSON.stringify(key)});
+        var hiddenPencil = document.getElementById(M.btn).style.display;
+        document.getElementById(M.rows[0]).style.display = '';
+        document.getElementById(M.rows[0]).title = '✨ A Label';
+        var shown = _editMenuSync(${JSON.stringify(key)});
+        return JSON.stringify({
+          shown: shown, hiddenPencil: hiddenPencil,
+          pencil: document.getElementById(M.btn).style.display,
+          firstRow: document.getElementById('row-' + M.rows[0]).style.display,
+          lastRow: document.getElementById('row-' + M.rows[M.rows.length - 1]).style.display,
+          label: document.getElementById('lbl-' + M.rows[0]).textContent
+        });
+      })()`));
+      assert.strictEqual(out.shown, 1, `${key}: exactly the visible button is counted`);
+      assert.strictEqual(out.firstRow, 'flex', `${key}: its row is shown`);
+      assert.strictEqual(out.lastRow, 'none', `${key}: a hidden button's row stays hidden`);
+      assert.strictEqual(out.label, 'A Label',
+        `${key}: the label comes from the button's own title, leading icon stripped`);
+      assert.strictEqual(out.hiddenPencil, 'none',
+        `${key}: with every row hidden the pencil is hidden too — it would open onto nothing`);
+      assert.strictEqual(out.pencil, '', `${key}: and it reappears once there is something to show`);
+    }
+
+    // ⚠️ ONE open page-wide. The two lesson-set pencils sit a few hundred pixels apart, so opening
+    // the second must close the first rather than stacking two menus over the same content.
+    const both = JSON.parse(C.run(`(function(){
+      _EDIT_MENUS['ls-story'].rows.forEach(function(id){ document.getElementById(id).style.display = ''; });
+      _EDIT_MENUS['ls-title'].rows.forEach(function(id){ document.getElementById(id).style.display = ''; });
+      toggleEditMenu('ls-story');
+      var afterFirst = document.getElementById('ls-story-edit-pop').style.display;
+      toggleEditMenu('ls-title');
+      return JSON.stringify({ afterFirst: afterFirst,
+        story: document.getElementById('ls-story-edit-pop').style.display,
+        title: document.getElementById('ls-title-edit-pop').style.display });
+    })()`));
+    assert.strictEqual(both.afterFirst, 'block', 'the first pencil opens its menu');
+    assert.strictEqual(both.title, 'block', 'the second opens its own…');
+    assert.strictEqual(both.story, 'none', '…and closes the first');
+    const twice = C.run(`(function(){ toggleEditMenu('ls-title');
+      return document.getElementById('ls-title-edit-pop').style.display; })()`);
+    assert.strictEqual(twice, 'none', 'a second press on the same pencil closes it');
+    console.log('  three menus, one mechanism: mirrored rows, stripped labels, one open at a time: OK');
+  }
+
+  // ── 6. The relocated buttons kept their handlers (v90_g) ──────────────────
+  {
+    const popStory = html.slice(html.indexOf('<div id="ls-story-edit-pop"'),
+                                html.indexOf('<div class="story-body"'));
+    for (const [id, handler] of [['ls-story-analyze-btn', 'analyzeChaptersRun'],
+                                 ['story-repair-toggle-btn', 'toggleStoryRepair()'],
+                                 ['story-qc-btn', 'runStoryQc()'],
+                                 ['story-retranslate-btn', 'onRetranslateBtn()']]) {
+      assert.ok(popStory.includes('id="' + id + '"'), `${id} is in the story row's menu`);
+      const at = popStory.indexOf('id="' + id + '"');
+      const tag = popStory.slice(popStory.lastIndexOf('<button', at), popStory.indexOf('</button>', at));
+      assert.ok(tag.includes(handler), `${id} kept its handler (${handler})`);
+    }
+    // ⚠️ 🔬 and 💬 must NOT have moved: the user's list was the four AUTHORING controls, and these
+    // two are what a LEARNER uses (the explorer works with no backend at all).
+    const row = html.slice(html.indexOf('<span id="ls-story-flags"'),
+                           html.indexOf('<div id="ls-story-edit-pop"'));
+    assert.ok(row.includes('id="ls-story-explorer-btn"'), 'the 🔬 explorer stays in the row');
+    assert.ok(row.includes('id="speakstory-btn"'), 'and 💬 read-aloud stays with it');
+    assert.ok(!row.includes('id="story-qc-btn"'), 'while QC has left the row');
+
+    const popTitle = html.slice(html.indexOf('<div id="ls-title-edit-pop"'));
+    const popTitleEnd = popTitle.slice(0, popTitle.indexOf('<div class="ls-hdr-storyline"'));
+    for (const [id, handler] of [['lesson-edit-btn', 'openLessonTitleEdit()'],
+                                 ['gen-topic-title-btn', 'genLessonTitle()']]) {
+      assert.ok(popTitleEnd.includes('id="' + id + '"'), `${id} is in the title row's menu`);
+      assert.ok(popTitleEnd.includes(handler), `${id} kept its handler`);
+    }
+    assert.ok(!popTitleEnd.includes('id="share-btn"'),
+      'and 🔗 share is NOT in it — the same exclusion the user made for the storyline header');
+    console.log('  the six relocated buttons kept their handlers; the learner controls stayed put: OK');
   }
 
 } catch (e) { failed = true; console.error(e); }

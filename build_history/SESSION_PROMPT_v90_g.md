@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_f` cut
+# Session prompt — written at the `v90_g` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_f`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_g`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -121,6 +121,19 @@ node tools/branch-mutation.js --discover --out /tmp/res.json --max 10
    `docs/` first or subtract `unit-static-freshness` — every `index.html` mutant reddens it for the
    byte change, not the defect.
 
+⚠️ **A RESTORE STEP MUST NEVER BE A VCS COMMAND.** At `v90_g` a mutation helper written inline used
+`git checkout -- index.html` to put the file back between mutations. That restores from the INDEX,
+so it discarded every unstaged change in the working tree — four completed UI tasks, in one command.
+The work was rebuilt from the transcript, but the rule is cheap to keep: copy the bytes first and
+copy them back, the way `mut.sh` and `tools/branch-mutation.js` already do. A VCS restore cannot tell
+the mutation from the work.
+
+⚠️ **THE USER TRANSLATES `ui.json` BY HAND.** Ask for an explicit key budget before adding any `en`
+key, and say what each one buys. `v90_g` was granted three of a proposed four and shipped the other
+four requests at zero — the two relocation mechanisms (`_editMenuSync`'s registry and
+`_cardEditPopHtml`) take each row's label from the button's own `title`, so moving a control into a
+menu costs nothing. Reach for those before asking.
+
 ## Orient yourself, in this order
 
 1. **This file**, whole.
@@ -140,7 +153,7 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 363 checks
+node test/run.js                          → expect 364 checks
 node test/run.js --quick                  → expect 302
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -173,8 +186,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **355 topics, 99 storylines, 33 languages, 737 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_f'`.
+Corpus at this cut: **355 topics, 99 storylines, 33 languages, 740 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_g'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

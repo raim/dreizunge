@@ -358,6 +358,7 @@ if (!quick) {
   // it skips them. The promise now holds.
   run('e2e: mixed lesson edit (type round-trip)', 'node', [path.join(__dirname, 'e2e-mixed-lesson-edit.test.js')]);
   run('e2e: every lesson type survives an edit round-trip (v75_e)', 'node', [path.join(__dirname, 'e2e-lesson-edit-roundtrip.test.js')]);
+  run('e2e: a hand-edited translation persists and touches nothing else (v90_g)', 'node', [path.join(__dirname, 'e2e-translation-edit.test.js')]);
   run('e2e: flagged merge-import keeps storyline storyboards (v75_f)', 'node', [path.join(__dirname, 'e2e-import-storyboard.test.js')]);
   run('e2e: rating/flag round-trip (v46 Tier 1)', 'node', [path.join(__dirname, 'e2e-rating-edit.test.js')]);
   run('e2e: pass mark per storyline + chapter (v69_i)', 'node', [path.join(__dirname, 'e2e-pass-mark.test.js')]);

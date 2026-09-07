@@ -1854,9 +1854,17 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div class="sl-screen-title-row">
       <span class="topic-emoji-big" id="topic-emoji-big" style="font-size:20px">📚</span>
       <span class="sl-screen-title" id="topic-name-big">Topic</span>
-      <button class="sl-screen-share" id="lesson-edit-btn" onclick="openLessonTitleEdit()" style="display:none" title="Edit title">✏️</button>
-      <button class="sl-screen-share" id="gen-topic-title-btn" onclick="genLessonTitle()" style="display:none" title="Generate title">✨</button>
+      <!-- v90_g (user): "merge the two edit buttons (manual edit and LLM-based chapter title
+           generation) into an edit menu (pencil icon), same as the edit menus of other levels."
+           Same relocation as the storyline header's item Y and the story row above: the buttons are
+           unchanged and the menu mirrors them. 🔗 stays in the row, matching the user's own
+           exclusion of share/play from the storyline header's menu. -->
+      <button class="sl-screen-share" id="ls-title-edit-menu-btn" onclick="event.stopPropagation();toggleEditMenu('ls-title',event)" title="" style="display:none">✏️</button>
       <button class="sl-screen-share" id="share-btn" onclick="shareLesson()" title="Share">🔗</button>
+    </div>
+    <div id="ls-title-edit-pop" class="sl-edit-pop" style="display:none" onclick="event.stopPropagation()">
+      <div class="sl-edit-pop-row" id="row-lesson-edit-btn"><button class="sl-screen-share" id="lesson-edit-btn" onclick="openLessonTitleEdit()" style="display:none" title="Edit title">✏️</button><span class="sl-edit-pop-lbl" id="lbl-lesson-edit-btn"></span></div>
+      <div class="sl-edit-pop-row" id="row-gen-topic-title-btn"><button class="sl-screen-share" id="gen-topic-title-btn" onclick="genLessonTitle()" style="display:none" title="Generate title">✨</button><span class="sl-edit-pop-lbl" id="lbl-gen-topic-title-btn"></span></div>
     </div>
     <div id="lesson-title-edit-row" style="display:none;padding:8px 0 0;gap:6px;align-items:center;flex-wrap:wrap">
       <span id="lesson-title-edit-icon" style="position:relative;display:inline-block"><span class="icon-picker-btn" id="lesson-emoji-picker" style="font-size:20px;cursor:pointer" onclick="openIconPicker('lesson-emoji-picker','lesson-emoji')">📚</span></span>
@@ -1915,11 +1923,16 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
            feature) and NOT 🔎 (already the AI-hunt checkbox's icon further down this same row). -->
       <span id="ls-story-flags" style="flex:none"></span>
       <button class="story-icon-btn" id="ls-story-explorer-btn" onclick="event.stopPropagation();toggleLsTextExplorer()" title="Text explorer — tap any word for its grammar">🔬</button>
-      <button class="story-icon-btn" id="ls-story-analyze-btn" onclick="event.stopPropagation();analyzeChaptersRun([APP.lessonData?.id].filter(Boolean),this)" title="Analyse words for the text explorer" style="display:none">🔤</button>
       <button class="story-icon-btn" onclick="event.stopPropagation();speakStory()" id="speakstory-btn" title="Read aloud">💬</button>
-      <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="event.stopPropagation();toggleStoryRepair()" title="Edit story">✏️</button>
-      <button class="story-icon-btn" id="story-qc-btn" onclick="event.stopPropagation();runStoryQc()" title="Proofread with QC model" style="display:none">🔍</button>
-      <button class="story-icon-btn" id="story-retranslate-btn" onclick="event.stopPropagation();retranslateStory()" title="Re-translate (after fixing the story text)" style="display:none">🔄</button>
+      <!-- ⚠️ v90_g (user): "hide the lesson-set page story view buttons behind an edit (pencil)
+           icon: the text-analysis, the edit story button, the QC button and the re-translate
+           button." The four are RELOCATED into #ls-story-edit-pop below, unchanged — same ids, same
+           handlers, same `title` strings, same per-button visibility rules in buildPath — so the
+           popover MIRRORS their state rather than re-deciding it, exactly as item Y's menu does.
+           The two that stay are the ones a LEARNER uses: 🔬 (a reading aid that works with no
+           backend at all) and 💬 (read aloud). The user was asked which of 🔬/🔤 "the text-analysis"
+           meant and chose 🔤, the button that RUNS the analysis. -->
+      <button class="story-icon-btn" id="ls-story-edit-menu-btn" onclick="event.stopPropagation();toggleEditMenu('ls-story',event)" title="" style="display:none">✏️</button>
       <span id="story-edit-toolbar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
         <button class="story-repair-btn" onclick="saveStoryEdit()" style="padding:4px 10px;font-size:12px">💾</button>
         <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="cancelStoryEdit()">✕</button>
@@ -1929,6 +1942,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         </label>
         <span id="story-edit-status" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
       </span>
+    </div>
+    <!-- The relocated four. Each row is the ORIGINAL button plus a label filled in at open time
+         from that button's own `title`, so the labels are whatever _applyUIStrings already set, in
+         whatever UI language — ZERO new ui.json keys. -->
+    <div id="ls-story-edit-pop" class="sl-edit-pop" style="display:none;margin:0 16px 6px" onclick="event.stopPropagation()">
+      <div class="sl-edit-pop-row" id="row-ls-story-analyze-btn"><button class="story-icon-btn" id="ls-story-analyze-btn" onclick="event.stopPropagation();analyzeChaptersRun([APP.lessonData?.id].filter(Boolean),this)" title="Analyse words for the text explorer" style="display:none">🔤</button><span class="sl-edit-pop-lbl" id="lbl-ls-story-analyze-btn"></span></div>
+      <div class="sl-edit-pop-row" id="row-story-repair-toggle-btn"><button class="story-icon-btn" id="story-repair-toggle-btn" onclick="event.stopPropagation();toggleStoryRepair()" title="Edit story">✏️</button><span class="sl-edit-pop-lbl" id="lbl-story-repair-toggle-btn"></span></div>
+      <div class="sl-edit-pop-row" id="row-story-qc-btn"><button class="story-icon-btn" id="story-qc-btn" onclick="event.stopPropagation();runStoryQc()" title="Proofread with QC model" style="display:none">🔍</button><span class="sl-edit-pop-lbl" id="lbl-story-qc-btn"></span></div>
+      <div class="sl-edit-pop-row" id="row-story-retranslate-btn"><button class="story-icon-btn" id="story-retranslate-btn" onclick="event.stopPropagation();onRetranslateBtn()" title="Re-translate (after fixing the story text)" style="display:none">🔄</button><span class="sl-edit-pop-lbl" id="lbl-story-retranslate-btn"></span></div>
     </div>
     <div class="story-body" id="story-body"></div>
     <div id="aeh-diff-panel" style="display:none;margin:0 16px 12px;font-size:12px;border-top:1.5px solid var(--gray-mid);padding-top:10px"></div>
@@ -2416,7 +2438,6 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <div id="sl-screen-edit-pop" class="sl-edit-pop" style="display:none">
         <div class="sl-edit-pop-row" id="row-sl-screen-edit-btn"><button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-edit-btn"></span></div>
         <div class="sl-edit-pop-row" id="row-sl-screen-gen-btn"><button class="sl-screen-share" id="sl-screen-gen-btn" onclick="openRetitleMenu(event)" title="Re-generate titles" style="display:none">✨</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-gen-btn"></span></div>
-        <div class="sl-edit-pop-row" id="row-sl-screen-summary-btn"><button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-summary-btn"></span></div>
         <div class="sl-edit-pop-row" id="row-sl-screen-storyboard-btn"><button class="sl-screen-share" id="sl-screen-storyboard-btn" onclick="onStorylineStoryboardBtn()" title="Generate storyboard" style="display:none">🎬</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-storyboard-btn"></span></div>
         <div class="sl-edit-pop-row" id="row-sl-screen-qc-btn"><button class="sl-screen-share" id="sl-screen-qc-btn" title="" style="display:none">🔍</button><span class="sl-edit-pop-lbl" id="lbl-sl-screen-qc-btn"></span></div>
         <!-- ⚠️ MOVED HERE FROM INSIDE #sl-tag-editor, where it had been sitting since it was added:
@@ -3316,7 +3337,6 @@ function applyUIStrings() {
   // it from the lesson data directly, same as #topic-name-big does.
   updateTeacherModeBtn();
   _buildGlobalTtsSelectors();
-  _setAttr('sl-screen-summary-btn', 'title', t('lesson.gen_summary'));
   _setAttr('sl-screen-storyboard-btn', 'title', t('storyboard.gen'));
   _setAttr('sl-screen-qc-btn',      'title', t('qc.btn.storyline') + ' ' + t('qc.btn.force_hint'));
   _setText('backend-lbl',          t('app.backend'));
@@ -6499,6 +6519,10 @@ function toggleStoryRepair(){
   if (!body || !toolbar) return;
   const isEditing = body.contentEditable === 'true';
   if (!isEditing) {
+    // v90_g: `editStoryTranslation` sets this immediately before calling in; every other entry
+    // point is editing the story itself. Read once and reset on close, so a cancelled translation
+    // edit cannot leave the next story edit pointed at the wrong field.
+    const _xlMode = APP._storyEditMode === 'translation';
     // Make sure the story is expanded — otherwise edit mode activates on a hidden body and
     // appears to "do nothing".
     body.classList.add('open');
@@ -6506,7 +6530,7 @@ function toggleStoryRepair(){
     // Switch to edit mode: make story-body directly editable
     // Store plain text version for editing
     body.dataset.origHtml = body.innerHTML;
-    body.innerText = APP.lessonData?.story || body.innerText;
+    body.innerText = (_xlMode ? APP.lessonData?.storyTranslation : APP.lessonData?.story) || body.innerText;
     body.contentEditable = 'true';
     body.dir = 'auto';                       // typed direction follows the text (Arabic → RTL)
     body.style.outline = '2px solid var(--blue)';
@@ -6514,9 +6538,12 @@ function toggleStoryRepair(){
     body.focus();
     toolbar.style.display = 'inline-flex';
     if (btn) btn.style.background = 'var(--blue-light, #e8f0fe)';
-    // Live diff update while editing (debounced 600ms)
+    // Live diff update while editing (debounced 600ms).
+    // ⚠️ Not for a translation edit: the AI error hunt is built from the TARGET story, and diffing
+    // source-language prose against it would offer nonsense corrections.
     let _aehDebounce;
     body._aehInput = () => {
+      if (APP._storyEditMode === 'translation') return;
       if (!document.getElementById('gen-ai-hunt-cb')?.checked) return;
       clearTimeout(_aehDebounce);
       _aehDebounce = setTimeout(() => {
@@ -6545,9 +6572,54 @@ function cancelStoryEdit(){
   if (body._aehInput) { body.removeEventListener('input', body._aehInput); delete body._aehInput; }
   const panel = document.getElementById('aeh-diff-panel');
   if (panel) panel.style.display = 'none';
+  delete APP._storyEditMode;             // v90_g: the next edit is a story edit unless it says so
+}
+// v90_g: a hand-edited TRANSLATION. Shares the editor UI with saveStoryEdit and nothing else — the
+// story save carries aiStory, comic-panel collapsing, curator-correction warnings and AI-hunt
+// regeneration, none of which has any meaning for source-language prose.
+async function saveTranslationEdit(){
+  const d = APP.lessonData; if (!d) return;
+  const body = document.getElementById('story-body');
+  const text = (body?.innerText || '').trim();
+  if (!text) return;                       // an empty save is a delete nobody asked for
+  const status = document.getElementById('story-edit-status');
+  const close = () => {
+    body.contentEditable = 'false'; body.style.outline = ''; body.style.borderRadius = '';
+    delete body.dataset.origHtml;
+    const tb = document.getElementById('story-edit-toolbar'); if (tb) tb.style.display = 'none';
+    const tg = document.getElementById('story-repair-toggle-btn'); if (tg) tg.style.background = '';
+    if (status) status.textContent = '';
+    delete APP._storyEditMode;
+    renderStoryText(d);
+  };
+  // Static build: no server. Held in memory and riding the export, exactly like a story edit there.
+  if (!APP.info?.canGenerate) {
+    d.storyTranslation = text;
+    APP._dirtyExport = true;
+    try { _markStaticEdited(); } catch(_) {}
+    showToast(t('toast.translation_saved'));
+    close();
+    return;
+  }
+  if (status) status.textContent = 'Saving…';
+  try {
+    const r = await fetch('/api/save-translation', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: d.topic, topicId: d.id, translation: text }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { showToast(t('toast.retranslate_failed', { msg: j.error || r.status })); if (status) status.textContent = ''; return; }
+    d.storyTranslation = j.storyTranslation || text;
+    showToast(t('toast.translation_saved'));
+    close();
+  } catch (e) {
+    showToast(t('toast.retranslate_failed', { msg: e.message }));
+    if (status) status.textContent = '';
+  }
 }
 async function saveStoryEdit(){
   const d = APP.lessonData; if (!d) return;
+  // The toolbar's Save serves both editors; the mode set when it opened says which one this is.
+  if (APP._storyEditMode === 'translation') return saveTranslationEdit();
   const body = document.getElementById('story-body');
   const newStory = (body?.innerText || '').trim();
   if (!newStory) return;
@@ -6653,6 +6725,45 @@ async function saveStoryEdit(){
 // on every save), so `storyTranslation` can silently keep describing the PRE-fix text. Static build
 // has no server for this — the button is hidden there (buildPath's own canGenerate gate), same
 // convention as story-qc-btn.
+// ── v90_g (user): "allow to edit translations on lesson-set pages (teacher view). This could be an
+// option of the re-translate button: the user gets offered to edit an existing translation or to
+// use the LLM to re-translate."
+//
+// The 🔄 button now ASKS first. With no translation yet there is nothing to edit and nothing to
+// choose, so it goes straight to the model — a dialog whose only real option is the one you already
+// pressed is the "dead control" this project has ruled against twice.
+async function onRetranslateBtn(){
+  const d = APP.lessonData;
+  if (!d || !d.story) return;
+  if (!d.storyTranslation) return retranslateStory();
+  const pick = await showChoiceDialog({ choices: [
+    { value: 'edit',  label: t('translation.opt_edit'),  primary: true },
+    { value: 'regen', label: t('translation.opt_regen') },
+  ]});
+  if (pick === 'edit')  return editStoryTranslation();
+  if (pick === 'regen') return retranslateStory();
+}
+// Editing the translation reuses the STORY editor wholesale — the same contentEditable body, the
+// same toolbar, the same cancel — with one flag deciding where Save sends the text. Two nearly
+// identical editors is exactly the duplication this project keeps having to undo (two QC functions,
+// two voice rankers, two pass-mark controls), so the mode is a branch, not a copy.
+//
+// ⚠️ The panel is switched to the SOURCE language first. Editing the translation while the panel
+// shows the target text would put source-language prose into #story-body over the target story and
+// save it as the translation of something the editor cannot see.
+function editStoryTranslation(){
+  const d = APP.lessonData;
+  if (!d || !d.storyTranslation) return;
+  APP._lsStoryLang = 'source';
+  APP._lsTextExplorer = false;          // the explorer marks up the TARGET text; it has no place here
+  renderStoryText(d);
+  // toggleStoryRepair TOGGLES: called while the story editor is already open it would simply close
+  // it, and the learner would see the 🔄 menu do nothing.
+  const body = document.getElementById('story-body');
+  if (body && body.contentEditable === 'true') cancelStoryEdit();
+  APP._storyEditMode = 'translation';
+  toggleStoryRepair();
+}
 async function retranslateStory(){
   const d = APP.lessonData; if (!d || !d.story) return;
   const btn = document.getElementById('story-retranslate-btn');
@@ -11095,6 +11206,7 @@ function buildPath(){
   const genTitleBtn   = document.getElementById('gen-topic-title-btn');
   if (lessonEditBtn) lessonEditBtn.style.display = APP.info.canGenerate ? '' : 'none';
   if (genTitleBtn)   genTitleBtn.style.display   = APP.info.canGenerate ? '' : 'none';
+  try { _editMenuSync('ls-title'); } catch(_) {}   // v90_g: same, for the chapter-title row
   // Set TTS language to lesson target language, then rebuild selectors
   if (APP.lessonData?.lang) {
     const _ll = LANGS[APP.lessonData.lang];
@@ -11281,6 +11393,9 @@ function buildPath(){
     // at all, same as the completion card's own 🔍).
     const lsAnalyzeBtn=document.getElementById('ls-story-analyze-btn');
     if(lsAnalyzeBtn) lsAnalyzeBtn.style.display=(APP.info?.canGenerate && d.story)?'':'none';
+    // v90_g: the four above now live behind one pencil. Sync AFTER their visibility is decided —
+    // the menu mirrors those rules, it does not re-decide them, so this has to be the last word.
+    try { _editMenuSync('ls-story'); } catch(_) {}
     // Story flag row
     const sfRow=document.getElementById('story-flag-row');
     if(sfRow) sfRow.style.display='';
@@ -11400,7 +11515,13 @@ function buildPath(){
       + _flagBtn
       + `<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="document.getElementById('sial-enc-lesson-card').value='${_enc}';openAddLesson('lesson-card','${_enc}')">➕</button>`
       + `<button class="ico-btn export" title="Export" data-topic="${d.topic.replace(/"/g,'&quot;')}" onclick="openExportMenu(event,[this.dataset.topic])">⬇</button>`
-      + `<button class="ico-btn" title="Clear progress" onclick="clearLessonProgress('${_enc}')">↺</button>`
+      // v90_g (user): "the 'clear progress' button on the lesson-set page should be a 🧹 icon, as in
+      // other buttons with the same function" — #comp-wipe on the progress card and #sl-bottom-clear
+      // on the storyline page both already carry it, and all three route through
+      // _clearChapterProgress. The title came along: it was a hardcoded English literal while its
+      // two siblings used t(), and this button clears exactly ONE chapter, which is what
+      // `chapter.clear_progress` says (already translated — no new key).
+      + `<button class="ico-btn" title="${escAttr(t('chapter.clear_progress'))}" onclick="clearLessonProgress('${_enc}')">🧹</button>`
       + `<button class="ico-btn" title="Delete" onclick="deleteSaved('${_enc}')">🗑</button>`;
       _actRow.classList.add('visible');
     } else {
@@ -12350,13 +12471,32 @@ function _cardEditPopHtml(popId, entries){
 // harness can actually observe (element-scoped querySelectorAll is not modelled there — the same
 // limitation unit-jobs-popover ran into with `Element.contains`), and it states in one place which
 // controls belong to the menu instead of leaving that to markup archaeology.
-const _SL_EDIT_MENU_BTNS = ['sl-screen-edit-btn', 'sl-screen-gen-btn', 'sl-screen-summary-btn',
-                            'sl-screen-storyboard-btn', 'sl-screen-qc-btn', 'sl-screen-del-btn'];
-function _slEditMenuSync(){
-  const pop = document.getElementById('sl-screen-edit-pop');
+// ⚠️ v90_g: item Y's mechanism, now TABLE-DRIVEN because there are three of these menus rather
+// than one (the storyline header, the lesson-set story row, the lesson-set title row). One registry
+// says which controls belong to which menu, so "what is in this menu" is a fact stated here rather
+// than markup archaeology — and a fourth menu costs a table entry, not a third copy of the walk.
+//
+// `sl-screen-summary-btn` is NO LONGER in the storyline header's list: the user moved "generate
+// summary" onto the summary's own edit menu, beside its manual edit and its QC.
+const _EDIT_MENUS = {
+  'sl-screen': { pop: 'sl-screen-edit-pop', btn: 'sl-screen-edit-menu-btn',
+                 rows: ['sl-screen-edit-btn', 'sl-screen-gen-btn',
+                        'sl-screen-storyboard-btn', 'sl-screen-qc-btn', 'sl-screen-del-btn'] },
+  'ls-story':  { pop: 'ls-story-edit-pop', btn: 'ls-story-edit-menu-btn',
+                 rows: ['ls-story-analyze-btn', 'story-repair-toggle-btn',
+                        'story-qc-btn', 'story-retranslate-btn'] },
+  'ls-title':  { pop: 'ls-title-edit-pop', btn: 'ls-title-edit-menu-btn',
+                 rows: ['lesson-edit-btn', 'gen-topic-title-btn'] },
+};
+// Kept as a name because other guards reference it, and because the storyline header's list is the
+// one a reader is most likely to come looking for.
+const _SL_EDIT_MENU_BTNS = _EDIT_MENUS['sl-screen'].rows;
+function _editMenuSync(key){
+  const M = _EDIT_MENUS[key];
+  const pop = M && document.getElementById(M.pop);
   if (!pop) return 0;
   let shown = 0;
-  _SL_EDIT_MENU_BTNS.forEach(id => {
+  M.rows.forEach(id => {
     const btn = document.getElementById(id);
     const row = document.getElementById('row-' + id);
     const lbl = document.getElementById('lbl-' + id);
@@ -12371,26 +12511,36 @@ function _slEditMenuSync(){
   });
   // The pencil is worth showing only when it opens onto something. A menu button that opens an
   // empty menu is the "dead button" this project already ruled against for the cancel affordance.
-  const menuBtn = document.getElementById('sl-screen-edit-menu-btn');
+  const menuBtn = document.getElementById(M.btn);
   if (menuBtn) menuBtn.style.display = shown ? '' : 'none';
+  if (!shown) pop.style.display = 'none';   // …and a menu that just lost its last row closes itself
   return shown;
 }
-function _slEditMenuClose(){
-  const pop = document.getElementById('sl-screen-edit-pop');
-  if (pop) pop.style.display = 'none';
+// Closing is global on purpose: ONE of these is open page-wide, the same rule .card-edit-pop
+// already follows, so a click on a second pencil cannot leave the first hanging open behind it.
+function _editMenuCloseAll(){
+  Object.values(_EDIT_MENUS).forEach(M => {
+    const pop = document.getElementById(M.pop);
+    if (pop) pop.style.display = 'none';
+  });
 }
-function toggleSlEditMenu(ev){
-  const pop = document.getElementById('sl-screen-edit-pop');
+function toggleEditMenu(key, ev){
+  const M = _EDIT_MENUS[key];
+  const pop = M && document.getElementById(M.pop);
   if (!pop) return;
   const open = pop.style.display !== 'none';
-  if (open) { _slEditMenuClose(); return; }
-  _slEditMenuSync();
+  _editMenuCloseAll();
+  if (open) return;
+  _editMenuSync(key);
   pop.style.display = 'block';
   // Dismiss on the next click ANYWHERE else. The rows' own buttons keep their existing handlers —
   // several of them (openRetitleMenu, the storyboard menu) open a SECOND popover of their own, so
   // this one must be out of the way by then rather than sitting behind it.
-  setTimeout(() => document.addEventListener('click', _slEditMenuClose, { once: true }), 0);
+  setTimeout(() => document.addEventListener('click', _editMenuCloseAll, { once: true }), 0);
 }
+function _slEditMenuSync(){ return _editMenuSync('sl-screen'); }
+function _slEditMenuClose(){ _editMenuCloseAll(); }
+function toggleSlEditMenu(ev){ return toggleEditMenu('sl-screen', ev); }
 
 function _renderStorylineScreen(chainId, encodedChain, topics) {
   try{ _refreshSlThreshold(); }catch(_){}
@@ -12453,8 +12603,6 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const editBtn2 = document.getElementById('sl-screen-edit-btn');
   if (editBtn2)  editBtn2.style.display  = APP.info.canGenerate ? '' : 'none';
   if (genBtn)    genBtn.style.display    = APP.info.canGenerate ? '' : 'none';
-  const summaryBtn = document.getElementById('sl-screen-summary-btn');
-  if (summaryBtn) summaryBtn.style.display = APP.info.canGenerate ? '' : 'none';
   // v88_p: the walkthrough button. Gated on TEACHER MODE, not on canGenerate — walking a storyline
   // reads chapters that already exist and needs no backend at all, so it works in the static build
   // too. It needs chapters to walk, hence the length check.
@@ -12605,8 +12753,29 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         + '<button class="storyline-story-hdr" style="flex:1" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">' + '📖 ' 
         + (existingSummary ? t('lesson.read_summary') : t('lesson.no_summary')) + ' ▼</button>'
         + (existingSummary ? '<button class="storyline-hdr-btn" onclick="speakBodyText(\'' + _sumId + '\')">💬</button>' : '')
-        + (_canEdit() ? '<button class="storyline-hdr-btn" data-sumid="' + _sumId + '" onclick="event.stopPropagation();openSummaryEdit(null,this.dataset.sumid)" title="Edit summary">✏️</button>' : '')
-        + ((_canEdit() && existingSummary) ? '<button class="storyline-hdr-btn" id="sum-qc-btn" onclick="event.stopPropagation();runSummaryQc()" title="' + escAttr(t('qc.summary_btn')) + '">🔍</button>' : '')
+        // ⚠️ v90_g (user): "move the 'generate summary' button from the edit menu of the storyline
+        // page header to a new edit menu of the summary with two options: manual edit and generate,
+        // using the three stars icon, and QC." The generate button is the SAME control that used to
+        // sit in the header popover — same id, so genStorylineSummary's own ⏳/disabled feedback
+        // still finds it — with ✨ for its icon per the user's wording. This row is built as a
+        // string, so it uses _cardEditPopHtml (v88_am), the card variant of the same popover; the
+        // labels come from each button's own title, so this costs ZERO ui.json keys.
+        + _cardEditPopHtml('sumedit-' + _sumId, [
+            // ⚠️ "Edit summary" is a hardcoded English literal, exactly as it was before this move —
+            // it has never had a ui.json key. Kept verbatim rather than spending one of this
+            // release's three granted keys on a string the user did not ask to change.
+            { html: '<button class="storyline-hdr-btn" data-sumid="' + _sumId + '" onclick="event.stopPropagation();openSummaryEdit(null,this.dataset.sumid)" title="Edit summary">✏️</button>',
+              label: 'Edit summary', on: _canEdit() },
+            { html: '<button class="storyline-hdr-btn" id="sl-screen-summary-btn" onclick="event.stopPropagation();genStorylineSummary()" title="' + escAttr(t('lesson.gen_summary')) + '">✨</button>',
+              // ⚠️ canGenerate ONLY, exactly as the header button was gated — NOT also _canEdit().
+              // unit-can-edit-teacher-mode §4 sweeps for a call site combining the two axes and
+              // caught this the moment it was written that way: generating a summary re-runs one
+              // LLM call over chapters that already exist, the same class of action as QC and
+              // re-translate, neither of which carries a teacher gate either.
+              label: t('lesson.gen_summary'), on: !!APP.info?.canGenerate },
+            { html: '<button class="storyline-hdr-btn" id="sum-qc-btn" onclick="event.stopPropagation();runSummaryQc()" title="' + escAttr(t('qc.summary_btn')) + '">🔍</button>',
+              label: t('qc.summary_btn'), on: _canEdit() && !!existingSummary },
+          ].filter(e => e.on))
         + '</div>'
         + '<div id="' + _sumId + '" data-lang="' + (byTopic[topics[0]]?.srcLang||'') + '" style="display:none;padding:12px 16px;font-size:14px;line-height:1.6;color:var(--text)">'
         + (existingSummary ? escHtml(existingSummary) : '<em style="color:var(--gray-dark)">Here could be your summary.</em>')

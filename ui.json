@@ -736,7 +736,10 @@
     "qc.btn.text": "Check spelling & capitalization",
     "qc.toast.text_done": "✓ {n} of {total} texts corrected",
     "qc.mode.light": "Spelling & capitalization only — never changes a word",
-    "qc.mode.heavy": "Full proofread — may fix grammar and wording"
+    "qc.mode.heavy": "Full proofread — may fix grammar and wording",
+    "translation.opt_edit": "Edit the existing translation",
+    "translation.opt_regen": "Re-translate with the model",
+    "toast.translation_saved": "💾 Translation saved"
   },
   "nl": {
     "qc.editor.suggests_by": "⚑ {model} stelt voor:",

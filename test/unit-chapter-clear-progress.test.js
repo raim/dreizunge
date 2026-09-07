@@ -167,4 +167,42 @@ const stores = C => JSON.parse(C.run(`JSON.stringify({
   console.log('  the three new en keys are present');
 }
 
+// ── The three wipes look the same, because they DO the same thing (v90_g) ────
+//
+// User: "the 'clear progress' button on the lesson-set page should be a 🧹 icon, as in other
+// buttons with the same function." All three route through _clearChapterProgress (that is what the
+// rest of this file is about), and the icon is how a learner knows that. The lesson-set one was
+// the odd ↺ out, with a hardcoded English tooltip beside two translated ones.
+{
+  const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  // Each control, located by its own handler rather than by a shape that a rewrite would move.
+  const btnFor = (needle) => {
+    const at = src.indexOf(needle);
+    assert.ok(at > 0, 'found ' + needle);
+    const start = src.lastIndexOf('<button', at);
+    return src.slice(start, src.indexOf('</button>', at));
+  };
+  const controls = {
+    'lesson-set card': btnFor("clearLessonProgress('${_enc}')"),
+    'storyline page':  btnFor('id="sl-bottom-clear"'),
+  };
+  for (const [where, tag] of Object.entries(controls)) {
+    assert.ok(tag.includes('🧹'), `${where}: the wipe carries the broom`);
+    assert.ok(!tag.includes('↺'), `${where}: and not the old ↺`);
+  }
+  // The progress card's is assigned in JS (standing rule 22: the stub DOM cannot click an inline
+  // handler), so it is checked where it is written rather than in the markup.
+  assert.ok(/_compIco\(_wp, '🧹', t\('chapter\.clear_progress'\)\)/.test(src),
+    "the progress card's wipe uses the same icon and the same key");
+  // ⚠️ …and the lesson-set one's tooltip is now a t() call, not an English literal — it sat beside
+  // two translated siblings saying "Clear progress" in English in every language.
+  assert.ok(/title="\$\{escAttr\(t\('chapter\.clear_progress'\)\)\}"[^>]*clearLessonProgress/.test(src),
+    'the lesson-set wipe is localized through the existing chapter.clear_progress key');
+  const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+  assert.ok(ui.en['chapter.clear_progress'], 'and that key exists');
+  assert.ok(Object.keys(ui).filter(l => l !== 'en' && ui[l]['chapter.clear_progress']).length > 20,
+    'already translated widely — reusing it cost no new key');
+}
+console.log('  all three wipes show 🧹 and the lesson-set one is localized: OK');
+
 console.log('unit-chapter-clear-progress: ALL PASSED');

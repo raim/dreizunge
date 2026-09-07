@@ -2695,6 +2695,68 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_g — five user requests: three pencils, an editable translation, and a broom
+
+Five items in one batch. **THREE new `ui.json` keys, granted by the user** (`translation.opt_edit`,
+`translation.opt_regen`, `toast.translation_saved`) — the other four cost none.
+
+| the request | what shipped |
+|---|---|
+| *"hide the lesson-set page story view buttons behind an edit (pencil) icon: the text-analysis, the edit story button, the QC button and the re-translate button"* | 🔤 / ✏️ / 🔍 / 🔄 relocated into `#ls-story-edit-pop`. ⚠️ **Asked which button "the text-analysis" meant** — the row holds both 🔬 (the explorer, a reading aid) and 🔤 (the button that RUNS the analysis) — and the user chose 🔤. 🔬 and 💬 stay in the row: those are what a learner uses, and the explorer works with no backend at all |
+| *"merge the two edit buttons … into an edit menu (pencil icon), same as the edit menus of other levels"* | ✏️ Edit title + ✨ Generate title behind `#ls-title-edit-pop`. 🔗 share stays out, matching the user's own exclusion of share/play from the storyline header's menu |
+| *"move the 'generate summary' button … to a new edit menu of the summary with two options: manual edit and generate, using the three stars icon, and QC"* | The summary row's ✏️ and 🔍 joined by the relocated generate button — **the same control, same id** (`genStorylineSummary` finds it by id to show ⏳ while it runs), now wearing ✨. Built with `_cardEditPopHtml`, the card variant of the same popover |
+| *"allow to edit translations on lesson-set pages (teacher view) … an option of the re-translate button"* | 🔄 opens a choice; with no translation yet it goes straight to the model, because a dialog whose only real option is the one you pressed is a dead control |
+| *"the 'clear progress' button on the lesson-set page should be a 🧹 icon, as in other buttons with the same function"* | ↺ → 🧹, joining `#comp-wipe` and `#sl-bottom-clear`. Its tooltip came along: a hardcoded English literal beside two translated siblings, now `t('chapter.clear_progress')` — already translated, no key |
+
+### One mechanism, not three copies
+
+`_slEditMenuSync` became **`_editMenuSync(key)` over a registry**, because there are three of these
+menus now. One table states which controls belong to which menu instead of leaving it to markup
+archaeology, and a fourth menu costs a table entry rather than a third copy of the walk. All three
+mirror their buttons rather than re-deciding visibility, take each row's label from that button's own
+`title` (hence zero keys), hide the pencil when every row is hidden, and — new — **only one is open
+page-wide**, which matters because the two lesson-set pencils sit a few hundred pixels apart.
+
+### The translation editor
+
+It is the STORY editor with one flag. Two nearly identical editors is the duplication this project
+keeps having to undo (two QC functions, two voice rankers, two pass-mark controls), so
+`APP._storyEditMode` decides where Save sends the text and everything else is shared.
+
+| | |
+|---|---|
+| **its own route** | `/api/save-translation`, not a field on `/api/save-story`. That route's body sets `aiStory` on first save, **collapses an edited story into a single comic panel's caption**, invalidates curator corrections keyed on sentence text, and regenerates the AI error hunt — all four about the TARGET story. Running them for a source-language edit would rewrite a comic caption with prose from the other language. `e2e-translation-edit` §3 is the assertion that keeps them apart |
+| **no backend gate, no job** | A person typing must not depend on the model being up |
+| **the stamp** | A hand-edited translation is credited to `(user-provided)` with origin `user-provided` — the corpus invariant `unit-translation-stamp` asserts is "every stamp records where its value came from", and this one came from a human |
+| **the details that needed deciding** | The panel switches to the SOURCE language first (editing the translation while the target text is shown would save the wrong language over it); the explorer is turned off (it marks up the target text); the AI-hunt live diff is suppressed; and the mode is cleared on save AND on cancel, or the next story edit would save into the translation |
+
+### ⚠️ I destroyed my own work mid-task and had to rebuild it
+
+A mutation helper written inline used **`git checkout -- index.html` to restore the file between
+mutations**. That restores from the INDEX, so it discarded every unstaged change in the working
+tree — all four UI tasks, in one command. Rebuilt from the transcript; `server.js`, the tests and
+`ui.json` were untouched, and the rebuilt file was verified byte-identical to the pre-mutation copy
+afterwards.
+
+The project already had the right pattern: `mut.sh`, written earlier in this same line, restores
+from a **byte copy** taken before the edit. **A restore step must never be a VCS command** — the VCS
+does not know which changes were the mutation and which were the work.
+
+### Guards
+
+Nine mutations red: the icon reverting to ↺, the editor seeding the story instead of the
+translation, the save routed to `/api/save-story`, the edit mode never cleared, the 🔄 dialog shown
+when there is nothing to choose, the route also overwriting the story, the route dropping its trim,
+a menu leaving the registry, and an emptied menu staying open. Two existing guards fired on the way
+and were right both times — `unit-can-edit-teacher-mode` §4 caught the generate row being written as
+`_canEdit() && canGenerate` (it re-runs one LLM call, like QC and re-translate, and carries no
+teacher gate), and `unit-static-summary-edit` caught the pencil's gate moving; the latter pinned a
+source PHRASING and was restated against the entry's own `on:` clause. ⚠️ While rewriting it I hit
+the containment trap **inside the guard for it**: scanning the whole entry for `_canEdit()` matched
+the source COMMENT that says "NOT also `_canEdit()`".
+
+Suite: **364 full / 302 quick** (one new e2e), 740 `en` keys.
+
 ## ✅ v90_f — the last four zeros: the orchestration functions, driven
 
 User: *"go ahead with the remaining four"* — `doDialectImport`, `renderEx`, `startLesson` and
