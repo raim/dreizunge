@@ -19,6 +19,13 @@
 
 'use strict';
 const fs   = require('fs');
+// ⚠️ v90_d: this run is NOT a one-shot maintenance pass. It rewrites ui.json after EVERY batch,
+// for hours, while the server, build-static.js and the test suite all read the same file — the
+// exact live-reader condition unit-atomic-write §4 gives for requiring atomicity. A bare
+// writeFileSync of a ~400KB JSON is several write() calls, and a reader landing between them gets
+// a truncated file. Reported for real: `node test/run.js --quick` failed unit-library-sort while
+// the suite and the tree were both fine, because it parsed ui.json mid-write.
+const { writeFileAtomic } = require('./atomic-write');
 const path = require('path');
 const { callLLM, ping, extractJSON, setNumThread } = require('./llm');
 // Shared with the --qc auditor below: the writer and the auditor MUST apply the same rules, or a
@@ -196,7 +203,7 @@ technical tokens (Dreizunge, JSON, HTML, Markdown, PDF, IPA, URL) untranslated.`
     }
 
     // Save after each batch so progress isn't lost on interruption
-    fs.writeFileSync(UI_FILE, JSON.stringify(ui, null, 2), 'utf8');
+    writeFileAtomic(UI_FILE, JSON.stringify(ui, null, 2));
   }
 
   // Report any still-missing after translation
@@ -274,7 +281,7 @@ function runQC() {
   if (QC_FIX) {
     let n = 0;
     for (const f of fixable) { ui[f.lang][f.key] = f.repaired; n++; }
-    if (n && !DRY_RUN) fs.writeFileSync(UI_FILE, JSON.stringify(ui, null, 2), 'utf8');
+    if (n && !DRY_RUN) writeFileAtomic(UI_FILE, JSON.stringify(ui, null, 2));
     console.log(`${'─'.repeat(50)}`);
     console.log(`🔧 Repaired ${n} entr(ies)${DRY_RUN ? ' (dry run — not saved)' : ` → ${UI_FILE}`}`);
   }
@@ -324,7 +331,7 @@ function _serializeLangs(obj) {
 function _flushLangs() {
   const out = _serializeLangs(langs);
   JSON.parse(out);                      // never write a file that will not parse
-  fs.writeFileSync(LANG_FILE, out, 'utf8');
+  writeFileAtomic(LANG_FILE, out);
 }
 
 async function runLangNames() {
@@ -418,7 +425,7 @@ async function main() {
     const byLang = {};
     unfixable.forEach(f => (byLang[f.lang] = byLang[f.lang] || []).push(f.key));
     for (const [lang, keys] of Object.entries(byLang)) keys.forEach(k => delete ui[lang][k]);
-    if (!DRY_RUN) fs.writeFileSync(UI_FILE, JSON.stringify(ui, null, 2), 'utf8');
+    if (!DRY_RUN) writeFileAtomic(UI_FILE, JSON.stringify(ui, null, 2));
     const reachable = await ping();
     if (!reachable) { console.error(`❌ Cannot reach LLM backend at ${OLLAMA_HOST}.`); process.exit(1); }
     for (const [lang, keys] of Object.entries(byLang)) await translateLang(lang, keys);

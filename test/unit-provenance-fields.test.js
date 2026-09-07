@@ -265,4 +265,97 @@ console.log('  one formatter, four render sites, inert user link, hardened sourc
 }
 console.log('  backfill-createdby: dry-run default, admin stamp, preserves existing, idempotent: OK');
 
+// ── The three renderers, RENDERED (v90_d, same-answer-fixture audit) ─────────
+//
+// ⚠️ Everything above about the OUTPUT of these functions is a regex over their own source. `ext()`
+// is used here as a slicing tool, never fed to `new Function` — so `provLineHtml`, `_provSrcBits`
+// and `provLineForChapters` are read, not run. Measured: flipping every `if` condition inside them,
+// in both directions, left this file green — 0 of 6, 1 of 8 and 2 of 6 mutants caught. The licence
+// suffix, the host-name fallback, the sourceFile fallback, the note gate, the source dedup, the
+// three-source cap and its `+N` counter could ALL have been broken silently. These are the display
+// rules the user asked for by name, so assert the rendered string.
+{
+  const R = new Function('t', 'escHtml', 'escAttr',
+    ext(client, '_provSrcBits') + '\n' + ext(client, 'provLineHtml') + '\n' +
+    ext(client, 'provLineForChapters') + '\nreturn { _provSrcBits, provLineHtml, provLineForChapters };')(
+    (k, v) => (k === 'prov.by' ? 'by ' + (v && v.user) : (k === 'prov.from' ? 'from' : k)),
+    (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
+    (x) => String(x).replace(/&/g, '&amp;').replace(/"/g, '&quot;'));
+
+  // ── the label ladder: author → licence → host → DOI → sourceFile → nothing ──
+  assert.deepStrictEqual(R._provSrcBits({ author: 'A. Autor' }), { label: 'A. Autor', href: null },
+    'an author with no link is a plain label');
+  assert.deepStrictEqual(R._provSrcBits({ author: 'A', licence: 'CC-BY' }), { label: 'A · CC-BY', href: null },
+    'a licence rides beside the author, separated by a middle dot');
+  assert.deepStrictEqual(R._provSrcBits({ licence: 'CC-BY' }), { label: 'CC-BY', href: null },
+    'a licence with no author stands alone, with no leading separator');
+  assert.deepStrictEqual(R._provSrcBits({ url: 'https://example.org/deep/path' }),
+    { label: 'example.org', href: 'https://example.org/deep/path' },
+    'no author → the HOST is the label, not the whole URL');
+  for (const raw of ['10.1234/xyz', 'doi:10.1234/xyz', 'DOI:10.1234/xyz']) {
+    assert.deepStrictEqual(R._provSrcBits({ url: raw }),
+      { label: 'doi:10.1234/xyz', href: 'https://doi.org/10.1234/xyz' },
+      `${raw} resolves through doi.org and is labelled as a DOI`);
+  }
+  assert.deepStrictEqual(R._provSrcBits({ url: 'not a url' }), { label: 'not a url', href: 'not a url' },
+    'an unparseable URL falls back to itself rather than throwing');
+  assert.deepStrictEqual(R._provSrcBits(null, 'Artikel.pdf'), { label: 'Artikel.pdf', href: null },
+    'with no source object at all, the uploaded filename is the provenance');
+  assert.deepStrictEqual(R._provSrcBits({ author: '' }, 'Artikel.pdf'), { label: 'Artikel.pdf', href: null },
+    'and an EMPTY author falls through to it rather than rendering a blank label');
+  assert.strictEqual(R._provSrcBits(null, null), null, 'nothing known → no source part at all');
+  assert.strictEqual(R._provSrcBits({}, null), null, 'an empty source object is not a source');
+
+  // ── the one-liner ──
+  assert.strictEqual(R.provLineHtml(null), '', 'no topic → no line (not an empty div)');
+  {
+    const h = R.provLineHtml({ createdBy: 'raim', source: { author: 'A. Autor', url: 'https://ex.org/a' } });
+    assert.ok(h.includes('>by raim<'), 'the author of the chapter is named');
+    assert.ok(/<a href="https:\/\/ex\.org\/a" target="_blank" rel="noopener"/.test(h),
+      'and the source is a real link, new tab, noopener');
+    assert.ok(h.includes('>A. Autor</a>'), 'labelled by the source author');
+    assert.ok(!/<a[^>]*prov-user/.test(h), 'the USER half stays inert — there is no login to link to yet');
+  }
+  assert.ok(!R.provLineHtml({ createdBy: 'r' }).includes('from'),
+    'a chapter with no source renders no dangling "from:" at all');
+
+  // the note is a FULL-view detail; the compact line must not carry it
+  {
+    const full = R.provLineHtml({ createdBy: 'r', source: { author: 'A', note: 'scanned by hand' } }, true);
+    const compact = R.provLineHtml({ createdBy: 'r', source: { author: 'A', note: 'scanned by hand' } }, false);
+    assert.ok(full.includes('scanned by hand') && full.includes('prov-note'), 'the full view shows the note');
+    assert.ok(!compact.includes('scanned by hand'), 'the compact one-liner does not');
+    assert.notStrictEqual(full, compact, 'the two views are genuinely different renderings');
+  }
+
+  // escaping, on both the label and the href
+  {
+    const h = R.provLineHtml({ createdBy: '<img src=x>', source: { author: '</a><script>', url: 'https://e.org/"x' } });
+    assert.ok(!h.includes('<script>') && !h.includes('<img'), 'hostile author/user text is escaped, not rendered');
+    assert.ok(h.includes('&quot;x'), 'and a quote in the href cannot close the attribute');
+  }
+
+  // ── the storyline aggregate ──
+  {
+    const chaps = [
+      { createdBy: 'raim', source: { author: 'A' } },
+      { createdBy: 'raim', source: { author: 'A' } },      // same label → deduped
+      { createdBy: 'gast', source: { author: 'B' } },
+      { createdBy: 'raim', source: { author: 'C' } },
+      { createdBy: 'raim', source: { author: 'D' } },      // the fourth distinct source
+    ];
+    const sources = (x) => String(x).split('from: ')[1].replace('</div>', '');
+    const h = R.provLineForChapters(chaps);
+    assert.ok(h.includes('by raim, gast'), 'distinct authors, in first-seen order, joined once each');
+    // The whole "from" half, exactly — a containment check would pass on a duplicated A as well.
+    assert.strictEqual(sources(h), 'A; B; C +1',
+      'the source shared by two chapters appears ONCE, the first three are listed, the fourth is counted');
+    assert.strictEqual(sources(R.provLineForChapters(chaps.slice(0, 3))), 'A; B',
+      'and with nothing over the cap there is no overflow counter at all');
+  }
+  assert.ok(!R.provLineForChapters([{ createdBy: 'r' }]).includes('from'),
+    'chapters with no sources render no "from:" half');
+}
+console.log('  provenance renderers: label ladder, DOI, note gate, dedup + 3-cap + overflow — RENDERED: OK');
+
 console.log('unit-provenance-fields: ALL PASSED');

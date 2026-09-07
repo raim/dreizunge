@@ -51,7 +51,10 @@ const { ROOT } = require('./lib-dom');
   };
   fs.writeFileSync(path.join(tmp, 'languages.json'), JSON.stringify(langs, null, 2));
   fs.writeFileSync(path.join(tmp, 'ui.json'), JSON.stringify({ en: { 'a.b': 'x' } }, null, 2));
-  for (const f of ['translate-ui.js', 'ui-qc.js']) {
+  // ⚠️ v90_d: `atomic-write.js` joined this list when translate-ui.js started writing through it.
+  // Miss a real dependency here and the copy dies with "Cannot find module", which reads as a
+  // failure of the MODE rather than of the harness.
+  for (const f of ['translate-ui.js', 'ui-qc.js', 'atomic-write.js']) {
     fs.copyFileSync(path.join(ROOT, f), path.join(tmp, f));
   }
   // The stub records how it was called and answers plausibly, so the mode's own argument handling
@@ -119,7 +122,7 @@ const { ROOT } = require('./lib-dom');
   };
   fs.writeFileSync(path.join(tmp, 'languages.json'), JSON.stringify(langs, null, 2));
   fs.writeFileSync(path.join(tmp, 'ui.json'), JSON.stringify({ en: { 'a.b': 'x' } }, null, 2));
-  for (const f of ['translate-ui.js', 'ui-qc.js']) {
+  for (const f of ['translate-ui.js', 'ui-qc.js', 'atomic-write.js']) {
     fs.copyFileSync(path.join(ROOT, f), path.join(tmp, f));
   }
   // Answers the first call, then aborts the process on the second — standing in for any
@@ -184,7 +187,7 @@ const { ROOT } = require('./lib-dom');
   };
   fs.writeFileSync(path.join(tmp, 'languages.json'), JSON.stringify(langs, null, 2));
   fs.writeFileSync(path.join(tmp, 'ui.json'), JSON.stringify({ en: { 'a.b': 'x' } }, null, 2));
-  for (const f of ['translate-ui.js', 'ui-qc.js']) fs.copyFileSync(path.join(ROOT, f), path.join(tmp, f));
+  for (const f of ['translate-ui.js', 'ui-qc.js', 'atomic-write.js']) fs.copyFileSync(path.join(ROOT, f), path.join(tmp, f));
 
   // The model answers with an EMPTY string for `de` — the exact input validateEntry flags as a
   // blocking `empty` issue, and the only thing needed to reach the crash. `sr` is answered well, so
@@ -261,7 +264,7 @@ console.log('unit-langnames: ALL PASSED');
     en: { name: 'English', flag: '\u{1F1EC}\u{1F1E7}', tts: 'en-GB', names: { en: 'English' } },
     de: { name: 'German',  flag: '\u{1F1E9}\u{1F1EA}', tts: 'de-DE', names: { en: 'German' } },
   }, null, 2));
-  for (const f of ['translate-ui.js', 'ui-qc.js']) fs.copyFileSync(path.join(ROOT, f), path.join(tmp, f));
+  for (const f of ['translate-ui.js', 'ui-qc.js', 'atomic-write.js']) fs.copyFileSync(path.join(ROOT, f), path.join(tmp, f));
   fs.writeFileSync(path.join(tmp, 'llm.js'), `
     let calls = 0;
     function callLLM(model, system, userMsg, maxTokens, opts) {

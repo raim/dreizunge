@@ -26,7 +26,7 @@ const M = new Function(
   src.match(/const _MAX_UNIT_CHARS = \d+;/)[0] + '\n' +
   extract('_sentenceSplit') + extract('_splitLongUnit') + extract('_sentenceUnits') + extract('_unitsToText') +
   extract('_splitIntoChunks') + extract('_autoTitle') +
-  '\nreturn { _cleanPdfText, _sentenceUnits, _unitsToText, _splitIntoChunks };')();
+  '\nreturn { _cleanPdfText, _sentenceUnits, _unitsToText, _splitIntoChunks, _splitLongUnit };')();
 
 const ENDS_SENTENCE = /[.!?…]["'»«”’)\]]*$/u;
 const words = s => String(s).split(/\s+/).filter(Boolean).length;
@@ -180,5 +180,131 @@ assert.ok(!/const paras = \(c\.text\|\|''\)\.split\(\/\\n\\n\+\//.test(src), 'th
   assert.strictEqual(M._sentenceUnits('Er ging. Sie blieb.').length, 2, 'real sentence ends still split');
   console.log('  glued periods (500.000, S.J., 15.30, bericht.txt) no longer split or corrupt text');
 }
+
+
+// ── 9. _splitLongUnit is RUN, not merely present (v90_c audit follow-up) ─────
+//
+// ⚠️ Why this section exists. `_splitLongUnit` was already compiled into the module above and
+// already executing — `unit-pdf-paragraphs`' article contains sentences past the 300-character
+// budget, so the over-budget path really ran. It just made no difference to anything asserted:
+// flipping any of its twelve branch conditions, in either direction, left BOTH pdf test files
+// green. The word-count invariant those files rely on is invariant under WHERE the cut lands (the
+// words are all still there wherever you cut), and no assertion looked at the pieces.
+//
+// That is the blind spot the v90_b/v90_c audit named and could not see: a guard that runs the right
+// function on a fixture whose answer does not change when the function does. The repair is not a
+// new guard over new code — it is assertions that DISCRIMINATE.
+//
+// Budgets are passed explicitly so the fixtures stay readable; §10 covers the real 300 default.
+{
+  const S = M._splitLongUnit;
+
+  // Under budget: returned whole, and nothing at all for nothing at all.
+  assert.deepStrictEqual(S('kurz.', 40), ['kurz.'], 'a short unit is returned whole');
+  assert.deepStrictEqual(S('', 40), [], 'empty text yields no units, not one empty unit');
+  assert.deepStrictEqual(S(null, 40), [], 'and neither does a missing one');
+
+  // ⚠️ THE PREFERENCE ORDER, which is the whole design: a clause boundary beats a later word gap.
+  // A splitter that simply took the last gap inside the budget would cut after "theta" (39 chars);
+  // this cuts after the comma (17), giving up 22 characters of budget to break where the sense does.
+  {
+    const parts = S('alpha beta gamma, delta epsilon zeta eta theta iota kappa lambda mu', 40);
+    assert.strictEqual(parts[0], 'alpha beta gamma,', 'the cut lands on the clause boundary…');
+    assert.notStrictEqual(parts[0], 'alpha beta gamma, delta epsilon zeta eta',
+      '…and NOT on the last word gap that would have fitted');
+    // …but with no punctuation to prefer, the last gap inside the budget is exactly right.
+    const plain = S('alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu', 40);
+    assert.strictEqual(plain[0], 'alpha beta gamma delta epsilon zeta eta', 'with no clause, the widest word gap wins');
+    assert.ok(plain[0].length <= 40 && plain[0].length > 30, `and it uses the budget (${plain[0].length}/40)`);
+  }
+
+  // ⚠️ EVERY CUT IS ANCHORED TO EXISTING WHITESPACE. The source calls this load-bearing: Segmenter
+  // reports word boundaries INSIDE a token — `l'aria` as `l` `'` `aria`, `30-32` as `30` `-` `32` —
+  // so cutting at an arbitrary boundary and rejoining with a space turns one word into two. That
+  // defect was found once by a word count (937 against 934); assert it directly instead.
+  {
+    const text = "l'aria era 30-32 gradi ogni giorno d'estate nella valle stretta";
+    const parts = S(text, 30);
+    assert.ok(parts.length > 1, 'the fixture really is over budget');
+    assert.strictEqual(parts.join(' '), text, 'rejoining the pieces restores the original exactly');
+    for (const tok of ["l'aria", '30-32', "d'estate"]) {
+      assert.ok(parts.some(p => p.includes(tok)), `${tok} survives whole in one piece`);
+      assert.ok(!parts.some(p => p.endsWith(tok.slice(0, 2)) && !p.endsWith(tok)),
+        `${tok} is never cut mid-token`);
+    }
+  }
+
+  // No hand-written punctuation list — the same clause preference in a script with different marks.
+  {
+    const ar = S('الطقس اليوم جميل، والسماء صافية تماما وهذا يجعل النزهة ممتعة جدا', 40);
+    assert.ok(ar[0].endsWith('،'), 'the Arabic comma is found as a clause boundary, with nothing hand-written');
+    assert.ok(ar.length > 1, 'and the unit really was split');
+  }
+
+  // A script with no whitespace yields NO candidates, and the correct answer is to leave it whole:
+  // splitting CJK on character count would cut mid-word, which is worse than a long unit.
+  {
+    const ja = '日本語の文章はここで区切られます。とても長い文です。';
+    assert.deepStrictEqual(S(ja, 10), [ja],
+      'a whitespace-free script is left whole rather than cut mid-word — even far over budget');
+  }
+
+  // Progress guarantee: when nothing fits inside the budget the next gap is taken anyway, so the
+  // loop always advances. A regression here is an infinite loop, not a wrong answer.
+  {
+    const parts = S('abcdefghijklmnopqrstuvwxyz then short bits', 10);
+    assert.strictEqual(parts[0], 'abcdefghijklmnopqrstuvwxyz',
+      'an over-long leading token is emitted whole rather than cut, and the loop moves on');
+    assert.deepStrictEqual(parts.slice(1), ['then', 'short', 'bits'], 'and the rest still splits');
+  }
+
+  // No piece is ever blank. Downstream these become UNITS, and a blank unit is a blank sentence in
+  // the chapter — the two guards `if (piece)` / `if (tail)` exist for exactly this, and dropping
+  // either of them is invisible to every other assertion here.
+  // These three inputs each end with the cut ON the final whitespace run, so the remainder handed to
+  // the trailing `if (tail)` is whitespace only — the one input shape that reaches that guard.
+  // (Found by searching for it: an empty `piece` never occurs, because a cut is always the START of
+  // a maximal whitespace run and two of those cannot be adjacent. `if (piece)` is therefore
+  // unreachable defensive code, and no fixture can kill a mutation of it. `if (tail)` is not.)
+  for (const [label, text, budget] of [
+    ['a trailing space',        'alpha beta ', 10],
+    ['an even split',           'alpha beta gamma delta ', 12],
+    ['several pieces',          'one two three four five ', 10],
+  ]) {
+    const parts = S(text, budget);
+    assert.deepStrictEqual(parts.filter(p => !p.trim()), [],
+      `${label}: no blank unit is emitted — downstream that is a blank sentence in the chapter`);
+    assert.strictEqual(parts.join(' '), text.trim(), `${label}: and the words are all still there`);
+  }
+}
+console.log('  _splitLongUnit: clause > gap, cuts on existing whitespace only, CJK left whole: OK');
+
+// ── 10. …and the fragments are MARKED as fragments ───────────────────────────
+// `_sentenceUnits` flags pieces that came out of a sub-split (`frag`/`fragFirst`/`fragLast`) so a
+// consumer can say "excerpt" rather than present half a sentence as a whole one — the defect the
+// source comment records against `_synContext`. Nothing asserted those flags, and the branch that
+// sets them only runs when a real sentence exceeds the real 300-character budget.
+{
+  const long = 'Er ging weiter durch den Wald, ' + 'immer tiefer zwischen die alten Bäume hinein, '.repeat(8) + 'und blieb dann stehen.';
+  assert.ok(long.length > 300, `the fixture clears the real budget (${long.length} chars)`);
+  const units = M._sentenceUnits(long + ' Danach war es still.');
+
+  const frags = units.filter(u => u.frag);
+  assert.ok(frags.length > 1, `the long sentence became several fragments (${frags.length})`);
+  assert.strictEqual(frags.filter(u => u.fragFirst).length, 1, 'exactly one is marked as the first');
+  assert.strictEqual(frags.filter(u => u.fragLast).length, 1, 'and exactly one as the last');
+  assert.ok(frags[0].fragFirst, 'the first fragment is the one marked first');
+  assert.ok(frags[frags.length - 1].fragLast, 'and the last is marked last');
+
+  const whole = units.filter(u => !u.frag);
+  assert.strictEqual(whole.length, 1, 'the short sentence beside it is one unit');
+  assert.ok(!whole[0].fragFirst && !whole[0].fragLast,
+    'and carries NO fragment flags — a whole sentence must not read as an excerpt');
+
+  // and the text still survives the round trip
+  assert.ok(M._unitsToText(units).replace(/\s+/g, ' ').includes('immer tiefer zwischen die alten Bäume hinein'),
+    'rejoining the fragments restores the sentence');
+}
+console.log('  sentence fragments are flagged frag/fragFirst/fragLast, whole sentences are not: OK');
 
 console.log('unit-pdf-chunking: ALL PASSED');

@@ -143,7 +143,14 @@ console.log('  credential mode is applied before the swap, and no temp debris re
 // A SOURCE check, deliberately, because "no bare writeFileSync survives" is a claim about a SET of
 // call sites that no single rendered outcome can observe. Behaviour is §1's job; this is coverage.
 {
-  for (const f of ['server.js', 'learners.js']) {
+  // ⚠️ v90_d — `translate-ui.js` JOINED THIS SET, and the exemption below is why it had to.
+  // The rule that stood here excused "a one-shot maintenance script … a human runs it, one at a
+  // time, and re-runs it on failure". `translate-ui.js` is none of those things: it rewrites
+  // ui.json after EVERY batch, for hours, with `--threads 5`, while the server, build-static.js and
+  // this very suite read the same file. Reported by the user as `node test/run.js --quick` failing
+  // `unit-library-sort` — which does `JSON.parse(readFileSync(ui.json))` — with nothing wrong in
+  // either the suite or the tree. The exemption is about a live reader, not about the word "script".
+  for (const f of ['server.js', 'learners.js', 'translate-ui.js']) {
     const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
     const bare = [...src.matchAll(/fs\.writeFileSync\(/g)];
     assert.strictEqual(bare.length, 0,
@@ -160,8 +167,15 @@ console.log('  credential mode is applied before the swap, and no temp debris re
     assert.ok(new RegExp('writeFileAtomic\\(' + store).test(srv),
       `${store} is written through the atomic helper`);
   }
+  // …and the same non-vacuity for the translator: it really does write both files it owns, so its
+  // clean bill above is not the clean bill of a file that never writes anything.
+  const tui = fs.readFileSync(path.join(ROOT, 'translate-ui.js'), 'utf8');
+  for (const store of ['UI_FILE', 'LANG_FILE']) {
+    assert.ok(new RegExp('writeFileAtomic\\(' + store).test(tui),
+      `translate-ui.js writes ${store} through the atomic helper`);
+  }
 }
-console.log('  every durable store in server.js and learners.js writes atomically: OK');
+console.log('  every durable store in server.js, learners.js and translate-ui.js writes atomically: OK');
 
 async function main() {
 // ── 5. ⚠️ The ui.json watcher survives a file REPLACEMENT — driven, not read ────────────────────

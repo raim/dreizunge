@@ -2695,6 +2695,88 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_d — the blind spot: guards that run the right code on a fixture that cannot disagree
+
+User: *"the blind spot next: guards passing on same-answer fixtures"* — the limitation `v90_b` and
+`v90_c` both named and neither could see. **ZERO `ui.json` keys.**
+
+`v90_b`/`v90_c` asked *is this function executed at all*. This asks the harder question: **does the
+guard notice when it behaves differently?** New probe, `tools/branch-mutation.js`: rewrite each
+`if (cond)` inside a function to `true`, then to `false`, and run the tests that LIFT that function.
+A guard that catches none of its function's mutants has a fixture whose answer never moves.
+
+**86 functions, 1000 mutants, 463 caught (46%). Fourteen scored ZERO.**
+
+| function | caught | lifting guard |
+|---|---|---|
+| `doDialectImport` | **0/20** | `unit-dialect-panel` |
+| `renderEx` | **0/20** | `unit-student-flags` |
+| `_splitLongUnit` | **0/20** | `unit-pdf-chunking` |
+| `onUseDialectCb` | **0/16** | `unit-dialect-panel` |
+| `qcProse` | **0/16** | `unit-qc-correct` |
+| `_renderCompStory` | **0/14** | `unit-learner-nav` |
+| `_buildGlobalTtsSelectors` | **0/14** | `unit-tts-no-approximation` |
+| `startLesson` | **0/10** | `unit-drill` |
+| `goLessonSet` | **0/10** | `unit-drill` |
+| `_applyUploadCleanup` | **0/8** | `unit-pdf-cleanup` |
+| `_sbMarkCurrentPanels` | **0/8** | `unit-storyboard-nav` |
+| `_editorReadInputsMath` | **0/6** | `unit-editor-sync` |
+| `provLineForChapters` | **0/6** | `unit-provenance-fields` |
+| `openStoryboardChapter` | **0/6** | `unit-storyboard-nav` |
+| `_speakAndAdvance` | **2/18** | `unit-tts-no-approximation` |
+| `generateErrorHunt` | **2/16** | `unit-error-hunt-validation` |
+| `saveProvEdit` | **2/16** | `unit-provenance-fields` |
+| `_sentenceSplit` | **1/8** | `unit-pdf-chunking` |
+| `_provSrcBits` | **1/8** | `unit-provenance-fields` |
+| `_ttsRankVoices` | **1/8** | `unit-tts-allcaps` |
+| `confirmQuit` | **2/14** | `unit-learner-nav` |
+| `_resolveExItemEntry` | **3/20** | `unit-coverage` |
+| `buildStandardExercises` | **4/20** | `unit-apply-cp-lessons` |
+| `chainGlyphSet` | **2/10** | `unit-intro-script` |
+
+*(worst 24 of 86; the full ranking is regenerable — `node tools/branch-mutation.js --discover`)*
+
+### ⚠️ What a zero here does and does not mean
+
+It means **the guards that lift this function do not notice**. It does NOT mean nothing in the suite
+notices — `v90_c`'s suspect list was 57% wrong for exactly that reason, and `renderEx`, `startLesson`,
+`goLessonSet` and `loadSaved` are almost certainly in that category (heavily exercised by
+`smoke-render` and the journey tests, which never mention them by name). Escalate before calling a
+zero a coverage gap. Two mutants also can never be killed and are not findings: an EQUIVALENT mutant
+(the condition has no observable effect) and one whose condition is constant in this environment.
+**Judge the survivor list; do not just count it.**
+
+### Two clusters repaired, both confirmed by measurement first
+
+| | |
+|---|---|
+| **`_splitLongUnit` 0/12 → 20/24** | The PDF sub-splitter. Both pdf test files compile and CALL it, and `unit-pdf-paragraphs`' article really does contain sentences past the 300-character budget — confirmed by making the over-budget path throw and watching that file go red. **It ran, and nothing asserted anything that moves with it**: the word-count invariant those files rest on is invariant under WHERE the cut lands. Its `frag`/`fragFirst`/`fragLast` flags — which exist so an excerpt is not shown as a whole sentence, the defect the source records against `_synContext` — had no assertion at all. Now asserted: a clause boundary beats a later word gap (giving up 22 characters of budget to break where the sense does), cuts land only on EXISTING whitespace so `l'aria` and `30-32` survive whole, the Arabic `،` works with nothing hand-written, a whitespace-free script is left whole rather than cut mid-word, the progress guarantee holds, and no blank unit is emitted. Of the four survivors left, `if (piece)` is **unreachable** — 200k whitespace-heavy random inputs never produced an empty piece — and the rest are equivalent under Node; `if (tail)` WAS reachable and a search found the witness |
+| **the provenance renderers 3/20 → 20/20** | `unit-provenance-fields` uses `ext()` as a SLICING tool and never feeds it to `new Function`: every claim about the rendered line was a regex over the function's own source. So the licence suffix, the host-name fallback, the DOI resolution, the sourceFile fallback, the note gate, the source dedup, the three-source cap and its `+N` counter could all have broken silently — **the display rules the user asked for by name**. Now rendered and compared, including the whole `from:` segment rather than a containment check (a containment check passes on a duplicated source too) |
+
+### ⚠️ A real bug fell out of it, reported by the user mid-audit
+
+`node test/run.js --quick` failed `unit-library-sort` and `unit-text-explorer` with the tree and the
+suite both fine. Two different truncated-file races, and only one of them was mine:
+
+- my probe rewrote `index.html` with a bare `writeFileSync` — thousands of times, 7MB each. **Fixed**: the shipped tool writes temp+rename, and long sweeps run on a copy.
+- **`translate-ui.js` wrote `ui.json` with a bare `writeFileSync` at four sites**, after every batch, for hours, with `--threads 5`, while the server, `build-static.js` and the suite all read it. `unit-atomic-write` §4 already forbids bare writes in `server.js`/`learners.js` and exempts *"a one-shot maintenance script — a human runs it, one at a time, and re-runs it on failure"*. **The translator is none of those things.** The exemption is about a live reader, not about the word "script". All four sites plus the `languages.json` one now go through `writeFileAtomic`, and §4's set includes the translator with the reasoning; 3 mutations red. ⚠️ It rippled: `unit-langnames` copies `translate-ui.js` into a temp dir and ran it there, so the new `require('./atomic-write')` failed with *Cannot find module* — four copy sites updated, and the harness now carries a note about it
+
+### The probe ships, and it is guarded
+
+`tools/branch-mutation.js`, with `unit-branch-mutation-tool.test.js`. **A measuring instrument needs
+a guard more than most code, because its failure is inverted and silent**: if `ifSites` stops finding
+branch points the probe reports 0 mutants, and 0 mutants prints as *100% caught* — it would tell every
+future session the suite is perfect.
+
+⚠️ **And that guard was itself same-answer twice, on the first try.** Mutating the tool: deleting the
+identifier check stayed GREEN (the fixture used `const gif = 1`, which the scanner rejects at the
+missing paren anyway — only an identifier ENDING in `if` and followed by ` (` discriminates), and
+replacing the paren-matching scan with `indexOf(')')` stayed GREEN (the assertion counted sites
+instead of checking the span). Both fixed, five mutations now red. The trap is not exotic and
+knowing about it is not protection — write the fixture, then break the code and watch.
+
+Suite: **362 full / 301 quick** (one new file).
+
 ## ✅ v90_c — the audit's remainder: 3 of the 7 were real, and the migration script is now RUN
 
 User: *"go ahead with the remaining seven"* — the follow-up list `v90_b` left in the session prompt.
