@@ -366,8 +366,23 @@ function makeElement(tag = 'div', id = '', doc = null) {
     // could set an aria-label and no test could ever see it — accessible names were structurally
     // untestable. unit-report-edits had to hand-roll its own attribute store to work around this.
     getAttribute(k) { return Object.prototype.hasOwnProperty.call(el._attrs, k) ? el._attrs[k] : null; },
-    setAttribute(k, v) { el._attrs[k] = String(v); },
-    removeAttribute(k) { delete el._attrs[k]; },
+    // ⚠️ v90_h: a runtime setAttribute REFLECTS onto the same-named property for the attributes
+    // PROP_ATTRS already declares, because that is what the DOM does — `el.setAttribute('title', x)`
+    // and `el.title` are one value. Parsed markup already reflected (applyParsedAttribute does it);
+    // only the runtime path did not, so `_applyUIStrings` setting a tooltip was invisible to any
+    // test reading `.title`. Found while checking that the story row's relocated buttons carry
+    // LOCALIZED labels: the menu takes each row's label from `btn.title`, and every one read empty
+    // here while being correct in a browser.
+    setAttribute(k, v) {
+      el._attrs[k] = String(v);
+      if (PROP_ATTRS.has(k)) el[k] = String(v);
+      if (BOOL_ATTRS.has(k)) el[k] = true;
+    },
+    removeAttribute(k) {
+      delete el._attrs[k];
+      if (PROP_ATTRS.has(k)) el[k] = '';
+      if (BOOL_ATTRS.has(k)) el[k] = false;
+    },
     hasAttribute(k) { return Object.prototype.hasOwnProperty.call(el._attrs, k); },
     addEventListener() {}, removeEventListener() {}, dispatchEvent() { return true; },
     focus() {}, blur() {}, click() {}, scrollIntoView() {}, select() {},

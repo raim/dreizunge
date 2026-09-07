@@ -301,6 +301,59 @@ try {
     console.log('  the six relocated buttons kept their handlers; the learner controls stayed put: OK');
   }
 
+  // ── 7. …and the rows they became are LOCALIZED (v90_h) ────────────────────
+  //
+  // User: "the text 'Re-translate (after fixing the story text)' is not in ui.json?" It was not —
+  // and neither were three of its neighbours. Until v90_g that cost only a tooltip nobody reads on
+  // a touch screen; once the buttons moved into the menu, the title became THE VISIBLE ROW LABEL,
+  // so the whole menu read English in every language. All four were given existing keys — the user
+  // asked for exactly that ("just re-use an existing 'Translate' ui entry"), and it cost none.
+  {
+    const UIJ = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+    // The wiring is source-pinned: applyUIStrings sweeps the DOM with an element-scoped
+    // querySelectorAll, which this harness does not model, so the function cannot be run here.
+    for (const [id, key] of [['ls-story-explorer-btn', 'text_explorer.toggle_title'],
+                             ['ls-story-analyze-btn', 'gen.post_gen_analysis_lbl'],
+                             ['story-repair-toggle-btn', 'lesson.edit_story'],
+                             ['story-retranslate-btn', 'models.translation']]) {
+      assert.ok(new RegExp(`_setAttr\\('${id}',\\s*'title',\\s*t\\('${key.replace(/\./g, '\\.')}'\\)`).test(html),
+        `${id}'s title comes from t('${key}')`);
+      assert.ok(UIJ.en[key] && UIJ.en[key].trim(), `${key} exists in en`);
+      const translated = Object.keys(UIJ).filter(l => l !== 'en' && UIJ[l][key]).length;
+      assert.ok(translated > 20, `${key} is already translated (${translated} languages) — no new key`);
+    }
+    // ⚠️ and the parenthetical the user asked to drop is gone from the ATTRIBUTE. Scanning the
+    // whole file for the phrase fired on the source's own comment, which QUOTES the user's request
+    // — the containment trap, hit for the third time this session while writing a guard for it.
+    // Assert on the delimited value, not on "the string appears somewhere".
+    assert.ok(!/title="[^"]*after fixing the story text/.test(html),
+      'no button still carries the old hardcoded re-translate title');
+    assert.ok(/title="[^"]*after fixing the story text/.test(
+      '<button title="Re-translate (after fixing the story text)">'),
+      '(and that pattern really does match the shape it is looking for)');
+
+    // The MECHANISM, run: a localized title becomes a localized row label, icon stripped.
+    const C2 = loadClient({ quiet: true });
+    const labels = JSON.parse(C2.run(`(function(){
+      UI_STRINGS = ${JSON.stringify(JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8')).de)};
+      _setAttr('ls-story-analyze-btn', 'title', t('gen.post_gen_analysis_lbl'));
+      _setAttr('story-repair-toggle-btn', 'title', t('lesson.edit_story'));
+      _setAttr('story-retranslate-btn', 'title', t('models.translation'));
+      _EDIT_MENUS['ls-story'].rows.forEach(function(id){ document.getElementById(id).style.display = ''; });
+      _editMenuSync('ls-story');
+      return JSON.stringify(['ls-story-analyze-btn','story-repair-toggle-btn','story-retranslate-btn']
+        .map(function(id){ return document.getElementById('lbl-' + id).textContent; }));
+    })()`));
+    for (const l of labels) {
+      assert.ok(l && l.trim(), 'every row got a label');
+      assert.ok(!/^[a-z_]+\.[a-z_]/.test(l), `"${l}" is a real string, not a raw key name`);
+    }
+    assert.ok(!labels.some(l => /^🔤/.test(l)), 'and the leading icon is stripped, as elsewhere');
+    assert.notDeepStrictEqual(labels, ['Analyse words for the text explorer', 'Edit story', 'Translation'],
+      '⚠️ the German labels are NOT the English ones — this is the whole point');
+    console.log('  the story row menu reads in the UI language, at zero new keys: OK');
+  }
+
 } catch (e) { failed = true; console.error(e); }
 console.log(failed ? 'unit-storyline-edit-menu: FAILED' : 'unit-storyline-edit-menu: ALL PASSED');
 process.exit(failed ? 1 : 0);

@@ -2695,6 +2695,68 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_h — the menus read English in every language, and a stamp claimed what the record did not
+
+User: *"the text 'Re-translate (after fixing the story text)' is not in ui.json? We can delete the
+'(after fixing the story text)' part and just re-use an existing 'Translate' ui entry."*
+**ZERO new `ui.json` keys** — four titles, four keys that already existed.
+
+### ⚠️ The user found a regression `v90_g` introduced and I did not notice
+
+Four of the story row's five button titles were hardcoded English in the markup. Until `v90_g` that
+cost only a **tooltip**, which nobody reads on a touch screen. Then the buttons moved into an edit
+menu, where `_editMenuSync` takes each row's label **from that button's own `title`** — so the
+title became THE VISIBLE ROW LABEL and the whole menu read English in every language. The mechanism
+that made the relocation cost zero keys is the same one that made this worse.
+
+| button | now takes its title from | value |
+|---|---|---|
+| 🔬 explorer | `text_explorer.toggle_title` | an EXACT match — the same sentence, already keyed |
+| 🔤 analyse | `gen.post_gen_analysis_lbl` | exact, plus a leading 🔤 the row label strips anyway |
+| ✏️ edit story | `lesson.edit_story` | exact |
+| 🔄 re-translate | `models.translation` | the user's own instruction. It is also the string `retranslateStory` **already** labels this call with in the jobs popover, so the menu row and the running job now say the same word |
+
+Verified by rendering: `de` gives *"Wörter für den Text-Explorer analysieren · Geschichte bearbeiten ·
+Übersetzung"*, `fr` gives *"Analyser les mots pour l'explorateur de texte · Éditer l'histoire ·
+Traduction"*. **⚠️ One title has no existing key and is left English:** the 🔍 QC button's *"Proofread
+with QC model"*. `qc.summary_btn` is the summary's version of the same string; the story's never got
+one. Flagged rather than silently spending a key.
+
+### ⚠️ `lib-dom`'s setAttribute did not reflect onto properties
+
+`_applyUIStrings` writes tooltips with `setAttribute('title', …)`; `_editMenuSync` reads `btn.title`.
+In a browser those are one value. In the harness the runtime `setAttribute` stored the attribute and
+left the property empty, so **every label read as blank while being correct in the app** — the check
+could not have been written at all. Parsed markup already reflected (`applyParsedAttribute` does it);
+only the runtime path did not. Now both do, for the attributes `PROP_ATTRS` already declares. That is
+the DOM's own behaviour, so it is a harness bug fixed, not a product concession.
+
+### ⚠️⚠️ AND A REAL DEFECT IN `v90_g`, CAUGHT BY THE CORPUS
+
+`unit-translation-stamp` went red on the user's OWN library, within the hour, on the first chapter
+they edited: **`tp_17886338472190000441`, "Government Boast"**.
+
+`/api/save-translation` stamped `translationMeta.origin = 'user-provided'` and wrote only
+`storyTranslation`. But the corpus invariant is *"origin `user-provided` ⇒ the topic carries
+`userTranslation`"* — the field that holds a translation a person supplied. **The stamp claimed a
+human wrote the text while the record showed nobody had.** The text itself was saved correctly and
+the feature worked; the provenance was the lie.
+
+| | |
+|---|---|
+| **the fix** | The route sets `userTranslation` too. It is read at GENERATION time (it feeds the lesson prompts); on an existing chapter it is inert, and if that chapter is ever rebuilt this is exactly the translation to build from |
+| **the existing row** | A boot heal in `fixMetaSource`'s pass, firing on that one shape only: origin `user-provided`, no `userTranslation`, a `storyTranslation` to take it from. Idempotent, and self-limiting because the route no longer produces the shape |
+| **⚠️ the user's copy is still red until they restart** | The heal runs at boot and their server was down. Their `lessons.json` is uncommitted working data and I did not touch it — after the incident earlier in this line where a second server of mine clobbered their translations, writing to their store unasked is the wrong instinct |
+| **guards** | `e2e-translation-edit` §2 now asserts the record backs the claim, and §4b seeds both the broken shape and a GENERATED translation and boots a second server: the first heals, the second is left alone. Two mutations red (the route dropping the field; the heal widened to fire on generated rows) |
+
+### The containment trap, third time in one session
+
+The guard for "the parenthetical is gone" scanned the whole file for the phrase — and fired on the
+source's own comment, which QUOTES the user's request. Restated against the delimited value
+(`title="…"`), with a self-check that the pattern really matches the shape it is looking for.
+
+Suite: **364 full / 302 quick**, unchanged.
+
 ## ✅ v90_g — five user requests: three pencils, an editable translation, and a broom
 
 Five items in one batch. **THREE new `ui.json` keys, granted by the user** (`translation.opt_edit`,

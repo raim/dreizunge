@@ -1950,7 +1950,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <div class="sl-edit-pop-row" id="row-ls-story-analyze-btn"><button class="story-icon-btn" id="ls-story-analyze-btn" onclick="event.stopPropagation();analyzeChaptersRun([APP.lessonData?.id].filter(Boolean),this)" title="Analyse words for the text explorer" style="display:none">🔤</button><span class="sl-edit-pop-lbl" id="lbl-ls-story-analyze-btn"></span></div>
       <div class="sl-edit-pop-row" id="row-story-repair-toggle-btn"><button class="story-icon-btn" id="story-repair-toggle-btn" onclick="event.stopPropagation();toggleStoryRepair()" title="Edit story">✏️</button><span class="sl-edit-pop-lbl" id="lbl-story-repair-toggle-btn"></span></div>
       <div class="sl-edit-pop-row" id="row-story-qc-btn"><button class="story-icon-btn" id="story-qc-btn" onclick="event.stopPropagation();runStoryQc()" title="Proofread with QC model" style="display:none">🔍</button><span class="sl-edit-pop-lbl" id="lbl-story-qc-btn"></span></div>
-      <div class="sl-edit-pop-row" id="row-story-retranslate-btn"><button class="story-icon-btn" id="story-retranslate-btn" onclick="event.stopPropagation();onRetranslateBtn()" title="Re-translate (after fixing the story text)" style="display:none">🔄</button><span class="sl-edit-pop-lbl" id="lbl-story-retranslate-btn"></span></div>
+      <div class="sl-edit-pop-row" id="row-story-retranslate-btn"><button class="story-icon-btn" id="story-retranslate-btn" onclick="event.stopPropagation();onRetranslateBtn()" title="Translation" style="display:none">🔄</button><span class="sl-edit-pop-lbl" id="lbl-story-retranslate-btn"></span></div>
     </div>
     <div class="story-body" id="story-body"></div>
     <div id="aeh-diff-panel" style="display:none;margin:0 16px 12px;font-size:12px;border-top:1.5px solid var(--gray-mid);padding-top:10px"></div>
@@ -3330,6 +3330,19 @@ function applyUIStrings() {
   _setAttr('share-storyline-btn',  'title', t('lesson.btn_share'));
   _setAttr('speakstory-btn',       'title', t('lesson.read_aloud'));
   _setAttr('edit-story-btn',       'title', t('lesson.edit_story'));
+  // ⚠️ v90_h (user: "the text 'Re-translate (after fixing the story text)' is not in ui.json?").
+  // These four titles were hardcoded English in the markup, and until v90_g that only cost a
+  // tooltip nobody reads on a touch screen. Then the buttons moved into the story row's edit menu,
+  // where the title IS THE VISIBLE ROW LABEL — so the whole menu read English in every language.
+  // Every one of them already had a key somewhere else in the app; none is new.
+  _setAttr('ls-story-explorer-btn', 'title', t('text_explorer.toggle_title'));
+  _setAttr('ls-story-analyze-btn',  'title', t('gen.post_gen_analysis_lbl'));
+  _setAttr('story-repair-toggle-btn', 'title', t('lesson.edit_story'));
+  // The user's own instruction for this one: "we can delete the '(after fixing the story text)'
+  // part and just re-use an existing 'Translate' ui entry". `models.translation` is that entry —
+  // and it is the SAME string retranslateStory already labels this call with in the jobs popover,
+  // so the menu row and the running job now say the same word.
+  _setAttr('story-retranslate-btn', 'title', t('models.translation'));
   _setAttr('continue-story-btn-title', 'title', t('lesson.continue_title'));
   _setAttr('cont-story-btn',       'title', t('lesson.continue_title'));
   _setText('story-cont-btn',       '↪');
@@ -10476,7 +10489,7 @@ const STATIC_LESSONS = [
     },
     "translationMeta": {
       "type": "translation",
-      "model": "qwen3.6:35b-a3b",
+      "model": "(user-provided)",
       "attempts": null,
       "valid": 1,
       "rejected": 0,
@@ -10484,11 +10497,11 @@ const STATIC_LESSONS = [
       "promptTokens": 81,
       "completionTokens": 19,
       "ms": 13126,
-      "at": "2026-09-07T09:09:04.577Z",
-      "origin": "generated",
-      "source": "re-translated after a manual story edit"
+      "at": "2026-09-07T11:17:27.022Z",
+      "origin": "user-provided",
+      "source": "edited by hand"
     },
-    "storyTranslation": "Of course, the government has boasted that the country is vast and free thanks to it.",
+    "storyTranslation": "Of course, the government has boasted that the country is free of giants, thanks to it.",
     "userStory": "Freilich hat sich die Regierung damit gebrüstet, dass das Land dank ihr riesenfrei ist",
     "continuedFrom": "No Giants Exist",
     "continuedFromId": "tp_17886332486940000399",
@@ -10701,7 +10714,7 @@ const STATIC_LESSONS = [
       }
     ],
     "generatedAt": "2026-09-05T18:44:07.219Z",
-    "updatedAt": "2026-09-07T09:09:04.577Z",
+    "updatedAt": "2026-09-07T11:17:27.022Z",
     "createdBy": "admin"
   },
   {
@@ -169736,12 +169749,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v90_g', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v90_h', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"cdd86d4732e6","lessons.json":"8d1f4037edae","ui.json":"6f11560fbaa5","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"016a5cc0e38b","analysis-corrections.json":"e64c06e5700a","build-static.js":"811abf3b5152"};
+  APP.buildSources = {"index.html":"d6d9dfcb7524","lessons.json":"b6e26d04f5db","ui.json":"6f11560fbaa5","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"016a5cc0e38b","analysis-corrections.json":"e64c06e5700a","build-static.js":"811abf3b5152"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

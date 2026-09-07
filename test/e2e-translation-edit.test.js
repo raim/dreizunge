@@ -61,7 +61,13 @@ let failed = false;
       assert.ok(m.source && /hand/i.test(m.source), 'and a source that says how it got here');
       assert.strictEqual(m.type, 'translation', 'still a translation stamp');
       assert.ok(T().updatedAt, 'the chapter is stamped as updated');
-      console.log('  the stamp records a human author, not a model');
+      // ⚠️ v90_h: and the FIELD that records a user-supplied translation is set, not just the stamp.
+      // unit-translation-stamp asserts over the whole corpus that origin 'user-provided' implies
+      // `userTranslation` exists; v90_g stamped the origin without the field and broke that
+      // invariant on the user's own library within the hour, on the first chapter they edited.
+      assert.strictEqual(T().userTranslation, T().storyTranslation,
+        "a user-provided translation is actually present on the topic, not just claimed");
+      console.log('  the stamp records a human author, and the record backs the claim');
     }
 
     // ── 3. ⚠️ AND IT TOUCHES NOTHING ELSE ───────────────────────────────────────────────────
@@ -95,6 +101,39 @@ let failed = false;
       console.log('  malformed requests are refused and change nothing');
     }
 
+    // ── 4b. The boot heal fixes chapters written before the field was set (v90_h) ───────────
+    {
+      const fs2 = require('fs');
+      const store = env.readStore();
+      // the exact broken shape v90_g produced: the stamp claims a person, the record does not
+      store.topics.push({ id: 'tp_broken', topic: 'Broken', lang: 'nl', srcLang: 'de',
+        story: 'Iets.', storyTranslation: 'Etwas.', lessons: [],
+        storyMeta: { type: 'story', model: 'f:1', origin: 'generated', source: 's' },
+        translationMeta: { type: 'translation', model: '(user-provided)', origin: 'user-provided',
+                           source: 'edited by hand' } });
+      // one that must NOT be touched: a generated translation has no business gaining the field
+      store.topics.push({ id: 'tp_gen', topic: 'Generated', lang: 'nl', srcLang: 'de',
+        story: 'Iets.', storyTranslation: 'Etwas.', lessons: [],
+        storyMeta: { type: 'story', model: 'f:1', origin: 'generated', source: 's' },
+        translationMeta: { type: 'translation', model: 'f:1', origin: 'generated', source: 's' } });
+      // ⚠️ Snapshot the seed BEFORE stopping: env.stop() removes the temp store file, so reading
+      // it afterwards is an ENOENT rather than a test failure.
+      fs2.writeFileSync(env.storePath, JSON.stringify(store));
+      const seedForBoot = JSON.parse(fs2.readFileSync(env.storePath, 'utf8'));
+      await env.stop();
+      const env2 = await boot({ seed: seedForBoot });
+      try {
+        const healed = env2.readStore().topics.find(t => t.id === 'tp_broken');
+        assert.strictEqual(healed.userTranslation, 'Etwas.',
+          'a chapter stamped user-provided without the field gets it from its own translation');
+        const untouched = env2.readStore().topics.find(t => t.id === 'tp_gen');
+        assert.ok(!untouched.userTranslation,
+          '⚠️ and a GENERATED translation is left alone — the heal fires on one exact shape');
+        console.log('  the boot heal repairs the v90_g shape and only that shape');
+      } finally { await env2.stop(); }
+      // the rest of this file has stopped its server; re-boot for §5's source read is unnecessary
+    }
+
     // ── 5. It works with no model available ─────────────────────────────────────────────────
     // A person typing must not depend on a backend. (The seeded server HAS a fake Ollama, so this
     // asserts the route carries no `active === 'none'` gate of its own — the one /api/retranslate-
@@ -113,7 +152,7 @@ let failed = false;
     failed = true;
     console.error(e && e.stack || e);
   } finally {
-    await env.stop();
+    try { await env.stop(); } catch (_) { /* §4b already stopped it */ }
   }
   if (!failed) console.log('e2e-translation-edit: ALL PASSED');
   process.exit(failed ? 1 : 0);

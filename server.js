@@ -286,7 +286,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_g';
+const APP_VERSION  = 'v90_h';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -903,6 +903,15 @@ function _newTopicId() {
     }
     for (const k of ['storyMeta', 'translationMeta']) {
       if (t[k] && !t[k].source) { t[k].source = 'recorded at generation'; healed++; }
+    }
+    // ⚠️ v90_h: /api/save-translation shipped in v90_g stamping origin 'user-provided' WITHOUT
+    // setting `userTranslation`, which breaks the corpus invariant "a user-provided translation is
+    // actually present on the topic". Any chapter edited in that window carries the broken shape;
+    // the text itself is right, only the field that records who supplied it was missing. Idempotent
+    // and self-limiting: it fires only on that exact shape, and the route no longer produces it.
+    const _tm = t.translationMeta;
+    if (_tm && _tm.origin === 'user-provided' && !t.userTranslation && t.storyTranslation) {
+      t.userTranslation = t.storyTranslation; healed++;
     }
   });
   if (healed || refined) {
@@ -10093,6 +10102,14 @@ http.createServer(async (req, res) => {
       const text = translation.trim();
       if (!text) return json(res, 400, { error: 'Empty translation' });
       saved.storyTranslation = text;
+      // ⚠️ v90_h: `userTranslation` is set TOO, and it has to be. The corpus invariant
+      // unit-translation-stamp asserts is `origin === 'user-provided'` ⇒ the topic carries the
+      // field that holds a user's translation — and it broke on the user's OWN library within the
+      // hour, on the first chapter they edited. Setting only the stamp claimed a person wrote the
+      // text while the record showed nobody had. The field is read at GENERATION time (it feeds the
+      // lesson prompts); on an existing chapter it is inert, and if that chapter is ever rebuilt
+      // this is exactly the translation to build from.
+      saved.userTranslation = text;
       // The stamp records WHO produced this text and WHERE the value came from — the invariant
       // unit-translation-stamp §4 asserts over the whole corpus. A hand-edited translation was
       // written by a person, so it is credited to no model: '(user-provided)' is the same sentinel

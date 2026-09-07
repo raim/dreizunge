@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_g` cut
+# Session prompt — written at the `v90_h` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_g`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_h`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -134,6 +134,20 @@ four requests at zero — the two relocation mechanisms (`_editMenuSync`'s regis
 `_cardEditPopHtml`) take each row's label from the button's own `title`, so moving a control into a
 menu costs nothing. Reach for those before asking.
 
+⚠️ **IF `unit-translation-stamp` IS RED, THE USER HAS NOT RESTARTED THEIR SERVER YET.** `v90_g`'s
+`/api/save-translation` stamped `origin: 'user-provided'` without setting `userTranslation`, breaking
+the corpus invariant that the field must exist. `v90_h` fixed the route and added a boot heal for the
+rows already written that way — it runs when the server starts. One chapter
+(`tp_17886338472190000441`) was affected. Their `lessons.json` is uncommitted working data; do not
+write to it to "fix" this.
+
+⚠️ **A TOOLTIP THAT MOVES INTO AN EDIT MENU BECOMES VISIBLE TEXT.** `_editMenuSync` and
+`_cardEditPopHtml` take each row's label from the button's own `title` — that is what makes a
+relocation cost zero keys, and it is also why a hardcoded English `title` that was invisible as a
+tooltip becomes an English label in every language. Before moving a control into a menu, check that
+its title comes from `t()`. Four did not at `v90_g`; one still does not — the 🔍 story-QC button's
+"Proofread with QC model" has no key (`qc.summary_btn` is the summary's version of the same string).
+
 ## Orient yourself, in this order
 
 1. **This file**, whole.
@@ -187,7 +201,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **355 topics, 99 storylines, 33 languages, 740 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_g'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_h'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing
