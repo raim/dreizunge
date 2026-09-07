@@ -281,6 +281,7 @@ run('unit: dialect TTS approximate detection (M1)', 'node', [path.join(__dirname
   run('unit: dialect import panel toggle (M1)', 'node', [path.join(__dirname, 'unit-dialect-panel.test.js')]);
   run('unit: lesson retry — cancel, and hard-vs-soft backoff (v90_n)', 'node', [path.join(__dirname, 'unit-lesson-retry.test.js')]);
   run('unit: a scraped article is never cut mid-sentence (v90_o)', 'node', [path.join(__dirname, 'unit-scrape-sentence-split.test.js')]);
+  run('unit: Wikipedia source + the chapter-size ruler (v90_q)', 'node', [path.join(__dirname, 'unit-wikipedia-source.test.js')]);
   run('unit: dialect story generator + gate (M2)', 'node', [path.join(__dirname, 'unit-dialect-story.test.js')]);
   run('unit: dialect mute + no-lang prompt', 'node', [path.join(__dirname, 'unit-dialect-mute.test.js')]);
 run('unit: no-keyboard glyph ordering (v48)', 'node', [path.join(__dirname, 'unit-no-keyboard.test.js')]);
@@ -386,6 +387,7 @@ if (!quick) {
   run('e2e: synonyms context sentences', 'node', [path.join(__dirname, 'e2e-synonyms.test.js')]);
   run('e2e: LLM chapter split', 'node', [path.join(__dirname, 'e2e-chapter-split.test.js')]);
   run('e2e: scrape a story from a URL (NewsArticle)', 'node', [path.join(__dirname, 'e2e-fetch-url.test.js')]);
+  run('e2e: Wikipedia via the MediaWiki API (v90_q)', 'node', [path.join(__dirname, 'e2e-wikipedia-fetch.test.js')]);
   run('e2e: analysis is deferred until the book job finishes (v90_o)', 'node', [path.join(__dirname, 'e2e-deferred-analysis.test.js')]);
   run('e2e: cancelling a book job aborts the model (v90_p)', 'node', [path.join(__dirname, 'e2e-book-cancel-aborts.test.js')]);
   run('e2e: re-create storyline lessons', 'node', [path.join(__dirname, 'e2e-recreate.test.js')]);

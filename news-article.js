@@ -229,5 +229,102 @@ function fetchPage(rawUrl, opts) {
   return step(String(rawUrl || '').trim(), 0);
 }
 
+// ── Wikipedia, via its OWN API rather than by scraping (v90_q) ───────────────
+//
+// ⚠️ WHY A SECOND PATH AT ALL. Wikipedia serves `@type: Article` with `articleBody: ""` — measured
+// on `en.` and `de.` — so the JSON-LD path refuses it, correctly. But MediaWiki publishes the
+// article as plain text through a documented API, which is strictly better than anything scraping
+// could recover: no citation markers, no `[edit]`, no navigation, and REAL PARAGRAPH STRUCTURE
+// (379 newlines in the English article, against ZERO in a JSON-LD `articleBody`).
+//
+// ⚠️ AND IT ANSWERS THE ONE THING THE NEWS PATH NEVER CAN: the licence, machine-readably, from
+// `meta=siteinfo&siprop=rightsinfo`. That drops straight into the `source.licence` field `v89_aj`
+// built. A newspaper tells you nothing about reuse; Wikipedia tells you exactly.
+//
+// One request carries everything — extract, canonical URL, last-edit timestamp, site name and
+// licence — so this costs the same round trip the scrape path already pays.
+// ⚠️ NOT `[a-z]{2,3}` for the language code. That rejected `simple.wikipedia.org` — Simple English
+// Wikipedia, which is the single most useful wiki for a language learner and exactly the sort of
+// thing this app exists for. Wikipedia subdomains are not all ISO-639 two/three-letter codes:
+// `simple`, `zh-yue`, `nds-nl`, `bat-smg` are all real. Any lowercase subdomain is accepted except
+// `www`, which serves the portal and has no /wiki/ articles.
+const WIKI_HOST = /^(?!www\.)([a-z][a-z0-9-]{1,11})\.(?:m\.)?wikipedia\.org$/i;
+
+// `{ lang, title }` for a Wikipedia article URL, else null. Deliberately narrow: only `/wiki/<Title>`
+// article paths, never `/w/index.php?...` query forms or Special: pages, so a URL this does not
+// fully understand falls through to the ordinary scrape path instead of being half-handled.
+function wikipediaTarget(rawUrl) {
+  let u;
+  try { u = new URL(String(rawUrl || '').trim()); } catch (_) { return null; }
+  const m = WIKI_HOST.exec(u.hostname);
+  if (!m) return null;
+  const path = decodeURIComponent(u.pathname);
+  const hit = /^\/wiki\/(.+)$/.exec(path);
+  if (!hit) return null;
+  const title = hit[1].replace(/_/g, ' ').trim();
+  // A namespaced page (Talk:, Special:, File:, Category:, …) is not an article. The test is
+  // structural — a colon before any space — NOT a list of namespace names, which would be
+  // language knowledge in the code and would be wrong in every language but English.
+  if (!title || /^[^\s:]+:/.test(title)) return null;
+  return { lang: m[1].toLowerCase(), title };
+}
+
+// ⚠️ SECTION HEADINGS KEEP THEIR TEXT AND LOSE THEIR `=` MARKERS. `_autoTitle` already treats a
+// short line with no sentence-final punctuation as a heading that TITLES the chapter following it,
+// so the text is worth keeping; the `==` markup is not, and would otherwise be read aloud as prose.
+function stripWikiMarkup(text) {
+  return String(text || '')
+    .replace(/^\s*=+\s*(.+?)\s*=+\s*$/gm, '$1')   // == History == → History
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+// ⚠️ THE TRAILING BOILERPLATE SECTIONS ARE DELIBERATELY *NOT* TRIMMED. References / External links
+// and friends sit in the last ~2% of the text (measured: char 64553 of 65663 on the English
+// article), and dropping them would mean matching their HEADINGS BY NAME — which differ in every
+// language ("Einzelnachweise", "Collegamenti esterni", …). That is exactly the hand-authored
+// language table this project's standing design principle forbids. The chunk review card is where
+// furniture gets dropped, by the same argument the news path already makes: it converts an
+// unsolved problem into two clicks. **Do not "fix" this with a word list.**
+async function fetchWikipediaArticle(target, opts) {
+  const { lang, title } = target;
+  // ⚠️ Overridable so the guard can drive this against a stub MediaWiki, exactly as the route
+  // accepting `http://` is what makes the scrape path testable. `{lang}` is substituted, so one
+  // setting covers every language subdomain. Also the honest hook for a local mirror.
+  const origin = (process.env.WIKIPEDIA_ORIGIN || 'https://{lang}.wikipedia.org').replace('{lang}', lang);
+  const api = `${origin}/w/api.php?action=query&format=json&formatversion=2`
+    + '&redirects=1&prop=extracts%7Cinfo%7Crevisions&inprop=url&rvprop=timestamp&rvlimit=1'
+    + '&explaintext=1&meta=siteinfo&siprop=rightsinfo%7Cgeneral'
+    + '&titles=' + encodeURIComponent(title);
+  const page = await fetchPage(api, opts);
+  if (!(page.status >= 200 && page.status < 300)) return { ok: false, status: page.status };
+  let j;
+  try { j = JSON.parse(page.body); } catch (_) { return { ok: false, status: page.status }; }
+  const pg = j && j.query && Array.isArray(j.query.pages) && j.query.pages[0];
+  // `missing: true` is how MediaWiki reports an unknown title — a clean refusal, same shape the
+  // news path gives, so the client needs no new branch.
+  if (!pg || pg.missing || typeof pg.extract !== 'string') return { ok: false, status: page.status };
+  const text = stripWikiMarkup(pg.extract);
+  if (text.length < MIN_BODY_CHARS) return { ok: false, status: page.status };
+  const rights = (j.query.rightsinfo && j.query.rightsinfo.text) || '';
+  const general = j.query.general || {};
+  const rev = Array.isArray(pg.revisions) && pg.revisions[0];
+  return {
+    ok: true, status: page.status,
+    text,
+    headline: pg.title || title,
+    // No single author exists, and inventing one would be a false attribution. The licence and the
+    // canonical URL are what make the reuse honest, and both are the API's own answers.
+    author: '',
+    licence: rights,
+    publisher: general.sitename || 'Wikipedia',
+    datePublished: (rev && rev.timestamp) || '',
+    url: pg.fullurl || `${origin}/wiki/${encodeURIComponent(title)}`,
+    bodyWords: wordCount(text),
+    pageWords: 0,
+  };
+}
+
 module.exports = { extractNewsArticle, ldJsonObjects, pageProseWords, wordCount, fetchPage,
+                   wikipediaTarget, fetchWikipediaArticle, stripWikiMarkup,
                    MIN_BODY_CHARS, MIN_PAGE_WORDS, MAX_REDIRECTS, MAX_BYTES, TIMEOUT_MS };

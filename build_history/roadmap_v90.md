@@ -514,7 +514,10 @@ that exact URL** rather than by estimating.
 
 - **The easy 70%, roughly a session:** a `/api/fetch-url` route (fetch, cap, follow redirects), JSON-LD
   `NewsArticle` extraction, provenance auto-filled, then hand off to the machinery the PDF/paste flow
-  already uses. Works today on Corriere and most schema.org news sites.
+  already uses. ~~Works today on Corriere and most schema.org news sites.~~ ⚠️ **CORRECTED at `v90_q`
+  by measuring eleven titles: `articleBody` is RARE, not common — 4 of 11 worked, and the Guardian,
+  BBC, Spiegel, Zeit and Al Jazeera all carry `NewsArticle` with NO `articleBody`. See the `v90_q`
+  entry. The refusal path is the common case.**
 - **The remaining 30% is a different project.** Beating 45% noise generically is the Readability
   problem — link density and text-to-markup ratio per node — several hundred lines, and this repo has
   no HTML parser at all.
@@ -2934,6 +2937,95 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v90_q — Wikipedia through its own API, a chapter-size ruler, and a correction: JSON-LD coverage is much worse than claimed
+
+User: *"are the JSON-LD widely supported, eg. also new york times or international newspapers in
+other languages? wikipedia would be nice to have, other ways to scrape wikipedia articles?"*
+Both answered by measurement. **ZERO `ui.json` keys.**
+
+### ⚠️⚠️ THE CORRECTION: `articleBody` IS RARE. JSON-LD IS NOT.
+
+`roadmap_v90.md` said the scrape "works today on Corriere and **most schema.org news sites**", and
+the `v90_m` entry repeated a softer version. **That is wrong.** `NewsArticle` markup is near-universal
+because it is SEO — but **`articleBody` is optional and most publishers deliberately omit it.**
+Measured, one real article per site:
+
+| works | refuses |
+|---|---|
+| 🇳🇱 NOS 677w · 🇹🇷 Hürriyet 326w · 🇵🇱 Onet 178w · 🇮🇹 Repubblica 60w (itself likely a teaser) | 🇬🇧 Guardian, 🇬🇧 BBC, 🇩🇪 Spiegel, 🇩🇪 Zeit, 🇶🇦 Al Jazeera — **all carry `NewsArticle`, none carries `articleBody`** · 🇸🇪 SVT: no JSON-LD at all · 🇺🇸 **NYT: HTTP 403**, blocks the UA · 🇫🇷 **Le Monde: HTTP 402 Payment Required** |
+
+**4 of 11 reachable sites.** (Three more went untested — the URL patterns missed. Small sample, but
+the failure mode is consistent and mechanical.) **The refusal path is the COMMON case, not the rare
+one.** That is an argument for the scoping, not against it — the alternative was 45% furniture — but
+the expectation set by the old wording was wrong and is corrected here.
+
+### ⭐ WIKIPEDIA, VIA MEDIAWIKI'S API — a better source than the news path, not a worse one
+
+Wikipedia serves `@type: Article` with `articleBody: ""`, so the JSON-LD path refuses it correctly.
+`action=query&prop=extracts&explaintext` gives something strictly better than scraping could:
+
+| | |
+|---|---|
+| **clean plain text** | no `[1]` citation markers, no `[edit]`, no navigation — nothing to strip |
+| **⭐ REAL PARAGRAPH STRUCTURE** | 379 newlines in the English article, against **ZERO** in a JSON-LD `articleBody` |
+| **⭐ THE LICENCE, MACHINE-READABLY** | `Creative Commons Attribution-Share Alike 4.0` from `meta=siteinfo&siprop=rightsinfo` — straight into the `source.licence` field `v89_aj` built. **A newspaper can never fill this in; Wikipedia can.** |
+| **every language** | en/de/it/fr/ja/pl all verified |
+| **one round trip** | extract + canonical URL + last-edit timestamp + sitename + licence in a single request |
+| **honest refusals** | `missing:true` for an unknown title, in the same `{ok:false}` shape the scrape path returns — **so the client needed no new branch, no new field and no new string** |
+
+⚠️ **`simple.wikipedia.org` forced the host pattern open.** The first version used `[a-z]{2,3}` for the
+language code and rejected **Simple English Wikipedia** — the single most useful wiki for a language
+learner. Wikipedia subdomains are not all ISO-639 codes (`simple`, `zh-yue`, `nds-nl`, `bat-smg`).
+
+⚠️ **NAMESPACES ARE REJECTED STRUCTURALLY, NOT BY NAME.** `Talk:`/`Diskussion:`/`Discussione:` differ
+in every language; the rule is "a colon before any space", and a real title containing a colon later
+(`Star Wars: Episode IV`) still passes. Anything `wikipediaTarget` does not fully understand —
+`/w/index.php` forms, wiktionary, the `www` portal — **falls THROUGH to the scrape path** rather than
+being half-handled.
+
+⚠️⚠️ **THE TRAILING BOILERPLATE IS DELIBERATELY NOT TRIMMED, AND THERE IS A GUARD AGAINST "FIXING"
+IT.** References / External links sit in the last ~2% (char 64553 of 65663, measured). Dropping them
+means matching headings BY NAME — `Einzelnachweise`, `Collegamenti esterni` — which is exactly the
+hand-authored language table this project's standing design principle forbids. The chunk review card
+drops them, by the same argument the news path already makes. `unit-wikipedia-source` §4 fails if any
+such word appears in the source. ⚠️ **Its first draft read the raw file and went red on
+`news-article.js`'s own comment EXPLAINING the decision** — a guard about what the CODE does must not
+be defeated by prose describing it, so comments are stripped first.
+
+### The chapter-size ruler (user request) — the slider existed, the NUMBER did not
+
+*"can we also add a words/chapter ruler, such that we can vary the chapter length and number?"*
+
+**The varying already worked**: `#story-len-slider` live re-splits the loaded document with a 250ms
+debounce whenever `_splitMode === 'len'`, and has since the upload flow was built. What was missing
+was the readout: it said `"300 words · 3-4 paragraphs"` — a generic estimate for a story that has not
+been written — which is meaningless for a document already in the panel. In upload mode it now reports
+the count the setting **actually produces**. Verified live by dragging the real slider:
+
+| slider | readout | rendered rows |
+|---|---|---|
+| 1000 | `1000 words · 10 chapters` | 10 |
+| 300 | `300 words · 32 chapters` | 32 |
+| 50 | `50 words · 154 chapters` | 154 |
+
+⚠️ **ZERO new keys**: composed from `pdf.words` (`{n} words`) and `pdf.chapters` (`{n} chapters`),
+both already translated into all 33 languages.
+
+⚠️ **AND A LONG FETCHED DOCUMENT NOW DEFAULTS TO LENGTH MODE** (`_FETCH_LEN_MODE_WORDS = 1500`).
+A Wikipedia article has ~96 paragraphs, so paragraph mode would hand back ~96 one-paragraph chapters
+**with the ruler hidden** — it is only shown in `len` mode, because paragraph boundaries come from the
+document. Confined to the fetch path; the PDF flow's paragraph-first default (a `v71_b` user ruling)
+is untouched.
+
+### Guards
+
+`unit-wikipedia-source.test.js` (5 sections) and `e2e-wikipedia-fetch.test.js` (4 sections, driven
+against a real stub MediaWiki through the new `WIKIPEDIA_ORIGIN` override — the same reason
+`/api/fetch-url` accepts `http://`). **Five mutations red; one survivor JUDGED, not counted**:
+deleting the `pg.missing` check keeps the suite green because a missing page has no extract and the
+`MIN_BODY_CHARS` gate refuses it anyway. It is kept for what it documents, not because it is
+load-bearing — `v90_d`'s own rule about equivalent mutants.
 
 ## ✅ v90_p — cancelling a BOOK job now actually stops the model, and says so
 

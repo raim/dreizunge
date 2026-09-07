@@ -3819,10 +3819,25 @@ function storyLenLabel(words){
   return t('form.story_len_val',{n:words,lo,hi});
 }
 function _updateStoryLenLabel(){ onStoryLenSlider(APP.storyLen); }
+// v90_q (user request: "a words/chapter ruler, such that we can vary the chapter length and
+// number"). The SLIDER already did the varying — it live re-splits the loaded document below, with
+// a 250ms debounce, and has since the upload flow was built. What was missing was the NUMBER: the
+// readout said "300 words · 3-4 paragraphs", a generic estimate for a story that has not been
+// written yet, which is meaningless for a document already sitting in the panel. In upload mode it
+// now reports the chapter count the current setting ACTUALLY produces.
+// ⚠️ ZERO new ui.json keys: composed from `pdf.words` ("{n} words") and `pdf.chapters`
+// ("{n} chapters"), both of which already exist and are already translated into all 33 languages.
+function _chunkRulerLabel(words){
+  const n = Array.isArray(_pdfChunks) ? _pdfChunks.length : 0;
+  return t('pdf.words', { n: words }) + ' · ' + t('pdf.chapters', { n });
+}
 function onStoryLenSlider(v){
   APP.storyLen=parseInt(v,10); saveStoryLen();
   const el=document.getElementById('story-len-val');
-  if(el) el.textContent=storyLenLabel(APP.storyLen);
+  // In upload mode the slider IS the chunk-size control (see _updateUploadSliderVis), so the
+  // readout must describe chapters, not the paragraphs of an unwritten story.
+  const asChunkSize = _uploadMode && _splitMode==='len';
+  if(el) el.textContent = asChunkSize ? _chunkRulerLabel(APP.storyLen) : storyLenLabel(APP.storyLen);
   // In upload (document) mode the slider sets the length-based chunk size — re-split
   // the loaded text (debounced). Skipped when splitting per page or after manual edits.
   if(_uploadMode && _pdfRawText && !_pdfBookId && !_chunksDirty && _splitMode==='len'){
@@ -8122,6 +8137,11 @@ function _resplitUpload(){
   _renderSplitModes();
   _renderPdfChunks();
   _updateUploadSliderVis();
+  // v90_q: the chapter COUNT just changed, so the ruler's readout is stale until it is repainted.
+  // Done here rather than inside onStoryLenSlider because a re-split also happens on a mode switch
+  // and on a fresh load, neither of which moves the slider.
+  { const el=document.getElementById('story-len-val');
+    if(el && _uploadMode && _splitMode==='len') el.textContent = _chunkRulerLabel(APP.storyLen); }
   document.getElementById('pdf-panel').classList.add('open');
 }
 // Switching mode re-cuts the document. Manual edits are discarded by the re-split, which is why
@@ -8221,6 +8241,10 @@ async function onUploadFileChosen(input){
 // furniture that cleanExtractedText provably does not remove (see news-article.js's header). A
 // refusal is one click from the paste box below; 900 words of furniture is a chapter that looks
 // fine and teaches navigation menus.
+// Above this many words, a fetched document defaults to LENGTH mode rather than paragraph mode, so
+// the chapter-size ruler is visible and active. 1500 ≈ five chapters at the default 300, i.e. the
+// point where "one chapter per paragraph" stops being a sane default and starts being a wall.
+const _FETCH_LEN_MODE_WORDS = 1500;
 async function fetchStoryFromUrl(){
   const input = document.getElementById('fetch-url-input');
   const status = document.getElementById('upload-status');
@@ -8265,7 +8289,15 @@ async function fetchStoryFromUrl(){
     // typically ONE unbroken run with no newlines at all (measured: 0 newlines / 0 blank lines on
     // the article this was built against), so _paragraphCount() returns 1 and this correctly lands
     // on the length slider. Defaulting to paragraph mode would hand back one enormous chapter.
-    _splitMode = _paragraphCount(_pdfRawText) >= 3 ? 'para' : 'len';
+    // The file path's rule, with ONE addition for this route (v90_q). A JSON-LD articleBody has no
+    // paragraphs at all, so it lands on 'len' anyway — but a Wikipedia article has ~96 of them, and
+    // paragraph mode would hand back ~96 one-paragraph chapters with the length ruler HIDDEN (it is
+    // only shown in 'len' mode, because paragraph boundaries come from the document). For anything
+    // this long, length mode is the useful default precisely because it puts the ruler in the
+    // learner's hands. Confined to the fetch path: the PDF flow's own paragraph-first default
+    // (a v71_b user ruling) is untouched.
+    const _longDoc = wordCount(_pdfRawText) > _FETCH_LEN_MODE_WORDS;
+    _splitMode = (!_longDoc && _paragraphCount(_pdfRawText) >= 3) ? 'para' : 'len';
     _resplitUpload();
     _setPasteVisible(false);
     document.getElementById('pdf-panel')?.classList.add('open');
@@ -8279,6 +8311,10 @@ async function fetchStoryFromUrl(){
       if(el && val && !el.value.trim()) el.value = String(val).slice(0, el.maxLength > 0 ? el.maxLength : 500);
     };
     setIfBlank('gen-src-author', d.author);
+    // v90_q: Wikipedia reports its licence machine-readably (CC BY-SA 4.0, from the API's own
+    // rightsinfo). A newspaper never does, so this stays blank on the scrape path — which is
+    // honest: an unknown licence must not be guessed at.
+    setIfBlank('gen-src-licence', d.licence);
     setIfBlank('gen-src-url', d.url);          // the FINAL url, after any redirects
     setIfBlank('gen-src-note', [d.publisher, (d.datePublished||'').slice(0,10)].filter(Boolean).join(' · '));
     // headline → the topic title. Same "only if blank" rule, same reason.
@@ -170506,12 +170542,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v90_p', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v90_q', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"968baa1c114a","lessons.json":"cd28778dbbc8","ui.json":"b135c2e9db14","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"4126d7870e19","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
+  APP.buildSources = {"index.html":"d6269b4f2eb0","lessons.json":"cd28778dbbc8","ui.json":"b135c2e9db14","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"4126d7870e19","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

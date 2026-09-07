@@ -7,7 +7,7 @@ const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
-const { extractNewsArticle, fetchPage } = require('./news-article.js');
+const { extractNewsArticle, fetchPage, wikipediaTarget, fetchWikipediaArticle } = require('./news-article.js');
 const { createSkillRegistry, resolveSkill, withRegisteredSkill, withSkillAlias, withoutSkillAlias } = require('./skill-registry.js');
 const { CANCELLED, callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, lastPingFailure, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
@@ -287,7 +287,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_p';
+const APP_VERSION  = 'v90_q';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8878,6 +8878,25 @@ http.createServer(async (req, res) => {
         if (u.protocol !== 'http:' && u.protocol !== 'https:') {
           return json(res, 400, { error: 'Only http:// and https:// addresses can be fetched.' });
         }
+      }
+
+      // ── Wikipedia goes through MediaWiki's own API, not through the scraper (v90_q) ──────
+      // Dispatched on the URL because it is the one thing that reliably identifies the source, and
+      // the answer is the SAME SHAPE the scrape path returns — so the client needs no new branch,
+      // no new field and no new string. `wikipediaTarget` returns null for anything it does not
+      // fully understand (a Talk:/Special: page, an /w/index.php form, wiktionary), and those fall
+      // through to the ordinary scrape path rather than being half-handled.
+      const wiki = wikipediaTarget(target);
+      if (wiki) {
+        let w;
+        try { w = await fetchWikipediaArticle(wiki); }
+        catch (e) { return json(res, 502, { error: e.message || 'Could not fetch that page.' }); }
+        if (!w.ok) {
+          console.log(`  Wikipedia: no article at ${target} (HTTP ${w.status})`);
+          return json(res, 200, { ok: false, status: w.status, url: target });
+        }
+        console.log(`  Wikipedia: ${w.bodyWords} words from ${w.url} (${wiki.lang})`);
+        return json(res, 200, w);
       }
 
       let page;
