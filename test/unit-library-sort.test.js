@@ -383,6 +383,44 @@ async function headers(sortKey) {
     console.log(`  the STATIC build honours the key and the direction (${edited.ids.length} storylines): OK`);
   } catch (e) { failed = true; console.error(e && e.stack || e); }
 
+
+  // ── applyUIStrings runs, and this row is localized (v90_k) ─────────────────
+  //
+  // ⚠️ Added while re-deriving the i18n audit, which had listed these six labels as hardcoded
+  // English. They are not: the markup English is the first-paint FALLBACK. The audit could not tell
+  // the difference because `applyUIStrings` walks `<select>.options` and `lib-dom` did not model
+  // `.options`, so the function THREW in the harness and nothing about it was measurable. It runs
+  // now (the harness gained `.options`), and this section pins both halves of the claim.
+  {
+    const uiAll = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+    const langsAll = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+    const label = (lang) => {
+      const C = loadClient({ quiet: true });
+      C.run('LANGS = ' + JSON.stringify(langsAll) + '; UI_STRINGS = ' + JSON.stringify(uiAll[lang])
+          + '; APP.uiLang = ' + JSON.stringify(lang) + '; applyUIStrings();');
+      return C.document.getElementById('lib-sort-lbl').textContent;
+    };
+    const en = label('en'), de = label('de'), fr = label('fr');
+    assert.ok(en && de && fr, 'applyUIStrings runs and fills the sort label');
+    assert.notStrictEqual(de, en, 'the label is TRANSLATED, not a hardcoded English literal');
+    assert.notStrictEqual(fr, en, 'in French too');
+
+    // ⚠️ The five OPTIONS cannot be measured here: getElementById AUTO-VIVIFIES, so the select this
+    // harness hands back is a fresh blank element with no children — the markup's options are not
+    // in it. Stated at the layer that IS observable: every option value maps to a key, and every
+    // one of those keys is translated. Both halves matter — a mapping to a missing key would ship a
+    // menu captioned `lib.sort_tokens`.
+    const html2 = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    const mapSrc = /const L=\{ edited:'([\w.]+)', created:'([\w.]+)', tokens:'([\w.]+)',\s*srclang:'([\w.]+)', lang:'([\w.]+)' \}/.exec(html2);
+    assert.ok(mapSrc, 'applyUIStrings maps every option value to a ui.json key');
+    for (const key of mapSrc.slice(1)) {
+      assert.ok(uiAll.en[key] && uiAll.en[key].trim(), `${key} exists in en`);
+      const n = Object.keys(uiAll).filter(l => l !== 'en' && uiAll[l][key]).length;
+      assert.ok(n > 20, `${key} is translated (${n} languages) — the audit called this hardcoded`);
+    }
+    console.log('  the sort label localizes (measured) and all five options map to translated keys: OK');
+  }
+
   console.log(failed ? 'unit-library-sort: FAILED' : 'unit-library-sort: ALL PASSED');
   process.exit(failed ? 1 : 0);
 })();

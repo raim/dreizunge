@@ -2695,6 +2695,61 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_k — the i18n audit, re-derived: 86 certain, not 143
+
+User: *"re-derive the i18n audit numbers properly."* **ZERO `ui.json` keys** — this release measures
+and records; it adds no strings and changes no user-visible text.
+
+### Why the first pass was wrong, and why a regex can never settle it
+
+The client localizes through **at least four different idioms**: `_setAttr(id, attr, t(k))`,
+`_setText(id, t(k))`, `set(id, el => el.textContent = t(k))`, and a bare
+`const el = getElementById(id); if (el) el.textContent = t(k)` two statements later. A source scan
+mis-classifies in BOTH directions — it called `fin-title` hardcoded (it is not) and
+`topic-name-big` localized (it is assigned the topic NAME, which is user content). The first pass
+also could not run `applyUIStrings` at all, so it guessed which markup literals were first-paint
+FALLBACKS. That guess is what put the six library-sort labels on the list; they are keyed and
+translated in 32 languages.
+
+⚠️ **`lib-dom` did not model `<select>.options`**, and `applyUIStrings` walks them to localize the
+sort menu — so the function threw in the harness and NOTHING about it was measurable. Adding
+`.options` (standard DOM, one getter) is what made the re-derivation possible at all.
+
+### The method, per class — and what each can actually decide
+
+| class | how it is decided | result |
+|---|---|---|
+| **A. markup `title`/`placeholder` with an id** | ⚠️ **MEASURED.** `getElementById` AUTO-VIVIFIES, so an element the harness hands back starts BLANK. Run `applyUIStrings()` and ask for each id: a value present means it wrote there; nothing means the markup English is what a user reads | 63 candidates → 27 localized, 1 keyed-but-identical across en/de/fr, **35 never written** |
+| **B. literals passed to `showToast`/`confirm`/`alert`** | Certain by construction — no fallback path exists for a literal argument | **10** |
+| **C. markup text with an id** | Only partly decidable. Certain when NOTHING in the source ever addresses that element | 70 candidates → **10 certain**, 60 needing a per-element check |
+| **D. literal `title`/`placeholder`/`aria-label` with NO id** | Certain — `applyUIStrings` addresses by id, so it cannot reach these | **31 distinct** (41 occurrences) |
+
+**86 distinct certain findings. Plus 60 undecided** (class C's remainder); a hand-check of 27 of
+them found roughly half genuinely localized, so expect ~25–30 more real ones.
+
+Against the **143** the first pass reported. The number moved less than the composition did: that
+143 mixed fallbacks, already-localized elements and un-ID'd duplicates together, and would have led
+someone to spend keys on strings that are already translated.
+
+### Roughly who reads them (judgement, unlike the counts above)
+
+- **A learner, in normal play (~25)** — the generation screen's own progress text ("Building your lessons…", "Generating…", "Starting…"), the bottom-bar/settings/mute/mic pill tooltips, the speech-language and voice selectors on two screens, "Home", the completion card's explorer and read-aloud buttons, `confirm("Clear all lesson results for …")`, `alert("Please paste your story…")`, the three vocab-mode options.
+- **A teacher authoring (~45)** — the whole dialect studio, the lesson editor's placeholders ("use ___ for the blank", "short reason the correct form fits", "the exact word as it appears above"), title/tag inputs, "Add choice"/"Remove choice"/"Delete", `confirm("Delete the … lesson…")`.
+- **A maintainer (~10)** — "Rebuild docs/index.html", "Import lessons.json", "Teacher dashboard", "✓ docs/index.html rebuilt".
+
+### The rule this earns
+
+**An audit that cannot RUN the code it audits is a list of suspects.** Every wrong entry in the first
+pass came from inferring, at a distance, what a function would do to a string. The classes that are
+now trustworthy are exactly the ones where something is executed or where no mechanism exists at
+all; the 60 that remain undecided are the ones where neither is true.
+
+Guard: `unit-library-sort` now measures that the sort label localizes across en/de/fr and that every
+option value maps to a translated key. Two mutations red — the harness losing `.options`, and an
+option mapped to a key that does not exist.
+
+Suite: **364 full / 302 quick**, unchanged.
+
 ## ✅ v90_j — the library sort did nothing in the static build
 
 User: *"does the sorting on the main page fully work in static, including the reverse button?"*

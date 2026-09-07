@@ -365,6 +365,11 @@ function makeElement(tag = 'div', id = '', doc = null) {
     // Attributes are STORED (v70_g). They used to be no-ops returning null, which meant a render
     // could set an aria-label and no test could ever see it — accessible names were structurally
     // untestable. unit-report-edits had to hand-roll its own attribute store to work around this.
+    // ⚠️ v90_k: `<select>.options` is standard DOM and was missing, so any code walking a select's
+    // options threw here — applyUIStrings does exactly that for the library sort menu and the
+    // language pickers, which made the whole function unrunnable in this harness and therefore made
+    // "is this string localized?" unanswerable by measurement. Live list, like the real thing.
+    get options() { return (el.children || []).filter(c => c && String(c.tagName).toLowerCase() === 'option'); },
     getAttribute(k) { return Object.prototype.hasOwnProperty.call(el._attrs, k) ? el._attrs[k] : null; },
     // ⚠️ v90_h: a runtime setAttribute REFLECTS onto the same-named property for the attributes
     // PROP_ATTRS already declares, because that is what the DOM does — `el.setAttribute('title', x)`
