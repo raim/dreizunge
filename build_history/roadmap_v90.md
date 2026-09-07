@@ -2935,6 +2935,131 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_o — the analysis post-pass no longer competes with the generation that spawned it, and a scraped article is never cut mid-sentence
+
+Two user reports from one failed book job, plus a correction to `v90_n`'s own write-up.
+**ZERO `ui.json` keys.**
+
+### ⚠️ THE FAILURE: `Chapter 3: Lesson generation failed: Lesson 1 failed after 3 attempts: Ollama timeout`
+
+Not a network fault — `Ollama timeout` is the app's OWN 720s wall-clock request timeout. The user's
+log shows a **load curve, not an incident**:
+
+| step | duration | what else was in flight |
+|---|---|---|
+| ch1 translation | 69.6s | nothing |
+| ch1 lesson | 320.5s | nothing |
+| ch2 translation | **295.2s** — 4.2× ch1 | ch1's CP2 analysis (8 sentences) |
+| ch2 lesson | **716.4s** | ⚠️ **3.6 seconds under the 720s timeout** |
+| ch3 lesson ×3 | all timed out | ch1 CP2 (stuck at 4/8) + ch2 CP2 (9 sentences) |
+
+Chapter 2 finished with 3.6 seconds of headroom; chapter 3 crossed the line. The
+`[analysis] failed: Ollama timeout` lines show the analyses were starving too.
+
+**The cause is `v86_o`'s own design decision.** It fired `_kickOffAnalysisJob(saved)` the instant each
+chapter was persisted, reasoning that analysis "must never hold up the NEXT chapter's generation".
+⚠️ **That reasoning assumed the backend could do two things at once.** On a CPU-only, single-model
+Ollama it cannot: requests SERIALISE at the backend, so the analysis held the next chapter up
+anyway — **invisibly**, and the waiting was charged against a wall-clock timeout sized for the
+model's own work, not for queue depth. And it compounds: ch2 competes with one analysis, ch3 with
+two. Three chapters is where it starts to bite; ten would be far worse.
+
+⚠️ **A CONFOUND, STATED RATHER THAN BURIED: the agent's own test suites ran almost continuously
+through that exact window** (~19:19–19:28, 19:30–19:34, 19:51–20:00, 20:01–20:10, 20:16, against a
+job running 19:14:53–~20:20). They use `fake-ollama` so they never competed for the MODEL, but they
+competed for CPU, which is the scarce resource. Chapter 1's 69.6s translation is the only figure
+taken before that started. **The table above is therefore not proof of the design defect on its
+own.** What stands independently: the code demonstrably ran analysis concurrently, Ollama
+demonstrably serialises on one CPU model, and the timeout demonstrably counts queue time.
+
+### The fix (user's choice, "do A"): collect, then run after the book, ONE AT A TIME
+
+`_runBookJob` now pushes each saved chapter onto `pendingAnalysis` and calls `_runDeferredAnalyses`
+at the very end. **The same call `v77_w` made for lesson QC**, for the same reason: not urgent, and
+it loses nothing by waiting.
+
+- ⚠️ **Started after the job's status is settled and deliberately NOT awaited** — the book is
+  finished when its chapters are, and parking the job in `running` for the length of the analyses
+  would be a worse lie than the contention it fixes.
+- ⚠️ **Sequential is the point, not tidiness.** CP2 issues one model call PER SENTENCE (8 and 9 for
+  the measured chapters), so firing three chapters at once merely moves the same thundering herd
+  later — ~25 queued calls, each carrying the same 720s timeout the queue itself would exhaust.
+  `_kickOffAnalysisJob` now also RETURNS its promise so the runner can await each one; still
+  fire-and-forget for every existing caller, and the `.catch` stays attached so an unawaited promise
+  cannot become an unhandled rejection.
+- ⚠️ **`return` → `break` on chapter failure.** The post-loop block is already gated on
+  `bj.status !== 'error'`, so nothing new runs for a failed book — but control now reaches the
+  deferred call. A `return` would have silently dropped analysis for the chapters that DID succeed,
+  a regression against the per-chapter behaviour (the user's own failed job analysed chapters 1–2).
+- A **cancelled** book starts nothing: the user said stop.
+
+### ⚠️ AND SCRAPED ARTICLES *WERE* BEING CUT MID-SENTENCE — but not on the path that was reported
+
+The user reported broken sentences "from our corriere della sera URL". **Measured: that draft came
+from the PDF/upload path, not the scrape** — its own log line reads `3 chapter(s) (from upload)`, its
+first chunk's title is the HEADLINE (`"Accordo De Gasperi-Gruber, tutto pronto per l'arrivo di"`, cut
+exactly where the roadmap's PDF-vs-URL comparison already recorded it breaking, before "Mattarella"),
+and **the headline does not appear in `articleBody` at all**. The scrape at the sizes in play was
+clean: 21 sentence units, every boundary on a sentence-final period.
+
+**But building the guard found a real defect anyway, at smaller chapter sizes.** Sweeping targets
+80–400 over the real article, an 80-word target produced a chapter ending
+`…dedicata al tema «1946-2026:` — mid-quote, mid-sentence. **A sentence longer than
+`_MAX_UNIT_CHARS` (300) is broken into fragment units by `_splitLongUnit`, and `_splitIntoChunks`
+treated those exactly like whole sentences**, so a chapter boundary could land inside one. It is
+size-dependent, which is why one target looked clean and a smaller one did not — and it affects the
+PDF path too, since the splitter is shared.
+
+Fixed by one condition: `const midSentence = u.frag && !u.fragLast` — never close a chapter on a
+fragment that is not its sentence's last. The `frag`/`fragLast` flags already existed (`v90_d` noted
+they "had no assertion at all"); this is their first behavioural use.
+
+### The guards
+
+**`test/e2e-deferred-analysis.test.js`** — four sections, three mutations red. ⚠️ **The claim is
+about ORDERING, so it is asserted against the server's own LOG**, the layer where "did this start
+before that" is observable. It could not be asserted on the analysis RESULT: the results are
+identical either way, which is exactly why `e2e-postgen-analysis-optin` (all outcome assertions)
+missed the defect for four release lines. That file's header, which stated the superseded timing
+ruling, is **re-scoped rather than deleted**, per the standing rule.
+
+**`test/unit-scrape-sentence-split.test.js`** — the real `articleBody` as a stored fixture
+(`test/fixtures/newsarticle-body-it.json`; the network is never touched). ⚠️ **Its zero newlines are
+the point**: that is what makes paragraph mode unavailable and forces the length splitter, the one
+path where a word budget could cut mid-sentence. 17 chunks across six chapter sizes, every one
+whole; plus a word-conservation check, because a splitter can respect sentences and still drop one.
+
+### ⚠️⚠️ THREE VACUOUS-GUARD FINDINGS, ALL IN GUARDS WRITTEN THIS SESSION
+
+Recorded because they were caught by mutation testing and by the guards' own rails, not by review:
+
+1. **A section that announced its own vacuity.** `e2e-deferred-analysis` §3 cancelled a
+   normal-speed book and, when the cancel lost the race, printed `(cancel lost the race)` and
+   asserted NOTHING. Two further drafts also failed — `FAKE_SLOW_MS` as an env var (the server's
+   boot-time `warmup()` is itself an `/api/chat` call, so a fake slow from process start hangs boot;
+   `e2e-job-cancel` already records this), then `/__slow` at 30s (chapter 1 could then never finish).
+   A **moderate** 600ms delay applied up front is what holds. Each failure was caught by the
+   section's own guard-rail assertion that the job is genuinely `running` when cancelled.
+2. **The cancel had to land with a chapter ALREADY SAVED**, or the pending list is empty,
+   `_runDeferredAnalyses` returns without logging, and **removing the `!== 'cancelled'` gate leaves
+   the section green**. Found by mutation.
+3. **"One at a time" was asserted as ownership, not interleaving.** §2 checked only that every
+   analysis began after the deferred runner announced itself — which is still true when they all
+   fire at once. Deleting the `await` left it GREEN while its own console line claimed serialisation.
+   Now asserted as: analysis N must COMPLETE before analysis N+1 STARTS.
+   The same shape appeared in `unit-scrape-sentence-split`: raising `_MAX_UNIT_CHARS` so nothing ever
+   fragments left the whole file green, because §1 then only ever sees whole sentences. It now
+   asserts the fixture really does contain fragment units (4 of them).
+
+### ⚠️ AND A RESTORE THAT DID NOT RUN
+
+A mutation sweep hit the 2-minute tool timeout mid-run, and the `cp` restore was sequenced AFTER the
+test in the same shell line — so `server.js` kept an injected `return;` and the next run failed for
+a reason that had nothing to do with the code. Caught by diffing against the saved copy. **A restore
+must not be reachable only on the success path**; the re-run used a `trap … EXIT INT TERM`. This is
+the third time this line of work has been bitten by restore/edit scoping (`v89` rule 1, and the
+broken mutation at `v90_n`).
+
 ## ✅ v90_n — the two loose ends `v90_l` left: one was real and worse than described, one dissolved
 
 The `v90_l` write-up flagged two things its IPv6 fix did not address, "both worth measuring now that
@@ -2948,13 +3073,27 @@ transitions are spurious."* **It costs 565 / 565 / 602 ms** — three runs of th
 3-chapter book job was running and competing for the CPU*.
 
 Why it is cheap: **`llm.js` sends `keep_alive: -1` on every generation call**, so `ollama ps` reports
-both models pinned **`UNTIL: Forever`** (`expires_at: 2318-12-18`) and nothing is ever evicted. The
-"warm-up" therefore finds the model already loaded and is a 1-token round trip. The concern was about
-a design in which a warm-up reloads 22GB; that is not what this configuration does.
+both models pinned **`UNTIL: Forever`** (`expires_at: 2318-12-18`) — Ollama's own idle eviction never
+takes them. The "warm-up" therefore finds the model already loaded and is a 1-token round trip. The
+concern was about a design in which a warm-up reloads 22GB; that is not what happens on a loaded model.
 
-⚠️ **It is configuration-dependent, not impossible** — if something else ran `ollama stop`, or a
-competing model pushed this one out, the reload cost would be real. Recorded so the next session
-neither re-derives it nor "fixes" a 600ms call.
+⚠️⚠️ **CORRECTED AT `v90_o` — THIS ENTRY ORIGINALLY SAID THE MODEL "IS NEVER EVICTED", AND THAT IS
+FALSE.** The user's own book-job log ends:
+
+```
+  Idle 60m — releasing models from VRAM (next generation will reload them).
+  Released 4 model(s) from VRAM.
+```
+
+**The APP evicts them itself.** `keep_alive: -1` stops *Ollama* from unloading; item AU's idle
+release (`v88_l`, `server.js`'s own `_idleReleased`) unloads them after 60 idle minutes, exactly as
+designed. So the 565/565/602ms figure is the cost **on a loaded model**, which is the common case but
+not the only one: a warm-up that lands after an idle release, or after something else ran
+`ollama stop`, or after a competing model pushed this one out, really does pay the 22GB reload.
+**The measurement stands; the generalisation drawn from it did not.** The conclusion is unchanged —
+there is still nothing to fix, because a warm-up after a genuine eviction is doing necessary work —
+but "never evicted" was a claim about a configuration this project actively contradicts elsewhere in
+its own code, and it survived a full review because nobody read the last two lines of the log.
 
 ### ⚠️ THE RETRY WAS REAL — AND THE WRITE-UP UNDERSTATED IT IN ONE DIRECTION, OVERSTATED IT IN ANOTHER
 

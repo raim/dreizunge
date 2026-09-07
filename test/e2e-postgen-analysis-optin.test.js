@@ -1,14 +1,25 @@
 // E2E: item W follow-up (v86_o) — `postGenAnalysis`, mirroring `postGenStoryboard`'s own opt-in
 // shape (e2e-postgen-storyboard-optin.test.js is the direct template this file follows). CP1/CP2
-// analysis is intrinsically PER-CHAPTER (unlike the once-per-storyline storyboard), so
-// `_kickOffAnalysisJob` fires the instant each chapter is saved inside `_runBookJob`'s own
-// per-chapter loop, fire-and-forget — it must never hold up the NEXT chapter's generation, and the
-// book job itself must reach 'done' without waiting for analysis to finish.
+// analysis is intrinsically PER-CHAPTER (unlike the once-per-storyline storyboard): one analysis
+// per chapter, and the book job itself must reach 'done' without waiting for any of them.
+//
+// ⚠️ THE *TIMING* RULING THIS HEADER USED TO STATE WAS SUPERSEDED AT `v90_o`, and the header is
+// re-scoped rather than deleted. It said `_kickOffAnalysisJob` "fires the instant each chapter is
+// saved… it must never hold up the NEXT chapter's generation". It no longer fires there: on a
+// CPU-only single-model backend the requests serialise anyway, so it held the next chapter up
+// invisibly and timed out a real chapter on the user's machine. The analyses are now collected and
+// run once the book has finished, one at a time.
+//
+// ⚠️ EVERY ASSERTION BELOW IS ABOUT OUTCOMES — which chapters end up analysed and cached, and that
+// the book still reaches 'done' — so all of them survive that change untouched. That is also
+// exactly why this file could not have caught the defect: the results are identical either way.
+// The ORDERING claim lives in `e2e-deferred-analysis.test.js`, which asserts it against the
+// server's own log, the layer where "did this start before that" is observable.
 //
 // Covers: omitting the flag starts NO analysis job at all (the default, no-checkbox-checked case);
-// `postGenAnalysis:true` DOES start one per chapter, and it actually completes and caches (proven
+// `postGenAnalysis:true` DOES produce one per chapter, and it actually completes and caches (proven
 // via the real GET /api/analysis/:chapterId route, not just "a job started"); a MULTI-chapter book
-// fires one job per chapter, not one for the whole book (unlike storyboard).
+// gets one analysis per chapter, not one for the whole book (unlike storyboard).
 const fs = require('fs');
 const { boot, post, get, waitBookJob, assert, sleep, tmpFile } = require('./lib');
 
@@ -51,7 +62,7 @@ async function waitAnalysisAvailable(sport, chapterId, timeoutMs = 15000) {
       console.log('  postGenAnalysis omitted: no analysis job started, no model calls: OK');
     }
 
-    // ── 2. With postGenAnalysis:true — fires per chapter, actually completes and caches ─────────
+    // ── 2. With postGenAnalysis:true — one per chapter, actually completes and caches ──────────
     {
       const start = await post(sport, '/api/generate-book', {
         lang: 'de', srcLang: 'en', difficulty: 2, lessonFormat: 'standard',
@@ -59,15 +70,15 @@ async function waitAnalysisAvailable(sport, chapterId, timeoutMs = 15000) {
         postGenAnalysis: true,
       });
       const final = await waitBookJob(sport, start.body.bookId, { timeoutMs: 90000 });
-      assert(final && final.status === 'done', 'book done with postGenAnalysis:true (the fire-and-forget job must not block it)');
+      assert(final && final.status === 'done', 'book done with postGenAnalysis:true (analysis must not block the job — since v90_o it does not even start until the book is finished)');
       const topicId = final.chapters[0].topicId;
       const shadow = await waitAnalysisAvailable(sport, topicId);
-      assert(shadow, 'the per-chapter analysis actually completed and cached within the wait window');
+      assert(shadow, 'the chapter analysis actually completed and cached within the wait window');
       assert(shadow.available === true && shadow.sentenceCount > 0, `real cached analysis data (got ${JSON.stringify(shadow)})`);
-      console.log('  postGenAnalysis:true: a real per-chapter analysis job fires, completes, and caches: OK');
+      console.log('  postGenAnalysis:true: a real per-chapter analysis runs, completes, and caches: OK');
     }
 
-    // ── 3. Multi-chapter book: one analysis job PER CHAPTER, not one for the whole book ──────────
+    // ── 3. Multi-chapter book: one analysis PER CHAPTER, not one for the whole book ─────────────
     {
       const start = await post(sport, '/api/generate-book', {
         lang: 'de', srcLang: 'en', difficulty: 2, lessonFormat: 'standard',

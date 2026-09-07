@@ -8722,7 +8722,16 @@ function _splitIntoChunks(text, targetWords) {
   units.forEach(u => {
     cur.push(u); words += wc(u.text);
     const nearTarget = words >= targetWords * 0.7;
-    if (words >= targetWords || (u.endsPara && nearTarget)) { chunks.push(cur); cur = []; words = 0; }
+    // ⚠️ v90_o: NEVER close a chapter between two fragments of the SAME sentence. A sentence longer
+    // than _MAX_UNIT_CHARS is broken into fragment units by _splitLongUnit, and those units were
+    // treated here exactly like whole sentences — so a chapter boundary could land inside one.
+    // Found by a guard sweeping chapter sizes over a real scraped article: at an 80-word target a
+    // chapter ended `…dedicata al tema «1946-2026:`, mid-quote and mid-sentence. It is
+    // size-dependent, which is why one target looked clean and a smaller one did not.
+    // `fragLast` marks the final piece of a split sentence, so waiting for it keeps every sentence
+    // whole while leaving the budget logic otherwise untouched.
+    const midSentence = u.frag && !u.fragLast;
+    if (!midSentence && (words >= targetWords || (u.endsPara && nearTarget))) { chunks.push(cur); cur = []; words = 0; }
   });
   if (cur.length) {
     // A short tail is absorbed rather than left as a stub chapter.
@@ -170733,12 +170742,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v90_n', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v90_o', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"c287f33a5797","lessons.json":"754591a40945","ui.json":"b135c2e9db14","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8b2260254140","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
+  APP.buildSources = {"index.html":"f10c473fa36c","lessons.json":"754591a40945","ui.json":"b135c2e9db14","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8b2260254140","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

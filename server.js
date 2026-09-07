@@ -287,7 +287,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_n';
+const APP_VERSION  = 'v90_o';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -7314,15 +7314,21 @@ function _kickOffAnalysisJob(topic, jobOpts) {
   const jobId = newJob({ label: `Analyzing "${(topic.topic||'').slice(0,50)}"`, link: { type: 'topic', id: chapterId } });
   analyzingChapters.set(chapterId, jobId);
   console.log(`  Analyzing chapter: ${chapterId} model=${OLLAMA_ANALYSIS_MODEL} job=${jobId}`);
-  runCancellable(jobId, () => _runAnalysisJob(jobId, topic, jobOpts)).catch(e => {   // item AU cancel
+  // v90_o: the promise is RETURNED as well as swallowed, so a caller that must not start the next
+  // analysis until this one is finished can await it. Still fire-and-forget for every existing
+  // caller — the `.catch` is attached here, so the returned promise never rejects and an unawaited
+  // one cannot become an unhandled rejection.
+  const running = runCancellable(jobId, () => _runAnalysisJob(jobId, topic, jobOpts)).catch(e => {   // item AU cancel
     console.error('  Analysis job error:', e.message);
     jobFailOrCancel(jobId, e);
     analyzingChapters.delete(chapterId);
   });
-  return { jobId, cached: false, shadow };
+  return { jobId, cached: false, shadow, promise: running };
 }
 
 async function _runBookJob(bookId, chunks, base) {
+  // v90_o: chapters whose CP1/CP2 analysis is owed, run only once the book itself is finished.
+  const pendingAnalysis = [];
   const bj = bookJobs.get(bookId);
   if (!bj) return;
   let prevRef = base.continuedFrom || null; // id or name of the parent for chapter 0
@@ -7529,20 +7535,34 @@ async function _runBookJob(bookId, chunks, base) {
       bj.chapters[i].topicId = saved.id || null;
       bj.chapters[i].title   = saved.topic || placeholderTopic;
       prevRef = saved.id || saved.topic; // chain next chapter from this one (prefer id)
-      // item W follow-up (v86_o): opt-in per-chapter CP1/CP2 analysis, fired the instant THIS
-      // chapter is saved rather than waiting for the whole book — unlike the storyboard post-pass
-      // (below, once per storyline, needs every chapter's summary first), analysis is intrinsically
-      // per-chapter and has nothing to gain from waiting. Fire-and-forget: _kickOffAnalysisJob
-      // already owns its own error handling/logging, and a chapter taking real minutes to analyse
-      // must never hold up the NEXT chapter's generation.
-      if (base.postGenAnalysis) _kickOffAnalysisJob(saved);
+      // ⚠️⚠️ v90_o — THIS USED TO FIRE HERE, PER CHAPTER, AND IT COST THE USER A CHAPTER.
+      // `v86_o` started the analysis the instant each chapter was saved, reasoning that analysis is
+      // intrinsically per-chapter and "must never hold up the NEXT chapter's generation". That
+      // reasoning assumed the backend could do two things at once. On a CPU-only, single-model
+      // Ollama it cannot: requests SERIALISE at the backend, so the analysis held up the next
+      // chapter anyway — invisibly, and the waiting was charged against a WALL-CLOCK request
+      // timeout (`OLLAMA_TIMEOUT`, 720s) that was sized for the model's own work, not for queue
+      // depth. And it compounds: chapter 2 competes with one analysis, chapter 3 with two.
+      // Measured on the user's own failed 3-chapter book job (roadmap_v90.md has the full table):
+      // chapter 1's translation took 69.6s with nothing else running; chapter 2's took 295.2s with
+      // chapter 1's analysis in flight; chapter 2's LESSON took 716.4s against the 720s timeout —
+      // 3.6 seconds of headroom — and chapter 3's three attempts all timed out, as did the
+      // analyses themselves. The chapter's story survived; its lessons did not.
+      // Collected now, run after the book (see _runDeferredAnalyses) — the same call `v77_w` made
+      // for lesson QC, for the same reason: it is not urgent, and it loses nothing by waiting.
+      if (base.postGenAnalysis) pendingAnalysis.push(saved);
     } catch (e) {
       console.error(`  [book ${bookId}] chapter ${i+1} failed:`, e.message);
       jobFail(jobId, e.message);
       bj.chapters[i].status = 'error';
       bj.chapters[i].error  = e.message;
       bj.status = 'error'; bj.error = `Chapter ${i+1}: ${e.message}`;
-      return;
+      // ⚠️ v90_o: `break`, not `return`. The post-loop block below is already gated on
+      // `bj.status !== 'error'` so nothing new runs for a failed book — but control now reaches the
+      // end of the function, where the deferred analyses are started. A `return` here would have
+      // silently dropped analysis for the chapters that DID succeed, which is a regression against
+      // the per-chapter behaviour this replaces (the user's failed job analysed chapters 1 and 2).
+      break;
     }
   }
   if (bj.status !== 'cancelled' && bj.status !== 'error') {
@@ -7612,6 +7632,32 @@ async function _runBookJob(bookId, chunks, base) {
     bj.status = 'done';
   }
   console.log(`  [book ${bookId}] finished: ${bj.status}`);
+  // ⚠️ Started AFTER the job's own status is settled and deliberately NOT awaited: the book is
+  // finished the moment its chapters are, and making the job sit in `running` for the length of the
+  // analyses would be a worse lie than the contention this fixes. Runs for an errored book too —
+  // the chapters that succeeded still deserve analysis — but not for a cancelled one, where the
+  // user has said stop.
+  if (bj.status !== 'cancelled') _runDeferredAnalyses(bookId, pendingAnalysis);
+}
+
+// v90_o: the deferred CP1/CP2 analyses for a finished book, ONE AT A TIME.
+//
+// ⚠️ SEQUENTIAL IS THE POINT, not tidiness. Firing N chapter-analyses at once the moment the book
+// ends would simply move the same thundering herd later: CP2 issues one model call PER SENTENCE
+// (8 and 9 for the two measured chapters), so three chapters is ~25 queued calls, each carrying the
+// same 720s wall-clock timeout that the queue itself would exhaust. Awaiting each job before
+// starting the next keeps the backend's queue one deep, which is what a single-model CPU backend
+// can actually serve.
+async function _runDeferredAnalyses(bookId, topics) {
+  if (!topics || !topics.length) return;
+  console.log(`  [book ${bookId}] deferred analysis: ${topics.length} chapter(s), one at a time`);
+  for (const t of topics) {
+    const r = _kickOffAnalysisJob(t);
+    // `null` (no backend, no story) and `{cached:true}` (already analysed) both mean there is
+    // nothing to wait for — only a job that actually started carries a promise.
+    if (r && r.promise) { try { await r.promise; } catch (_) { /* already logged and job-failed */ } }
+  }
+  console.log(`  [book ${bookId}] deferred analysis: all chapters done`);
 }
 
 // Re-create all lessons for an existing storyline using the book-generation arc

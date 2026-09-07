@@ -8717,7 +8717,16 @@ function _splitIntoChunks(text, targetWords) {
   units.forEach(u => {
     cur.push(u); words += wc(u.text);
     const nearTarget = words >= targetWords * 0.7;
-    if (words >= targetWords || (u.endsPara && nearTarget)) { chunks.push(cur); cur = []; words = 0; }
+    // ⚠️ v90_o: NEVER close a chapter between two fragments of the SAME sentence. A sentence longer
+    // than _MAX_UNIT_CHARS is broken into fragment units by _splitLongUnit, and those units were
+    // treated here exactly like whole sentences — so a chapter boundary could land inside one.
+    // Found by a guard sweeping chapter sizes over a real scraped article: at an 80-word target a
+    // chapter ended `…dedicata al tema «1946-2026:`, mid-quote and mid-sentence. It is
+    // size-dependent, which is why one target looked clean and a smaller one did not.
+    // `fragLast` marks the final piece of a split sentence, so waiting for it keeps every sentence
+    // whole while leaving the budget logic otherwise untouched.
+    const midSentence = u.frag && !u.fragLast;
+    if (!midSentence && (words >= targetWords || (u.endsPara && nearTarget))) { chunks.push(cur); cur = []; words = 0; }
   });
   if (cur.length) {
     // A short tail is absorbed rather than left as a stub chapter.
