@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_l` cut
+# Session prompt — written at the `v90_m` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_l`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_m`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -64,35 +64,45 @@ current one) carries the protocol, the open items and the RULES, but none of tha
 
 # WHERE TO START
 
-**NOTHING IS OWED.** Every item the `v89` line was handed shipped, and the three the user queued at
-the end (job audit, item V, the `kind:'sync'` deletion) all landed. **Ask the user what they want
-next** — that is the right first move here.
+**NOTHING IS OWED.** The URL scrape — the one thing that was teed up and costed — **shipped at
+`v90_m`**. **Ask the user what they want next** — that is the right first move here.
 
-🟢 **ONE THING IS TEED UP AND COSTED, IF THEY ASK FOR IT: scrape a story from a URL, scoped to the
-JSON-LD `NewsArticle` class.** The whole diagnosis, the measurements (the user's own Corriere
-article: HTTP 200, a 499-word clean `articleBody`, author/date/publisher for free) and a per-piece
-effort table are in `roadmap_v90.md` → *"SCRAPE A STORY STRAIGHT FROM A URL"*. Roughly a session,
-because chunking, the review card, the wizard, the book job and every provenance field already exist
-— it is a route, a parser, a field and a guard. ⚠️ **Read that section before starting**: it records
-two traps found by measurement (a `tagesschau.de` 404 page carrying a JSON-LD block with no article
-in it; a generic `<p>` fallback pulling 45% furniture that `cleanExtractedText` does NOT remove) and
-**the user must be asked for a key budget — 3 or 4 — before any `en` string is added.**
+✅ **SCRAPE A STORY FROM A URL IS BUILT** (`v90_m`), scoped to the schema.org Article subtree, with
+`news-article.js` + `POST /api/fetch-url` + `fetchStoryFromUrl()` + `e2e-fetch-url` (7 sections).
+**TWO `ui.json` keys**, granted against an estimate of 3–4. Read its roadmap entry before touching
+it — ⚠️ **it corrected the roadmap's own prescribed defence**: the `tagesschau.de` 404 page carries a
+`NewsArticle` with a REAL 133-word `articleBody` (a German error message), so the "test for
+`articleBody`, not for a block" rule that section prescribed **passes on it**. Two gates are needed
+(HTTP status 2xx *and* a non-empty body) and neither is sufficient alone.
 
-📌 **A user ACTION is pending, not a code task.** A book job died mid-run on the IPv6 fault `v90_l`
-fixed, having generated chapter 1 of 3. Nothing was lost: `draft_50c237bfa2a47ef7` holds all three
-chunks. The recovery is theirs to do in the UI — resume the draft, **delete chunk 1** (already
-generated), set *"Continue story from"* to that chapter, generate. If `lessons.json` shows that
-chapter's storyline complete, they have done it.
+⚠️ **THE PAYWALL CHECK WAS ASKED FOR, BUILT AND WITHDRAWN ON THE MEASUREMENT** — do not re-derive it.
+Both plausible signals are WRONG on this project's own test case (the Corriere article, known
+complete): the prose ratio's full-article band is 0.555–1.003 with Corriere itself at the 0.555
+floor, and `isAccessibleForFree` is declared `"False"` — the STRING, not a boolean — on that complete
+article. The roadmap entry has the numbers and the reasoning. What ships instead is the word count on
+the status line, and the review card, which has no false positives.
+
+🟢 **THREE THINGS THE URL WORK LEFT, NONE OWED, ALL COSTED IN ITS ROADMAP ENTRY:**
+- **Wikipedia is refused, correctly** — it serves `@type: Article` with `articleBody: ""` (measured on
+  `en.` and `de.`). Its own REST API returns clean article text and would be a separate, easy source.
+- **SSRF is stated, not solved.** The route makes the SERVER fetch a caller-supplied URL. Fine on a
+  localhost personal tool; it belongs in **TIER 0** of *"PUTTING THIS ON THE INTERNET"* and needs a
+  scheme/host allow-list — **re-checked after every redirect hop** — before any exposure.
+- **The generic (non-JSON-LD) extractor is still unbuilt and still a different project** — the
+  Readability problem, several hundred lines, and this repo has no HTML parser.
 
 ⚠️ **THE USER WAS TRANSLATING `ui.json` BY HAND ACROSS THE WHOLE v90 LINE SO FAR** and will commit it themselves.
 Do not touch that file until `git log ui.json` shows their commit, and do not trust any translated
-count in this document until then.
+count in this document until then. ⚠️ **At the `v90_m` cut the file was CLEAN in `git status`** (no
+in-flight hand translation to clobber), which is the check to repeat before adding a key — not the
+`git log` date alone. **`v90_m` added exactly two `en` keys, `form.fetch_url` and `pdf.no_article`,
+`en` only**; they are the two awaiting hand translation.
 
-⚠️ **AND `docs/index.html` BAKES `ui.json`.** Every v90-line cut so far has committed a `docs/` built
-from a mid-translation `ui.json`, because `APP_VERSION` is baked there too and had to be current. So
-`unit-static-freshness` will be RED until someone re-runs `node build-static.js` after the user's
-translation lands. **That is the expected first action of the next session if `git log ui.json`
-shows a commit newer than `docs/index.html`** — it is not a finding, and the fix is one command:
+⚠️ **AND `docs/index.html` BAKES `lessons.json`, WHICH THE USER'S SERVER REWRITES CONSTANTLY.** At
+the `v90_m` cut `unit-static-freshness` was RED on session entry for exactly this — `docs/` had been
+built from a `lessons.json`/`canonical-analysis.json` snapshot the live server had since moved past.
+**It is not a finding**, and the fix is one command; expect to run it again right before committing,
+because the corpus can move during a 9-minute suite run:
 
 ```
 node build-static.js && node test/run.js --quick
@@ -213,7 +223,7 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 365 checks
+node test/run.js                          → expect 366 checks
 node test/run.js --quick                  → expect 303
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -246,8 +256,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **357 topics, 100 storylines, 33 languages, 741 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_l'`.
+Corpus at this cut: **359 topics, 100 storylines, 33 languages, 743 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_m'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

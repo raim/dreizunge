@@ -1510,6 +1510,22 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
               style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="upload-choose-lbl">📎 Upload a document</span></button>
             <span id="upload-status" style="font-size:11px;color:var(--gray-dark)"></span>
           </div>
+          <!-- v90_m: scrape a story straight from a URL, scoped to schema.org NewsArticle. Sits in
+               #user-story-panel's own header row beside "📎 Upload a document" because it is the
+               same act — bringing outside text in — and it lands in the SAME place: the fetched
+               articleBody goes through _resplitUpload() into #pdf-panel's chunk list, so chunking,
+               the review card, the wizard and the book job are all reused unchanged. It also
+               inherits this panel's visibility gate and, deliberately, sits directly above
+               #gen-source-row, whose four attribution inputs the fetch pre-fills.
+               The placeholder is the literal "https://…" — an example, not prose, so it needs no
+               ui.json key and reads the same in every language. -->
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+            <input type="url" id="fetch-url-input" placeholder="https://…" maxlength="2000"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();fetchStoryFromUrl()}"
+              style="flex:1;min-width:150px;font-size:12px;font-family:'Nunito',sans-serif;padding:4px 8px;border:1.5px solid var(--gray-mid);border-radius:6px">
+            <button type="button" id="fetch-url-btn" onclick="fetchStoryFromUrl()"
+              style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="fetch-url-lbl">🌐 Fetch from a web page</span></button>
+          </div>
           <div id="story-lang-row" style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <label class="form-lbl" style="margin-bottom:0" id="story-panel-lbl">Story language:</label>
             <select id="user-story-lang" style="font-size:12px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 8px;background:var(--white);font-family:Nunito,sans-serif">
@@ -3176,6 +3192,7 @@ function applyUIStrings() {
   if (useStoryLbl) useStoryLbl.textContent = t('form.use_story');
   { const ud=document.getElementById('use-dialect-lbl'); if(ud) ud.textContent=t('form.use_dialect'); }
   { const ub=document.getElementById('upload-choose-lbl'); if(ub) ub.textContent=t('form.upload_doc'); }
+  { const fu=document.getElementById('fetch-url-lbl'); if(fu) fu.textContent=t('form.fetch_url'); }
   { const uc=document.getElementById('use-comic-lbl'); if(uc) uc.textContent=t('form.use_image'); }
   { const ch=document.getElementById('comic-help'); if(ch) ch.textContent=t('form.image_help'); }
   { const cc=document.getElementById('comic-choose-lbl'); if(cc) cc.textContent=t('form.image_choose'); }
@@ -8183,6 +8200,100 @@ async function onUploadFileChosen(input){
     status.textContent = msg.includes('password') ? t('pdf.encrypted') : '⚠ ' + msg.slice(0,60);
   }
   input.value = '';
+}
+
+// v90_m: scrape a story straight from a URL, scoped to schema.org NewsArticle.
+//
+// This function deliberately does almost nothing of its own: past the fetch it performs the SAME
+// sequence onUploadFileChosen() performs for a file, in the same order, so the article lands in
+// #pdf-panel's chunk list and every downstream stage — the split controls, the review card, the
+// wizard, the book job, the drafts autosave — is reused byte-for-byte. Anything that needs to be
+// true of an uploaded document is therefore already true of a fetched article.
+//
+// ⚠️ The REFUSAL is the feature, not a fallback. server.js returns {ok:false} for a page that
+// publishes no NewsArticle, and this shows that plainly instead of scraping the page's <p> tags —
+// which was measured at 900 words against the article's real 499, roughly 45% navigation and promo
+// furniture that cleanExtractedText provably does not remove (see news-article.js's header). A
+// refusal is one click from the paste box below; 900 words of furniture is a chapter that looks
+// fine and teaches navigation menus.
+async function fetchStoryFromUrl(){
+  const input = document.getElementById('fetch-url-input');
+  const status = document.getElementById('upload-status');
+  const btn = document.getElementById('fetch-url-btn');
+  const target = (input?.value || '').trim();
+  if(!target){ input?.focus(); return; }
+  if(status) status.textContent = t('pdf.extracting');
+  if(btn) btn.disabled = true;
+  try{
+    const r = await fetch('/api/fetch-url', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ url: target }) });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error || 'Failed');
+    if(!d.ok){
+      // The honest degrade. Both causes (no article object; a non-2xx page whose JSON-LD carries one
+      // anyway) land here, because the user's next move is the same for both.
+      console.warn(`URL scrape: no NewsArticle at ${target} (HTTP ${d.status})`);
+      if(status) status.textContent = t('pdf.no_article');
+      return;
+    }
+
+    // ── From here on: onUploadFileChosen()'s own sequence, same order ──────────────────────────
+    if(_pdfBookId) pdfCancelBook();
+    _pdfOrig = { text: d.text, pages: null }; _uploadMode = true; _chunksDirty = false;
+    // ⚠️ Cleanup defaults OFF, matching the plain-text upload branch and NOT the PDF one.
+    // cleanExtractedText is tuned for PDF EXTRACTION noise (page numbers, bare dates, wrapped
+    // lines, short unpunctuated fragments); a publisher's own articleBody is already clean prose,
+    // so running it by default could only drop real sentences. The row is still shown, so it stays
+    // one click away if a particular publisher's body turns out to need it.
+    const clCb = document.getElementById('pdf-cleanup-cb'); if(clCb) clCb.checked = false;
+    const clRow = document.getElementById('pdf-cleanup-row'); if(clRow) clRow.style.display = '';
+    const aiRow = document.getElementById('pdf-aiclean-row');
+    if(aiRow) aiRow.style.display = APP.info?.canGenerate ? '' : 'none';
+    _applyUploadCleanup();
+    // ⚠️ NOT _uploadFileName. That field is the uploaded FILE's name and is stored as the
+    // storyline's `sourceFile`; a fetched article has no file. Where it came from is recorded in
+    // source.url instead, via the attribution inputs filled in below — which is the field that
+    // actually means "this came from here", and the one v89_aj built for it.
+    _uploadFileName = '';
+    const spRow = document.getElementById('split-mode-row'); if(spRow) spRow.style.display = 'flex';
+    // ⚠️ The same rule the file path uses, and it matters more here: a JSON-LD articleBody is
+    // typically ONE unbroken run with no newlines at all (measured: 0 newlines / 0 blank lines on
+    // the article this was built against), so _paragraphCount() returns 1 and this correctly lands
+    // on the length slider. Defaulting to paragraph mode would hand back one enormous chapter.
+    _splitMode = _paragraphCount(_pdfRawText) >= 3 ? 'para' : 'len';
+    _resplitUpload();
+    _setPasteVisible(false);
+    document.getElementById('pdf-panel')?.classList.add('open');
+
+    // Provenance, straight into the four inputs #gen-source-row already has — the SAME fields
+    // _readGenAttribution() reads at generate time, so nothing new is persisted or invented and the
+    // user can edit any of them before generating. Only blank fields are filled: a value the user
+    // typed themselves outranks anything a publisher declares.
+    const setIfBlank = (id, val) => {
+      const el = document.getElementById(id);
+      if(el && val && !el.value.trim()) el.value = String(val).slice(0, el.maxLength > 0 ? el.maxLength : 500);
+    };
+    setIfBlank('gen-src-author', d.author);
+    setIfBlank('gen-src-url', d.url);          // the FINAL url, after any redirects
+    setIfBlank('gen-src-note', [d.publisher, (d.datePublished||'').slice(0,10)].filter(Boolean).join(' · '));
+    // headline → the topic title. Same "only if blank" rule, same reason.
+    const topic = document.getElementById('topic-input');
+    if(topic && d.headline && !topic.value.trim()) topic.value = d.headline;
+
+    // ⚠️ The word count is shown DELIBERATELY, and it is the whole of what became of the paywall
+    // check (news-article.js's header records the two signals that were measured and rejected).
+    // It is a true, checkable number at the moment it is actionable: a 90-word "article" is a
+    // visible stub, and the review card below shows the text itself before anything is generated.
+    if(status) status.textContent = t('pdf.words', { n: d.bodyWords });
+    console.log(`🌐 Fetched ${d.bodyWords} words from ${d.url}`
+      + (d.pageWords ? ` (the page's own <p> mass: ${d.pageWords} words)` : ''));
+  }catch(e){
+    // Same idiom onUploadFileChosen() uses for an unexpected failure: show the real message, capped.
+    // The server has already turned a network fault into a readable sentence.
+    if(status) status.textContent = '⚠ ' + (e.message||'').slice(0,60);
+  }finally{
+    if(btn) btn.disabled = false;
+  }
 }
 
 // Light cleanup for plain-text uploads (normalise newlines, trim trailing spaces).

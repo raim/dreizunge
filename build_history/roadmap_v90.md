@@ -2935,6 +2935,151 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_m — scrape a story straight from a URL, scoped to schema.org `NewsArticle`
+
+The feature teed up at the `v90_k` cut and costed in *"SCRAPE A STORY STRAIGHT FROM A URL"* above.
+Built to that scoping, which the user re-confirmed. **TWO `ui.json` keys**, both granted explicitly
+(`form.fetch_url`, `pdf.no_article`) against an estimate of 3–4 — the other strings were reused.
+
+### ⚠️⚠️ THE ROADMAP'S OWN PRESCRIBED DEFENCE WAS WRONG, AND MEASUREMENT IS WHAT CAUGHT IT
+
+The section above records the `tagesschau.de` 404 trap as *"a JSON-LD block was present with no
+article in it, so the test must be 'an `articleBody` came back', not 'a block exists'"*. **Re-probing
+that page shows the conclusion does not hold.** Its 404 page carries a real `NewsArticle` with a
+**non-empty 964-char / 133-word `articleBody`** — the German error text (*"Liebe Nutzerinnen und
+Nutzer, leider ist die von Ihnen gewünschte Seite nicht verfügbar…"*). An `articleBody` test **passes
+on it**, and the user would get a chapter generated from an error message.
+
+**Two gates are needed and neither is sufficient alone.** Each was measured against a page that
+defeats the other:
+
+| gate | kills | but misses |
+|---|---|---|
+| HTTP status must be 2xx | the tagesschau 404 (133 words of real error prose) | `en.wikipedia.org` — HTTP **200**, `@type: Article`, `articleBody: ""` |
+| `articleBody` non-empty, ≥ `MIN_BODY_CHARS` | Wikipedia | the tagesschau 404 — its body is 133 genuine words |
+
+`MIN_BODY_CHARS` is 20, deliberately the same floor `onUploadFileChosen` already applies to an
+uploaded file, so both intake paths refuse on identical grounds. **The lesson generalises:** a
+previous session's stated *defence* is a claim in exactly the way its stated *problem* is (protocol
+§2), and this one had been written down as settled.
+
+⚠️ **"First block" is not "the article" either.** The measured article page carries **three**
+`ld+json` blocks and the `NewsArticle` is the **second**; the others are `BreadcrumbList` and
+`NewsMediaOrganization`.
+
+### ⚠️ A SUBSTRING `@type` TEST LOOKED GENEROUS AND WAS QUIETLY NARROW
+
+Found mid-session by the user asking *"are there other such formats?"*, and answered by RUNNING the
+types rather than reading the spec. The gate was `/article/i`. **`BlogPosting` is a subtype of
+`Article`, it does carry `articleBody`, and its name does not contain the word "article"** — so every
+blog post was silently refused, which is squarely the prose this feature wants. Now
+`/(article|blogposting)$/i`: the whole `*Article` subtree plus `BlogPosting`/`LiveBlogPosting`.
+Deliberately still OUT: `Comment` (a marked-up comment thread), `WebPage`, and `SocialMediaPosting`
+(a status update is not a story); `Report` is nominally in the subtree but rare and ambiguous, and
+under-accepting costs an honest refusal while over-accepting costs a bad chapter.
+`e2e-fetch-url` §7 pins **8 accepted and 5 refused** against one stub page per type, all carrying the
+SAME body so only the type can decide. **Mutation-tested in BOTH directions** — a widening is exactly
+as dangerous as a narrowing: reverting to `/article/i` fails on `BlogPosting`, and widening to `/./`
+returns the `Comment` as the story.
+
+⚠️ **Wikipedia does not work through this route and that is correct, not a bug.** It answers HTTP 200
+with `@type: Article` and `articleBody: ""` — measured on both `en.` and `de.` It publishes no body
+in its structured data at all. (Wikipedia has its own REST API returning clean article text; that
+would be a separate, easy source, not a case for this parser.) Also measured with no `articleBody`
+anywhere: `developer.mozilla.org` and `blog.rust-lang.org`. **Structured article data is common on
+news sites and far from universal elsewhere** — which is the honest scope of this feature.
+
+### ⚠️ THE PAYWALL CHECK WAS ASKED FOR, BUILT, AND WITHDRAWN ON THE MEASUREMENT
+
+The user asked for it mid-session (*"add the paywall check now, if it would be more complicated to do
+later"*). It is not more complicated later — it is purely additive — but it was measured anyway, and
+**both plausible signals are wrong on this project's own test case**, the Corriere article whose
+499-word body is known-complete (the section above compares it word for word against the PDF path's
+chapter 1):
+
+1. **The prose ratio** (`articleBody` words ÷ the page's own `<p>` words). Across **nine** live,
+   fully-readable articles the band is **0.555–1.003** — and the 0.555 floor **is the Corriere
+   article**, i.e. the test case is already the worst case among known-good pages. Worse, the ratio
+   does not detect the thing: on a paywalled page the visible `<p>` mass shrinks *together with* the
+   teaser, so numerator and denominator fall together. A threshold low enough to spare Corriere is
+   too low to catch a teaser.
+   ⚠️ **An earlier probe put the band at 0.41–0.55 and would have justified a 0.25 threshold. That
+   probe was wrong**: its `<p[^>]*>` also matched `<picture>` and `<path>`, inflating every
+   denominator. The constant would have shipped derived from a regex bug — caught only because the
+   module and the probe disagreed and the disagreement was chased.
+2. **schema.org's own `isAccessibleForFree`.** The standard answer, and unusable: the Corriere
+   article declares `isAccessibleForFree: "False"` with a matching `hasPart` `WebPageElement` **while
+   serving the complete body**. Publishers mark the page for Google's flexible sampling, not to
+   describe the JSON-LD. A warning keyed on it **fires on a complete article**.
+   ⚠️ Note the value is the **string `"False"`**, not a boolean: `=== false` never fires, and a
+   truthiness test reads it as `true`. Either mistake is silent.
+
+**So no truncation claim is made.** What ships instead is the honest number the signal was a proxy
+for: `bodyWords`, shown on the status line the moment the fetch lands (via the **existing**
+`pdf.words` key — zero cost), where a 90-word "article" is a self-evident stub. The chunk review card
+the user ruled must stay then shows the whole text before anything is generated. **That review stop
+was always where a paywall gets caught, and unlike either signal above it has no false positives.**
+The fixture in `e2e-fetch-url` carries `isAccessibleForFree: "False"` on the GOOD article deliberately,
+so anyone who later keys a warning off it discovers there that it fires on a known-good page.
+
+### What was built
+
+| piece | where |
+|---|---|
+| the parser + the fetch | **new `news-article.js`** — `extractNewsArticle(html, status)` (pure; `status` is a required argument, not an option, because it is the gate) and `fetchPage(url, opts)` (`http`+`https`, ≤5 redirects, 5MB cap, 15s timeout). Zero dependencies, no HTML parser, no JS engine — the body is in the HTML |
+| the route | **`POST /api/fetch-url`** — deliberately **not** a job (`runAsJob` is for long model-backed routes; this makes no model call) and deliberately **not** gated on `active === 'none'`, because fetching a page needs no backend. Nothing is persisted. 400 for a caller error, 502 for an upstream one, `{ok:false}` + the upstream status for "no article here" |
+| the client | **`fetchStoryFromUrl()`** — past the fetch it performs `onUploadFileChosen()`'s own sequence, in the same order, so the article lands in `#pdf-panel`'s chunk list and chunking, the review card, the wizard, the book job and the drafts autosave are all reused unchanged |
+| the markup | `#fetch-url-input` + `#fetch-url-btn` in `#user-story-panel`'s header row beside "📎 Upload a document", directly above `#gen-source-row`. Placeholder is the literal `https://…` — an example, not prose, so **no key** |
+| provenance | `author.name` → `#gen-src-author`, the **final** URL → `#gen-src-url`, `publisher · datePublished` → `#gen-src-note`, `headline` → `#topic-input`. Straight into the four inputs `_readGenAttribution()` already reads at generate time — `v89_aj` built every field, so **nothing new is persisted or invented**. Only blank fields are filled: what the user typed outranks what a publisher declares |
+
+⚠️ **`_uploadFileName` is deliberately NOT set.** That field is the uploaded *file's* name, stored as
+the storyline's `sourceFile`; a fetched article has no file. Where it came from is `source.url`.
+
+⚠️ **Cleanup defaults OFF**, matching the plain-text upload branch and not the PDF one:
+`cleanExtractedText` is tuned for PDF *extraction* noise, and a publisher's `articleBody` is already
+clean prose, so running it by default could only drop real sentences.
+
+⚠️ **A JSON-LD `articleBody` is typically ONE unbroken run** (measured: **0** newlines on the article
+this was built against), so `_paragraphCount()` returns 1 and the split correctly lands on the length
+slider. The file path's existing rule already does this; it just matters more here.
+
+### The guard — `test/e2e-fetch-url.test.js`, seven sections, driven against a real stub publisher
+
+A real `http.createServer`, not a monkey-patched `https.get`: a stub that replaced the transport
+would assert against a re-implementation. **This is also why the route accepts `http://`** — an
+https-only route could only ever be tested against the live internet, which is not a test.
+
+**Seven mutations red** (five on the original build, two more on the `@type` boundary above).
+⚠️ **One survived on the first attempt and that was the finding**:
+deleting the `@type` gate entirely left the whole file GREEN, because every non-article block in the
+fixture also happened to lack an `articleBody` — the body gate was silently doing all the work and
+the `@type` gate was asserting nothing. Fixed by giving `GRAPH_PAGE` a `Comment` that carries its own
+long `articleBody` *before* the article — a real shape, and exactly what a body-gate-only
+implementation hands back as the story. The mutant now returns `"A Commenter"` and the section fails.
+
+### ⚠️ SSRF, stated rather than solved
+
+The route makes the **server** fetch a caller-supplied URL. Acceptable here for one reason only —
+operator and user are the same person on a localhost tool, so the caller can already reach those
+hosts directly and gains nothing. **It stops being acceptable the moment this server is exposed**;
+`news-article.js` says so at the point of the code, and this belongs in **TIER 0** of *"PUTTING THIS
+ON THE INTERNET"* above: before any multi-user exposure it needs a scheme/host allow-list rejecting
+loopback, link-local and private ranges — **re-checked after every redirect hop**, since a public URL
+can redirect to `127.0.0.1`.
+
+### Verified at the layer the user touches
+
+Driven in a real browser against a live server (scratch store, port 3461, `LLM_BACKEND=none`) by
+**clicking `#fetch-url-btn`**, not by calling `fetchStoryFromUrl()` — `v89` rule 12. The Corriere URL
+produced: status `"499 words"`, two chapters of 329 + 170 (summing to exactly 499), `_splitMode`
+`len`, the panel open with the chunk list rendered, the paste box hidden, and all four provenance
+fields plus the topic filled. `_uploadFileName` empty, as intended. Three refusals (Wikipedia, the
+tagesschau 404, an unresolvable host) each showed their message, entered no upload mode, left the
+paste box visible so the suggested next action is right there, and re-enabled the button.
+**`canGenerate` was `false` throughout** — confirming live that the route needs no LLM backend.
+Layout checked at desktop and at 375px, where the button wraps to its own line with no overflow and
+no sideways page scroll.
+
 ## ✅ v90_l — the "⚠ Ollama unreachable" flapping was IPv6 loopback, not the wlan
 
 User, pasting a real book-job log: *"the laptop had lost contact to wlan, and it again lead to loss

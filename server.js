@@ -7,6 +7,7 @@ const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
+const { extractNewsArticle, fetchPage } = require('./news-article.js');
 const { createSkillRegistry, resolveSkill, withRegisteredSkill, withSkillAlias, withoutSkillAlias } = require('./skill-registry.js');
 const { CANCELLED, callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, lastPingFailure, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
@@ -286,7 +287,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_l';
+const APP_VERSION  = 'v90_m';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -8713,6 +8714,73 @@ http.createServer(async (req, res) => {
         const failed  = out.filter(r => r.failed).length;
         console.log(`  Text QC (${qcMode}): ${touched}/${out.length} item(s) corrected, ${failed} could not be checked`);
         return { results: out, touched, failed, mode: qcMode, promptTokens, completionTokens };
+      });
+    }
+
+    // ── Scrape a story straight from a URL, scoped to schema.org NewsArticle (v90_m) ──
+    // Deliberately NOT a job: runAsJob exists for long model-backed routes (see the job-coverage
+    // enumeration in roadmap_v89.md), and this makes no model call at all — it is one HTTP GET and a
+    // JSON.parse, measured at well under a second on the article it was built against. Nor does it
+    // touch the corpus: it returns text to the client, which feeds it into the SAME chunk/review/
+    // book-job path a pasted story or an uploaded PDF already takes. Nothing is persisted here.
+    //
+    // ⚠️ NOT gated on `active === 'none'` like the routes above it. Fetching a page needs no LLM
+    // backend, and a user with no backend can still legitimately pull an article in to read and
+    // chunk it. The GENERATION that may follow is gated where it always was.
+    if (M === 'POST' && url.pathname === '/api/fetch-url') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch (e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const target = String(body.url || '').trim();
+      if (!target) return json(res, 400, { error: 'No URL given.' });
+      if (target.length > 2000) return json(res, 400, { error: 'That URL is too long.' });
+      // Shape-check HERE so a malformed address or a bad scheme is a 400 (the caller's fault) and
+      // not the 502 the catch below would give it — fetchPage rejects both, but it cannot know that
+      // no network call was ever attempted. fetchPage keeps its own copy of this check regardless:
+      // it is a module boundary, not only a route.
+      {
+        let u = null;
+        try { u = new URL(target); } catch (_) {}
+        if (!u) return json(res, 400, { error: 'That does not look like a web address.' });
+        if (u.protocol !== 'http:' && u.protocol !== 'https:') {
+          return json(res, 400, { error: 'Only http:// and https:// addresses can be fetched.' });
+        }
+      }
+
+      let page;
+      try {
+        page = await fetchPage(target);
+      } catch (e) {
+        // The network failure itself is the useful message ("getaddrinfo ENOTFOUND …", "took too
+        // long to answer") and the client shows it verbatim, the same way onUploadFileChosen already
+        // surfaces a PDF failure. 502, not 500: the fault is upstream, not in this server.
+        return json(res, 502, { error: e.message || 'Could not fetch that page.' });
+      }
+
+      const article = extractNewsArticle(page.body, page.status);
+      if (!article) {
+        // ⚠️ ONE refusal for two quite different causes, deliberately. The client shows the same
+        // "this page does not publish structured article data" either way, because the USER'S next
+        // move is identical in both cases (paste the text instead) — but `status` is returned so a
+        // 404 is distinguishable in the console and by the guard.
+        console.log(`  URL scrape: no NewsArticle at ${target} (HTTP ${page.status})`);
+        return json(res, 200, { ok: false, status: page.status, url: page.url });
+      }
+      console.log(`  URL scrape: ${article.bodyWords} words from ${page.url} (HTTP ${page.status})`);
+      return json(res, 200, {
+        ok: true,
+        status: page.status,
+        text: article.text,
+        headline: article.headline,
+        // The provenance fields map 1:1 onto the four attribution inputs the client already has
+        // (#gen-src-author/-licence/-url/-note, read by _readGenAttribution at generate time), so
+        // nothing new is persisted or invented — v89_aj built every one of these.
+        author: article.author,
+        publisher: article.publisher,
+        datePublished: article.datePublished,
+        url: page.url,             // the FINAL url after redirects — what provenance should record
+        bodyWords: article.bodyWords,
+        pageWords: article.pageWords,
       });
     }
 
