@@ -555,6 +555,48 @@ than "less clicking".
    `v89_aj` provenance line renders on the landing card, the storyline page and the completion card.
 3. **Live-only.** No server in the static build, so this joins the other backend-gated features.
 
+
+### ⭐ SCOPED TO `NewsArticle` ONLY — what that actually costs (user follow-up)
+
+User: *"how hard would it be to implement the webscrape if first implemented for defined
+NewsArticle class?"* Dropping the generic extractor removes the only hard part. Everything
+downstream already exists, so this is wiring plus one parser.
+
+| piece | size | notes |
+|---|---|---|
+| **`POST /api/fetch-url`** | ~70 lines | `https.get` with a browser UA, ≤5 redirects, a size cap and a timeout. No dependency, no JS engine — the body is in the HTML |
+| **the JSON-LD parse** | ~25 lines | Collect every `<script type="application/ld+json">`, `JSON.parse` each (tolerating a bare object, an array, and `@graph`), take the first whose `@type` matches `Article`/`NewsArticle`. ⚠️ Measured on a `tagesschau.de` **404 page**: a JSON-LD block was present with no article in it, so the test must be "an `articleBody` came back", not "a block exists" |
+| **the client** | ~40 lines | A URL field beside the paste box. On success the text goes into the SAME path a paste takes, so chunking, the review card, the wizard and the book job are all reused unchanged |
+| **provenance** | ~0 | `headline` → topic title, `author.name` → `source.author`, the URL → `source.url`, `publisher`/`datePublished` → `source.note`. `v89_aj` built every field |
+| **`ui.json`** | 3–4 keys | The field's label and placeholder, and the "no article found here" message |
+| **guards** | ~80 lines | An e2e against a stub server: a page WITH `NewsArticle` (extraction + provenance mapping), one WITHOUT (refuses, and says so rather than falling back to noise), one whose only JSON-LD is a 404 page, and a redirect |
+
+**Roughly a session**, and it degrades honestly: a site without `NewsArticle` gets a clear "this page
+does not publish structured article data — paste the text instead", which is a true statement and
+one click from the flow that already works. That is a much better failure than the generic
+extractor's 45% furniture.
+
+⚠️ **Still worth deciding before building**: paywalled pages may return a truncated `articleBody`
+(worth comparing its length against the page's own `<p>` mass and warning), and the server would be
+fetching operator-supplied URLs — fine for a localhost personal tool, worth a sentence in the code
+about why no allow-list.
+
+### ⚠️ THE ABORTED BOOK JOB LOST NOTHING (same session)
+
+The user asked whether the job that died on chapter 2 could be saved. **The text was never at risk.**
+`bookJobs` is an in-memory `Map`, so the JOB is gone, but the DRAFT is on disk:
+`draft_50c237bfa2a47ef7` (2026-09-07T14:19) holds all **three** chunks — 171 / 195 / 177 words —
+with every generation setting (`lang`, `srcLang`, `difficulty`, `arc`, `postGenAnalysis`).
+
+Recovery needs no code: resume the draft, **delete chunk 1** with `pdfDeleteChunk` (chapter 1 already
+generated, with lessons, translation and analysis), set *"Continue story from"* to that chapter, and
+generate. `resumeDraft` restores every chunk as `status:'pending'`, so without deleting the first one
+it would generate a duplicate chapter 1.
+
+**That the draft outlives the job is a design that paid off here** — item R's "unfinished-project
+drafts" were built for a learner who closes the tab, and they turned out to cover a backend fault
+nobody had in mind.
+
 ## 🆕 CARRIED FORWARD FROM THE v86 LINE, GENUINELY STILL OPEN
 
 *Everything below survived the cut on its merits, not by mechanical carry — each item is restated
