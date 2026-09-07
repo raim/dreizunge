@@ -56,7 +56,6 @@ for (const id of ['dialect-name-input', 'dialect-input', 'dialect-import-btn', '
 assert.ok(/onclick="doDialectImport\(\)"/.test(panelSlice), 'Build button calls doDialectImport()');
 
 console.log('  dialect panel: shown via .open class, Generate row hidden, panel self-contained: OK');
-console.log('unit-dialect-panel: ALL PASSED');
 
 // ── Option A: LLM-authoring add-lesson types + AI-hunt gated off for dialect (UI) ──
 // ⚠️ RE-ANCHORED at v87_o. The CLAIM is unchanged and still load-bearing — a dialect topic must
@@ -130,3 +129,142 @@ console.log('  Option A (UI): LLM-authoring add-lesson types hidden for dialect;
   assert.ok(/source\s*:\s*APP\.srcLang/.test(fnImport), 'doDialectImport() sends source:APP.srcLang (the actual selected source language)');
 }
 console.log('  doDialectImport(): sends APP.lang/APP.srcLang, not a hardcoded \'de\'/\'de\' pair: OK');
+
+// ── doDialectImport RUN, not read (v90_f) ────────────────────────────────────
+//
+// ⚠️ The section above pins the fix for the v85_h bug as SOURCE TEXT — the strings `base:APP.lang`
+// and `source:APP.srcLang` appear in the function. The branch-mutation probe flipped all ten of its
+// conditions, both ways, and this file stayed green (0/20); so did the whole `--quick` suite. The
+// import could have posted an empty body, skipped its own validation, left the button disabled
+// forever, or reported success on a server error. Load the client and drive it.
+const { loadClient, ROOT } = require('./lib-dom');
+const UI = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+const LANGS = JSON.parse(fs.readFileSync(path.join(ROOT, 'languages.json'), 'utf8'));
+const settle = (ms) => new Promise(r => setTimeout(r, ms || 40));
+
+(async () => {
+  // `reply` is what /api/dialect-import answers; `throws` makes the request itself fail.
+  const run = async (o) => {
+    const C = loadClient({ quiet: true });
+    C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
+      globalThis._toasts = []; globalThis._posts = []; globalThis._listReloads = 0;
+      showToast = (m) => _toasts.push(m);
+      loadSavedList = () => { _listReloads++; };
+      fetch = (url, init) => {
+        _posts.push({ url, body: JSON.parse(init.body) });
+        ${o.throws ? "return Promise.reject(new Error('network down'));" : ''}
+        return Promise.resolve({ ok: ${o.ok === false ? 'false' : 'true'}, status: ${o.status || 200},
+                                 json: async () => (${JSON.stringify(o.reply || {})}) });
+      };
+      APP.info = { canGenerate: ${o.canGenerate === false ? 'false' : 'true'} };
+      APP.lang = 'lb'; APP.srcLang = 'nl';
+      document.getElementById('dialect-input').value = ${JSON.stringify(o.text === undefined ? 'moien = hallo' : o.text)};
+      document.getElementById('dialect-name-input').value = ${JSON.stringify(o.label === undefined ? 'Lëtzebuergesch' : o.label)};
+      document.getElementById('dialect-attr-input').value = 'Wikipedia';
+      document.getElementById('dialect-import-btn').disabled = false;
+      document.getElementById('dialect-import-status').textContent = 'stale';
+      document.getElementById('dialect-report').innerHTML = '<b>stale</b>';`);
+    await C.run('doDialectImport()');
+    await settle();
+    return {
+      C,
+      posts: JSON.parse(C.run('JSON.stringify(_posts)')),
+      toasts: JSON.parse(C.run('JSON.stringify(_toasts)')),
+      reloads: C.run('_listReloads'),
+      status: C.document.getElementById('dialect-import-status').textContent,
+      report: String(C.document.getElementById('dialect-report').innerHTML || ''),
+      disabled: C.document.getElementById('dialect-import-btn').disabled,
+    };
+  };
+
+  // ── the three refusals, each BEFORE any request goes out ──
+  for (const [label, o] of [
+    ['no backend', { canGenerate: false }],
+    ['no name',    { label: '   ' }],
+    ['no text',    { text: '  \n ' }],
+  ]) {
+    const r = await run(o);
+    assert.deepStrictEqual(r.posts, [], `${label}: nothing is sent`);
+    assert.strictEqual(r.toasts.length, 1, `${label}: and the learner is told why`);
+    assert.strictEqual(r.reloads, 0, `${label}: the library is not reloaded`);
+  }
+
+  // ── ⚠️ the v85_h fix, as BEHAVIOUR: the request carries the pair actually selected ──
+  {
+    const r = await run({ reply: { rows: 12, lessons: 2, topic: 'Lëtzebuergesch', report: {} } });
+    assert.strictEqual(r.posts.length, 1, 'one request');
+    assert.strictEqual(r.posts[0].url, '/api/dialect-import');
+    assert.deepStrictEqual(r.posts[0].body,
+      { text: 'moien = hallo', label: 'Lëtzebuergesch', attribution: 'Wikipedia', base: 'lb', source: 'nl' },
+      'the selected pair rides on the request — not the hardcoded de/de it used to send');
+    assert.ok(/12|2/.test(r.status), "the status line reports the server's counts");
+    assert.strictEqual(r.report, '', 'a clean import clears the previous report rather than leaving it stale');
+    assert.strictEqual(r.reloads, 1, 'and the new dialect topic is pulled into the library');
+    assert.strictEqual(r.disabled, false, 'the button is usable again');
+  }
+
+  // ── the parse report: suspicious lines are listed, duplicates counted, the list capped ──
+  {
+    const susp = Array.from({ length: 14 }, (_, i) => ({ line: i + 1, raw: '<b>bad ' + i + '</b>' }));
+    const r = await run({ reply: { rows: 3, lessons: 1, topic: 'D', report: { suspicious: susp, duplicates: [1, 2] } } });
+    assert.ok(/⚠/.test(r.report), 'suspicious rows are flagged');
+    assert.strictEqual((r.report.match(/<li>/g) || []).length, 10,
+      'at most ten are listed — a 200-line paste must not render 200 list items');
+    assert.ok(/&lt;b&gt;bad 0/.test(r.report), '⚠️ and the raw source line is ESCAPED, not rendered as markup');
+    assert.ok(!/<b>bad 0<\/b>/.test(r.report), '(the unescaped form really is absent)');
+    assert.ok(/2/.test(r.report.split('</ul>')[1] || ''), 'duplicates are counted after the list');
+  }
+  {
+    const r = await run({ reply: { rows: 3, lessons: 1, topic: 'D', report: { suspicious: [], duplicates: [] } } });
+    assert.strictEqual(r.report, '', 'nothing suspicious → an empty report, not an empty heading');
+  }
+
+  // ── a server error is reported, and nothing pretends the import happened ──
+  {
+    const r = await run({ ok: false, status: 500, reply: { error: 'bad glossary' } });
+    assert.ok(r.toasts.some(t => /bad glossary/.test(t)), "the server's reason reaches the learner");
+    assert.strictEqual(r.status, '', 'the "importing…" status is cleared rather than left hanging');
+    assert.strictEqual(r.reloads, 0, 'the library is NOT reloaded for an import that failed');
+    assert.strictEqual(r.disabled, false, '⚠️ and the button is re-enabled — a failed import must be retryable');
+  }
+  // ── and so is a request that never completes ──
+  {
+    const r = await run({ throws: true });
+    assert.ok(r.toasts.some(t => /network down/.test(t)), 'a transport failure is surfaced too');
+    assert.strictEqual(r.status, '', 'with the status cleared');
+    assert.strictEqual(r.disabled, false, 'and the button freed');
+  }
+  // ── ⚠️ WHILE THE REQUEST IS IN FLIGHT. An import is the slowest thing on this panel, and the
+  // three lines that say so — the button greying out, the "importing…" status, the previous report
+  // being cleared — are invisible to any assertion taken AFTER the call settles, because the
+  // success and error paths overwrite all three. Hold the response open and look.
+  {
+    const C = loadClient({ quiet: true });
+    C.run(`LANGS = ${JSON.stringify(LANGS)}; UI_STRINGS = ${JSON.stringify(UI.en)};
+      globalThis._toasts = []; showToast = (m) => _toasts.push(m); loadSavedList = () => {};
+      globalThis._release = null;
+      fetch = () => new Promise((res) => { _release = () => res({ ok: true, status: 200,
+        json: async () => ({ rows: 1, lessons: 1, topic: 'D', report: {} }) }); });
+      APP.info = { canGenerate: true }; APP.lang = 'lb'; APP.srcLang = 'nl';
+      document.getElementById('dialect-input').value = 'moien = hallo';
+      document.getElementById('dialect-name-input').value = 'Lëtzebuergesch';
+      document.getElementById('dialect-attr-input').value = '';
+      document.getElementById('dialect-import-btn').disabled = false;
+      document.getElementById('dialect-import-status').textContent = '';
+      document.getElementById('dialect-report').innerHTML = '<b>a previous run</b>';
+      doDialectImport();`);
+    await settle();
+    assert.strictEqual(C.document.getElementById('dialect-import-btn').disabled, true,
+      'the button is disabled while the import runs — a second click would import twice');
+    assert.ok(String(C.document.getElementById('dialect-import-status').textContent).trim().length > 0,
+      'and the status line says something is happening');
+    assert.strictEqual(String(C.document.getElementById('dialect-report').innerHTML), '',
+      "and the PREVIOUS run's report is cleared, so it cannot be read as this one's result");
+    C.run('_release()');
+    await settle();
+    assert.strictEqual(C.document.getElementById('dialect-import-btn').disabled, false,
+      'and the button comes back when it finishes');
+  }
+  console.log('  doDialectImport: refuses early, sends the selected pair, escapes its report, always frees the button: OK');
+  console.log('unit-dialect-panel: ALL PASSED');
+})();

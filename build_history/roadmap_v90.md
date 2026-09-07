@@ -2695,6 +2695,50 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_f — the last four zeros: the orchestration functions, driven
+
+User: *"go ahead with the remaining four"* — `doDialectImport`, `renderEx`, `startLesson` and
+`goLessonSet`, the four the `v90_e` entry set aside as "a different job". **ZERO `ui.json` keys.**
+No app behaviour changed; every edit is in `test/`.
+
+| function | before | after |
+|---|---|---|
+| `startLesson` | 0/10 | **10/10** |
+| `goLessonSet` | 0/10 | **8/10** |
+| `doDialectImport` | 0/20 | **20/28** |
+| `renderEx` | 0/20 | **19/28** |
+
+### Why it really was a different job
+
+These close over most of the client and their branches are language-context switches, screen
+transitions and render dispatch — the lift-and-drive pattern every earlier repair used cannot reach
+them. They are driven through `lib-dom`'s `loadClient`, which loads the whole client into a vm
+sandbox with a real-enough DOM. **The claims asserted are the ones their own comments record as
+user-reported bugs**, which is why those branches exist at all.
+
+| | |
+|---|---|
+| **`goLessonSet` — three languages, not one** | The chrome language, the UI language and the TARGET language are separate, and this is the one choke point every entry into a lesson set passes through. Now asserted: a standalone topic takes all three with it; **a STORYLINE chapter with "keep fixed" ticked does NOT move the UI language** but records `_slLangMismatch` (the reported bug — this function is also the plumbing every "next chapter" transition runs through, so its old unconditional follow silently overrode the setting on every chapter change); the footer selector agrees with `APP.srcLang`; and a chapter that records no target language leaves `APP.lang` alone rather than assigning `undefined` over it and taking the RTL flags with it |
+| **`startLesson` — the return value IS routing** | `loadSaved` routes on it, and a silent `false` strands a learner on a page they must never see (`v68.1`). Now: a hidden lesson refuses for a learner and opens for a teacher, an unpoolable `mixed` lesson refuses instead of opening an empty player, and each type reaches its own renderer and only its own. Plus the per-round resets, each a real defect — a wrong-set that used to accumulate across the whole session (so drilling a word you had missed INCREMENTED its wrong count), a stale review flag, a stale answer ledger, and a mic left listening from a previous lesson (`v85_b`) |
+| **`renderEx` — the crash a user hit** | `v88_r`: a speech-advance timer from the previous round landing after the learner has browsed to a review card. That synthetic `C` has `_review:true`, an empty exercises array and **no `cur`** — and `C.cur >= length` is false for `undefined`, so the stray call went straight through to `C.exercises[undefined].type`. Now a no-op, asserted. Also the **drill teardown** (`v71_h`/`v71_n`, reported as *"studiare asked over and over"*): the ledger is written while the drill lesson and its wrong-set both still exist, the real topic comes back, and the card shown is the real chapter's; the **word-tap detour** (item Z) resumes forward progress instead of parking on a card, fires once, and falls back to the normal card when nothing was captured; and a listening question speaks its target — or **queues it for the audio unlock rather than dropping it** |
+| **`doDialectImport` — behaviour, where there was a regex** | The `v85_h` fix (send the pair actually selected, not a hardcoded `de`/`de`) was pinned by the strings `base:APP.lang` and `source:APP.srcLang` appearing in the source. Now the request body is read: all three refusals happen **before anything is sent**, a server error surfaces the server's own reason and does **not** reload the library, the parse report caps its list at ten and **escapes** the raw source line, and — the part no post-hoc assertion can see — ⚠️ **while the request is in flight** the button is disabled, the status says so, and the previous run's report is cleared, so it cannot be read as this one's result |
+
+### ⚠️ What the remaining survivors are, and why they are not chased
+
+Nearly all of them are `if (el)` null guards mutated to `true`, and **`lib-dom`'s `getElementById`
+AUTO-VIVIFIES a miss** — the element is never null in this harness, so those mutants are equivalent
+*here* by construction. The rest are `typeof x === 'function'` guards and `→ true` masks on
+conditions the fixtures already satisfy. `renderEx` also keeps two for `_glyphOrderActive`, which
+needs a no-keyboard glyph-ordering fixture; `unit-no-keyboard` covers that path separately.
+
+**This closes the audit.** Four passes: `v90_b` (17 mutations, 9 survivors, 7 files repaired),
+`v90_c` (its remainder, 4 of 7 false positives), `v90_d` (the same-answer blind spot, 86 functions /
+1000 mutants / 14 zeros), `v90_e` (five zeros repaired, three never gaps, one probe bug), and this.
+`tools/branch-mutation.js` and its guard remain, so the measurement is repeatable rather than a
+number in a document.
+
+Suite: **363 full / 302 quick** (one new file).
+
 ## ✅ v90_e — the remaining zeros: five repaired, three were never gaps, and the probe itself was wrong once
 
 User: *"go ahead with the remaining zeros"* — the fourteen functions `v90_d` measured at 0 caught.
