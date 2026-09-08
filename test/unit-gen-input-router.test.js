@@ -207,20 +207,48 @@ const f = (name, type) => ({ name, type: type || '' });
   console.log('  each mode reveals its own surface; restore paths still get everything: OK');
 }
 
-// ── 8. ⚠️ THE LEGACY ESCAPE HATCH SURVIVES EVERY MODE ────────────────────────
-// `#user-story-checks` is the ONLY way to reach the dialect panel and the "I also have a
-// translation" modifier, neither of which the router routes to. Hiding it would make them
-// unreachable from the wizard — an actual loss of function — and the user's ruling on both (spec
-// decisions 2 and 4) has not been given.
+// ── 8. ⚠️ THE FOUR CHECKBOXES ARE HIDDEN AS A GROUP, AND STILL WORK AS STATE (v90_v) ──
+// ⚠️ RE-SCOPED, NOT DELETED. This section used to assert the OPPOSITE — that `#user-story-checks`
+// is revealed in every mode — because until the user ruled, hiding it would have made the dialect
+// panel and the translation modifier unreachable, i.e. a real loss of function. The user has now
+// ruled: "we don't need to expose any dialect-functionality at the moment, and we also don't expose
+// the 'i have my own translation' for now. These are experimental features that we can fully hide."
+// The claim flipped, so the assertion flips with it rather than being dropped.
 {
+  // Hidden at the ELEMENT, which is what also covers the restore paths — `_genRouterOpen()` clears
+  // every `.gen-hide`, so a class-based hide alone would let a resumed draft bring the row back.
+  assert.ok(/id="user-story-checks" style="display:none"/.test(client),
+    'the checkbox row is hidden at the element, so the full-reveal restore path cannot resurrect it');
   const always = client.match(/const _GEN_ALWAYS = (\[[^\]]*\]);/);
   assert.ok(always, 'the always-shown list is named');
   const A = JSON.parse(always[1].replace(/'/g, '"'));
-  assert.ok(A.includes('user-story-checks'),
-    '⚠️ the legacy checkbox row is shown in EVERY mode — it is the only route to the dialect panel ' +
-    'and the translation modifier, so hiding it is a real loss of function, not a tidy-up');
-  assert.ok(A.includes('gen-input-panel'), 'and the router itself never hides');
-  console.log('  the legacy escape hatch is reachable in every mode: OK');
+  assert.ok(!A.includes('user-story-checks'), 'and it is no longer force-shown per mode');
+  assert.deepStrictEqual(A, ['gen-input-panel'], 'only the router itself is always visible');
+
+  // ⚠️ BUT THEY MUST STILL EXIST AND STILL BE READ — they are the wizard's mode state, and deleting
+  // them would break `_genInputMode()` and every downstream gate. This is the re-scope, made explicit.
+  for (const id of ['use-story-cb', 'use-dialect-cb', 'use-comic-cb', 'use-translation-cb']) {
+    assert.ok(client.includes(`id="${id}"`), `#${id} still exists as state, it was not deleted`);
+  }
+  const mode = ext('_genInputMode');
+  assert.ok(/use-comic-cb/.test(mode) && /use-story-cb/.test(mode),
+    '_genInputMode still derives the mode from those checkboxes — the router writes them');
+  const scan = client.slice(client.indexOf('async function genScan('));
+  assert.ok(/use-comic-cb/.test(scan.slice(0, 4000)) && /use-story-cb/.test(scan.slice(0, 4000)),
+    'and genScan still sets them, so every downstream path is unchanged');
+
+  // ⚠️ The two experimental features are genuinely OFF, not merely invisible.
+  // `#dialect-panel` is only ever shown by onUseDialectCb, which nothing now calls;
+  // `#user-translation-panel` needs `.open`, which only onUseTranslationCb adds.
+  const modes = client.match(/const _GEN_MODE_SHOW = \{[\s\S]*?\n\};/)[0];
+  assert.ok(!/use-dialect|onUseDialectCb/.test(scan.slice(0, 4000)),
+    'the router never enables dialect, so #dialect-panel is unreachable from the wizard');
+  assert.ok(!/use-translation/.test(scan.slice(0, 4000)),
+    'and never enables the translation modifier');
+  assert.ok(/\.user-translation-panel\{display:none/.test(client.replace(/\s+/g, '')) ||
+            /user-translation-panel\{display:none/.test(client.replace(/\s+/g, '')),
+    'the translation panel is display:none until .open, which nothing now adds');
+  console.log('  the four checkboxes are hidden but still carry the mode; dialect + translation are off: OK');
 }
 
 // ── 9. ⚠️ A CONSUMED FILE IS UNSTAGED; A REFUSED ONE IS NOT ──────────────────

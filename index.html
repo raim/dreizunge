@@ -1474,7 +1474,21 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <span class="style-select-arrow">▾</span>
           </div>
         </div>
-        <div class="user-story-checks" id="user-story-checks">
+        <!-- ⚠️⚠️ v90_v — HIDDEN AS A GROUP, NOT DELETED (user ruling). All four checkboxes are now
+             internal STATE ONLY: `_genInputMode()` still reads them and `genScan()` still sets
+             `use-story-cb`/`use-comic-cb`, so every downstream path is unchanged — they simply have
+             no visible control any more, because the one input field decides the mode from what was
+             actually given.
+             ⚠️ TWO FEATURES GO DARK WITH IT, which is the point and was the user's explicit call —
+             "we don't need to expose any dialect-functionality at the moment, and we also don't
+             expose the 'i have my own translation' for now. These are experimental features that we
+             can fully hide": `use-dialect-cb` is never set by the router, so `#dialect-panel` is
+             unreachable; `use-translation-cb` stays unchecked, so `#user-translation-panel` never
+             gains `.open` AND the send path's `useTranslation` read is false.
+             ⚠️ NOTHING IS DELETED: `doDialectImport`, `parseDialectGlossary`, `buildDialectTopic`
+             and SIX dialect test files are untouched and still pass, per the standing re-scope rule.
+             Reversing this is deleting one attribute. -->
+        <div class="user-story-checks" id="user-story-checks" style="display:none">
           <label class="user-story-check-row">
             <input type="checkbox" id="use-story-cb" onchange="onUseStoryCb()">
             <span id="use-story-lbl">📖 I have my own story or document!</span>
@@ -8491,12 +8505,13 @@ const _GEN_MODE_SHOW = {
   comic:   ['comic-panel'],
   dialect: ['dialect-panel'],
 };
-// ⚠️ `#user-story-checks` is revealed in EVERY mode, deliberately and for now. It is the legacy
-// escape hatch, and it is the only way to reach the dialect panel and the "I also have a
-// translation" modifier — both of which the router does not route to. Hiding it would make them
-// unreachable from the wizard, i.e. an actual loss of function, and the user's ruling on those two
-// (spec decisions 2 and 4) has not been given. When it is, this list is where it goes.
-const _GEN_ALWAYS = ['gen-input-panel','user-story-checks'];
+// ⚠️ `#user-story-checks` USED TO BE LISTED HERE and no longer is (v90_v). `v90_s`/`v90_u` kept it
+// visible in every mode precisely because it was the only route to the dialect panel and the
+// translation modifier, and hiding it without a ruling would have been a real loss of function.
+// The user has now given that ruling — both are experimental and are to be fully hidden — so the
+// row is hidden at the ELEMENT (see its markup comment), which covers the restore paths too.
+// It stays a state carrier: `_genInputMode()` reads it and `genScan()` writes it.
+const _GEN_ALWAYS = ['gen-input-panel'];
 
 function _genRevealFor(mode){
   const card=document.getElementById('gen-card-2'); if(!card) return;

@@ -3157,6 +3157,54 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_v — the four input checkboxes are hidden as a group; dialect and translation go dark
+
+User, answering the two decisions the wizard work had been carrying: *"Can the three lines 'i have my
+own story', dialect-glossar, and 'i have an image' be removed now? … we don't need to expose any
+dialect-functionality at the moment, and we also don't expose the 'i have my own translation' for
+now. These are experimental features that we can fully hide."* **ZERO `ui.json` keys.**
+
+### The answer to the question that came with it
+
+*"Or is it still important to distinguish ambiguous input?"* — **No.** The only input the router
+genuinely cannot classify is a SHORT TEXT (story or topic?), and that is already handled by asking,
+with two buttons, since `v90_s`. The checkboxes never disambiguated anything: they were the learner
+DECLARING a mode before giving the input, which is exactly what the one field replaced. Everything
+else — PDF, text file, image, URL, long text — is decided from the input itself.
+
+### Hidden as a group, NOT deleted
+
+`#user-story-checks` carries `style="display:none"`. All four checkboxes remain **internal state**:
+`_genInputMode()` still reads them and `genScan()` still writes `use-story-cb`/`use-comic-cb`, so
+every downstream gate — `_genChapterCount`, `_genArcApplicable`, `_applyLessonCardUI`,
+`pdfGenerateAll` — is untouched. **Reversing this is deleting one attribute.**
+
+⚠️ **HIDDEN AT THE ELEMENT, NOT BY A CLASS, AND THAT IS LOAD-BEARING.** `_genRouterOpen()` clears
+every `.gen-hide` for the restore paths (a resumed draft has no mode and needs the full surface), so
+a class-based hide alone would let a resumed draft resurrect the row. Verified live: hidden in the
+first window, in all three routed modes, AND after a full reveal.
+
+### Two features go dark, which is the point
+
+- **Dialect**: the router never sets `use-dialect-cb`, so `#dialect-panel` is unreachable from the
+  wizard. ⚠️ **`doDialectImport`, `parseDialectGlossary`, `buildDialectTopic` and SIX dialect test
+  files are untouched and all six still pass** — checked explicitly, per the standing re-scope rule.
+- **Translation**: `use-translation-cb` stays unchecked, so `#user-translation-panel` never gains
+  `.open`. ⚠️ **It is off at the SEND layer too, not merely invisible** — the request path reads
+  `use-translation-cb?.checked` and gets `false`, so no translation is sent. A feature that is only
+  hidden in the UI while still firing server-side would be the worse outcome, and this one is not.
+
+### ⚠️ THE GUARD ASSERTED THE OPPOSITE ONE RELEASE AGO — RE-SCOPED, NOT DELETED
+
+`unit-gen-input-router` §8 read *"the legacy escape hatch is reachable in every mode"*, and its own
+comment explained why: until the user ruled, hiding the row would have stranded dialect and the
+translation modifier, i.e. a real loss of function. **The ruling arrived, so the claim flipped and
+the assertion flipped with it** — the standing rule is to re-scope a superseded ruling rather than
+drop the section, and its comment now records both the old claim and why it changed. §8 additionally
+pins that the four checkboxes still EXIST and are still read, which is what makes this a hide rather
+than a deletion. **Three mutations red**: un-hiding at the element, force-showing per mode again, and
+*deleting* a checkbox instead of hiding it.
+
 ## ✅ v90_u — per-mode reveal, the camera as an input root, and three orphan chapters cleared
 
 Three user requests. **ZERO new `ui.json` keys** — the camera reuses `form.image_camera`, already
