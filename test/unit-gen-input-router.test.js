@@ -175,4 +175,87 @@ const f = (name, type) => ({ name, type: type || '' });
   console.log('  the ambiguous case is ASKED with existing keys, behind an explicit Scan: OK');
 }
 
+// ── 7. ⚠️ PER-MODE REVEAL: a scan shows what ITS mode needs, not the whole card (v90_u) ──
+// `v90_s` opened the card all-or-nothing, so a Scan brought back the four checkboxes the field
+// exists to replace — "nothing else" held only for the first window.
+{
+  const map = client.match(/const _GEN_MODE_SHOW = \{[\s\S]*?\n\};/);
+  assert.ok(map, 'the per-mode reveal is a named table (if reshaped, update this guard)');
+  const M = new Function(map[0] + '\nreturn _GEN_MODE_SHOW;')();
+  // Each mode shows its OWN surface and not the others'.
+  assert.ok(M.llm.includes('topic-input') && !M.llm.includes('pdf-panel') && !M.llm.includes('comic-panel'),
+    'the topic mode shows the topic controls and no upload panels');
+  assert.ok(M.pdf.includes('pdf-panel') && !M.pdf.includes('topic-input'),
+    'the document/url mode shows the chunk list and not the topic field');
+  assert.ok(M.comic.includes('comic-panel') && M.comic.length === 1,
+    'the image mode shows the comic panel alone');
+  assert.ok(M.paste.includes('user-story-panel') && !M.paste.includes('num-chapters-row'),
+    'the paste mode shows the paste box and not the chapter-count slider');
+  // ⚠️ THE MECHANISM ONLY EVER *ADDS* HIDING. Forcing visibility (e.g. display:revert !important)
+  // would override the inline decisions `_updateUploadSliderVis` and `_applyLessonCardUI` make, and
+  // silently break them — measured live: #story-len-row is correctly HIDDEN for a paragraph-split
+  // document and SHOWN for a length-split URL, which only holds because this never force-shows.
+  const reveal = ext('_genRevealFor');
+  assert.ok(/classList\.add\('gen-hide'\)/.test(reveal) && /classList\.remove\('gen-hide'\)/.test(reveal),
+    'the reveal toggles a hide-class');
+  assert.ok(!/style\.display\s*=/.test(reveal),
+    'and never assigns display itself — the existing imperative logic still governs what it reveals');
+  // ⚠️ A RESTORE path never went through the router and has no mode, so it needs the WHOLE surface.
+  const open = ext('_genRouterOpen');
+  assert.ok(/classList\.remove\('gen-hide'\)/.test(open) && !/gen-hide'\)/.test(open.replace(/remove\('gen-hide'\)/g,'')),
+    'the full-reveal path clears every hide, so a resumed draft is not stranded behind it');
+  console.log('  each mode reveals its own surface; restore paths still get everything: OK');
+}
+
+// ── 8. ⚠️ THE LEGACY ESCAPE HATCH SURVIVES EVERY MODE ────────────────────────
+// `#user-story-checks` is the ONLY way to reach the dialect panel and the "I also have a
+// translation" modifier, neither of which the router routes to. Hiding it would make them
+// unreachable from the wizard — an actual loss of function — and the user's ruling on both (spec
+// decisions 2 and 4) has not been given.
+{
+  const always = client.match(/const _GEN_ALWAYS = (\[[^\]]*\]);/);
+  assert.ok(always, 'the always-shown list is named');
+  const A = JSON.parse(always[1].replace(/'/g, '"'));
+  assert.ok(A.includes('user-story-checks'),
+    '⚠️ the legacy checkbox row is shown in EVERY mode — it is the only route to the dialect panel ' +
+    'and the translation modifier, so hiding it is a real loss of function, not a tidy-up');
+  assert.ok(A.includes('gen-input-panel'), 'and the router itself never hides');
+  console.log('  the legacy escape hatch is reachable in every mode: OK');
+}
+
+// ── 9. ⚠️ A CONSUMED FILE IS UNSTAGED; A REFUSED ONE IS NOT ──────────────────
+// `_genClassify` checks files BEFORE text, so a file left staged after a successful scan silently
+// outranks anything typed afterwards: scan a document, then type a topic and press Scan, and the
+// SAME document is processed again while the typed text is ignored — the button appears dead.
+{
+  const scan = client.slice(client.indexOf('async function genScan('));
+  const body = scan.slice(0, scan.indexOf('\n}'));
+  const imageBranch = body.slice(body.indexOf("d.kind==='image'"), body.indexOf("d.kind==='document'"));
+  const docBranch = body.slice(body.indexOf("d.kind==='document'"), body.indexOf("d.kind==='url'"));
+  assert.ok(/_genSetFiles\(\[\]\)/.test(imageBranch), 'a consumed image drop is unstaged');
+  assert.ok(/_genSetFiles\(\[\]\)/.test(docBranch), 'a consumed document is unstaged');
+  const refuseLine = body.split('\n').find(l => l.includes("d.kind==='refuse'"));
+  assert.ok(!/_genSetFiles/.test(refuseLine),
+    '⚠️ but a REFUSAL leaves them staged, so removing the odd file out and pressing Scan again works');
+  // And files still outrank text, which is exactly why the unstaging matters.
+  assert.strictEqual(C._genClassify('cooking in Rome', [f('a.pdf', 'application/pdf')]).kind, 'document',
+    'files outrank text by design — which is why a consumed one must not linger');
+  console.log('  consumed files unstage, refused files persist, files outrank text: OK');
+}
+
+// ── 10. The camera is an input root beside the upload button (user request) ──
+{
+  const flat = client.replace(/\s+/g, ' ');
+  assert.ok(/id="gen-camera-input"[^>]*capture="environment"/.test(flat), 'the camera input captures');
+  assert.ok(/id="gen-camera-input"[^>]*accept="image\/\*"/.test(flat), 'and accepts images');
+  assert.ok(/id="gen-camera-input"[^>]*onchange="genOnFilePick\(this\)"/.test(flat),
+    '⚠️ a captured photo is STAGED like any other file rather than dispatched immediately — which ' +
+    'is what lets several pages be shot one after another before Scan (item V\'s multi-image meaning)');
+  assert.ok(flat.indexOf('id="gen-camera-btn"') < flat.indexOf('id="gen-file-btn"'),
+    'the camera button sits beside the upload button, before it');
+  assert.ok(/gen-camera-lbl'\); if\(gc\) gc\.textContent=t\('form\.image_camera'\)/.test(client.replace(/\s+/g,' ')),
+    'and reuses form.image_camera — an existing translated key, so it cost nothing');
+  console.log('  the camera is an input root beside upload, staged not auto-dispatched: OK');
+}
+
 console.log('unit-gen-input-router: ALL PASSED');

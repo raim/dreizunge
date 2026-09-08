@@ -485,6 +485,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-len-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .story-len-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.02em}
 .gen-card.router-collapsed > *:not(#gen-input-panel):not(.gen-card-nav){display:none !important}
+.gen-card > .gen-hide{display:none !important}
 #gen-input.drop-hot{outline:2px dashed var(--blue);outline-offset:2px}
 .story-len-val{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:10px;padding:2px 8px}
 .story-len-slider{width:100%;accent-color:var(--blue);cursor:pointer}
@@ -1390,6 +1391,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
               <input type="file" id="gen-file-input" multiple style="display:none"
                 accept=".pdf,.txt,.md,.markdown,.text,image/png,image/jpeg" onchange="genOnFilePick(this)">
+              <!-- v90_u (user request): the camera is elevated out of #comic-panel to sit beside the
+                   upload button, because "take a photo" is an INPUT ROOT like any other and hiding it
+                   inside the comic panel meant you had to know it was a comic first. Reuses
+                   `form.image_camera`, already translated — ZERO new keys. A captured photo is staged
+                   like any other file and waits for Scan, which is what lets several pages be shot one
+                   after another before creating anything (item V's own multi-image meaning). -->
+              <input type="file" id="gen-camera-input" accept="image/*" capture="environment" style="display:none" onchange="genOnFilePick(this)">
+              <button type="button" id="gen-camera-btn" onclick="document.getElementById('gen-camera-input').click()"
+                style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="gen-camera-lbl">📷 Take a photo</span></button>
               <button type="button" id="gen-file-btn" onclick="document.getElementById('gen-file-input').click()"
                 style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="gen-file-lbl">📎 Upload a document</span></button>
               <button type="button" id="gen-scan-btn" onclick="genScan()"
@@ -3239,6 +3249,7 @@ function applyUIStrings() {
   { const gl=document.getElementById('gen-input-lbl'); if(gl) gl.textContent=t('form.gen_input_lbl'); }
   { const gf=document.getElementById('gen-file-lbl'); if(gf) gf.textContent=t('form.upload_doc'); }
   { const gs=document.getElementById('gen-scan-lbl'); if(gs) gs.textContent=t('form.gen_scan'); }
+  { const gc=document.getElementById('gen-camera-lbl'); if(gc) gc.textContent=t('form.image_camera'); }
   { const fu=document.getElementById('fetch-url-lbl'); if(fu) fu.textContent=t('form.fetch_url'); }
   { const uc=document.getElementById('use-comic-lbl'); if(uc) uc.textContent=t('form.use_image'); }
   { const ch=document.getElementById('comic-help'); if(ch) ch.textContent=t('form.image_help'); }
@@ -8469,7 +8480,46 @@ function _genRouterCollapse(){
   const k=document.getElementById('gen-kind-row'); if(k) k.style.display='none';
   const st=document.getElementById('gen-input-status'); if(st) st.textContent='';
 }
-function _genRouterOpen(){ document.getElementById('gen-card-2')?.classList.remove('router-collapsed'); }
+// ⚠️ v90_u — PER-MODE REVEAL. `v90_s` opened the card all-or-nothing, so a Scan brought back the
+// ENTIRE old surface including the four checkboxes the field exists to replace: "nothing else" held
+// only for the first window. Now a scan reveals only what its own mode needs.
+//
+// ⚠️ THE MECHANISM ONLY EVER *ADDS* HIDING. It marks the children a mode does not need with
+// `.gen-hide` and never force-shows the rest — so whatever IS revealed is still governed by the
+// existing imperative logic (`_updateUploadSliderVis` hides `#story-len-row` outside length mode,
+// `_applyLessonCardUI` withholds the start button, and so on). A CSS rule that force-showed with
+// `display:revert !important` would override those inline decisions and silently break them.
+const _GEN_MODE_SHOW = {
+  llm:     ['topic-label','topic-input','style-wrap','num-chapters-row','story-len-row'],
+  paste:   ['user-story-panel','style-wrap'],
+  pdf:     ['user-story-panel','pdf-panel','story-len-row'],
+  comic:   ['comic-panel'],
+  dialect: ['dialect-panel'],
+};
+// ⚠️ `#user-story-checks` is revealed in EVERY mode, deliberately and for now. It is the legacy
+// escape hatch, and it is the only way to reach the dialect panel and the "I also have a
+// translation" modifier — both of which the router does not route to. Hiding it would make them
+// unreachable from the wizard, i.e. an actual loss of function, and the user's ruling on those two
+// (spec decisions 2 and 4) has not been given. When it is, this list is where it goes.
+const _GEN_ALWAYS = ['gen-input-panel','user-story-checks'];
+
+function _genRevealFor(mode){
+  const card=document.getElementById('gen-card-2'); if(!card) return;
+  card.classList.remove('router-collapsed');
+  const keep=new Set([..._GEN_ALWAYS, ...(_GEN_MODE_SHOW[mode]||[])]);
+  for(const el of [...card.children]){
+    if(el.classList.contains('gen-card-nav') || keep.has(el.id)) { el.classList.remove('gen-hide'); continue; }
+    el.classList.add('gen-hide');
+  }
+  console.log('[gen] revealing for mode:', mode);
+}
+// Full reveal — the old all-or-nothing behaviour, kept for the RESTORE paths. A resumed draft or a
+// reconnected job did not come through the router and has no mode, so it needs the whole surface.
+function _genRouterOpen(){
+  const card=document.getElementById('gen-card-2'); if(!card) return;
+  card.classList.remove('router-collapsed');
+  for(const el of [...card.children]) el.classList.remove('gen-hide');
+}
 
 // Hand real File objects to a handler that expects an <input>, without touching the handler.
 function _genFeedFiles(inputId, files){
@@ -8516,12 +8566,14 @@ async function genScan(){
   // left the old topic in `#topic-input`, and the fetch's own "only fill a blank field" rule
   // (correctly) declined to overwrite it — so the article arrived under the previous topic's title.
   _genClearRouted();
-  _genRouterOpen();
+  // url and document both end in #pdf-panel's chunk list, so they share its reveal.
+  _genRevealFor(d.kind==='image' ? 'comic' : d.kind==='story' ? 'paste' : 'pdf');
   if(d.kind==='image'){
     // item V's own path, multi-image included — reached through its real input.
     const cb=document.getElementById('use-comic-cb');
     if(cb && !cb.checked){ cb.checked=true; onUseComicCb(); }
     if(_genFeedFiles('comic-file-input', d.files)) onComicFileChosen(document.getElementById('comic-file-input'));
+    _genSetFiles([]);   // consumed — see the note on the document branch
     return;
   }
   if(d.kind==='document'){
@@ -8529,6 +8581,14 @@ async function genScan(){
     if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
     // Exactly one, by construction — the classifier refuses any other document count.
     if(_genFeedFiles('upload-file-input', d.files)) await onUploadFileChosen(document.getElementById('upload-file-input'));
+    // ⚠️ v90_u: A CONSUMED FILE IS UNSTAGED. `_genClassify` checks files BEFORE text, so a file left
+    // staged after a successful scan silently outranks anything typed afterwards: scan a document,
+    // then type a topic and press Scan, and the SAME document is processed again while the typed
+    // text is ignored entirely — the button appears to do nothing. Found by noticing the stale file
+    // name still under the field in a screenshot and then asking what a second Scan would do.
+    // ⚠️ A REFUSAL deliberately does NOT clear them (see the refuse branch above): there the drop
+    // must survive so the learner can remove the odd file out and press Scan again.
+    _genSetFiles([]);
     return;
   }
   if(d.kind==='url'){
@@ -8567,7 +8627,7 @@ function genChooseKind(kind){
   const text=(ta?ta.value:'').trim();
   const row=document.getElementById('gen-kind-row'); if(row) row.style.display='none';
   _genClearRouted();
-  _genRouterOpen();
+  _genRevealFor(kind==='story' ? 'paste' : 'llm');
   const cb=document.getElementById('use-story-cb');
   if(kind==='story'){
     if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
@@ -11131,10 +11191,215 @@ const STATIC_LESSONS = [
     "continuedFrom": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…",
     "continuedFromId": "tp_17888019097780000184",
     "storyStyle": "neutral",
-    "lessons": [],
+    "lessons": [
+      {
+        "id": "ls_1788862742020_0_standard",
+        "title": "Autonomia Alto Adige",
+        "desc": "Beispiele für Autonomie und Entwicklung",
+        "icon": "🌍",
+        "vocab": [
+          {
+            "target": "autonomia",
+            "source": "die Autonomie",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:autonomia",
+              "canonicalId": "it:vocab:autonomia",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "sviluppo",
+            "source": "die Entwicklung",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:sviluppo",
+              "canonicalId": "it:vocab:sviluppo",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "prosperità",
+            "source": "der Wohlstand",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:prosperità",
+              "canonicalId": "it:vocab:prosperità",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "territorio",
+            "source": "das Gebiet",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:territorio",
+              "canonicalId": "it:vocab:territorio",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "convivenza",
+            "source": "das Zusammenleben",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:convivenza",
+              "canonicalId": "it:vocab:convivenza",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "percorso",
+            "source": "der Weg",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:percorso",
+              "canonicalId": "it:vocab:percorso",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "trattato",
+            "source": "der Vertrag",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:trattato",
+              "canonicalId": "it:vocab:trattato",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "cerimonia",
+            "source": "die Zeremonie",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:cerimonia",
+              "canonicalId": "it:vocab:cerimonia",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          }
+        ],
+        "sentences": [
+          {
+            "target": "L'autonomia porta prosperità.",
+            "source": "Die Autonomie bringt Wohlstand.",
+            "skillId": "it:sentence:autonomia-prosperità",
+            "words": [
+              "L'autonomia",
+              "porta",
+              "prosperità."
+            ]
+          },
+          {
+            "target": "Il trattato è importante.",
+            "source": "Der Vertrag ist wichtig.",
+            "skillId": "it:sentence:trattato-importante",
+            "words": [
+              "Il",
+              "trattato",
+              "è",
+              "importante."
+            ]
+          },
+          {
+            "target": "Seguiamo questo percorso.",
+            "source": "Folgen wir diesem Weg.",
+            "skillId": "it:sentence:percorso-seguire",
+            "words": [
+              "Seguiamo",
+              "questo",
+              "percorso."
+            ]
+          },
+          {
+            "target": "La convivenza è serena.",
+            "source": "Das Zusammenleben ist friedlich.",
+            "skillId": "it:sentence:convivenza-serena",
+            "words": [
+              "La",
+              "convivenza",
+              "è",
+              "serena."
+            ]
+          },
+          {
+            "target": "Ogni territorio ha valore.",
+            "source": "Jedes Gebiet hat Wert.",
+            "skillId": "it:sentence:territorio-valore",
+            "words": [
+              "Ogni",
+              "territorio",
+              "ha",
+              "valore."
+            ]
+          }
+        ],
+        "skillIds": [],
+        "_skillTags": {
+          "type": "vocab",
+          "proposed": 8,
+          "resolved": 0,
+          "pending": 8
+        },
+        "_genMeta": {
+          "type": "standard",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": null,
+          "valid": 8,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 1301,
+          "completionTokens": 486,
+          "ms": 175325,
+          "at": "2026-09-08T10:19:02.020Z"
+        },
+        "_recreated": true
+      }
+    ],
     "generatedAt": "2026-09-07T17:43:39.625Z",
-    "updatedAt": "2026-09-07T17:43:39.625Z",
-    "createdBy": "admin"
+    "updatedAt": "2026-09-08T10:19:02.020Z",
+    "createdBy": "admin",
+    "generationStats": {
+      "model": "(post-gen)",
+      "totalMs": 0,
+      "totalPromptTokens": 1301,
+      "totalCompletionTokens": 486,
+      "tokensByType": {
+        "recreate": 1787
+      }
+    }
   },
   {
     "id": "tp_17888019097780000184",
@@ -11663,10 +11928,213 @@ const STATIC_LESSONS = [
     "continuedFrom": null,
     "continuedFromId": null,
     "storyStyle": "neutral",
-    "lessons": [],
+    "lessons": [
+      {
+        "id": "ls_1788862950172_0_standard",
+        "title": "Autonomia e De Gasperi",
+        "desc": "Vocabolario sull'autonomia altoatesina",
+        "icon": "🏔️",
+        "vocab": [
+          {
+            "target": "autonomia",
+            "source": "die Autonomie",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:autonomia",
+              "canonicalId": "it:vocab:autonomia",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "responsabilità",
+            "source": "die Verantwortung",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:responsabilità",
+              "canonicalId": "it:vocab:responsabilità",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "dialogo",
+            "source": "der Dialog",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:dialogo",
+              "canonicalId": "it:vocab:dialogo",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "rispetto",
+            "source": "der Respekt",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:rispetto",
+              "canonicalId": "it:vocab:rispetto",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "comunicazione",
+            "source": "die Kommunikation",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:comunicazione",
+              "canonicalId": "it:vocab:comunicazione",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "progetto",
+            "source": "das Projekt",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:progetto",
+              "canonicalId": "it:vocab:progetto",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "identità",
+            "source": "die Identität",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:identità",
+              "canonicalId": "it:vocab:identità",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "partecipazione",
+            "source": "die Teilnahme",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:partecipazione",
+              "canonicalId": "it:vocab:partecipazione",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          }
+        ],
+        "sentences": [
+          {
+            "target": "L'autonomia è fondamentale.",
+            "source": "Die Autonomie ist fundamental.",
+            "skillId": "it:sentence:autonomia",
+            "words": [
+              "L'autonomia",
+              "è",
+              "fondamentale."
+            ]
+          },
+          {
+            "target": "Serve molta responsabilità.",
+            "source": "Man braucht viel Verantwortung.",
+            "skillId": "it:sentence:responsabilità",
+            "words": [
+              "Serve",
+              "molta",
+              "responsabilità."
+            ]
+          },
+          {
+            "target": "Il dialogo crea pace.",
+            "source": "Der Dialog schafft Frieden.",
+            "skillId": "it:sentence:dialogo",
+            "words": [
+              "Il",
+              "dialogo",
+              "crea",
+              "pace."
+            ]
+          },
+          {
+            "target": "Rispettiamo le identità.",
+            "source": "Wir respektieren die Identitäten.",
+            "skillId": "it:sentence:identità",
+            "words": [
+              "Rispettiamo",
+              "le",
+              "identità."
+            ]
+          },
+          {
+            "target": "La comunicazione unisce.",
+            "source": "Die Kommunikation vereint.",
+            "skillId": "it:sentence:comunicazione",
+            "words": [
+              "La",
+              "comunicazione",
+              "unisce."
+            ]
+          }
+        ],
+        "skillIds": [],
+        "_skillTags": {
+          "type": "vocab",
+          "proposed": 8,
+          "resolved": 0,
+          "pending": 8
+        },
+        "_genMeta": {
+          "type": "standard",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": null,
+          "valid": 8,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 1294,
+          "completionTokens": 588,
+          "ms": 207285,
+          "at": "2026-09-08T10:22:30.171Z"
+        },
+        "_recreated": true
+      }
+    ],
     "generatedAt": "2026-09-07T14:19:18.986Z",
-    "updatedAt": "2026-09-07T14:19:18.986Z",
-    "createdBy": "admin"
+    "updatedAt": "2026-09-08T10:22:30.172Z",
+    "createdBy": "admin",
+    "generationStats": {
+      "model": "(post-gen)",
+      "totalMs": 0,
+      "totalPromptTokens": 1294,
+      "totalCompletionTokens": 588,
+      "tokensByType": {
+        "recreate": 1882
+      }
+    }
   },
   {
     "id": "tp_17886861038730000257",
@@ -111133,9 +111601,211 @@ const STATIC_LESSONS = [
     "storyLang": "target",
     "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Contemplative, questioning, abstract ideas.\n\nWrite a story for the topic: \"testing our language learning app story generation with a better learning arc\". Plain prose, no headings.",
     "storyStyle": "philosophical",
-    "lessons": [],
+    "lessons": [
+      {
+        "id": "ls_1788863096567_0_standard",
+        "title": "Storia al crepuscolo",
+        "desc": "Lessico per una storia serale",
+        "icon": "🌇",
+        "vocab": [
+          {
+            "target": "crepuscolo",
+            "source": "die Dämmerung",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:crepuscolo",
+              "canonicalId": "it:vocab:crepuscolo",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "schermo",
+            "source": "der Bildschirm",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:schermo",
+              "canonicalId": "it:vocab:schermo",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "tremare",
+            "source": "zittern",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:tremare",
+              "canonicalId": "it:vocab:tremare",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "invio",
+            "source": "die Eingabe",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:invio",
+              "canonicalId": "it:vocab:invio",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "paesaggio",
+            "source": "die Landschaft",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:paesaggio",
+              "canonicalId": "it:vocab:paesaggio",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "solitario",
+            "source": "einsam",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:solitario",
+              "canonicalId": "it:vocab:solitario",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "oscillare",
+            "source": "schwingen",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:oscillare",
+              "canonicalId": "it:vocab:oscillare",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          },
+          {
+            "target": "viaggio",
+            "source": "die Reise",
+            "skillId": null,
+            "skillProposal": {
+              "proposedId": "it:vocab:viaggio",
+              "canonicalId": "it:vocab:viaggio",
+              "skillId": null,
+              "status": "unregistered",
+              "targetLang": "it",
+              "sourceLang": "de",
+              "entry": null
+            }
+          }
+        ],
+        "sentences": [
+          {
+            "target": "Il crepuscolo copre la città.",
+            "source": "Die Dämmerung bedeckt die Stadt.",
+            "words": [
+              "Il",
+              "crepuscolo",
+              "copre",
+              "la",
+              "città."
+            ]
+          },
+          {
+            "target": "Sofia guarda lo schermo con paura.",
+            "source": "Sofia schaut mit Angst auf den Bildschirm.",
+            "words": [
+              "Sofia",
+              "guarda",
+              "lo",
+              "schermo",
+              "con",
+              "paura."
+            ]
+          },
+          {
+            "target": "Le sue dita iniziano a tremare.",
+            "source": "Ihre Finger beginnen zu zittern.",
+            "words": [
+              "Le",
+              "sue",
+              "dita",
+              "iniziano",
+              "a",
+              "tremare."
+            ]
+          },
+          {
+            "target": "Un albero solitario oscilla nel vento.",
+            "source": "Ein einsamer Baum schwingt im Wind.",
+            "words": [
+              "Un",
+              "albero",
+              "solitario",
+              "oscilla",
+              "nel",
+              "vento."
+            ]
+          },
+          {
+            "target": "Il paesaggio sembra desolato e triste.",
+            "source": "Die Landschaft wirkt öde und traurig.",
+            "words": [
+              "Il",
+              "paesaggio",
+              "sembra",
+              "desolato",
+              "e",
+              "triste."
+            ]
+          }
+        ],
+        "skillIds": [],
+        "_skillTags": {
+          "type": "vocab",
+          "proposed": 8,
+          "resolved": 0,
+          "pending": 8
+        },
+        "_genMeta": {
+          "type": "standard",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": null,
+          "valid": 8,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 1140,
+          "completionTokens": 393,
+          "ms": 145490,
+          "at": "2026-09-08T10:24:56.567Z"
+        },
+        "_recreated": true
+      }
+    ],
     "generatedAt": "2026-06-16T08:29:25.053Z",
-    "updatedAt": "2026-06-16T08:29:25.053Z",
+    "updatedAt": "2026-09-08T10:24:56.567Z",
     "continuedFromId": null,
     "continuedFrom": null,
     "id": "tp_17816139770630000089",
@@ -111167,7 +111837,16 @@ const STATIC_LESSONS = [
       "source": "no record (story present, no generationStats.models)",
       "origin": "unknown"
     },
-    "createdBy": "admin"
+    "createdBy": "admin",
+    "generationStats": {
+      "model": "(post-gen)",
+      "totalMs": 0,
+      "totalPromptTokens": 1140,
+      "totalCompletionTokens": 393,
+      "tokensByType": {
+        "recreate": 1533
+      }
+    }
   },
   {
     "topic": "Peut-être i",
@@ -172314,12 +172993,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v90_t', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v90_u', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"c9572f76627d","lessons.json":"15a7660be3f0","ui.json":"23a062d0f45e","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"daa13a297765","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
+  APP.buildSources = {"index.html":"53a7c149ac66","lessons.json":"0022db643488","ui.json":"23a062d0f45e","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"daa13a297765","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).

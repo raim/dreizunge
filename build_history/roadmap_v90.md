@@ -582,7 +582,20 @@ fetch the moment a pasted URL completed. The button is what makes the guess safe
    files** (`e2e-dialect-import`, `unit-dialect-glossary`, `-mute`, `-panel`, `-story`, `-tts`) are
    live. Hiding the ENTRY POINT is a two-line change and keeps every one of them passing; deleting
    the feature is a different, much larger request. **Assume hide unless the user says delete.**
-5. **The topic cap contradiction** (400 in the markup, 300 in `server.js`) — which is the real one?
+5. ~~**The topic cap contradiction** (400 in the markup, 300 in `server.js`)~~ — ⚠️ **THERE IS NO
+   CONTRADICTION. Withdrawn at `v90_u` after the user asked whether a reason had been recorded
+   (e.g. markdown markup).** The two numbers are on DIFFERENT FIELDS in DIFFERENT FEATURES: `400` is
+   `#topic-input`'s `maxlength`, and the three `slice(0, 300)` calls are all in the DIALECT path
+   (`generateDialectStory`, `generateDialectStoryV2`, `/api/dialect-story`), capping
+   `#dialect-story-topic` — a box the main flow never touches. **The main `/api/generate` path
+   applies no length cap at all**, only a `>= 2` MINIMUM; the other `slice(0, 50)`s are job-label
+   truncations. History confirms they never met: 400 arrived with the commit that made the topic
+   field multiline, 300 with `v50`/`v51` "started dialect pipeline", alongside its sibling
+   `instructions` cap of 600. **No comment anywhere justifies either number, and nothing mentions
+   markdown or markup.** So `GEN_TOPIC_MAX = 400` is simply correct and no decision is owed.
+   ⚠️ **How the error was made, because it is a cheap one to repeat**: a grep for
+   `topic.*slice(0, 300)` returned two hits in `server.js` and they were reported as the main path
+   without checking WHICH FUNCTION they sat in. **A grep hit is a location, not a caller.**
 
 ## The second idea, deliberately kept separate
 
@@ -3144,6 +3157,95 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_u — per-mode reveal, the camera as an input root, and three orphan chapters cleared
+
+Three user requests. **ZERO new `ui.json` keys** — the camera reuses `form.image_camera`, already
+translated into all 33 languages.
+
+### 1. Three chapters with a story and no lessons — CLEARED
+
+`tp_17888030196250000250` ("Esempio a livello mondiale"), `tp_17887907589860000108` and
+`tp_17816139770630000089`. All three were orphans (⚠️ **checked first**: `_runRecreateJob` walks the
+whole STORYLINE a chapter belongs to, so on a chaptered storyline this would have appended a lesson
+to every sibling — these had no storyline, so each was targeted alone). `POST
+/api/storyline/recreate-lessons` with `addTypes:['standard'], add:true`, 176s / 208s / 148s on the
+user's own machine. Each now carries one standard lesson (8 vocab / 5 sentences), and **the corpus
+has no story-without-lessons chapter left**.
+
+### 2. ⭐ PER-MODE REVEAL — the router stops re-opening the whole card
+
+`v90_s` opened card 2 all-or-nothing, so a Scan brought back the **four checkboxes the field exists
+to replace**: *"nothing else"* held only for the first window. A scan now reveals only what its own
+mode needs:
+
+| scan | reveals |
+|---|---|
+| topic | `#topic-input`, `#style-wrap`, `#num-chapters-row`, `#story-len-row` |
+| pasted story | `#user-story-panel`, `#style-wrap` |
+| document / URL | `#user-story-panel`, `#pdf-panel`, `#story-len-row` |
+| image | `#comic-panel` |
+
+⚠️⚠️ **THE MECHANISM ONLY EVER *ADDS* HIDING, AND THAT IS THE WHOLE DESIGN.** It marks the children a
+mode does not need with `.gen-hide` and **never force-shows** the rest, so whatever is revealed is
+still governed by the existing imperative logic. A CSS rule that force-showed (`display: revert
+!important`) would override the inline decisions `_updateUploadSliderVis` and `_applyLessonCardUI`
+make and silently break them. **Measured live, and this is the proof it works**: `#story-len-row` is
+correctly HIDDEN for a paragraph-split document and SHOWN for a length-split URL — the same mode,
+opposite outcomes, decided by the old code rather than by the reveal.
+
+⚠️ **RESTORE PATHS STILL GET EVERYTHING.** A resumed draft or reconnected job never went through the
+router and has no mode, so `_genRouterOpen()` clears every `.gen-hide`. Verified: zero hides remain.
+
+⚠️ **`#user-story-checks` IS SHOWN IN EVERY MODE, DELIBERATELY.** It is the only route to the dialect
+panel and to "I also have a translation", neither of which the router routes to. Hiding it would make
+them unreachable from the wizard — **an actual loss of function, not a tidy-up** — and the user's
+ruling on both (spec decisions 2 and 4) has not been given. `_GEN_ALWAYS` is where it goes when it is.
+
+### 3. The camera elevated to an input root (user request)
+
+*"input via camera should be elevated to the drop file dialog, next to the button with ui entry
+`form.upload_doc`."* Done — `#gen-camera-btn` sits before `#gen-file-btn`, reusing
+`form.image_camera`. ⚠️ **A captured photo is STAGED and waits for Scan**, not dispatched on capture:
+that is what lets several pages be photographed one after another before anything is created, which
+is item V's own multi-image meaning. Hiding the camera inside `#comic-panel` had meant you needed to
+know it was a comic before you could reach it.
+
+### ⚠️ A REAL TRAP, FOUND BY LOOKING AT A SCREENSHOT
+
+The first-window screenshot still showed a file name under the field after a completed scan. Asking
+what a SECOND Scan would then do exposed it: **`_genClassify` checks files BEFORE text**, so a file
+left staged after a successful scan silently outranks anything typed afterwards. Scan a document,
+then type a topic and press Scan — **the same document is processed again and the typed text is
+ignored entirely**; the button looks dead. A consumed file is now unstaged.
+⚠️ **A REFUSED one deliberately is not** — there the drop must survive so the odd file out can be
+removed and Scan pressed again, which is the whole point of `v90_t`'s refusal.
+
+### ⚠️ AND THE TOPIC-CAP "CONTRADICTION" IS WITHDRAWN — THERE WAS NEVER ONE
+
+Carried as an open decision by `v90_s` and `v90_t`. The user asked whether a reason had been
+recorded for it (markdown markup, say). Checking produced the opposite answer: **the two numbers are
+on different fields in different features.** `400` is `#topic-input`'s `maxlength`; all three
+`slice(0, 300)` calls are in the DIALECT path and cap `#dialect-story-topic`, which the main flow
+never touches. **The main `/api/generate` applies no length cap at all** — only a `>= 2` minimum.
+History: 400 arrived with the commit making the topic field multiline, 300 with `v50`/`v51` "started
+dialect pipeline" alongside its sibling `instructions` cap of 600. **No comment anywhere justifies
+either, and nothing mentions markdown or markup.**
+
+⚠️ **How the error was made, recorded because it is cheap to repeat:** a grep for
+`topic.*slice(0, 300)` returned two hits in `server.js` and they were reported as the main path
+**without checking which function they sat in**. Both were `generateDialectStory` and
+`generateDialectStoryV2` — the feature the user had just asked to drop from the router. **A grep hit
+is a location, not a caller.** Corrected in both shipped entries and in the spec.
+
+### Guards
+
+`unit-gen-input-router` §§7–10, **five mutations red**: an image mode leaking other panels; the
+escape hatch hidden (stranding dialect); a consumed document left staged; the reveal hiding nothing;
+and the camera auto-dispatching instead of staging. ⚠️ **Two of those mutations had to be re-applied
+before they meant anything** — the first attempt at each failed to match its target and produced no
+result rather than a red, which reads exactly like a survivor. **Third time this line of work has
+had a broken mutation** (`v90_n`, `v90_p`); a mutant that produces no output is not a passing mutant.
+
 ## ✅ v90_t — a multi-file drop is REFUSED rather than quietly resolved (user ruling)
 
 ⚠️ **This corrects `v90_s`, one release old, and it corrects its WRITE-UP too.** That entry described
@@ -3304,10 +3406,10 @@ instant a pasted URL completed. Guarded in both directions.
 - **Dialect is not routed to.** The user said "we drop the dialect upload for now", and the standing
   rule is re-scope rather than delete: `doDialectImport` and its **six test files** are untouched and
   the checkbox still works once the card opens. Nothing was removed.
-- ⚠️ **The topic-cap contradiction is still open**: the threshold used here is `#topic-input`'s own
-  `maxlength` of **400**, per the user's "use current length max for the topic field", while
-  `server.js` slices topics to **300** in two places. Deliberately NOT resolved by silently picking
-  one; §3 pins 400 so a change has to be intentional.
+- ~~⚠️ The topic-cap contradiction is still open~~ — ⚠️ **WITHDRAWN at `v90_u`: there was never a
+  contradiction.** The `300`s are the DIALECT story's own cap on `#dialect-story-topic`, a different
+  field in a different feature; the main path caps nothing. **400 is simply the right number**, and
+  §3 pinning it needs no further ruling. See the spec section above for the full correction.
 
 ### Verified live, at the layer the user touches
 

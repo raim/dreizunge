@@ -485,6 +485,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-len-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .story-len-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.02em}
 .gen-card.router-collapsed > *:not(#gen-input-panel):not(.gen-card-nav){display:none !important}
+.gen-card > .gen-hide{display:none !important}
 #gen-input.drop-hot{outline:2px dashed var(--blue);outline-offset:2px}
 .story-len-val{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:10px;padding:2px 8px}
 .story-len-slider{width:100%;accent-color:var(--blue);cursor:pointer}
@@ -1390,6 +1391,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
               <input type="file" id="gen-file-input" multiple style="display:none"
                 accept=".pdf,.txt,.md,.markdown,.text,image/png,image/jpeg" onchange="genOnFilePick(this)">
+              <!-- v90_u (user request): the camera is elevated out of #comic-panel to sit beside the
+                   upload button, because "take a photo" is an INPUT ROOT like any other and hiding it
+                   inside the comic panel meant you had to know it was a comic first. Reuses
+                   `form.image_camera`, already translated — ZERO new keys. A captured photo is staged
+                   like any other file and waits for Scan, which is what lets several pages be shot one
+                   after another before creating anything (item V's own multi-image meaning). -->
+              <input type="file" id="gen-camera-input" accept="image/*" capture="environment" style="display:none" onchange="genOnFilePick(this)">
+              <button type="button" id="gen-camera-btn" onclick="document.getElementById('gen-camera-input').click()"
+                style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="gen-camera-lbl">📷 Take a photo</span></button>
               <button type="button" id="gen-file-btn" onclick="document.getElementById('gen-file-input').click()"
                 style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="gen-file-lbl">📎 Upload a document</span></button>
               <button type="button" id="gen-scan-btn" onclick="genScan()"
@@ -3234,6 +3244,7 @@ function applyUIStrings() {
   { const gl=document.getElementById('gen-input-lbl'); if(gl) gl.textContent=t('form.gen_input_lbl'); }
   { const gf=document.getElementById('gen-file-lbl'); if(gf) gf.textContent=t('form.upload_doc'); }
   { const gs=document.getElementById('gen-scan-lbl'); if(gs) gs.textContent=t('form.gen_scan'); }
+  { const gc=document.getElementById('gen-camera-lbl'); if(gc) gc.textContent=t('form.image_camera'); }
   { const fu=document.getElementById('fetch-url-lbl'); if(fu) fu.textContent=t('form.fetch_url'); }
   { const uc=document.getElementById('use-comic-lbl'); if(uc) uc.textContent=t('form.use_image'); }
   { const ch=document.getElementById('comic-help'); if(ch) ch.textContent=t('form.image_help'); }
@@ -8464,7 +8475,46 @@ function _genRouterCollapse(){
   const k=document.getElementById('gen-kind-row'); if(k) k.style.display='none';
   const st=document.getElementById('gen-input-status'); if(st) st.textContent='';
 }
-function _genRouterOpen(){ document.getElementById('gen-card-2')?.classList.remove('router-collapsed'); }
+// ⚠️ v90_u — PER-MODE REVEAL. `v90_s` opened the card all-or-nothing, so a Scan brought back the
+// ENTIRE old surface including the four checkboxes the field exists to replace: "nothing else" held
+// only for the first window. Now a scan reveals only what its own mode needs.
+//
+// ⚠️ THE MECHANISM ONLY EVER *ADDS* HIDING. It marks the children a mode does not need with
+// `.gen-hide` and never force-shows the rest — so whatever IS revealed is still governed by the
+// existing imperative logic (`_updateUploadSliderVis` hides `#story-len-row` outside length mode,
+// `_applyLessonCardUI` withholds the start button, and so on). A CSS rule that force-showed with
+// `display:revert !important` would override those inline decisions and silently break them.
+const _GEN_MODE_SHOW = {
+  llm:     ['topic-label','topic-input','style-wrap','num-chapters-row','story-len-row'],
+  paste:   ['user-story-panel','style-wrap'],
+  pdf:     ['user-story-panel','pdf-panel','story-len-row'],
+  comic:   ['comic-panel'],
+  dialect: ['dialect-panel'],
+};
+// ⚠️ `#user-story-checks` is revealed in EVERY mode, deliberately and for now. It is the legacy
+// escape hatch, and it is the only way to reach the dialect panel and the "I also have a
+// translation" modifier — both of which the router does not route to. Hiding it would make them
+// unreachable from the wizard, i.e. an actual loss of function, and the user's ruling on those two
+// (spec decisions 2 and 4) has not been given. When it is, this list is where it goes.
+const _GEN_ALWAYS = ['gen-input-panel','user-story-checks'];
+
+function _genRevealFor(mode){
+  const card=document.getElementById('gen-card-2'); if(!card) return;
+  card.classList.remove('router-collapsed');
+  const keep=new Set([..._GEN_ALWAYS, ...(_GEN_MODE_SHOW[mode]||[])]);
+  for(const el of [...card.children]){
+    if(el.classList.contains('gen-card-nav') || keep.has(el.id)) { el.classList.remove('gen-hide'); continue; }
+    el.classList.add('gen-hide');
+  }
+  console.log('[gen] revealing for mode:', mode);
+}
+// Full reveal — the old all-or-nothing behaviour, kept for the RESTORE paths. A resumed draft or a
+// reconnected job did not come through the router and has no mode, so it needs the whole surface.
+function _genRouterOpen(){
+  const card=document.getElementById('gen-card-2'); if(!card) return;
+  card.classList.remove('router-collapsed');
+  for(const el of [...card.children]) el.classList.remove('gen-hide');
+}
 
 // Hand real File objects to a handler that expects an <input>, without touching the handler.
 function _genFeedFiles(inputId, files){
@@ -8511,12 +8561,14 @@ async function genScan(){
   // left the old topic in `#topic-input`, and the fetch's own "only fill a blank field" rule
   // (correctly) declined to overwrite it — so the article arrived under the previous topic's title.
   _genClearRouted();
-  _genRouterOpen();
+  // url and document both end in #pdf-panel's chunk list, so they share its reveal.
+  _genRevealFor(d.kind==='image' ? 'comic' : d.kind==='story' ? 'paste' : 'pdf');
   if(d.kind==='image'){
     // item V's own path, multi-image included — reached through its real input.
     const cb=document.getElementById('use-comic-cb');
     if(cb && !cb.checked){ cb.checked=true; onUseComicCb(); }
     if(_genFeedFiles('comic-file-input', d.files)) onComicFileChosen(document.getElementById('comic-file-input'));
+    _genSetFiles([]);   // consumed — see the note on the document branch
     return;
   }
   if(d.kind==='document'){
@@ -8524,6 +8576,14 @@ async function genScan(){
     if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
     // Exactly one, by construction — the classifier refuses any other document count.
     if(_genFeedFiles('upload-file-input', d.files)) await onUploadFileChosen(document.getElementById('upload-file-input'));
+    // ⚠️ v90_u: A CONSUMED FILE IS UNSTAGED. `_genClassify` checks files BEFORE text, so a file left
+    // staged after a successful scan silently outranks anything typed afterwards: scan a document,
+    // then type a topic and press Scan, and the SAME document is processed again while the typed
+    // text is ignored entirely — the button appears to do nothing. Found by noticing the stale file
+    // name still under the field in a screenshot and then asking what a second Scan would do.
+    // ⚠️ A REFUSAL deliberately does NOT clear them (see the refuse branch above): there the drop
+    // must survive so the learner can remove the odd file out and press Scan again.
+    _genSetFiles([]);
     return;
   }
   if(d.kind==='url'){
@@ -8562,7 +8622,7 @@ function genChooseKind(kind){
   const text=(ta?ta.value:'').trim();
   const row=document.getElementById('gen-kind-row'); if(row) row.style.display='none';
   _genClearRouted();
-  _genRouterOpen();
+  _genRevealFor(kind==='story' ? 'paste' : 'llm');
   const cb=document.getElementById('use-story-cb');
   if(kind==='story'){
     if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
