@@ -386,7 +386,7 @@
     "lesson.type.desc.error_hunt": "Find spelling and grammar errors in a text",
     "lesson.type.desc.ai_error_hunt": "AI-generated error hunt based on the story",
     "lesson.type.desc.math": "Number and arithmetic exercises",
-    "form.pdf_chunk_size": "PDF chunk size",
+    "form.pdf_chunk_size": "Text block size",
     "form.clear_text": "Clear",
     "ex.syn.q_synonyms": "similar to {word}",
     "ex.syn.q_antonyms": "opposite to {word}",

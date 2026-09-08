@@ -128,6 +128,61 @@ function pageProseWords(html) {
   return words;
 }
 
+// ── Paragraph breaks, recovered from the page's own <p> boundaries (v90_r) ───
+//
+// ⚠️ A JSON-LD `articleBody` is ONE UNBROKEN RUN — measured: zero newlines on the article this was
+// built against. That is not cosmetic: `_paragraphCount()` returns 1, so the client's "¶ By
+// paragraph" chapter mode is greyed out and length is the only way to cut the text. The user asked
+// for the paragraph button to work here as it does for a PDF.
+//
+// ⚠️⚠️ THE CONTENT STILL COMES ONLY FROM `articleBody`. The page's <p> elements supply BOUNDARY
+// POSITIONS and nothing else: a <p> whose words are not found inside the body is ignored, so not one
+// word of navigation or promo furniture can enter this way. Same line this module already draws for
+// `pageProseWords` — a position is not an extractor — and it is what keeps the 45%-furniture problem
+// out while still answering the request.
+//
+// ⚠️ MATCHING IS ON WORDS, NOT CHARACTERS, and that is load-bearing. An exact substring test finds
+// ZERO of the 23 <p> blocks on the measured page, because stripping an inline tag leaves different
+// spacing around punctuation ("Alcide De Gasperi , aveva" in the markup against "Alcide De Gasperi,
+// aveva" in the body). Comparing punctuation-stripped lowercase WORDS is immune to that, and the
+// first few words of a paragraph are enough to locate where it starts.
+const PARA_MATCH_WORDS = 6;      // enough to be unambiguous, short enough to survive an inline edit
+const PARA_MIN_WORDS = 8;        // a shorter <p> is a caption, byline or teaser, not a paragraph
+
+const _pw = w => w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+
+function restoreParagraphs(body, html) {
+  const src = String(body || '');
+  if (/\n\s*\n/.test(src)) return src;            // already paragraphed (Wikipedia) — leave it alone
+  // Every word of the body with the offset it starts at, so a break is reinserted into the ORIGINAL
+  // text rather than into a normalised copy that would then have to be mapped back.
+  const words = [], offs = [];
+  const re = /\S+/g;
+  let m;
+  while ((m = re.exec(src))) { const k = _pw(m[0]); if (k) { words.push(k); offs.push(m.index); } }
+  if (words.length < PARA_MIN_WORDS * 2) return src;
+
+  const breaks = new Set();
+  let cursor = 0;
+  for (const pm of String(html || '').matchAll(/<p\b[^>]*>([\s\S]*?)<\/p\s*>/gi)) {
+    const pWords = pm[1].replace(/<[^>]+>/g, ' ').split(/\s+/).map(_pw).filter(Boolean);
+    if (pWords.length < PARA_MIN_WORDS) continue;
+    const needle = pWords.slice(0, PARA_MATCH_WORDS);
+    // Searched FORWARD from the last match so paragraphs land in document order, and a phrase that
+    // recurs later in the article cannot pull a break backwards.
+    for (let i = cursor; i + needle.length <= words.length; i++) {
+      let hit = true;
+      for (let k = 0; k < needle.length; k++) if (words[i + k] !== needle[k]) { hit = false; break; }
+      if (hit) { if (i > 0) breaks.add(offs[i]); cursor = i + 1; break; }
+    }
+  }
+  if (!breaks.size) return src;
+  const cuts = [...breaks].sort((a, b) => a - b);
+  let out = '', prev = 0;
+  for (const c of cuts) { out += src.slice(prev, c).trimEnd() + '\n\n'; prev = c; }
+  return (out + src.slice(prev)).trim();
+}
+
 // Returns the article, or null when this page does not publish one. `status` is the HTTP status the
 // page was served with and is a REQUIRED argument, not an option: it is the gate that the measured
 // tagesschau 404 defeats when it is left out.
@@ -140,12 +195,14 @@ function extractNewsArticle(html, status) {
     const body = o.articleBody.trim();
     if (body.length < MIN_BODY_CHARS) continue;
 
+    // Paragraph boundaries recovered from the page's own <p> elements — positions only, never text.
+    const withParas = restoreParagraphs(body, html);
     const bodyWords = wordCount(body);
     const rawPageWords = pageProseWords(html);
     const pageWords = rawPageWords >= MIN_PAGE_WORDS ? rawPageWords : 0;
 
     return {
-      text: body,
+      text: withParas,
       headline: typeof o.headline === 'string' ? o.headline.trim() : '',
       author: nameOf(o.author),
       publisher: nameOf(o.publisher),
@@ -326,5 +383,5 @@ async function fetchWikipediaArticle(target, opts) {
 }
 
 module.exports = { extractNewsArticle, ldJsonObjects, pageProseWords, wordCount, fetchPage,
-                   wikipediaTarget, fetchWikipediaArticle, stripWikiMarkup,
+                   wikipediaTarget, fetchWikipediaArticle, stripWikiMarkup, restoreParagraphs,
                    MIN_BODY_CHARS, MIN_PAGE_WORDS, MAX_REDIRECTS, MAX_BYTES, TIMEOUT_MS };

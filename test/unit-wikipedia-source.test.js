@@ -120,4 +120,49 @@ const client = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   console.log('  the ruler reports words AND chapters, from two existing translated keys: OK');
 }
 
+// ── 6. The ruler's FLOOR moves with the slider's meaning (v90_r) ─────────────
+// User request: "lowest size could be 10 words per chapter". ⚠️ Lowered only where the slider is a
+// CHUNK-SIZE control. The same element is the story-length control for GENERATED stories, where 10
+// words would ask the model for something absurd — the label already switches for exactly that
+// reason, so the range switches with it. Both branches are asserted, because lowering it globally
+// is the tempting one-character version of this change.
+{
+  const at = client.indexOf('\nfunction _updateUploadSliderVis(');
+  assert.ok(at > 0, 'found _updateUploadSliderVis');
+  const b = client.indexOf('{', at); let d = 0, i = b;
+  for (; i < client.length; i++) { if (client[i] === '{') d++; else if (client[i] === '}') { d--; if (!d) { i++; break; } } }
+  const body = client.slice(at, i);
+
+  const run = (asChunk) => {
+    const slider = { min: '50', step: '50', value: '300' };
+    const el = { 'story-len-slider': slider, 'story-len-row': { style: {} },
+                 'story-len-lbl': { textContent: '' }, 'use-story-cb': { checked: true } };
+    const fn = new Function('document', 't', '_uploadMode', '_splitMode', 'onStoryLenSlider',
+      body + '\nreturn _updateUploadSliderVis;')(
+      { getElementById: id => el[id] || null }, k => k, true, asChunk ? 'len' : 'para', () => {});
+    fn();
+    return slider;
+  };
+  const chunk = run(true), story = run(false);
+  assert.strictEqual(chunk.min, '10', `as a chunk-size control the floor is 10 words (got ${chunk.min})`);
+  assert.strictEqual(chunk.step, '10', 'and it steps in tens, so 10 is actually reachable');
+  assert.strictEqual(story.min, '50',
+    `as the STORY-LENGTH control the floor stays 50 — a 10-word generated story is nonsense (got ${story.min})`);
+  console.log('  the slider floor is 10 for chunk size and stays 50 for story length: OK');
+}
+
+// ── 7. The label the user asked to rename ────────────────────────────────────
+// ⚠️ An EDITED existing key, not a new one: `form.pdf_chunk_size` is already translated into all 33
+// languages, and those translations now lag the English until the user retranslates — the same
+// pattern `v85_x`'s `form.arc_lbl` reword used. Pinned so the rename is not silently reverted.
+{
+  const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+  assert.strictEqual(ui.en['form.pdf_chunk_size'], 'Text block size',
+    'the chunk-size label reads "Text block size" — it said "PDF chunk size", which was wrong for a ' +
+    'URL scrape and for a Wikipedia article');
+  assert.ok(/t\('form\.pdf_chunk_size'\)/.test(client),
+    'and the client still reads it through t(), so it stays translated rather than becoming English-only');
+  console.log('  the chunk-size label is renamed, still translated, key count unchanged: OK');
+}
+
 console.log('unit-wikipedia-source: ALL PASSED');

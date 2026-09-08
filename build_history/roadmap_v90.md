@@ -2938,6 +2938,87 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_r — a scraped article gets its paragraphs back, so ¶ works for a URL too
+
+Three user requests from one message, all measured before being built. **ZERO new `ui.json` keys**
+(one EXISTING English value edited, at the user's explicit request).
+
+### ⚠️ FIRST, WHAT WAS ALREADY TRUE — measured before changing anything
+
+*"could you activate the buttons that are available for PDF also for URL upload… by pages doesn't
+make sense here."* Driven in a real browser against both source types:
+
+| | ¶ By paragraph | ↔ By length | 📄 By page |
+|---|---|---|---|
+| **Wikipedia** | **already enabled** | selected | already disabled ✓ |
+| **news (Corriere)** | **greyed out** | selected | already disabled ✓ |
+
+So two thirds of the request was already satisfied, and 📄 was already correctly withheld (a URL has
+no pages). The real gap was the news case — and it was not a UI bug: **a JSON-LD `articleBody` is one
+unbroken run with ZERO newlines**, so `_paragraphCount()` returned 1 and there was genuinely no
+paragraph information to offer.
+
+### ⭐ THE FIX: PARAGRAPH BOUNDARIES RECOVERED FROM THE PAGE'S OWN `<p>` ELEMENTS
+
+`restoreParagraphs(body, html)`. **The content still comes only from `articleBody`** — the `<p>`
+elements supply BOUNDARY POSITIONS and nothing else, and a `<p>` whose words are not found inside the
+body is ignored. So not one word of the furniture measured at 45% of this page's `<p>` mass can enter.
+That is the same line this module already draws for `pageProseWords`: **a position is not an
+extractor.**
+
+⚠️ **MATCHING IS ON WORDS, NOT CHARACTERS, and the measurement is why.** An exact substring test finds
+**0 of the 23** `<p>` blocks on the real page — stripping an inline tag leaves different spacing
+around punctuation (`"Alcide De Gasperi , aveva"` in the markup against `"Alcide De Gasperi, aveva"`
+in the body). The first probe reported "0% coverage" and nearly killed the idea; checking a distinctive
+phrase against the raw HTML showed the text was there all along and only the comparison was wrong.
+Comparing punctuation-stripped lowercase WORDS is immune to it.
+
+Result on the article this was built against: **3 paragraphs, 134 / 195 / 170 words, 499 total —
+byte-for-byte the same words in the same order.** ⚠️ Cross-check: `roadmap_v90.md` recorded the PDF
+path's own chapters for this article as 171 / 195 / 177, so these are demonstrably the article's real
+paragraphs and not an artefact. ¶ is now the DEFAULT for it (3 paragraphs ≥ 3), with ↔ one click away.
+
+Already-paragraphed text (Wikipedia) short-circuits untouched.
+
+### The two smaller asks
+
+- **"lowest size could be 10 words per chapter"** — done, but **only where the slider is a CHUNK-SIZE
+  control** (`min`/`step` 10). The same element is the story-length control for GENERATED stories,
+  where 10 words would ask the model for nonsense; the label already switches for exactly that
+  reason, so the range switches with it. ⚠️ Lowering it globally is the tempting one-character
+  version, and `unit-wikipedia-source` §6 asserts BOTH branches.
+- **"can be renamed to text blocks"** — `form.pdf_chunk_size` now reads **"Text block size"**
+  ("PDF chunk size" was wrong for a URL scrape and absurd for a Wikipedia article). ⚠️ An **EDITED
+  existing key, not a new one**: it is already translated into all 33 languages and those
+  translations now lag the English until the user retranslates — the same pattern `v85_x`'s
+  `form.arc_lbl` reword used. **`en` key count unchanged at 743.**
+
+### ⚠️ THREE MUTATIONS SURVIVED THE FIRST SWEEP. TWO WERE REAL GAPS.
+
+- **The recovery was never proved to be WIRED IN.** Every section drove `restoreParagraphs`
+  directly, so replacing the call site with `const withParas = body` left the whole file GREEN.
+  **`v89` rule 12 in miniature** — driving a function proves nothing about the caller meant to use
+  it. §6 now runs `extractNewsArticle` end to end.
+- **`PARA_MIN_WORDS` looked tested and was not.** The fixture's short `<p>` matched the very START of
+  the body, where the `i > 0` test already suppresses a break — so dropping the minimum changed
+  nothing. The fixture now carries a short `<p>` matching MID-paragraph, which would cut a paragraph
+  in half if short blocks were honoured.
+- **The third is a genuine equivalent mutant, judged not counted**: allowing a break at offset 0 is
+  absorbed by the final `.trim()`.
+
+⚠️ **AND A PROCESS NOTE THAT COST TEN MINUTES.** The Python heredoc used to splice the new function
+interpreted `\n` in the JS source, producing a literal newline inside a regex literal and a syntax
+error. `CLAUDE.md`'s rule 25 ("write emoji-bearing blocks via a `cat` heredoc and splice the file
+in") **is not about emoji — it is about any escape-heavy block**, and backslashes in JS regexes are
+the same hazard. Re-done via a `cat` heredoc, which is what the rule already prescribes.
+
+⚠️ **A STALE TEST SERVER FAKED A FAILURE, AGAIN.** The browser check reported `paragraphs: 1` after
+the fix, and the temptation was to debug the code. The server on that port had been started BEFORE
+the module was written — `server.js` re-reads `index.html` per request, but a `require`d module is
+loaded once at boot. Confirmed by comparing the process start time against the file's mtime. **This
+is the second time this session that a stale process produced a convincing false negative** (the
+first was the user's own browser tab holding a pre-fix client).
+
 ## ✅ v90_q — Wikipedia through its own API, a chapter-size ruler, and a correction: JSON-LD coverage is much worse than claimed
 
 User: *"are the JSON-LD widely supported, eg. also new york times or international newspapers in

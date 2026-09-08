@@ -7706,6 +7706,20 @@ function _updateUploadSliderVis(){
   const show = !storyOn || asChunkSize;
   const row=document.getElementById('story-len-row'); if(row) row.style.display = show ? '' : 'none';
   const lbl=document.getElementById('story-len-lbl'); if(lbl) lbl.textContent = asChunkSize ? t('form.pdf_chunk_size') : t('form.story_len_lbl');
+  // v90_r (user request: "lowest size could be 10 words per chapter"). The floor moves with the
+  // slider's MEANING, rather than being lowered globally: as a chunk-size control 10 words is a
+  // legitimate setting for cutting a document into very small blocks, but as the STORY LENGTH for
+  // a generated story it would ask the model for something absurd. Same element, two jobs — the
+  // label already switches for exactly this reason, so the range switches with it.
+  const sl=document.getElementById('story-len-slider');
+  if(sl){
+    const min = asChunkSize ? 10 : 50, step = asChunkSize ? 10 : 50;
+    if(sl.min !== String(min)) sl.min = String(min);
+    if(sl.step !== String(step)) sl.step = String(step);
+    // A value left below the new floor (switching back out of chunk mode) would be silently
+    // clamped by the browser without APP.storyLen ever hearing about it.
+    if(parseInt(sl.value,10) < min){ sl.value = String(min); onStoryLenSlider(min); }
+  }
 }
 
 // Re-split the loaded document into chapters: per page (when available + checked)

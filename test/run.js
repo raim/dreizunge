@@ -282,6 +282,7 @@ run('unit: dialect TTS approximate detection (M1)', 'node', [path.join(__dirname
   run('unit: lesson retry — cancel, and hard-vs-soft backoff (v90_n)', 'node', [path.join(__dirname, 'unit-lesson-retry.test.js')]);
   run('unit: a scraped article is never cut mid-sentence (v90_o)', 'node', [path.join(__dirname, 'unit-scrape-sentence-split.test.js')]);
   run('unit: Wikipedia source + the chapter-size ruler (v90_q)', 'node', [path.join(__dirname, 'unit-wikipedia-source.test.js')]);
+  run('unit: a scraped article gets its paragraphs back (v90_r)', 'node', [path.join(__dirname, 'unit-scrape-paragraphs.test.js')]);
   run('unit: dialect story generator + gate (M2)', 'node', [path.join(__dirname, 'unit-dialect-story.test.js')]);
   run('unit: dialect mute + no-lang prompt', 'node', [path.join(__dirname, 'unit-dialect-mute.test.js')]);
 run('unit: no-keyboard glyph ordering (v48)', 'node', [path.join(__dirname, 'unit-no-keyboard.test.js')]);
