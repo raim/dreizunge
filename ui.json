@@ -347,6 +347,7 @@
     "form.upload_doc": "📎 Upload a document",
     "form.gen_input_lbl": "Drop a text, image or topic here:",
     "form.gen_scan": "Scan",
+    "form.gen_drop_one": "⚠ Drop one document, or several images.",
     "form.fetch_url": "🌐 Fetch from a web page",
     "teacher.mode_off": "🔓 Teacher mode",
     "teacher.mode_on": "🔒 Teacher mode ON",

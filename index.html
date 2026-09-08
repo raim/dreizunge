@@ -8435,13 +8435,19 @@ function _genClassify(text, files){
   const fs = Array.isArray(files) ? files.filter(Boolean) : [];
   if(fs.length){
     const imgs = fs.filter(_genIsImage), docs = fs.filter(_genIsDoc);
-    // ⚠️ MIXED DROPS ARE A KNOWN GAP, not a solved case — the roadmap spec lists "mixed or multiple
-    // files in one drop" as a decision the user still owes. Until then images win, because item V
-    // gives N images a defined meaning (one chapter each) while a PDF+image pair has none. The
-    // choice is logged rather than silent.
-    if(imgs.length) return { kind:'image', files:imgs, ignored: fs.length-imgs.length };
-    if(docs.length) return { kind:'document', files:docs, ignored: fs.length-docs.length };
-    return { kind:'unknown-file', files: fs };
+    // ⚠️⚠️ v90_t — USER RULING: REFUSE ANYTHING THAT IS NOT "several images" OR "exactly one
+    // document". `v90_s` shipped a first-wins interim rule and it was WRONG in a way the roadmap
+    // entry did not even name: mixed KINDS discarded the loser with only a console line, and
+    // several DOCUMENTS discarded all but the first with NO trace at all — the ignored count was
+    // zero, because they were all documents. Dropping three PDFs silently used one.
+    //   • several images  → fine, item V gives each one its own chapter
+    //   • exactly one document → fine, the path that always existed
+    //   • anything else (3 PDFs, a PDF + a JPEG, a .zip) → REFUSED, and nothing is consumed
+    // The user chose refusal over first-wins precisely so that nothing is ever discarded behind
+    // their back. ⚠️ A refusal must therefore leave the form COMPLETELY untouched — see genScan.
+    if(imgs.length === fs.length) return { kind:'image', files:imgs };
+    if(fs.length === 1 && docs.length === 1) return { kind:'document', files:docs };
+    return { kind:'refuse', files: fs };
   }
   const s = String(text||'').trim();
   if(!s) return { kind:'empty' };
@@ -8492,9 +8498,14 @@ async function genScan(){
   const d=_genClassify(ta?ta.value:'', _genFiles);
   const status=document.getElementById('gen-input-status');
   if(status) status.textContent='';
-  console.log('[gen] scan →', d.kind, d.ignored?('(ignoring '+d.ignored+' other file(s))'):'');
+  console.log('[gen] scan →', d.kind, d.files ? '('+d.files.length+' file(s))' : '');
   if(d.kind==='empty'){ ta?.focus(); return; }
   if(d.kind==='ask'){ _genAskKind(); return; }
+  // ⚠️ A REFUSAL CONSUMES NOTHING. It does not open the card, does not clear the routed fields and
+  // does not touch `_genFiles` — the learner's drop is still staged, so removing the odd file out
+  // and pressing Scan again just works. That is the whole point of refusing rather than picking:
+  // nothing is discarded behind their back.
+  if(d.kind==='refuse'){ if(status) status.textContent=t('form.gen_drop_one'); return; }
   // ⚠️ Each Scan REPLACES the previous routing decision, so the fields the last one populated must
   // be cleared first. Found by driving the router twice in a row: scanning a topic and then a URL
   // left the old topic in `#topic-input`, and the fetch's own "only fill a blank field" rule
@@ -8511,7 +8522,8 @@ async function genScan(){
   if(d.kind==='document'){
     const cb=document.getElementById('use-story-cb');
     if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
-    if(_genFeedFiles('upload-file-input', [d.files[0]])) await onUploadFileChosen(document.getElementById('upload-file-input'));
+    // Exactly one, by construction — the classifier refuses any other document count.
+    if(_genFeedFiles('upload-file-input', d.files)) await onUploadFileChosen(document.getElementById('upload-file-input'));
     return;
   }
   if(d.kind==='url'){
@@ -8522,7 +8534,7 @@ async function genScan(){
     return;
   }
   if(d.kind==='story'){ genChooseKind('story'); return; }
-  if(d.kind==='unknown-file'){ if(status) status.textContent=t('pdf.no_text'); _genRouterCollapse(); return; }
+
 }
 
 // The story-or-topic question. Both labels are EXISTING translated keys — `form.use_story` already

@@ -41,23 +41,54 @@ const f = (name, type) => ({ name, type: type || '' });
   assert.strictEqual(k([f('a.JPG')]), 'image', 'an image by extension, uppercase, no MIME');
   assert.strictEqual(k([f('a.png'), f('b.png'), f('c.png')]), 'image',
     'several images stay ONE image job — item V gives N images a defined meaning (a chapter each)');
-  assert.strictEqual(k([f('a.zip', 'application/zip')]), 'unknown-file', 'an unsupported file is refused, not guessed at');
+  assert.strictEqual(k([f('a.zip', 'application/zip')]), 'refuse', 'an unsupported file is refused, not guessed at');
   console.log('  files: pdf/text/markdown → document, png/jpg → image, zip refused: OK');
 }
 
-// ── 2. ⚠️ A MIXED DROP IS A KNOWN GAP, and the choice is RECORDED, not silent ─
-// The roadmap spec lists "mixed or multiple files in one drop" as a decision the user still owes.
-// Until it is made, images win — because N images mean something and a PDF+image pair does not —
-// and the count of ignored files is returned so the caller can say so rather than dropping them
-// quietly. Pinned so the interim rule cannot drift into a silent one.
+// ── 2. ⚠️⚠️ NOTHING IS EVER DISCARDED BEHIND THE LEARNER'S BACK (user ruling, v90_t) ──
+// `v90_s` shipped a first-wins interim rule. It was wrong twice over, and the second way was not
+// even named in its own write-up:
+//   • mixed KINDS discarded the loser with only a console line — silent from the UI;
+//   • several DOCUMENTS discarded all but the first with NO trace at all, because the "ignored"
+//     count was ZERO (they were all documents). Dropping three PDFs silently used one.
+// The user chose REFUSAL over picking. Only two file shapes are accepted, and everything else is
+// refused without consuming anything.
 {
-  const d = C._genClassify('', [f('a.pdf', 'application/pdf'), f('b.png', 'image/png')]);
-  assert.strictEqual(d.kind, 'image', 'images win a mixed drop (the documented interim rule)');
-  assert.strictEqual(d.ignored, 1, 'and the number of ignored files is REPORTED, never silently dropped');
-  const d2 = C._genClassify('', [f('a.pdf', 'application/pdf'), f('b.zip')]);
-  assert.strictEqual(d2.kind, 'document', 'with no image, documents win');
-  assert.strictEqual(d2.ignored, 1, 'and again the remainder is counted');
-  console.log('  a mixed drop resolves to images and REPORTS what it ignored: OK');
+  const k = (files) => C._genClassify('', files).kind;
+  // Accepted:
+  assert.strictEqual(k([f('a.png'), f('b.png'), f('c.png')]), 'image', 'several images (item V)');
+  assert.strictEqual(k([f('a.pdf', 'application/pdf')]), 'document', 'exactly one document');
+  // Refused — each of these silently lost a file before the ruling:
+  assert.strictEqual(k([f('a.pdf', 'application/pdf'), f('b.png', 'image/png')]), 'refuse',
+    'a PDF and an image together is refused, not resolved in favour of one of them');
+  assert.strictEqual(k([f('a.pdf', 'application/pdf'), f('b.pdf', 'application/pdf')]), 'refuse',
+    '⚠️ TWO DOCUMENTS are refused — this is the case that lost files with no trace at all, ' +
+    'because both were documents and the old ignored-count was therefore zero');
+  assert.strictEqual(k([f('a.pdf'), f('b.pdf'), f('c.pdf')]), 'refuse', 'and three');
+  assert.strictEqual(k([f('a.pdf', 'application/pdf'), f('b.zip')]), 'refuse', 'a document plus junk');
+  assert.strictEqual(k([f('a.png'), f('b.zip')]), 'refuse', 'images plus junk — not "images win"');
+  // ⚠️ And the accepted document case really does carry exactly one file through, so the dispatcher
+  // never has to slice — `[d.files[0]]` was how the silent loss happened.
+  assert.strictEqual(C._genClassify('', [f('a.pdf', 'application/pdf')]).files.length, 1,
+    'the document branch hands over exactly one file, so no caller needs to pick');
+  console.log('  only "several images" or "exactly one document" is accepted; everything else refused: OK');
+}
+
+// ── 2b. ⚠️ A REFUSAL CONSUMES NOTHING ────────────────────────────────────────
+// The point of refusing rather than picking: the learner's drop is still staged, so removing the
+// odd file out and pressing Scan again just works. Asserted on the dispatcher, not the classifier.
+{
+  const scan = client.slice(client.indexOf('async function genScan('));
+  const body = scan.slice(0, scan.indexOf('\n}'));
+  const line = body.split('\n').find(l => l.includes("d.kind==='refuse'"));
+  assert.ok(line, 'genScan has a refuse branch');
+  assert.ok(line.includes("t('form.gen_drop_one')"), 'which SAYS so, using the granted key');
+  assert.ok(!/(_genRouterOpen|_genRouterCollapse|_genClearRouted|_genFiles\s*=)/.test(line),
+    'and does NOT open, collapse, clear the routed fields or drop the staged files — a refusal ' +
+    `must leave the form exactly as it was (got: ${line.trim()})`);
+  const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
+  assert.ok(ui.en['form.gen_drop_one'], 'the refusal message exists');
+  console.log('  a refusal reports the reason and consumes nothing: OK');
 }
 
 // ── 3. Text: url / story / ask ───────────────────────────────────────────────

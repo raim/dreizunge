@@ -3144,6 +3144,87 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_t — a multi-file drop is REFUSED rather than quietly resolved (user ruling)
+
+⚠️ **This corrects `v90_s`, one release old, and it corrects its WRITE-UP too.** That entry described
+mixed drops as "a known gap… images win, **and the count of ignored files is RETURNED**, so the
+choice can be reported rather than made silently". Checking the code to answer the user's *"what do
+you mean 'mixed drops' and what decision do you need?"* showed **two things wrong with that
+sentence**:
+
+1. **The count was returned but never SHOWN.** `genScan` only `console.log`ged it. From the
+   learner's side the discard was silent — exactly what the entry claimed it was not.
+2. ⚠️ **And the worse case was not named at all.** For SEVERAL DOCUMENTS the dispatcher did
+   `[d.files[0]]` — first wins — and the ignored count was **zero**, because they were all
+   documents. **Dropping three PDFs silently used one, with no trace anywhere, not even the
+   console.** The entry discussed mixed KINDS and never mentioned mixed COUNTS.
+
+**The lesson is about the write-up, not only the code:** "the count is returned" was true of the
+classifier and false of the product, and it read as a mitigation. ⚠️ **A claim that something is not
+silent has to be checked at the layer the user hears it** — the same rule this project applies to
+behaviour (`v88` rule 4, "verify at the layer the user touches") applies to the CLAIM as well.
+
+### The ruling
+
+User, offered four options, chose **refuse**: *"Refuse, ask for one kind — nothing is ever discarded
+behind your back."* **ONE `ui.json` key**, granted with the choice (`form.gen_drop_one`).
+
+| dropped | v90_s | now |
+|---|---|---|
+| several images | accepted (item V: a chapter each) | **accepted**, unchanged |
+| exactly one document | accepted | **accepted**, unchanged |
+| a PDF + a JPEG | image won, PDF discarded (console only) | ⚠️ **refused** |
+| 3 PDFs | first won, two discarded **with no trace** | ⚠️ **refused** |
+| a `.zip` | `unknown-file` → "⚠ No text found." | **refused**, with guidance that fits |
+
+⚠️ **A REFUSAL CONSUMES NOTHING**, and that is the whole point of refusing rather than picking. It
+does not open the card, does not clear the routed fields, and does not drop `_genFiles` — the drop
+stays staged, so removing the odd file out and pressing Scan again just works. Verified live:
+two PDFs → refused, still collapsed, **both files still listed**; then the same staged document
+alone → 3 chapters. `unit-gen-input-router` §2b asserts the refuse branch touches none of that
+state, by reading the branch itself rather than trusting the description.
+
+### ⚠️ AND A GUARD REPAIRED — RULE 6 PAID FOR THE FOURTH TIME
+
+The release run went red on `smoke-render`, and it was **neither the new code nor the documented
+flakiness**. Diagnosed exactly as `v87_o` prescribes, in two commands: the failure was
+**deterministic 15/15**, and `git show HEAD:lessons.json` made it **pass** — so the CORPUS had moved,
+not the code. The user's own book job had written a new storyline, and the fixture selection
+(`the first storyline with ≥2 chapters and a storyboard`) moved to its chapter *"Jubiläum der
+Autonomie"*.
+
+**The guard's condition was a WEAKER PROXY than the property it asserted** — `v81_d`, `v81_e` and
+`v87_o` twice, now a fourth:
+
+| | |
+|---|---|
+| the test asked | `(s.words \|\| []).length > 1` — multi-word, **no upper bound** |
+| the builder's actual gate | `s.words.length > 0 && s.words.length <= 5` — **at most five words** |
+
+So a chapter whose sentences all run six words or longer is "orderable" by the test and produces no
+`order` exercise at all. Measured on the new fixture: **`order` appeared in 0 of 40 builds** while
+the condition still insisted it must be there. The predicate now IS the builder's gate, and the
+assertion message says to check it against `tsOrderable` before suspecting the renderer.
+
+⚠️ **Mutation-testing it needed the right corpus, which is itself the lesson.** Emptying
+`tsOrderable` against the CURRENT corpus leaves the file green — correctly, because the fixture has
+no orderable sentences and the assertion is dormant by design. Run against `HEAD`'s corpus, where
+the fixture can order, the same mutation goes red. **A conditional guard can only be mutation-tested
+on data that satisfies its condition**; testing it on data that does not proves nothing and looks
+like a survivor.
+
+### Guards
+
+`unit-gen-input-router` §2 rewritten: two accepted shapes and **five refused ones**, each of which
+lost a file before the ruling — including `[pdf, pdf]`, called out in the assertion message as the
+case that lost files with no trace because both were documents. Plus a check that the document
+branch carries **exactly one** file through, so no caller has to slice — `[d.files[0]]` was how the
+loss happened. **Three mutations red**, including both halves of the old first-wins rule.
+
+⚠️ One assertion catches mutation 2 through §2's *earlier* mixed-kinds check rather than its own
+two-documents check, because restoring `if(docs.length)` also breaks the PDF+image case. The mutant
+dies either way; noted so a later reader does not mistake the ordering for a gap.
+
 ## ✅ v90_s — ONE input field for the generation wizard: first step, nothing lost
 
 User: *"can you build first steps now, w/o losing functionality? the first window should merely show

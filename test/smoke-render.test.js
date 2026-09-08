@@ -329,16 +329,33 @@ console.log('  showComplete: fresh, review, below-mark, drill card, teacher: OK'
   // builder dropped ordering at difficulty ≤ 1, and the fixture chapter IS difficulty 1 — so this
   // render path had never once been executed by the suite on a beginner chapter, which is exactly
   // where it now appears for the first time. Conditional on the fixture's SHAPE rather than
-  // asserted flat, so a future corpus without multi-word sentences fails honestly instead of
+  // asserted flat, so a future corpus without orderable sentences fails honestly instead of
   // spuriously; the condition is evaluated on the fixture the collection above actually ran over.
+  //
+  // ⚠️⚠️ THE CONDITION MUST BE THE BUILDER'S OWN GATE, NOT A PROXY FOR IT — repaired at `v90_t`,
+  // and this is the FOURTH time rule 6 has been paid for (`v81_d`, `v81_e`, `v87_o` twice).
+  // It used to read `(s.words||[]).length > 1`: multi-word, with NO UPPER BOUND. The builder's
+  // actual gate is
+  //     ts.filter(s => Array.isArray(s.words) && s.words.length > 0 && s.words.length <= 5)
+  // — AT MOST FIVE WORDS. So a chapter whose sentences all run six words or longer is "orderable"
+  // by the old test and produces no `order` exercise at all, and the assertion fires on correct
+  // code. That is exactly what happened: the user's own book job wrote a new storyline, the
+  // fixture selection moved to its chapter "Jubiläum der Autonomie", and `order` appeared in
+  // 0 of 40 builds while the old condition still said it must be there.
+  // ⚠️ Diagnosed the way `v87_o` prescribes and it took one command: the failure was deterministic
+  // 15/15, and `git show HEAD:lessons.json` made it pass — so the corpus had moved, not the code.
+  // ⚠️ If this ever fires again, CHECK THIS PREDICATE AGAINST `tsOrderable` IN index.html FIRST.
+  // A copy of a rule is a rule that can drift.
   {
     const orderable = C.run(`(APP.lessonData.lessons || []).some(L =>
       L && (L.type || 'standard') === 'standard' &&
-      (L.sentences || []).some(s => s && (s.words || []).length > 1))`);
+      (L.sentences || []).some(s => s && Array.isArray(s.words) && s.words.length > 0 && s.words.length <= 5))`);
     if (orderable) {
       assert.ok(typeNames.includes('order'),
-        'the fixture has multi-word sentences, so sentence ordering must be among the rendered ' +
-        'types — v75_d allows it at difficulty 1 and this chapter is difficulty 1');
+        'the fixture has sentences the BUILDER considers orderable (1–5 words), so sentence ' +
+        'ordering must be among the rendered types — v75_d allows it at difficulty 1 and this ' +
+        'chapter is difficulty 1. If this fires, check the predicate above against `tsOrderable` ' +
+        'in index.html before suspecting the renderer');
     }
   }
   console.log(`  renderEx: ${typeNames.length} exercise type(s) rendered without throwing (${typeNames.join(', ')}): OK`);
