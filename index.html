@@ -484,6 +484,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .user-dialect-input:focus{outline:none;border-color:var(--green)}
 .story-len-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .story-len-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.02em}
+.gen-card.router-collapsed > *:not(#gen-input-panel):not(.gen-card-nav){display:none !important}
+#gen-input.drop-hot{outline:2px dashed var(--blue);outline-offset:2px}
 .story-len-val{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:10px;padding:2px 8px}
 .story-len-slider{width:100%;accent-color:var(--blue);cursor:pointer}
 .diff-select-wrap{position:relative;display:inline-block;width:100%}
@@ -1367,6 +1369,43 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         </div><!-- end gen-card-1 -->
       <div id="gen-area">
         <div class="gen-card" id="gen-card-2" style="display:none">
+          <!-- ⚠️ v90_s — ONE INPUT FOR THE WHOLE WIZARD (user request; spec in roadmap_v90.md,
+               "ONE INPUT FIELD FOR THE GENERATION WIZARD"). The learner used to have to CLASSIFY
+               THEIR OWN INPUT before giving it: four checkboxes revealing four panels, plus a fifth
+               entry point (the URL field) hidden inside one of them. Now they give the thing, and
+               `genScan()` decides.
+               ⚠️ NOTHING BELOW THIS PANEL WAS DELETED. Card 2's other children are hidden by ONE CSS
+               rule while `.router-collapsed` is set, and removing that class returns the card to
+               exactly its previous behaviour — every checkbox, panel and handler still present and
+               still reachable. That is what makes this reversible, and it is why the router is an
+               ENTRY rather than a replacement. -->
+          <div id="gen-input-panel">
+            <label class="form-lbl" for="gen-input" id="gen-input-lbl">Drop a text, image or topic here:</label>
+            <textarea class="topic-input" id="gen-input" rows="3"
+              placeholder="e.g. cooking, architecture, medicine…"
+              ondragover="event.preventDefault();this.classList.add('drop-hot')"
+              ondragleave="this.classList.remove('drop-hot')"
+              ondrop="genOnDrop(event)"></textarea>
+            <div id="gen-input-files" style="display:none;font-size:12px;color:var(--gray-dark);margin:4px 0"></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <input type="file" id="gen-file-input" multiple style="display:none"
+                accept=".pdf,.txt,.md,.markdown,.text,image/png,image/jpeg" onchange="genOnFilePick(this)">
+              <button type="button" id="gen-file-btn" onclick="document.getElementById('gen-file-input').click()"
+                style="font-size:12px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="gen-file-lbl">📎 Upload a document</span></button>
+              <button type="button" id="gen-scan-btn" onclick="genScan()"
+                style="font-size:13px;font-weight:800;padding:5px 16px;border:none;border-radius:8px;background:var(--green);color:var(--white);cursor:pointer;font-family:Nunito,sans-serif"><span id="gen-scan-lbl">Scan</span></button>
+              <span id="gen-input-status" style="font-size:11px;color:var(--gray-dark)"></span>
+            </div>
+            <!-- The one genuinely ambiguous case: a SHORT text could be the story itself or a topic
+                 to write about. Length cannot tell them apart, so the learner is asked — and only
+                 then does the matching path open. Both labels are EXISTING translated keys. -->
+            <div id="gen-kind-row" style="display:none;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <button type="button" id="gen-kind-story" onclick="genChooseKind('story')"
+                style="font-size:12px;font-weight:700;padding:5px 12px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"></button>
+              <button type="button" id="gen-kind-topic" onclick="genChooseKind('topic')"
+                style="font-size:12px;font-weight:700;padding:5px 12px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"></button>
+            </div>
+          </div>
         <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
         <textarea class="topic-input" id="topic-input" rows="2"
           placeholder="e.g. cooking, architecture, medicine…"
@@ -3192,6 +3231,9 @@ function applyUIStrings() {
   if (useStoryLbl) useStoryLbl.textContent = t('form.use_story');
   { const ud=document.getElementById('use-dialect-lbl'); if(ud) ud.textContent=t('form.use_dialect'); }
   { const ub=document.getElementById('upload-choose-lbl'); if(ub) ub.textContent=t('form.upload_doc'); }
+  { const gl=document.getElementById('gen-input-lbl'); if(gl) gl.textContent=t('form.gen_input_lbl'); }
+  { const gf=document.getElementById('gen-file-lbl'); if(gf) gf.textContent=t('form.upload_doc'); }
+  { const gs=document.getElementById('gen-scan-lbl'); if(gs) gs.textContent=t('form.gen_scan'); }
   { const fu=document.getElementById('fetch-url-lbl'); if(fu) fu.textContent=t('form.fetch_url'); }
   { const uc=document.getElementById('use-comic-lbl'); if(uc) uc.textContent=t('form.use_image'); }
   { const ch=document.getElementById('comic-help'); if(ch) ch.textContent=t('form.image_help'); }
@@ -4837,6 +4879,7 @@ async function _resumeComicDraftFrom(d){
   if(!d.comic || !d.comic.dataUrl){ showToast(t('toast.draft_missing')); return; }
   _comicDraftId = d.id;
   show('generation-screen');
+  _genRouterOpen();   // v90_s: a RESTORED panel must not sit behind the collapsed router
   if(d.srcLang) selectSrcLang(d.srcLang);
   if(d.lang) selectLang(d.lang, true);
   if(d.difficulty){ APP.difficulty = d.difficulty; restoreDiffSelect(); }
@@ -6551,7 +6594,7 @@ async function _restoreFormLang(){
 // PLAN §C5 stage 2: shows 'generation-screen', not 'landing' — the two screens split at v81_w.
 // loadSavedList() is still called here: the generation screen's "continue this story" dropdown
 // (repopulateContinueSelect) reads APP.savedList, so it must stay fresh even off the library screen.
-async function goLanding(){ APP.ttsLang=null; APP._ttsVoiceName=null; await _restoreFormLang(); loadSavedList(); show('generation-screen'); }
+async function goLanding(){ APP.ttsLang=null; APP._ttsVoiceName=null; await _restoreFormLang(); loadSavedList(); show('generation-screen'); _genRouterCollapse(); }
 
 function toggleStory(){
   const body=document.getElementById('story-body');
@@ -7531,7 +7574,7 @@ async function goLessonSet(){
 // PLAN §C5 stage 2: shows 'generation-screen', not 'landing' — see goLibraryClean() just below for
 // the counterpart. Both still reset the same shared render-context state (ttsLang, form language);
 // only the destination screen differs now.
-function goLandingClean(){ history.replaceState(null,'','#'); APP.ttsLang=null; APP._ttsVoiceName=null; _restoreFormLang().finally(()=>{ loadSavedList(); show('generation-screen'); }); }
+function goLandingClean(){ history.replaceState(null,'','#'); APP.ttsLang=null; APP._ttsVoiceName=null; _restoreFormLang().finally(()=>{ loadSavedList(); show('generation-screen'); _genRouterCollapse(); }); }
 // PLAN §C5 — stage 1 gave "🌍 home" and every stranded-learner fallback a name of their own
 // (`showLibraryClean`) distinct from generation's (`showGenerationClean`) — a user ruling: "home"
 // means the library, not generation. Stage 2 (this release) is what makes this body's DESTINATION
@@ -7663,6 +7706,7 @@ async function resumeDraft(draftId){
     _chunksDirty = true;
     _pdfSelMode=false; _pdfSelections=[];
     show('generation-screen');
+    _genRouterOpen();   // v90_s: a RESTORED panel must not sit behind the collapsed router
     if(d.srcLang) selectSrcLang(d.srcLang);
     if(d.lang) selectLang(d.lang, true);
     if(d.difficulty){ APP.difficulty = d.difficulty; restoreDiffSelect(); }
@@ -8344,6 +8388,181 @@ async function fetchStoryFromUrl(){
   }finally{
     if(btn) btn.disabled = false;
   }
+}
+
+// ── v90_s: ONE INPUT FIELD FOR THE WIZARD — classification and dispatch ──────
+//
+// User request (spec in roadmap_v90.md): "have one field for file drop and text input… from the
+// input there, we decide which paths follow… if it's a short text only, we ask the user whether
+// this is the story already or just a topic for LLM, only then we open the inputs for LLM-based
+// story generation."
+//
+// ⚠️ THIS IS AN ENTRY, NOT A REPLACEMENT, and that is the whole safety argument. Every existing
+// panel, checkbox and handler is untouched; card 2 simply starts COLLAPSED behind one CSS rule and
+// `genScan()` opens the surface that matches what was given. Removing `.router-collapsed` returns
+// the card to exactly its previous behaviour, so nothing can be lost by this change that is not
+// also restored by deleting one class.
+//
+// ⚠️ AND THE TWO FILE HANDLERS ARE NOT REFACTORED. `onUploadFileChosen(input)` and
+// `onComicFileChosen(input)` both read `input.files`, so dropped files are handed to them through a
+// synthetic `DataTransfer` assigned to their OWN hidden inputs. Rewriting either to take a File
+// would have meant re-testing two paths that already work (the PDF flow, and item V's multi-image
+// comic upload) for no gain.
+
+// ⚠️ The topic/story threshold is `#topic-input`'s OWN maxlength, because the user said to "use
+// current length max for the topic field". ⚠️ NOTE THE CONTRADICTION recorded in the roadmap spec:
+// the markup caps the field at 400 but `server.js` slices topics to 300 in two places. The field's
+// value is used here — it is what the learner can actually type — and the mismatch is flagged as a
+// separate thing to reconcile, NOT silently resolved by picking one.
+const GEN_TOPIC_MAX = 400;
+let _genFiles = [];   // files dropped or picked, awaiting Scan
+
+function _genIsHttpUrl(s){
+  // The WHOLE input must be one URL. A story that merely mentions a link is a story — measured
+  // relevance: pasted articles routinely contain URLs in their body.
+  if(/\s/.test(s)) return false;
+  try{ const u=new URL(s); return u.protocol==='http:'||u.protocol==='https:'; }catch(_){ return false; }
+}
+function _genIsImage(f){ return /^image\//.test(f.type||'') || /\.(png|jpe?g)$/i.test(f.name||''); }
+function _genIsDoc(f){
+  return f.type==='application/pdf' || /^text\//.test(f.type||'')
+      || /\.(pdf|txt|md|markdown|text)$/i.test(f.name||'');
+}
+
+// ⚠️ PURE, and deliberately so: this is the whole decision, and a decision buried in a dispatcher
+// cannot be tested (`v89` rule 13). It returns what to do; `genScan` does it.
+function _genClassify(text, files){
+  const fs = Array.isArray(files) ? files.filter(Boolean) : [];
+  if(fs.length){
+    const imgs = fs.filter(_genIsImage), docs = fs.filter(_genIsDoc);
+    // ⚠️ MIXED DROPS ARE A KNOWN GAP, not a solved case — the roadmap spec lists "mixed or multiple
+    // files in one drop" as a decision the user still owes. Until then images win, because item V
+    // gives N images a defined meaning (one chapter each) while a PDF+image pair has none. The
+    // choice is logged rather than silent.
+    if(imgs.length) return { kind:'image', files:imgs, ignored: fs.length-imgs.length };
+    if(docs.length) return { kind:'document', files:docs, ignored: fs.length-docs.length };
+    return { kind:'unknown-file', files: fs };
+  }
+  const s = String(text||'').trim();
+  if(!s) return { kind:'empty' };
+  if(_genIsHttpUrl(s)) return { kind:'url', url:s };
+  // Too long to be a topic at all — the field itself would not have accepted it as one.
+  if(s.length > GEN_TOPIC_MAX) return { kind:'story', text:s };
+  // ⚠️ The one case length genuinely cannot decide. Ask, rather than guess and be silently wrong.
+  return { kind:'ask', text:s };
+}
+
+// Card 2 starts showing ONLY the new panel. One class, so the inverse is one class removal.
+function _genRouterCollapse(){
+  document.getElementById('gen-card-2')?.classList.add('router-collapsed');
+  const k=document.getElementById('gen-kind-row'); if(k) k.style.display='none';
+  const st=document.getElementById('gen-input-status'); if(st) st.textContent='';
+}
+function _genRouterOpen(){ document.getElementById('gen-card-2')?.classList.remove('router-collapsed'); }
+
+// Hand real File objects to a handler that expects an <input>, without touching the handler.
+function _genFeedFiles(inputId, files){
+  const el=document.getElementById(inputId); if(!el) return false;
+  try{
+    const dt=new DataTransfer();
+    for(const f of files) dt.items.add(f);
+    el.files=dt.files;
+    return true;
+  }catch(e){ console.warn('[gen] could not hand files to '+inputId+':', e.message); return false; }
+}
+
+function genOnDrop(ev){
+  ev.preventDefault();
+  document.getElementById('gen-input')?.classList.remove('drop-hot');
+  const fs=[...(ev.dataTransfer?.files||[])];
+  if(fs.length) _genSetFiles(fs);
+}
+function genOnFilePick(input){ _genSetFiles([...(input.files||[])]); input.value=''; }
+function _genSetFiles(fs){
+  _genFiles=fs;
+  const row=document.getElementById('gen-input-files');
+  if(row){ row.style.display=fs.length?'':'none'; row.textContent=fs.map(f=>f.name).join(', '); }
+}
+
+// The learner pressed Scan. ⚠️ EXPLICIT, never an oninput: classifying while they type would
+// reclassify mid-sentence (a topic becomes a story at character 401) and would fire a network fetch
+// the instant a pasted URL completed.
+async function genScan(){
+  const ta=document.getElementById('gen-input');
+  const d=_genClassify(ta?ta.value:'', _genFiles);
+  const status=document.getElementById('gen-input-status');
+  if(status) status.textContent='';
+  console.log('[gen] scan →', d.kind, d.ignored?('(ignoring '+d.ignored+' other file(s))'):'');
+  if(d.kind==='empty'){ ta?.focus(); return; }
+  if(d.kind==='ask'){ _genAskKind(); return; }
+  // ⚠️ Each Scan REPLACES the previous routing decision, so the fields the last one populated must
+  // be cleared first. Found by driving the router twice in a row: scanning a topic and then a URL
+  // left the old topic in `#topic-input`, and the fetch's own "only fill a blank field" rule
+  // (correctly) declined to overwrite it — so the article arrived under the previous topic's title.
+  _genClearRouted();
+  _genRouterOpen();
+  if(d.kind==='image'){
+    // item V's own path, multi-image included — reached through its real input.
+    const cb=document.getElementById('use-comic-cb');
+    if(cb && !cb.checked){ cb.checked=true; onUseComicCb(); }
+    if(_genFeedFiles('comic-file-input', d.files)) onComicFileChosen(document.getElementById('comic-file-input'));
+    return;
+  }
+  if(d.kind==='document'){
+    const cb=document.getElementById('use-story-cb');
+    if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
+    if(_genFeedFiles('upload-file-input', [d.files[0]])) await onUploadFileChosen(document.getElementById('upload-file-input'));
+    return;
+  }
+  if(d.kind==='url'){
+    const cb=document.getElementById('use-story-cb');
+    if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
+    const f=document.getElementById('fetch-url-input'); if(f) f.value=d.url;
+    await fetchStoryFromUrl();
+    return;
+  }
+  if(d.kind==='story'){ genChooseKind('story'); return; }
+  if(d.kind==='unknown-file'){ if(status) status.textContent=t('pdf.no_text'); _genRouterCollapse(); return; }
+}
+
+// The story-or-topic question. Both labels are EXISTING translated keys — `form.use_story` already
+// says "I have my own story or document!" and `gen.title` already says "Generate", which is exactly
+// the choice being offered. No new string was spent on it.
+function _genAskKind(){
+  const row=document.getElementById('gen-kind-row'); if(!row) return;
+  const a=document.getElementById('gen-kind-story'), b=document.getElementById('gen-kind-topic');
+  if(a) a.textContent=t('form.use_story');
+  if(b) b.textContent='✨ '+t('gen.title');
+  row.style.display='flex';
+}
+
+// Answering it opens ONLY the matching surface — "only then we open the inputs for LLM-based story
+// generation", as asked.
+// Clear whatever a PREVIOUS scan wrote into the wizard's own fields. Only the two the router
+// itself populates — a language choice or a lesson setting is not part of "what was scanned".
+function _genClearRouted(){
+  const topic=document.getElementById('topic-input'); if(topic) topic.value='';
+  const story=document.getElementById('user-story-input'); if(story) story.value='';
+}
+
+function genChooseKind(kind){
+  const ta=document.getElementById('gen-input');
+  const text=(ta?ta.value:'').trim();
+  const row=document.getElementById('gen-kind-row'); if(row) row.style.display='none';
+  _genClearRouted();
+  _genRouterOpen();
+  const cb=document.getElementById('use-story-cb');
+  if(kind==='story'){
+    if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
+    _setPasteVisible(true);
+    const box=document.getElementById('user-story-input');
+    if(box){ box.value=text; try{ autoResizeTextarea(box); }catch(_){ } }
+  }else{
+    if(cb && cb.checked){ cb.checked=false; onUseStoryCb(); }
+    const topic=document.getElementById('topic-input');
+    if(topic) topic.value=text;
+  }
+  console.log('[gen] kind chosen:', kind);
 }
 
 // Light cleanup for plain-text uploads (normalise newlines, trim trailing spaces).
@@ -25377,6 +25596,7 @@ async function _jobsOpenComicExtract(link){
     const panels = j && j.data && j.data.panels;
     if(!Array.isArray(panels) || !panels.length) throw new Error('No result');
     show('generation-screen');
+    _genRouterOpen();   // v90_s: a RESTORED panel must not sit behind the collapsed router
     _comicApplyExtraction(panels);
     comicOpenReview(true);
   }catch(e){

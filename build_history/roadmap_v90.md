@@ -3144,6 +3144,98 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_s — ONE input field for the generation wizard: first step, nothing lost
+
+User: *"can you build first steps now, w/o losing functionality? the first window should merely show
+a text input field, like the current topic field, but have a file upload button or file drop
+function. nothing else. from the input there, we decide which paths follow."* Built to the spec
+recorded at the `v90_r` cut. **TWO `ui.json` keys**, granted explicitly (`form.gen_input_lbl`,
+`form.gen_scan`) — the estimate was 2–3 and the third was avoided.
+
+### ⚠️ THE SAFETY ARGUMENT: it is an ENTRY, not a replacement, and the inverse is ONE class removal
+
+Card 2 starts `.router-collapsed`, and **one CSS rule** hides everything except the new panel:
+
+```css
+.gen-card.router-collapsed > *:not(#gen-input-panel):not(.gen-card-nav){display:none !important}
+```
+
+Nothing was deleted. All thirteen original controls — the four checkboxes, the four panels,
+`#topic-input`, `#style-wrap` and the three hidden file inputs — are still in the markup, still
+wired, and still work once the class comes off. Verified live: after any scan the old surface is
+fully back and **every legacy checkbox still drives its own panel** (`use-story` → paste,
+`use-dialect` → dialect, `use-comic` → comic). That is what "without losing functionality" had to
+mean, and it is asserted rather than asserted-about.
+
+⚠️ **AND EVERY RESTORE PATH OPENS IT.** `resumeDraft`, `_resumeComicDraftFrom` and the comic
+extraction reconnect all land on the generation screen with a panel ALREADY populated; without an
+explicit open they would render real content behind a collapsed card — which is `v87_d`'s bug (real
+content rendered into a `display:none` node) in a new place. Three call sites, guarded by count.
+
+### ⚠️ THE TWO FILE HANDLERS WERE NOT REFACTORED
+
+`onUploadFileChosen(input)` and `onComicFileChosen(input)` both read `input.files`, so dropped files
+are handed to them through a **synthetic `DataTransfer` assigned to their own hidden inputs**.
+Rewriting either to take a `File` would have meant re-testing two paths that already work — the PDF
+flow, and item V's multi-image comic upload — for no gain.
+
+### The decision, kept PURE so it can be tested
+
+`_genClassify(text, files)` returns what to do; `genScan()` does it. A decision buried in a
+dispatcher cannot be tested (`v89` rule 13).
+
+| input | → | opens |
+|---|---|---|
+| `.pdf` / `.txt` / `.md` | `document` | `#pdf-panel`'s chunk list |
+| `.png` / `.jpg` (one or many) | `image` | `#comic-panel` (item V: a chapter each) |
+| the whole input is one http(s) URL | `url` | `fetchStoryFromUrl` (`v90_m`/`v90_q`) |
+| text longer than the topic cap | `story` | the paste path |
+| **short text** | **`ask`** | **the learner is asked, and only then does a path open** |
+
+⚠️ **THE ASK IS THE POINT.** Length cannot tell a short story from a topic, so it does not guess —
+it offers two buttons whose labels are **existing translated keys** (`form.use_story` "📖 I have my
+own story or document!" against `gen.title` "Generate"), and *"only then we open the inputs for
+LLM-based story generation"*, as asked. **Zero keys spent on the ambiguous case.**
+
+⚠️ **Scan is an explicit button press, never an `oninput`** — classifying while the learner types
+would reclassify mid-sentence (a topic becomes a story at character 401) and fire a network fetch the
+instant a pasted URL completed. Guarded in both directions.
+
+### ⚠️ TWO BUGS FOUND BY DRIVING IT, NOT BY READING IT
+
+1. **A second Scan did not clear what the first one routed.** Scanning a topic and then a URL left
+   the old topic in `#topic-input`, and the fetch's own "only fill a blank field" rule — correct in
+   itself — declined to overwrite it, so the article arrived under the previous topic's title.
+   `_genClearRouted()` now runs before every dispatch. Found by running the router twice in a row;
+   a single-path test would never have shown it.
+2. ⚠️ **The guard's own URL fixture tested the wrong direction.** It used
+   `"Read more at https://…"`, which STARTS with prose — so `new URL()` throws and the whitespace
+   guard is never reached. Deleting that guard left the file GREEN. Measured: `new URL('https://
+   example.org/a and here is the rest')` **succeeds**, percent-encoding the prose into the path, so a
+   story that BEGINS with a link would have been fetched against a nonsense address. The fixture now
+   begins with the link, and the mutation dies.
+
+### Known gaps, deliberately left
+
+- **Mixed drops** (a PDF and an image together) remain the user's decision. Interim rule: images win,
+  because N images have a defined meaning and a PDF+image pair does not — **and the count of ignored
+  files is RETURNED**, so the choice can be reported rather than made silently. §2 pins that.
+- **Dialect is not routed to.** The user said "we drop the dialect upload for now", and the standing
+  rule is re-scope rather than delete: `doDialectImport` and its **six test files** are untouched and
+  the checkbox still works once the card opens. Nothing was removed.
+- ⚠️ **The topic-cap contradiction is still open**: the threshold used here is `#topic-input`'s own
+  `maxlength` of **400**, per the user's "use current length max for the topic field", while
+  `server.js` slices topics to **300** in two places. Deliberately NOT resolved by silently picking
+  one; §3 pins 400 so a change has to be intentional.
+
+### Verified live, at the layer the user touches
+
+Driven in a real browser against a live server: the first window shows ONLY the field, the upload
+button and Scan, with all eight other card-2 regions hidden. All seven routes exercised end to end —
+short text → ask → topic (`mode: llm`) and → story (`mode: paste`); long text → story with no
+question; a URL → 32 chapters with the licence auto-filled; a real `File` through the real hidden
+input → 4 chapters; a PNG → the comic panel. **Six mutations red.**
+
 ## ✅ FIELD CONFIRMATION — the `v90_l` IPv6 fix survives a real wlan drop (user, `v90_r` cut)
 
 User, unprompted: *"jobs now proceed even if the laptop loses wlan."*
