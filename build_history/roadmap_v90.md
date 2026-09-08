@@ -2938,6 +2938,154 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+# 🆕 ONE INPUT FIELD FOR THE GENERATION WIZARD (user, at the `v90_r` cut) — SPEC ONLY, NO CODE
+
+User: *"clean up generation wizard… have one field for file drop and text input… The field's title
+should be 'drop a text, image or topic here:'… When the user has entered something and pressed a
+'scan' button, this should automatically open the respective dialogues… We drop the dialect upload
+for now!"*
+
+**Nothing was built.** This is the design, the detection rules, what already exists to reuse, and the
+decisions that must be made before code. ⚠️ **No `ui.json` budget has been requested** — see the key
+estimate at the end; it is the first thing to settle, because the current design deletes more
+strings than it adds.
+
+## What exists today, and why it is worth replacing
+
+Card 2 currently asks the learner to CLASSIFY THEIR OWN INPUT before giving it: four checkboxes
+(`#use-story-cb`, `#use-translation-cb`, `#use-dialect-cb`, `#use-comic-cb`) reveal four panels
+(`#user-story-panel`, `#pdf-panel`, `#dialect-panel`, `#comic-panel`), and `v90_m` added a fifth
+entry point (the URL field) inside the first of them. `_genInputMode()` then re-derives the mode from
+those very checkboxes:
+
+```js
+function _genInputMode(){
+  if(document.getElementById('translate-select')?.value) return 'translate';
+  if(document.getElementById('use-comic-cb')?.checked) return 'comic';
+  if(document.getElementById('use-dialect-cb')?.checked) return 'dialect';
+  if(document.getElementById('use-story-cb')?.checked) return _uploadMode ? 'pdf' : 'paste';
+  return 'llm';
+}
+```
+
+⚠️ **That function is the seam this whole item turns on.** It already exists, every downstream row
+already gates on its answer (`_genChapterCount`, `_genArcApplicable`, `_applyLessonCardUI`,
+`_genStartBtnLabel`), and `v85_e`/item AL built it precisely so the wizard would not have to know
+five input shapes. **The change is to compute its answer from the INPUT rather than from a checkbox
+the user ticked** — not to invent a new router. Anything that re-implements the mode instead of
+feeding this one is the wrong shape.
+
+## The detection rules, split by how reliable they actually are
+
+⚠️ **Three of these are decidable; one is a guess.** Recording which is which is the point of this
+section — the guess is what the "scan" button and the review card exist to absorb.
+
+| input | rule | reliability |
+|---|---|---|
+| **PDF** | extension `.pdf` OR `type === 'application/pdf'` | **decidable.** `onUploadFileChosen` already does exactly this |
+| **image / comic** | MIME `image/*` (the existing input accepts `png,jpeg`) | **decidable** |
+| **text file** | `.txt`/`.md`/`.markdown`/`.text` → `_cleanPlainText` | **decidable.** Markdown needs no separate branch — both already take the same path |
+| **URL** | the WHOLE trimmed input parses as `new URL()` with an http/https scheme | **decidable**, and already written twice: `wikipediaTarget` and `/api/fetch-url`'s own shape check. ⚠️ A story that merely CONTAINS a link is not a URL — the test is "the entire input is one" |
+| **topic vs story** | length, against `#topic-input`'s existing `maxlength="400"` | ⚠️ **A GUESS, and the user chose it deliberately.** A 380-character topic and a 380-character micro-story are indistinguishable. Note the cap is not one number today: the field says 400, but `server.js` slices topics to **300** in two places — reconcile before using either as a threshold |
+
+⚠️ **Length is the right guess anyway, and not because it is accurate.** The alternatives —
+counting sentences, looking for a finite verb, asking the model — either need language knowledge in
+the code (which this project's standing design principle forbids) or cost a model call before the
+user has asked for anything. Length is wrong sometimes, cheap always, and **the "scan" button makes
+being wrong recoverable**: it opens a dialogue the user can see and correct, rather than silently
+committing to a path.
+
+## The flow
+
+1. One drop zone + textarea, titled *"drop a text, image or topic here:"*.
+2. The learner drops file(s) or types/pastes.
+3. **Scan** classifies and OPENS the matching existing surface, unchanged:
+   - PDF / text file → `#pdf-panel`'s chunk list (`onUploadFileChosen`'s own path)
+   - image(s) → `#comic-panel` (item V already gives one chapter per image)
+   - URL → `fetchStoryFromUrl` (`v90_m`/`v90_q`)
+   - long text → the paste path
+   - short text → the topic path, i.e. LLM generation
+4. Everything downstream — review card, split modes, the ruler, the wizard's lesson card, the book
+   job — is untouched.
+
+⚠️ **"Scan" must be an EXPLICIT act, not an oninput.** Classifying while the user is still typing
+would reclassify mid-sentence (a topic becomes a story at character 401) and would fire a network
+fetch the moment a pasted URL completed. The button is what makes the guess safe.
+
+## ⚠️ Decisions the user must make before any code
+
+1. **Mixed or multiple files in one drop.** N images is defined (item V: one chapter each). A PDF
+   *and* an image together is not. Refuse the mixture, or take the first, or queue them?
+2. **`#use-translation-cb` is not in the list** — "I also have a translation" is a MODIFIER on
+   pasted text, not an input kind. Does it survive as a checkbox beside the new field, or move into
+   the review step?
+3. **`translate-select`** short-circuits `_genInputMode` ahead of everything else (item AX). It is
+   not an "input" at all, so presumably it stays outside the new field entirely — confirm.
+4. **What "drop the dialect upload" means.** ⚠️ **The standing rule is re-scope, not delete**, and
+   this one has teeth: `doDialectImport`, `parseDialectGlossary`, `buildDialectTopic` and **six test
+   files** (`e2e-dialect-import`, `unit-dialect-glossary`, `-mute`, `-panel`, `-story`, `-tts`) are
+   live. Hiding the ENTRY POINT is a two-line change and keeps every one of them passing; deleting
+   the feature is a different, much larger request. **Assume hide unless the user says delete.**
+5. **The topic cap contradiction** (400 in the markup, 300 in `server.js`) — which is the real one?
+
+## The second idea, deliberately kept separate
+
+*"we could let a model decide whether further user-input is necessary, or whether there is a clean
+split into chapters."*
+
+⚠️ **This is a SEPARATE item and should not be built with the router.** Reasons, all measured this
+session:
+- The app already has `splitChaptersLLM` (✨ *By topic (model)*) doing exactly the chapter half, and
+  `cleanNarrativeText` doing the boilerplate half. **The capability exists; what is proposed is
+  making it AUTOMATIC.**
+- ⚠️ **Automatic means a model call on every upload, before the user has asked for anything** — and
+  on this hardware that is not free: `llama-server` runs at 350–480% CPU and ~23GB, one CP2 sentence
+  at a time, and `v90_o` exists because an automatic post-pass competing with generation cost a
+  chapter. An unprompted call per upload is the same mistake in a new place.
+- The honest version is **opt-in on a button the learner presses**, which is what ✨ already is.
+
+**Recommendation: build the router first, with the cheap decidable rules, and leave the model out of
+it.** Then measure whether the length guess is actually wrong often enough to need help.
+
+## Key budget — the first thing to settle, and it may be NEGATIVE
+
+Added: one field title (*"drop a text, image or topic here:"*) and one **Scan** button — **2 keys**.
+Possibly a third if a "couldn't tell what this is" message is wanted, though the existing
+`pdf.no_text`/`pdf.no_article` family may cover the failures.
+
+Removed, if the four checkboxes go: `form.use_story`, `form.use_dialect`, `form.use_image` and their
+help strings. ⚠️ **`v89_an` already found 29 dead keys this way and kept a detector as a guard** —
+run it after, not before. **The net may well be fewer keys than today**, which is worth telling the
+user when asking, since every one of these is 33 hand translations.
+
+## ✅ FIELD CONFIRMATION — the `v90_l` IPv6 fix survives a real wlan drop (user, `v90_r` cut)
+
+User, unprompted: *"jobs now proceed even if the laptop loses wlan."*
+
+⚠️ **This is the empirical half `v90_l` never had.** That fix was justified by measuring the CAUSE —
+`ECONNREFUSED ::1:11434` in single-digit milliseconds, Ollama listening on `127.0.0.1` only, and the
+app's default being the NAME `localhost` — and then by reasoning that pinning IPv4 must therefore
+remove it. It was **never confirmed by actually losing the wlan and watching a job continue**, which
+is the observation that matters to the user and the one nobody had made.
+
+It is now confirmed in the field, on the reporting machine, on the reporting fault. The chain the
+symptom took — interface goes down → resolver order changes → a call lands on `::1` → instant local
+refusal → "⚠ Ollama unreachable" — is closed end to end, cause and effect both measured.
+
+**Recorded because a fix justified by construction is a weaker claim than one confirmed by the
+failure not happening**, and this project's own protocol (§3, "revert-verify every fix and believe
+the result") says so. A future session seeing "Ollama unreachable" again should treat it as a NEW
+fault rather than a recurrence: check the error CODE and its TIMING first, per `v90_l`'s own note.
+
+⚠️ **And a related correction, from the same session.** While diagnosing the cancelled book job the
+agent sampled the `ollama` process and read 0.2% CPU, concluding the model had stopped. **That was
+the wrong process.** `ollama` is only the API front-end; **`llama-server` does the compute** and was
+measured at 350–480% CPU and ~23GB RSS while jobs ran. The `v90_p` cancel findings do not depend on
+it (they were established from the code, and its guard watches the socket close), but the reading
+itself was wrong — and it made the bug sound milder than it was: the model was most likely still
+burning four cores on a job the user had asked to stop. **When measuring whether this machine is
+busy, look at `llama-server`, never at `ollama`.**
+
 ## ✅ v90_r — a scraped article gets its paragraphs back, so ¶ works for a URL too
 
 Three user requests from one message, all measured before being built. **ZERO new `ui.json` keys**

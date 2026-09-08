@@ -269,7 +269,7 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **359 topics, 99 storylines, 33 languages, 743 `en` keys** — an inherently live
+Corpus at this cut: **361 topics, 100 storylines, 33 languages, 743 `en` keys** — an inherently live
 snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_r'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
