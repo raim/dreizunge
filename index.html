@@ -52,6 +52,18 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .bmodels{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--gray-dark);font-weight:600}
 /* v55_o — model pickers live in a popover under the backend pill. */
 .bpill-wrap{position:relative;display:inline-flex}
+/* ⚠️ v90_w — the model pill AS A BAR PILL. Scoped to #corner-pills so the same element keeps its
+   original appearance anywhere else it might be rendered; nothing about .bpill itself changed, and
+   renderPill() still rebuilds className exactly as before. */
+#corner-pills #bpill{width:36px;height:36px;padding:0;border-radius:50%;justify-content:center;
+  gap:0;box-shadow:0 2px 8px rgba(0,0,0,.15);font-size:16px}
+#corner-pills #bpill::before{content:'\2728'}          /* ✨ — the model, without naming it */
+/* The NAME is a tooltip, not bar width (renderPill writes it there). The dot is redundant once the
+   border carries the same colour, and at 36px there is no room for both. */
+#corner-pills #blbl,#corner-pills #bpill-caret,#corner-pills .bdot{display:none}
+/* ⚠️ The popover must open UPWARD: anchored below a bar that sits on the bottom edge, it would
+   render off-screen. Right-aligned too, so a wide popover cannot push past the left edge. */
+#corner-pills .bmodels-pop{top:auto;bottom:calc(100% + 10px);left:0}
 .bpill.clickable{cursor:pointer}
 .bpill.clickable:hover{filter:brightness(.97)}
 .bpill-caret{font-size:9px;opacity:.8;transition:transform .15s}
@@ -761,7 +773,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          existing document.querySelectorAll('.mute-btn') sync picks it up with no code change —
          that updater was already generic, only the BUTTON was scattered. Always visible, same
          reasoning as settings-pill: reachable on every page including static. -->
-    <button id="mute-pill" class="mute-btn" onclick="toggleMute()" title="Mute" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:.7">🔊</button>
+    
     <!-- item U (roadmap_v87.md): "a single place to see everything in flight" — a popover over the
          generic job store (GET /api/jobs), reachable from every screen like settings-pill/mute-pill.
          Hidden without a backend (refreshJobsPill(), same gating refreshTutorAvailability() uses) —
@@ -769,6 +781,25 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          #tutor-fab-badge's own float-above-the-button placement, but shows a running COUNT rather
          than a one-shot "reply ready" flag. #jobs-pop itself does NOT live in this wrap — see its
          own markup near #tutor-widget for why. -->
+    <!-- ⚠️ v90_w (user request): the MODEL SELECTOR lives here now, not in the wizard. It is the
+         SAME element moved wholesale — #bpill-wrap and its #bmodels-pop popover — so its existing
+         drivers and every model-switch handler stay wired exactly as they were; rebuilding it would
+         have meant re-testing all of that for no gain.
+         ⚠️ The driver names are deliberately NOT written out here. This comment travels into
+         docs/index.html (the bottom bar is inside the static slice), and `unit-model-picker` greps
+         the built file for those names to prove the live-only picker is not reachable there. A
+         mention in prose is harmless, but the guard cannot tell prose from a call — and the right
+         response is to keep the guard strict, not to teach it to ignore text.
+         ⚠️ It keeps its BACKEND DOT COLOUR: that is the only at-a-glance "am I offline" signal, and
+         the wizard's own #offline-note (a separate element) still spells it out in words.
+         The model NAME is not shown — #blbl and the caret are hidden and their text becomes the
+         button's `title`, so hovering still tells you which model without spending bar width. -->
+<span class="bpill-wrap" id="bpill-wrap">
+      <div id="bpill" class="bpill none" onmouseenter="_syncPillTitle()" onfocus="_syncPillTitle()" title="Checking…"><span class="bdot"></span><span id="blbl">Checking…</span><span id="bpill-caret" class="bpill-caret" style="display:none">▾</span></div>
+      <div id="bmodels-pop" class="bmodels-pop" style="display:none">
+        <span id="bmodels" class="bmodels"></span>
+      </div>
+    </span>
     <div id="jobs-fab" style="display:none;position:relative">
       <button id="jobs-pill" onclick="toggleJobsPop(event)" title="" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">⏳</button>
       <span id="jobs-pill-badge" style="display:none"></span>
@@ -792,23 +823,31 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
          same pattern `#tutor-fab`/`#tutor-fab-badge` already use just below. `interimResults` is now
          on (see `_speechListenSession`'s own comment) — this pill is what makes that live text
          actually useful to the learner, not just an internal detail. -->
-    <div id="speech-mic-wrap" style="position:relative">
-      <span id="mic-heard-pill" aria-live="polite"></span>
-      <button id="speech-mic-pill" disabled onclick="_speechMicPillClick()" title="Speak your answer" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)"><span class="mic-icon">🎤</span><span class="mic-dots"><span></span><span></span><span></span></span></button>
+    
+  </div>
+  <!-- ⚠️ v90_w: an EXPLICIT right-hand group. #bottom-bar is justify-content:space-between,
+       so leaving mic/mute/tutor as three bare children would have spread them across the bar
+       and centred the mic. Two children — the left pills and this group — put each at an edge. -->
+  <div id="corner-pills-right" style="display:flex;align-items:center;gap:8px">
+<div id="speech-mic-wrap" style="position:relative">
+        <span id="mic-heard-pill" aria-live="polite"></span>
+        <button id="speech-mic-pill" disabled onclick="_speechMicPillClick()" title="Speak your answer" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)"><span class="mic-icon">🎤</span><span class="mic-dots"><span></span><span></span><span></span></span></button>
+      </div>
+    <button id="mute-pill" class="mute-btn" onclick="toggleMute()" title="Mute" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:.7">🔊</button>
+<div id="tutor-fab" style="display:none;position:relative">
+      <button id="tutor-fab-btn" onclick="toggleTutorWidget()" title="" style="width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;border:none;box-shadow:0 4px 12px rgba(0,0,0,.28);cursor:pointer;font-size:22px;line-height:1">🦉</button>
+      <!-- v84_g (user request): a reply landing while the widget is CLOSED used to be genuinely
+           invisible — the fetch/stream keeps running either way (nothing aborts it), the reply is
+           saved into the thread, but nothing signalled it had arrived until the learner happened to
+           reopen the tutor. A speech-bubble pill above the fab, cleared the moment the widget opens. -->
+      <button id="tutor-fab-badge" onclick="toggleTutorWidget()" style="display:none;position:absolute;bottom:52px;right:0;background:var(--blue);color:#fff;font-size:11px;font-weight:800;padding:6px 10px;border:none;border-radius:12px;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer;font-family:inherit"></button>
     </div>
   </div>
   <!-- v62: persistent tutor fab — relocated INTO #bottom-bar (user follow-up); still its own id,
        still hidden/shown by refreshTutorAvailability() exactly as before (that function toggles
        THIS div's display, not the outer bar's — the bar itself is always present once any
        backend-gated or always-on child inside it is). -->
-  <div id="tutor-fab" style="display:none;position:relative">
-    <button id="tutor-fab-btn" onclick="toggleTutorWidget()" title="" style="width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;border:none;box-shadow:0 4px 12px rgba(0,0,0,.28);cursor:pointer;font-size:22px;line-height:1">🦉</button>
-    <!-- v84_g (user request): a reply landing while the widget is CLOSED used to be genuinely
-         invisible — the fetch/stream keeps running either way (nothing aborts it), the reply is
-         saved into the thread, but nothing signalled it had arrived until the learner happened to
-         reopen the tutor. A speech-bubble pill above the fab, cleared the moment the widget opens. -->
-    <button id="tutor-fab-badge" onclick="toggleTutorWidget()" style="display:none;position:absolute;bottom:52px;right:0;background:var(--blue);color:#fff;font-size:11px;font-weight:800;padding:6px 10px;border:none;border-radius:12px;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer;font-family:inherit"></button>
-  </div>
+  
 </div>
     <!-- v70_o: `justify-content:center` on a container whose content is wider than the viewport
          pushes the overflow off BOTH sides, so on a phone the grid sat to the right of the screen
@@ -1183,16 +1222,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </div>
     </div>
     <div class="sl-screen-body">
-      <div class="backend-row">
+      <!-- v90_w: the model pill moved to the bottom bar, leaving only the "Backend:" label here.
+           Hidden rather than deleted — #backend-lbl is still written by applyUIStrings, and
+           #bmodel is still written by renderPill(); both are simply no longer on screen. -->
+      <div class="backend-row" style="display:none">
         <span id="backend-lbl" style="font-size:12px;font-weight:700;color:var(--gray-dark)">Backend:</span>
         <!-- v55_o: the model pickers collapse into this pill (click → popover). The wrapper is the
              positioning context for #bmodels-pop; the pill only becomes clickable under Ollama. -->
-        <span class="bpill-wrap" id="bpill-wrap">
-          <div id="bpill" class="bpill none"><span class="bdot"></span><span id="blbl">Checking…</span><span id="bpill-caret" class="bpill-caret" style="display:none">▾</span></div>
-          <div id="bmodels-pop" class="bmodels-pop" style="display:none">
-            <span id="bmodels" class="bmodels"></span>
-          </div>
-        </span>
+        
         <span id="bmodel" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
       </div>
 
@@ -3442,6 +3479,7 @@ function applyUIStrings() {
   _setAttr('sl-screen-qc-btn',      'title', t('qc.btn.storyline') + ' ' + t('qc.btn.force_hint'));
   _setText('backend-lbl',          t('app.backend'));
   _setText('blbl',                 t('app.checking'));
+  _syncPillTitle();   // v90_w: that label is the bar pill's tooltip, and this writer runs after renderPill
   const _esBtn = document.getElementById('export-static-btn');
   if (_esBtn) _esBtn.style.display = APP.info.canGenerate ? '' : 'none';
   // v69_n: the dashboard reads learner accounts and the flag store, both server-side, so it is
@@ -9673,6 +9711,22 @@ async function init(){
   }
 }
 
+// ⚠️ v90_w: #blbl has TWO writers — renderPill() and applyUIStrings() (which resets it to
+// "Checking…") — and in the bottom bar that label is HIDDEN, so its text only reaches the user as
+// the pill's TOOLTIP. Whichever writer runs last must refresh the title, or it goes stale — or,
+// as observed live at v90_w, stays empty because applyUIStrings ran after renderPill. One helper,
+// called from both.
+// ⚠️ AND IT IS ALSO CALLED ON HOVER/FOCUS, which is what actually makes it correct. Chasing the
+// init interleaving was a dead end: renderPill() demonstrably runs to completion at load (its tail
+// disables #gen-btn and shows #offline-note, both observed), yet the title was still empty while
+// #blbl already read "Offline — saved lessons only" — so some ordering writes that label after the
+// last sync. Rather than keep guessing at the sequence, the tooltip is refreshed at the only moment
+// it can be read. A tooltip is needed when hovered and at no other time, so syncing there is
+// correct BY CONSTRUCTION rather than by getting an init order right and hoping it stays that way.
+function _syncPillTitle(){
+  const p=document.getElementById('bpill'), l=document.getElementById('blbl');
+  if(p && l) p.title = l.textContent || '';
+}
 function renderPill(){
   const pill=document.getElementById('bpill');
   const lbl=document.getElementById('blbl');
@@ -9695,6 +9749,7 @@ function renderPill(){
     lbl.textContent=t('status.offline');
     mdl.textContent='';
   }
+  _syncPillTitle();
   if(!APP.info.canGenerate){
     document.getElementById('gen-btn').disabled=true;
     document.getElementById('topic-input').disabled=true;

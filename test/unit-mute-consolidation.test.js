@@ -47,17 +47,31 @@ assert.strictEqual(muteBtnCount, 1,
   `exactly one .mute-btn should remain (the global pill), found ${muteBtnCount}`);
 console.log('  exactly one .mute-btn remains in index.html: OK');
 
-// ── 2. It lives inside #corner-pills, alongside Settings and Sign-in ──────────────────────────
+// ── 2. ⚠️ RE-SCOPED at `v90_w`: it lives in the bar's RIGHT-hand group now ──────────────────────
+// This asserted `#corner-pills contains the global mute pill`, and went red when the user reordered
+// the bottom bar: "the microphone, mute button, and tutor button on the right side". The CLAIM this
+// section exists to make is unchanged — there is exactly ONE global mute control and it lives in the
+// one global bar, not scattered per-screen (see §1's own note) — so the assertion follows the button
+// to its new group rather than being dropped.
+const bar = divBlock(html, /<div id="bottom-bar"/);
 const cornerPills = divBlock(html, /<div id="corner-pills"/);
-assert.ok(/<button[^>]*class="mute-btn"/.test(cornerPills), '#corner-pills contains the global mute pill');
+const rightPills = divBlock(html, /<div id="corner-pills-right"/);
+assert.ok(/<button[^>]*class="mute-btn"/.test(rightPills),
+  'the global mute pill is in #corner-pills-right, beside the mic and the tutor');
+assert.ok(!/<button[^>]*class="mute-btn"/.test(cornerPills),
+  'and no longer in the LEFT group — the two groups are distinct, so a stray copy would show up here');
+assert.ok(/<button[^>]*class="mute-btn"/.test(bar),
+  'either way it is still inside the ONE global bottom bar, which is what this file is about');
 assert.ok(cornerPills.includes('id="settings-pill"') && cornerPills.includes('id="acct-badge"'),
-  '#corner-pills still holds Settings and the login pill too');
-console.log('  the global mute pill lives in #corner-pills next to Settings/Sign-in: OK');
+  '#corner-pills still holds Settings and the login pill');
+assert.ok(cornerPills.includes('id="bpill-wrap"'),
+  'and now the ✨ model pill too (v90_w moved it out of the wizard)');
+console.log('  one global mute pill, now in the bar\'s right-hand group: OK');
 
 // Mutation check: the containment assertion must be able to fail.
 {
-  const withoutMute = cornerPills.replace(/<button id="mute-pill"[\s\S]*?<\/button>/, '');
-  assert.notStrictEqual(withoutMute, cornerPills,
+  const withoutMute = rightPills.replace(/<button id="mute-pill"[\s\S]*?<\/button>/, '');
+  assert.notStrictEqual(withoutMute, rightPills,
     'the mutation must actually remove the mute pill — if this fires, the regex no longer ' +
     'matches the real markup and check #2 is vacuous');
   assert.ok(!/<button[^>]*class="mute-btn"/.test(withoutMute), 'sanity: mutated slice lacks the pill');

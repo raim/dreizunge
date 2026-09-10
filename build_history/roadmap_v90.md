@@ -3157,6 +3157,92 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_w — the model selector moves to the bottom bar as a ✨ circle; the bar is reordered
+
+User request, agreed in detail before building. **ZERO `ui.json` keys.**
+
+| | before | after |
+|---|---|---|
+| **left** (`#corner-pills`) | 👤 · ⚙ · 🔇 · ⏳ | 👤 · ⚙ · **✨ model** · ⏳ |
+| **right** | 🎤 · 🦉 | 🎤 · **🔇** · 🦉 |
+
+⚠️ **`#bottom-bar-toggle` (collapse) is untouched and stays OUTSIDE `#corner-pills`** — the user
+caught this himself, and the markup already said why: a control that hides the bar cannot live
+inside the thing it hides. It is a sibling of `#bottom-bar`, not a child.
+
+⚠️ **An EXPLICIT right-hand group was needed.** `#bottom-bar` is `justify-content:space-between`, so
+leaving mic/mute/tutor as three bare children would have spread them across the bar and **centred the
+mic**. Two children — the left pills and a new `#corner-pills-right` — put each group at an edge.
+Verified live at 1280px: left pair at x=16/60, right pair at x=1169/1213.
+
+### Moved, not rebuilt
+
+`#bpill-wrap` and its `#bmodels-pop` popover relocated wholesale, so `renderPill()`,
+`renderModelPicker()` and every model-switch handler stay wired exactly as they were. Rebuilding
+would have meant re-testing all of that for no gain.
+
+- **A 36px ✨ circle that does not name the model**, as asked: `#blbl`, the caret and `.bdot` are
+  hidden by one scoped rule, and the name becomes the button's `title`.
+- ⚠️ **The backend STATE still colours the pill.** It is the only at-a-glance "am I offline" signal,
+  and hiding `.bdot` would have cost it — the `.bpill.ollama` / `.bpill.none` border colours carry it
+  instead. The wizard's `#offline-note` still spells it out in words, so nothing is lost.
+- ⚠️ **The popover had to be re-anchored UPWARD.** Anchored below a pill on the bottom edge it
+  renders off-screen. `#corner-pills .bmodels-pop` flips to `bottom:calc(100% + 10px)`; the ORIGINAL
+  downward rule is untouched, so the element still behaves anywhere else. Verified live: pill at
+  y≈674 in a 720px viewport, popover at top 640 / bottom 664, on screen.
+- The wizard's now-empty `.backend-row` is **hidden, not deleted** — `#backend-lbl` is still written
+  by `applyUIStrings` and `#bmodel` by `renderPill`.
+
+### ⚠️ THE TOOLTIP IS SYNCED ON HOVER, AND CHASING THE INIT ORDER WAS A DEAD END
+
+The model name now reaches the user only as a tooltip, so it has to be right. It was empty at load,
+and the obvious explanations were all wrong: **`renderPill()` demonstrably runs to completion at
+load** — its tail disables `#gen-btn` and shows `#offline-note`, both observed — and `#blbl` already
+read *"Offline — saved lessons only"*, yet the title stayed `""`. `#blbl` has two writers
+(`renderPill` and `applyUIStrings`, which resets it to "Checking…"), and syncing from both did not
+fix it either; a static `title` in the markup was cleared as well.
+
+**So it is synced on `mouseenter`/`focus` instead.** ⚠️ **A tooltip is read when hovered and at no
+other time, so syncing there is correct BY CONSTRUCTION** rather than by getting an init order right
+and hoping it stays that way. The `renderPill` sync is kept as well. Verified: empty at load, correct
+the instant the pill is hovered.
+⚠️ **The interleaving that empties it is NOT diagnosed** — recorded as unexplained rather than
+written up as understood, because a guess in this file would read like a finding.
+
+### The guard — `unit-bottom-bar-model.test.js`, seven sections, SIX mutations red
+
+The model name shown again; the popover opening downward; the wizard backend row un-hidden; the
+hover sync removed; **mute moved back into the left group**; and **the collapse button moved inside
+`#corner-pills`** — the last two being the ordering claim itself, which a source-order guard is
+otherwise easy to write vacuously.
+
+⚠️ **Its own first draft failed on correct CSS**: it matched `#corner-pills #blbl` against
+`flat.replace(/ /g,'')`, which turns the descendant selector into `#corner-pills#blbl`. **A guard
+that normalises away the very thing it is matching cannot pass** — fixed by testing the flattened
+source without stripping spaces.
+
+### ⚠️ TWO PRE-EXISTING GUARDS WENT RED, AND THEY ARE DIFFERENT CASES
+
+**1. `unit-mute-consolidation` — a superseded ruling, RE-SCOPED not deleted.** Its §2 pinned
+*"`#corner-pills` contains the global mute pill"*, which the user's reorder directly contradicts. The
+CLAIM the file exists to make is unchanged — exactly ONE global mute control, living in the one
+global bar rather than scattered per-screen — so the assertion follows the button to
+`#corner-pills-right` and additionally pins that it is **no longer in the left group**, which the old
+single-containment check could not have said. Its mutation check was re-pointed at the new group too,
+or it would have been asserting against a container the button had left.
+
+**2. `unit-model-picker` — a REAL leak, caused by a COMMENT.** *"static build must not reference the
+live-only picker functions"* went red because the markup comment explaining the move named
+`renderModelPicker()` in prose — and `#bottom-bar` sits inside the static slice, so that comment
+travels into `docs/index.html`. Measured: the name went **0 → 1** occurrences in the built file.
+⚠️ **The reassuring half:** `#bpill-wrap` was **already** in `docs/` at HEAD (count 1 before and
+after), so moving the pill exposed no markup that was not already there.
+⚠️ **The fix was to reword the COMMENT, not to loosen the guard.** The guard greps raw text and
+cannot tell prose from a call; teaching it to strip comments would weaken a check that protects the
+static build for the sake of one sentence. The comment now says "its existing drivers" and carries a
+note explaining why the names are deliberately absent — so the next person does not helpfully add
+them back.
+
 ## ✅ v90_v — the four input checkboxes are hidden as a group; dialect and translation go dark
 
 User, answering the two decisions the wizard work had been carrying: *"Can the three lines 'i have my
