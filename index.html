@@ -870,7 +870,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </div>
     </div>
 <div id="acct-modal" onclick="modalBackdropClose(event, closeAccount)" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px">
-  <div style="background:var(--white);border-radius:var(--radius-lg);max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)">
+  <div id="acct-card" style="background:var(--white);border-radius:var(--radius-lg);max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35);box-sizing:border-box">
     <div style="display:flex;align-items:center;margin-bottom:12px">
       <span style="font-size:18px;font-weight:900" id="acct-title">Sign in</span>
       <button onclick="closeAccount()" style="margin-left:auto;background:transparent;border:none;font-size:20px;cursor:pointer">×</button>
@@ -903,7 +903,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
      that has the footer controls" — folding it into one shared instance here would reverse that
      ruling, not just relocate a control, and deserves its own decision. -->
 <div id="settings-modal" onclick="modalBackdropClose(event, closeSettings)" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px">
-  <div style="background:var(--white);border-radius:var(--radius-lg);max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35);max-height:calc(100vh - 32px);overflow-y:auto;box-sizing:border-box">
+  <div id="settings-card" style="background:var(--white);border-radius:var(--radius-lg);max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35);max-height:calc(100vh - 32px);overflow-y:auto;box-sizing:border-box">
     <div style="display:flex;align-items:center;margin-bottom:12px">
       <span style="font-size:18px;font-weight:900" id="settings-title">⚙️ Settings</span>
       <button onclick="closeSettings()" style="margin-left:auto;background:transparent;border:none;font-size:20px;cursor:pointer">×</button>
@@ -3502,6 +3502,21 @@ function applyUIStrings() {
   _setText('add-lesson-lbl-card',  '➕ '+t('lib.add_lesson')+':');
   _setText('user-story-clear-btn', '✕ '+t('form.clear_text'));
   _setAttr('user-story-clear-btn', 'title', t('form.clear_text'));
+  // ⚠️ v90_aa — a RAW KEY was rendering in the bottom bar, live, on a clean load: the signed-out
+  // account badge showed the literal text `acct.signin`.
+  //
+  // `refreshAccountBadge()` writes `APP.learner || t('acct.signin')`, and it is called from the
+  // backend-info path — which can land BEFORE `loadUIStrings()` has resolved. `t()` returns the KEY
+  // when `UI_STRINGS` is still empty, and nothing rewrote it afterwards: this function did not
+  // address `#acct-name` at all, so a re-apply could not heal it either. The key itself was never
+  // missing — `ui.json` has had `acct.signin` = "Sign in" all along, which is exactly why it never
+  // showed up in the unlocalized-string audit: that audit looks for absent keys, not for a present
+  // key written too early.
+  //
+  // Re-applying here rather than reordering init: `applyUIStrings()` is what every string (re)load
+  // already ends with, including a UI-language CHANGE, so the badge now also follows that — which
+  // reordering alone would not have fixed.
+  try { refreshAccountBadge(); } catch (_) {}
 }
 
 // ── UI translation row ────────────────────────────────────────────────────────
@@ -3691,6 +3706,7 @@ function refreshAccountBadge(){
 function openAccount(){
   const m = document.getElementById('acct-modal'); if(!m) return;
   m.style.display = 'flex';
+  _anchorCardToBtn('acct-card', 'acct-btn');   // v90_aa
   // v70_b: plain HTTP off loopback — say so where the password is actually typed. Shown in BOTH
   // states: signed out the password is about to cross the wire, signed in the session cookie
   // already is, on every request. Guidance only; it never blocks sign-in (LAN use without TLS is
@@ -3744,6 +3760,7 @@ function modalBackdropClose(e, closer){ if(e && e.target === e.currentTarget) cl
 // neither can drift from the actual state while the card was closed.
 function openSettings(){
   const m=document.getElementById('settings-modal'); if(m) m.style.display='flex';
+  _anchorCardToBtn('settings-card', 'settings-pill');   // v90_aa
   // The overrule checkbox reflects APP state (not markup) — sync on every open rather than only
   // on init/toggle, so it can never drift from the actual persisted value.
   const cb = document.getElementById('overrule-sl-lang-cb'); if (cb) cb.checked = !!APP.overruleStorylineLang;
@@ -25975,9 +25992,74 @@ function _jobsPopOutside(e){
   if((!fab || !fab.contains(e.target)) && (!pop || !pop.contains(e.target))) closeJobsPop();
 }
 function _jobsPopEsc(e){ if(e.key === 'Escape') closeJobsPop(); }
+// ⚠️ v90_aa (user request): "align the settings bar popovers (login, settings, running jobs) with
+// their buttons, like the tutor and the model selection popovers are already aligned."
+//
+// The observation is exact. `#corner-pills` (account · settings · ✨ model · jobs) sits at the LEFT
+// of `#bottom-bar`, and of its four panels only ONE was anchored to its own button: `.bmodels-pop`
+// is `position:absolute; left:0` inside `#bpill-wrap`. `.jobs-pop` was `position:fixed; right:16px`
+// — pinned to the screen's RIGHT edge while its button is on the left — and settings/account are
+// centred MODALS, not popovers at all. (The tutor reads as aligned because its own fab is the
+// right-hand control, so `right:16px` happens to land under it.)
+//
+// ⚠️ WHY THIS IS DONE IN JS RATHER THAN BY COPYING `.bmodels-pop`'s absolute positioning, which
+// looks like the obvious fix and is a trap: `#jobs-pop` was deliberately MOVED OUT of `#jobs-fab`
+// (see its own markup comment) because `#bottom-bar` is a STACKING CONTEXT — `position:fixed` plus
+// `z-index:900` — so any descendant's z-index is capped by it and can never out-rank a body-level
+// `#tutor-widget` (z-index:901). Re-parenting these panels into the bar to get free alignment would
+// reintroduce exactly that bug: the panel would open invisibly behind the tutor. They stay at body
+// level; only their horizontal position is computed.
+//
+// ⚠️ The same latent trap applies to `.bmodels-pop`, which IS inside the bar — noted, not changed
+// here: it is pre-existing, it needs its own live check with both panels open, and folding it into
+// a request about three other controls is how a fix becomes a regression.
+//
+// Centres the panel on its button, clamped to the viewport. Narrow screens are left alone: below
+// 520px `.jobs-pop` already goes edge-to-edge by its own media query, and a 360px card on a 380px
+// screen has nowhere to be aligned TO.
+const _POP_ANCHOR_MIN_W = 520;
+function _anchorToBtn(pop, btn, fallbackWidth){
+  if(!pop || !btn) return false;
+  if(innerWidth <= _POP_ANCHOR_MIN_W) return false;
+  const r = btn.getBoundingClientRect();
+  // A hidden or collapsed button (the bottom bar toggled away) has nothing to align to — say so
+  // and let the caller keep its previous layout rather than pinning the panel to the left margin.
+  if(!r.width && !r.height) return false;
+  pop.style.right = 'auto';
+  pop.style.left = '0px';                        // measure at a known position first
+  const w = pop.offsetWidth || fallbackWidth || 300;
+  // ⚠️ LEFT-EDGE aligned, not centred — because `.bmodels-pop` (`left:0` inside `#bpill-wrap`) is
+  // the reference the request actually named, and that is what it does: the panel's left edge sits
+  // on its button's left edge and the panel extends rightward. Centring a 320px panel on a 36px
+  // pill also looks attached, but it would make these three disagree with the one control that was
+  // already right, which is the opposite of the ask.
+  const want = r.left;
+  pop.style.left = Math.round(Math.max(8, Math.min(want, innerWidth - w - 8))) + 'px';
+  return true;
+}
+// The two MODAL cards. The backdrop stays exactly as it is — it is what `modalBackdropClose` reads
+// to tell an outside press from an inside one, and that behaviour is guarded — so only the CARD
+// moves, from flex-centred to absolutely placed within the same fixed backdrop.
+function _anchorCardToBtn(cardId, btnId){
+  const card = document.getElementById(cardId), btn = document.getElementById(btnId);
+  if(!card) return;
+  // Always reset first: the viewport can have been resized, or the bar hidden, since the last open.
+  card.style.position = ''; card.style.left = ''; card.style.bottom = ''; card.style.maxHeight = '';
+  if(!_anchorToBtn(card, btn, 360)) { card.style.left = ''; card.style.right = ''; return; }
+  card.style.position = 'absolute';
+  card.style.bottom = 'calc(var(--bottom-bar-h) + 12px)';
+  // Anchored to the bar rather than centred, the room above is what is left over — the same bound
+  // #tutor-widget and .jobs-pop already use, so a long settings list scrolls instead of overflowing
+  // off the top of the screen.
+  card.style.maxHeight = 'calc(100vh - var(--bottom-bar-h) - 44px)';
+  card.style.overflowY = 'auto';
+}
 function openJobsPop(){
   const pop = document.getElementById('jobs-pop'); if(!pop) return;
   pop.style.display = '';
+  // v90_aa: after display, so offsetWidth is real — a hidden element measures 0 and would be
+  // centred on nothing.
+  _anchorToBtn(pop, document.getElementById('jobs-pill'), 320);
   _jobsRenderList();
   _jobsFetchAndRender();
   if(_jobsPollIv) clearInterval(_jobsPollIv);
@@ -25987,6 +26069,9 @@ function openJobsPop(){
 function closeJobsPop(){
   const pop = document.getElementById('jobs-pop'); if(!pop) return;
   pop.style.display = 'none';
+  // Hand the panel back to its stylesheet, so the narrow-screen media query (`left:8px;right:8px`)
+  // is not permanently overridden by an inline value computed on a wider viewport.
+  pop.style.left = ''; pop.style.right = '';
   if(_jobsPollIv){ clearInterval(_jobsPollIv); _jobsPollIv = null; }
   document.removeEventListener('click', _jobsPopOutside);
   document.removeEventListener('keydown', _jobsPopEsc);

@@ -2616,6 +2616,34 @@ a dead end.
 | the wiring | `startBackgroundJob(jobId, topic, genAttribution, postGenQc)` → `qcRun({topicId})` on done. The flag rides on `APP.activeJob` (the `v85_i` pattern) so a reload cannot lose it, and `resumeBackgroundJob` honours it |
 | ⚠️ harness trap | a never-settling `fetch` stub leaves `startBackgroundJob`'s `setInterval` alive and hangs the whole test file AFTER it prints its results — `v89` rule 16 |
 
+**The bottom bar's panels, and how they are positioned** (`index.html`, `v90_aa`)
+
+| what | where |
+|---|---|
+| anchor a body-level panel to a bar button | `_anchorToBtn(pop, btn, fallbackWidth)` — LEFT-EDGE aligned (what `.bmodels-pop`'s `left:0` does), clamped to the viewport. Returns `false` and writes nothing below **520px** or for a **zero-size button** (bar toggled away) |
+| the two MODAL cards | `_anchorCardToBtn(cardId, btnId)` → `#settings-card` / `#acct-card`. ⚠️ **The BACKDROP is never repositioned** — its geometry is what `modalBackdropClose` reads to tell an outside press from an inside one. Resets stale inline state on every open |
+| ⚠️ **why this is JS and not CSS** | `#bottom-bar` is a **STACKING CONTEXT** (`position:fixed` + `z-index:900`), so ANY descendant's z-index is capped by it and can never out-rank a body-level `#tutor-widget` (`z-index:901`). That is why `#jobs-pop` was moved OUT of `#jobs-fab`. Re-parenting a panel into the bar to get free alignment reopens that bug — the panel renders invisibly behind the tutor |
+| ⚠️ **a latent instance, NOT fixed** | `.bmodels-pop` IS inside the bar and carries exactly that trap. Pre-existing; needs a live check with both panels open |
+| the guard | `unit-bar-popover-align.test.js`. ⚠️ **`lib-dom` gives EVERY element the same rect (`left:0,width:100`), a constant non-configurable `offsetWidth`, and `innerWidth: 390`** — below the cutoff, so nothing anchors by default. Each case sets `innerWidth` and overrides `getBoundingClientRect` on the BUTTON only; real geometry was verified in a browser instead |
+
+**⚠️ A RAW `ui.json` KEY CAN REACH THE SCREEN WITHOUT THE KEY BEING MISSING** (`v90_aa`)
+
+| what | where |
+|---|---|
+| the instance | the signed-out account badge rendered the literal text `acct.signin`. `refreshAccountBadge()` writes `APP.learner \|\| t('acct.signin')` from the backend-info path, which can land BEFORE `loadUIStrings()` resolves; `t()` returns the KEY when `UI_STRINGS` is empty, and `applyUIStrings()` did not address `#acct-name`, so nothing healed it |
+| the fix | `applyUIStrings()` ends with `refreshAccountBadge()` — chosen over reordering init so a **UI-LANGUAGE CHANGE** updates the badge too |
+| ⚠️ **why the audit could never find it** | `v90_k`'s unlocalized-string audit looks for ABSENT keys. `acct.signin` has always been in `ui.json`. **A present key written too early is a different class**, and a sweep for it (elements written from `t()` outside `applyUIStrings()`, from a path that can run before strings load) is NOT done |
+
+**⚠️ CP2 vocab ARTICLE SYMMETRY — the rule exists and does NOT work** (`v90_aa`, correcting `v90_z`)
+
+| what | where |
+|---|---|
+| where the rule lives | `qcCheckPair` (server.js), as rule (3) of a prompt otherwise about translation accuracy, with sibling pairs supplied as "the convention" |
+| ⚠️ **measured INERT** | a forced per-lesson QC over 8/8 asymmetric pairs flags none. The captured prompt replayed against `translategemma:12b` AND `qwen3.6:35b-a3b`, with asymmetric siblings / symmetric siblings / no sibling block: **`OK` in all six arms**. A bigger model is NOT the lever, and the "follow the lesson's convention" clause is NOT the cause |
+| ⚠️ **the confound to avoid repeating** | `v90_z` read "QC'd de→it lessons are 0/64 asymmetric" as evidence the rule works. Those lessons were QC'd by the model that has now missed 8/8 — they were already symmetric. **Correlation, reported as causation, used to argue AGAINST building the fix** |
+| what does partially work | a FOCUSED single-question article prompt: 4/7 on the 35B model (2 of 3 real fixes vs 0 of 3; verbs/adverbs correctly untouched) — ⚠️ **but both failures CREATE asymmetry, and every failure involves the ELIDED article `l'`** (`la`/`il` succeed) |
+| how the prompt was obtained | CAPTURED from the running server via `fake-ollama`'s `FAKE_LOG`, never re-implemented in a probe — the only way to be sure the thing measured is the thing shipped |
+
 ## 7. Maintaining this file
 
 Add an entry when a session discovers something a future session would otherwise rediscover:

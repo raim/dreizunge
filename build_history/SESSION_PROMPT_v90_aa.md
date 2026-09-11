@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_z` cut
+# Session prompt — written at the `v90_aa` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_z`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_aa`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -75,58 +75,92 @@ current one) carries the protocol, the open items and the RULES, but none of tha
 
 # WHERE TO START
 
-✅ **ALL FOUR OF THE USER-REPORTED ISSUES THE LAST SESSION WAS HANDED ARE SHIPPED (`v90_z`).**
-The full write-up is `roadmap_v90.md` → the `v90_z` entry; the original report section is kept there
-too, marked CLOSED with a note on exactly where its own framing turned out to be wrong. **Nothing
-from that list is owed.**
+⚠️⚠️ **ONE THING IS OWED, IT NEEDS A USER DECISION, AND IT IS OWED BECAUSE `v90_z` GOT IT WRONG.**
 
-⚠️⚠️ **THE ONE LESSON FROM `v90_z` THAT IS WORTH MORE THAN THE FOUR FIXES, because it happened
-TWICE in one session: for BOTH items that asked for a "new" mechanism, the mechanism already existed
-and already worked.** The vocab article check the user asked to have built has been in
-`qcCheckPair` for releases (QC'd de→it pairs: **0 of 64** asymmetric; never-QC'd: **65 of 274**), and
-the post-generation QC checkbox they then asked for already existed too — it was merely unreachable
-for a single-chapter generation. **Measure the thing the request assumes is missing, BEFORE building
-it.** Both would otherwise have shipped a second copy of working code.
+**The vocabulary ARTICLE ASYMMETRY (`der Weg ↔ percorso`) is NOT fixed, and QC does not catch it.**
+`v90_z` argued a dedicated check was unnecessary because `qcCheckPair`'s existing ARTICLE SYMMETRY
+rule "already worked" — that was a **correlation reported as causation**, and the user's own live
+test refuted it within a day. Measured at `v90_aa`, all on copies of the store:
 
-⚠️ **`ASK THE USER WHAT THEY WANT NEXT.`** These are the only things left open from the `v90_z` work,
-and all three are small:
+- A forced per-lesson QC over a chapter with **8 of 8** asymmetric pairs: `26 checked, 2 flagged`,
+  **neither flag an asymmetry**. (A per-lesson run never takes the "already QC'd" skip, so this was
+  a real check.)
+- The exact `qcCheckPair` prompt, captured from the running server via `fake-ollama`'s `FAKE_LOG` and
+  replayed: **`OK` in all six arms** — `translategemma:12b` AND `qwen3.6:35b-a3b`, with asymmetric
+  siblings, with symmetric siblings, and with no sibling block at all.
+- ⚠️ So **a bigger model is not the lever**, and neither is the "follow the lesson's convention"
+  clause (a plausible culprit that measurement killed — removing it changes nothing).
+- ⚠️ **A FOCUSED single-question prompt IS a partial lever**: 4/7 on `qwen3.6:35b-a3b`, fixing 2 of 3
+  real asymmetries where the buried rule fixes 0 of 3, and correctly leaving verbs and adverbs alone.
+  **But both its failures CREATE asymmetry**, and **every failure involves the ELIDED article `l'`**
+  (`la`/`il` succeed). That is a specific weak spot to fix and re-measure — not a reason to abandon
+  the approach, and not something to point at the corpus until it is fixed.
 
-1. **The `en` key `text_explorer.phrase` = "Phrase"** was added (`en` only, granted from a budget of
-   four after being proposed on its own). It **awaits hand translation**, alongside `v90_m`'s
-   `form.fetch_url` and `pdf.no_article`.
-2. **The existing corpus backlog is untouched.** `v90_z` fixed the FLOW (new single chapters can now
-   be QC'd on generation); the **126 already-written asymmetric vocab pairs across 21 chapters** are
-   still there, and the fix for them is to run the existing QC — no code. The worst are all `de→it`
-   and `de→nl`: *Richiamando la figura di Alcide De Gasperi* (16/16), *Naturraum für Biodiversität*
-   (14/16), *Verantwortung und Demokratie*, *Jubiläum der Autonomie*, *Esempio a livello mondiale*
-   (8/8 each). Re-derive the list with `node build_history/probe_article_symmetry_v80j.js`.
-3. **`translate-select`** (generate a storyline in another source language) is still deliberately
-   OUTSIDE the new input field, because it takes no input text at all. Confirm or move it.
+**The user has proposed the shape**: split QC into a pure translation check (`translategemma`) and a
+lesson-consistency check on the bigger model that explicitly covers articles. That is right, with one
+correction from the measurements: **the split must carry a DEDICATED, single-question check** —
+putting the same buried rule on a bigger model is measured to do nothing. **Ask before building**;
+the elision failure and the "writes to the corpus" risk both need a ruling.
 
-✅ **AND CARRIED ITEM `T` CLOSED FOR FREE — it was the SAME BUG.** "Two questions initiated via
-text-selection → grammar click were never answered" had sat open since the `v86` line waiting for a
-live reproduction; it is `_storySelExplain('grammar')` hitting the very lines `v90_z` fixed. ⚠️ **The
-protocol says to cross-check a carried item against the SHIPPED list before carrying it again — this
-one also needed checking against the fix about to be made.** Worth one grep per release.
+⚠️ **AND THE COVERAGE HALF IS STILL REAL AND STILL SEPARATE**: only 51 of 660 vocab lessons have ever
+been QC'd, and 21 of the 23 chapters with asymmetric pairs have never been QC'd at all. `v90_z`'s
+post-generation checkbox addresses the FLOW and is worth keeping — it just cannot fix an asymmetry
+until the check itself can.
+
+---
+
+⚠️⚠️ **THE METHOD LESSON, which is worth more than either fix and has now cost two releases in a row:**
+
+**`v90_z` shipped a decision built on a correlation, and named the confirming experiment in its own
+write-up without running it.** The user chose the option that appeared not to need it, and the
+argument for that option was itself the unverified claim. **When a measurement is used to talk
+someone OUT of building something, run the experiment that would falsify it FIRST** — especially when
+you have already written down what that experiment is.
+
+⚠️ The sibling lesson from `v90_z`, which still holds: **before spending effort on a "new" mechanism,
+check whether it already exists.** Both times it did. The correction is that "it exists" is not the
+same as "it works", and only the second one licenses a decision.
+
+---
+
+✅ **EVERYTHING ELSE FROM `v90_z` AND `v90_aa` IS SHIPPED AND VERIFIED.** The all-null text analysis
+(sized output budget + truncation retry), the tutor's two silent drops, phrase-level analysis
+display, carried item `T` (the same bug), the bottom-bar panel alignment, and a raw `ui.json` key
+that was rendering on screen.
+
+⚠️ **A NEW CLASS OF i18n DEFECT, FOUND BY LOOKING AT THE SCREEN** (`v90_aa`): the signed-out account
+badge rendered the literal text `acct.signin`. The key was never missing — `ui.json` has always had
+it — it was WRITTEN TOO EARLY, before `loadUIStrings()` resolved, and nothing re-applied it.
+**`v90_k`'s unlocalized-string audit can never find this class**: it looks for absent keys. A sweep
+for "elements written from `t()` outside `applyUIStrings()`, from a path that can run before strings
+load" is its own piece of work and is NOT done.
+
+**Two smaller things still open, both from `v90_z`:**
+
+1. **Three `en` keys await hand translation** — `text_explorer.phrase` (v90_z), `form.fetch_url` and
+   `pdf.no_article` (v90_m). `v90_aa` added **none**.
+2. **`translate-select`** is still deliberately OUTSIDE the new input field, because it takes no input
+   text at all. Confirm or move it.
+
+⚠️ **`.bmodels-pop` CARRIES A LATENT STACKING BUG, NOTED AND NOT FIXED** (`v90_aa`): it lives inside
+`#bottom-bar`, which is a stacking context (`position:fixed` + `z-index:900`), so it can never
+out-rank a body-level `#tutor-widget` (`z-index:901`) — the exact bug that made `#jobs-pop` move out
+of `#jobs-fab`. Pre-existing; needs a live check with both panels open; deliberately not folded into
+a request about three other controls.
 
 ⚠️ **THE FOUR-LEVEL ANALYSIS BROWSING IDEA IS A ROADMAP ITEM, NOT STARTED** — the user's own framing
 ("Perhaps rather for the roadmap": paragraph → sentence → phrase → word). `v90_z` shipped only the
-one-token fix (clicking a word shows the phrase it belongs to), deliberately.
+one-token fix, deliberately.
 
-⚠️ **THREE THINGS `v90_z` LEARNED THE HARD WAY, all about GUARDS rather than about the code:**
+⚠️ **THREE GUARD LESSONS FROM `v90_z`, all still live:**
 
-1. **⚠️⚠️ TWO SIGNALS THAT ALWAYS FIRE TOGETHER ARE ONE SIGNAL.** `unit-analysis-truncation` checks
-   truncation two ways (`done_reason === 'length'`, and a parse failure). Its first fixture triggered
-   BOTH, so deleting *either* arm left the file GREEN — and then, after adding a fixture for the
-   first, deleting the *second* arm did too. It took three fixtures (`ZZZCUT`, `ZZZNODR`,
-   `ZZZWORSE`) to make the branches distinguishable. **When a guard covers an OR, every arm needs a
-   fixture that fires it ALONE.**
-2. **⚠️ A MUTATION THAT SILENTLY MATCHED NOTHING READS EXACTLY LIKE A SURVIVING ONE.** Two "survivors"
-   in this session were `str.replace` calls whose anchor did not exist (quoting mangled in the shell).
-   **Assert the file actually changed** before believing a survivor.
-3. **⚠️ `v89` RULE 16 FIRED AGAIN, IMMEDIATELY.** A never-settling `fetch` stub — the natural way to
-   write "a job still in flight" — left `startBackgroundJob`'s `setInterval` alive and hung the whole
-   test file *after* it printed its results. Use a terminating stub and an explicit `process.exit(0)`.
+1. **⚠️⚠️ TWO SIGNALS THAT ALWAYS FIRE TOGETHER ARE ONE SIGNAL.** It took three fake-Ollama fixtures
+   (`ZZZCUT`, `ZZZNODR`, `ZZZWORSE`) to make the truncation guard's OR-arms distinguishable.
+   **When a guard covers an OR, every arm needs a fixture that fires it ALONE.**
+2. **⚠️ A MUTATION THAT SILENTLY MATCHED NOTHING READS EXACTLY LIKE A SURVIVING ONE.** Assert the file
+   actually changed — `cmp` before believing a survivor.
+3. **⚠️ `v89` RULE 16.** A never-settling `fetch` stub leaves a `setInterval` alive and hangs the test
+   file *after* it prints its results.
 
 ⚠️ **AND ONE HYPOTHESIS THAT WAS CHECKED AND IS WRONG — do not re-derive it.** `test/fake-ollama.js`'s
 own comment says an `IncomingMessage`'s `close` has ALREADY fired by the time a handler is added,
@@ -261,8 +295,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 381 checks
-node test/run.js --quick                  → expect 314
+node test/run.js                          → expect 382 checks
+node test/run.js --quick                  → expect 315
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -295,7 +329,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **363 topics, 101 storylines, 33 languages, 747 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_z'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_aa'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

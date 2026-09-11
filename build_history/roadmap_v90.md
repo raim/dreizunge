@@ -501,11 +501,13 @@ content, not a translatable string).
 > DESTROYED THE PREMISE of the section below, is in the `v90_z` entry in the shipped list.
 >
 > **Where the text below is now WRONG, and would mislead a session that built to it:**
-> - **§3's framing.** "Is this a new QC MODE, or a generation-prompt change, or both?" — **neither.**
->   `qcCheckPair` already carries an ARTICLE SYMMETRY rule and it WORKS: de→it pairs in QC'd lessons
->   are **0 of 64** asymmetric against **65 of 274 (23.7%)** in lessons never QC'd, and 21 of the 23
->   affected chapters had never had vocab QC run at all. It was a COVERAGE problem. The instruction
->   to "measure the actual rate first" was the right one and is what found this.
+> - **§3's framing.** ⚠️⚠️ **`v90_z` answered this "neither" and was WRONG — corrected at `v90_aa`.**
+>   `qcCheckPair` does carry an ARTICLE SYMMETRY rule, and the coverage numbers are real (de→it pairs
+>   in QC'd lessons **0 of 64** asymmetric against **65 of 274** never QC'd; 21 of 23 affected
+>   chapters never QC'd). But the rule **does not work**: measured live at `v90_aa` it flags 0 of 8
+>   real asymmetries, on both models, with and without the sibling block. **§3's original framing was
+>   closer to right than `v90_z`'s answer to it** — a dedicated check IS needed; what `v90_z`
+>   correctly added was that coverage is a second, independent problem.
 > - **§4's "the display simply does not prefer them"** was exactly right, and the fix was that small.
 > - **§1's mechanism** was correct to the line; §2 was correctly left undiagnosed, and the shape it
 >   turned out to be (the client dropping a turn it had already persisted) is not what the
@@ -3315,6 +3317,135 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_aa — the bottom bar's panels line up with their buttons; a raw key found on screen; and ⚠️ `v90_z`'s central QC claim MEASURED AND WITHDRAWN
+
+**ZERO `ui.json` keys.** 11 mutations, all red. Baseline 381/314 → **382/315**.
+
+### ⚠️⚠️ FIRST, THE WITHDRAWAL — `v90_z` §3's headline claim was WRONG, and the user's live test is what caught it
+
+User: *"How can I access the new article-specific QC? When I press QC for a vocabulary lesson on the
+lesson-set page, I didn't get a choice … Also it did NOT flag or fix the article asymmetry."*
+
+The first half is expected — **no article-specific QC exists**; `v90_z` argued one was unnecessary
+because the rule already worked, and the user redirected to the post-generation checkbox on that
+argument. **The second half destroys the argument.**
+
+**Reproduced exactly**, on a COPY of the store (`LESSONS_FILE`/`CANONICAL_ANALYSIS_FILE` in `/tmp`,
+port 3462, killed by PID). Chapter *Verantwortung und Demokratie*, 8 of 8 vocab pairs asymmetric
+(`die Autonomie ↔ autonomia`, `der Weg ↔ percorso`, …), per-lesson QC forced:
+
+```
+✓ QC done: 26 checked, 2 flagged, 0 cleared, 0 skipped
+    ⚑ flag [pair] [translategemma:12b] "der Pfad"
+    ⚑ flag [pair] [translategemma:12b] "die Tutel"
+```
+
+**Neither flag is an article asymmetry. All eight passed clean.** ⚠️ And a per-lesson run (`lessonIdx`
+set) never takes the "already QC'd, unedited" skip, so this was a real check, not a skipped one.
+
+**WHY `v90_z`'s MEASUREMENT WAS MISREAD — the confound, stated plainly.** `v90_z` reported de→it
+pairs in QC'd lessons as **0 of 64** asymmetric against 65 of 274 never QC'd, and concluded "the rule
+works". That is a CORRELATION and it was reported as causation. The check that would have settled it
+— running the rule against a real asymmetric pair — was named in `v90_z`'s own write-up as something
+to do, and then **never run** because the user chose the option that did not seem to need it.
+⚠️ **The 8 QC'd de→it lessons were QC'd by `translategemma:12b`, the same model that has now missed
+8 of 8.** They were already symmetric; QC did not make them so.
+
+**THEN THE REAL DIAGNOSIS, measured — the instruction is INERT, not under-powered.** The exact
+`qcCheckPair` system prompt was CAPTURED from the running server via `fake-ollama`'s `FAKE_LOG`
+(never re-implemented in a probe) and replayed against real models, varying only the sibling block:
+
+| model | siblings ASYMMETRIC (as shipped) | siblings SYMMETRIC | NO sibling block |
+|---|---|---|---|
+| `translategemma:12b` | `OK` | `OK` | `OK` |
+| `qwen3.6:35b-a3b` | `OK` | `OK` | `OK` |
+
+**Six measurements, all `OK`.** ⚠️ A plausible hypothesis died here and is recorded so it is not
+re-derived: the rule says *"Fix it on whichever side matches how the other pairs in this lesson are
+written"*, and when every sibling is asymmetric the same way the lesson's "convention" IS the error —
+self-defeating exactly where it matters, which would also explain the bimodal all-or-nothing
+distribution. **It is not the cause**: removing the sibling block entirely changes nothing. The rule
+is simply not acted on as rule (3) of a prompt that is otherwise about translation accuracy.
+
+⚠️ **This is the `v86`-line rule firing** (two independently measured prompt attempts with zero
+effect ⇒ reconsider the DIAGNOSIS, not the wording). **A bigger model is not the lever either** — the
+35B model is just as inert.
+
+**A FOCUSED single-question prompt IS a lever, and is not yet good enough.** A prompt asking about
+article symmetry and nothing else, on `qwen3.6:35b-a3b`, scored **4/7** with negative controls:
+
+- fixes 2 of 3 real asymmetries (`responsabilità` → `la responsabilità`, `percorso` → `il percorso`) — against **0 of 3** for the buried rule
+- verbs and adverbs correctly left alone (`svuotare`, `rapidamente`) — the control that stops a naive "always add an article" checker
+- ⚠️ **but both failures CREATE asymmetry**: it stripped the article from an already-correct `l'autonomia => die Autonomie`, and added one to a correctly-bare `autonomia => Autonomie`
+- ⚠️ **every failure involves the ELIDED article `l'`** — `la`/`il` succeed. That is a specific, testable weak spot, not general incapacity
+
+**OPEN, and needing a user decision** — see the open section. The user has proposed splitting QC into
+a pure translation check (`translategemma`) plus a lesson-consistency check on the bigger model. That
+is the right shape, but **model size is measured as NOT the lever** — focus is, partially — so the
+split must carry a dedicated single-question check, and the elision case must be fixed and measured
+before it can be trusted to write to the corpus.
+
+### The bar's panels line up with their buttons (the actual request)
+
+User: *"align the settings bar popovers (login, settings, running jobs) with their buttons, like the
+tutor and the model selection popovers are already aligned."* The observation is exact.
+`#corner-pills` (account · settings · ✨ model · jobs) is at the LEFT of `#bottom-bar`, and of its
+four panels only **one** was anchored to its own button: `.bmodels-pop` is `position:absolute;
+left:0` inside `#bpill-wrap`. `.jobs-pop` was `position:fixed; right:16px` — pinned to the screen's
+RIGHT edge while its button sits on the left — and settings/account are centred MODALS, not popovers.
+(The tutor only READS as aligned because its own fab is the right-hand control.)
+
+⚠️ **The obvious fix is a trap.** Copying `.bmodels-pop`'s absolute positioning means re-parenting the
+panels into the bar — and `#jobs-pop` was deliberately moved OUT of `#jobs-fab` because `#bottom-bar`
+is a STACKING CONTEXT (`position:fixed` + `z-index:900`), so a descendant can never out-rank a
+body-level `#tutor-widget` (`z-index:901`). That would reopen the exact bug its own markup comment
+records: the panel opening invisibly behind the tutor. They stay at body level; only `left` is
+computed, from the button's own rect.
+
+- **`_anchorToBtn(pop, btn, fallbackWidth)`** — LEFT-EDGE aligned, not centred, because
+  `.bmodels-pop` is the reference the request named and `left:0` is what it does. Clamped to the
+  viewport at both edges. Returns `false` (and writes nothing) below **520px**, where `.jobs-pop`
+  already goes edge-to-edge by its own media query, and for a **zero-size button** (the bar toggled
+  away), which would otherwise pin every panel to the left margin.
+- **`_anchorCardToBtn(cardId, btnId)`** for the two modals. ⚠️ **The BACKDROP is untouched** — it is
+  what `modalBackdropClose` reads to tell an outside press from an inside one — so only the card
+  moves, from flex-centred to absolutely placed within the same fixed backdrop, with the
+  `calc(100vh - var(--bottom-bar-h) - 44px)` bound `#tutor-widget`/`.jobs-pop` already use so a long
+  settings list scrolls rather than running off the top. It RESETS stale inline state on every open,
+  or a card anchored on a desktop would stay stuck bottom-left after a resize.
+- `closeJobsPop` clears the inline `left`/`right`, so a value computed on a wide viewport cannot
+  defeat the narrow-screen media query later.
+- ⚠️ **Noted, deliberately NOT changed**: `.bmodels-pop` is itself inside the bar and carries the same
+  latent stacking trap. It is pre-existing, it needs its own live check with both panels open, and
+  folding it into a request about three other controls is how a fix becomes a regression.
+
+**LIVE-VERIFIED in a real browser** at 1100px against a test server on a copy — account button
+left 16 → card 16, settings 133 → 133, jobs 221 → 221; at 375px nothing is anchored and `.jobs-pop`
+stays edge-to-edge; settings dismissal still ignores an inside press and closes on the backdrop; the
+jobs panel still closes on an outside click only.
+
+### ⚠️ A RAW `ui.json` KEY WAS RENDERING IN THE BOTTOM BAR, and the audit could never have found it
+
+Found while photographing the alignment: the signed-out account badge read the literal text
+**`acct.signin`**. `refreshAccountBadge()` writes `APP.learner || t('acct.signin')` and runs off the
+backend-info path, which can land BEFORE `loadUIStrings()` resolves — and `t()` returns the KEY when
+`UI_STRINGS` is empty. `applyUIStrings()` did not address `#acct-name`, so nothing ever healed it.
+
+⚠️ **The key was never MISSING** — `ui.json` has had `acct.signin` = "Sign in" all along. That is
+precisely why the `v90_k` unlocalized-string audit never saw it: **that audit looks for absent keys,
+not for a present key written too early.** A new class, worth a sweep of its own.
+
+Healed in `applyUIStrings()` rather than by reordering init, so a UI-LANGUAGE CHANGE updates the
+badge too — which reordering alone would not have fixed. Guarded with a non-vacuity arm that
+reproduces the raw-key state first, and a third that proves a signed-in name is not blindly
+overwritten.
+
+**Guard**: `unit-bar-popover-align.test.js` (8 checks). ⚠️ **Harness limits shaped it**: `lib-dom`
+gives EVERY element the same rect (`left:0, width:100`) and a constant non-configurable
+`offsetWidth`, and its `innerWidth` is 390 — below the cutoff, so nothing anchors by default. Each
+case sets `innerWidth` and overrides `getBoundingClientRect` on the BUTTON only. **Eleven mutations,
+all red.**
+
 ## ✅ v90_z — the four handed-over user reports: two diagnosed to the line, and two whose premise measurement destroyed
 
 **ONE `ui.json` key** (`text_explorer.phrase`, `en` only, granted from a budget of four after being
@@ -3443,7 +3574,18 @@ because the other covered it. Rule 3's "mutually-masking pair of defensive guard
 drain's clear was deleted, one clear kept as the invariant *"being inside a send means nothing is
 queued"* — and both mutations then went red against **simpler** code.
 
-### 3. German-with-article vs Italian-without — ⚠️ THE PREMISE WAS FALSE, AND THE MEASUREMENT IS THE FINDING
+### 3. German-with-article vs Italian-without — ⚠️⚠️ **THIS SECTION'S CENTRAL CLAIM WAS WRONG. See `v90_aa`.**
+
+> ⚠️⚠️ **CORRECTION (`v90_aa`), recorded rather than edited away.** Everything below about COVERAGE is
+> still true and still measured. **"The rule works" is NOT.** That was a CORRELATION — QC'd de→it
+> lessons happen to be symmetric — reported as causation, and the one check that would have settled
+> it (running the rule against a real asymmetric pair) is named in this very entry as something to do
+> and was never run. Measured at `v90_aa`: a forced per-lesson QC over 8 of 8 asymmetric pairs flags
+> **none** of them, on BOTH models, with or without the sibling block — six measurements, all `OK`.
+> The article instruction is INERT as rule (3) of that prompt. The 8 "clean" QC'd de→it lessons were
+> QC'd by `translategemma:12b`, the same model that has now missed 8 of 8; they were already
+> symmetric. **The post-generation checkbox `v90_z` shipped is still worth having — but on its own it
+> will not fix an article asymmetry, because the check it runs does not catch one.**
 
 The request was *"a QC (perhaps an option on QC for vocab) could specifically catch that"*. **The
 option already exists**: `qcCheckPair` has carried an explicit **ARTICLE SYMMETRY** rule for
