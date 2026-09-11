@@ -170,8 +170,21 @@ const f = (name, type) => ({ name, type: type || '' });
   // character 401) and fire a network fetch the instant a pasted URL completed.
   assert.ok(/id="gen-scan-btn"[^>]*onclick="genScan\(\)"/.test(client.replace(/\s+/g, ' ')),
     'Scan is a button press, never an oninput');
-  assert.ok(!/id="gen-input"[^>]*oninput=/.test(client.replace(/\s+/g, ' ')),
-    'and the field itself does not classify while the learner types');
+  // ⚠️ RE-SCOPED at `v90_y`. This banned ANY `oninput` on the field, as a proxy for "does not
+  // classify while typing". The field now has one — `_genInputEdited` — and the ban would have
+  // forbidden a handler that does not classify at all. The real claim is about CLASSIFYING, so it
+  // is asserted about the handler's BODY instead of about the attribute's existence.
+  const edited = ext('_genInputEdited');
+  assert.ok(!/genScan\(|_genClassify\(/.test(edited),
+    'the oninput handler must never classify — that is what the Scan button is for, and classifying '
+    + 'while typing would reclassify mid-sentence and fetch the instant a pasted URL completed');
+  assert.ok(/_genShowInputActions\(true\)/.test(edited),
+    'it brings the Scan button back, because the text no longer matches the last decision');
+  // ⚠️ AND IT KEEPS THE HIDDEN TOPIC FIELD IN STEP. #topic-input is no longer shown in `llm` mode
+  // but `doGenerate()` still reads the topic from it — without this, editing the text after
+  // choosing "topic" generates the OLD topic, silently, with the new one on screen.
+  assert.ok(/topic-input/.test(edited) && /_genInputMode\(\) === 'llm'/.test(edited),
+    'and mirrors the text into the hidden #topic-input while in topic mode');
   console.log('  the ambiguous case is ASKED with existing keys, behind an explicit Scan: OK');
 }
 
@@ -183,8 +196,13 @@ const f = (name, type) => ({ name, type: type || '' });
   assert.ok(map, 'the per-mode reveal is a named table (if reshaped, update this guard)');
   const M = new Function(map[0] + '\nreturn _GEN_MODE_SHOW;')();
   // Each mode shows its OWN surface and not the others'.
-  assert.ok(M.llm.includes('topic-input') && !M.llm.includes('pdf-panel') && !M.llm.includes('comic-panel'),
-    'the topic mode shows the topic controls and no upload panels');
+  // ⚠️ v90_y: the topic FIELD is deliberately NOT revealed any more — the scan field already holds
+  // the text, and #topic-input was a second copy asking the same question again.
+  assert.ok(!M.llm.includes('topic-input') && !M.llm.includes('topic-label'),
+    'the duplicate topic field is not revealed — the scan field already shows the text');
+  assert.ok(M.llm.includes('style-wrap') && M.llm.includes('num-chapters-row') && M.llm.includes('story-len-row'),
+    'the topic mode shows exactly the generation controls: style, chapter count and length');
+  assert.ok(!M.llm.includes('pdf-panel') && !M.llm.includes('comic-panel'), 'and no upload panels');
   assert.ok(M.pdf.includes('pdf-panel') && !M.pdf.includes('topic-input'),
     'the document/url mode shows the chunk list and not the topic field');
   assert.ok(M.comic.includes('comic-panel') && M.comic.length === 1,
@@ -284,6 +302,23 @@ const f = (name, type) => ({ name, type: type || '' });
   assert.ok(/gen-camera-lbl'\); if\(gc\) gc\.textContent=t\('form\.image_camera'\)/.test(client.replace(/\s+/g,' ')),
     'and reuses form.image_camera — an existing translated key, so it cost nothing');
   console.log('  the camera is an input root beside upload, staged not auto-dispatched: OK');
+}
+
+// ── 11. The three input buttons retire once a route is chosen (v90_y) ───────
+// User: "the 'Foto aufnehmen', 'Dokument hochladen' and 'Scan' buttons are not needed anymore".
+{
+  assert.ok(/id="gen-input-actions"/.test(client), 'the button row is addressable');
+  const hide = ext('_genShowInputActions');
+  assert.ok(/gen-input-actions/.test(hide), 'and toggled by a named helper');
+  const scan = client.slice(client.indexOf('async function genScan('));
+  assert.ok(/_genShowInputActions\(false\)/.test(scan.slice(0, scan.indexOf('\n}'))),
+    'a successful route retires the buttons');
+  assert.ok(/_genShowInputActions\(false\)/.test(ext('genChooseKind')),
+    'and so does answering the story/topic question');
+  // ⚠️ They must come BACK on a fresh arrival, or the wizard is unusable on the second visit.
+  assert.ok(/_genShowInputActions\(true\)/.test(ext('_genRouterCollapse')),
+    'a fresh arrival restores them — otherwise the second visit has no way to scan anything');
+  console.log('  the input buttons retire after a decision and return on a fresh arrival: OK');
 }
 
 console.log('unit-gen-input-router: ALL PASSED');

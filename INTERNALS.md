@@ -2530,6 +2530,49 @@ an evaluation of the three possible tiers first)
 **Keep 6b current the cheap way:** when a session's write-up names a function it had to hunt for,
 add the row. A wrong row is worse than a missing one, so only add names verified in that session.
 
+**The generation wizard's ONE input field, and the bottom bar** (`index.html`, `v90_s`…`v90_y`)
+
+⚠️ **Read this before touching card 2.** The learner no longer classifies their own input with
+checkboxes; they give the thing and `genScan()` decides. The four checkboxes still EXIST and are
+still the mode state — they are simply hidden.
+
+| what | where |
+|---|---|
+| the whole decision, PURE and testable | `_genClassify(text, files)` → `{kind}` of `empty`/`ask`/`url`/`story`/`image`/`document`/`refuse`. Returns what to do; `genScan()` does it |
+| the dispatcher | `genScan()` — reveals the matching surface and hands off to the EXISTING path for that kind |
+| the one ambiguous case | a SHORT text: story or topic? `_genAskKind()` offers two buttons (`form.use_story` vs `gen.title`, both pre-existing keys); `genChooseKind(kind)` answers it |
+| what each mode shows | `_GEN_MODE_SHOW` + `_genRevealFor(mode)`. ⚠️ **Only ever ADDS `.gen-hide`; never force-shows** — so `_updateUploadSliderVis`/`_applyLessonCardUI` still govern whatever is revealed |
+| the full reveal, for RESTORE paths | `_genRouterOpen()` — a resumed draft never went through the router and has no mode |
+| the collapsed first window | `_genRouterCollapse()` — called by `goLanding`/`goLandingClean` |
+| files staged before Scan | `_genSetFiles()`/`_genFiles`. ⚠️ Handed to the UNCHANGED `onUploadFileChosen`/`onComicFileChosen` through a synthetic `DataTransfer` (`_genFeedFiles`) — neither handler was refactored |
+| editing after a decision | `_genInputEdited()` — restores the Scan button AND mirrors into the hidden `#topic-input`. ⚠️ **Never classifies**; that is what Scan is for |
+| the topic/story threshold | `GEN_TOPIC_MAX` = 400 = `#topic-input`'s own `maxlength` |
+
+⚠️ **`#topic-input` is NO LONGER SHOWN in topic mode** (`v90_y`) but is still WRITTEN, because
+`doGenerate()` reads the topic from it. That is the whole reason `_genInputEdited` exists.
+
+⚠️ **Two features are hidden, not removed** (`v90_v`, user ruling): the dialect panel and the
+"I also have a translation" modifier. `doDialectImport` and its six test files are untouched;
+`use-translation-cb` stays unchecked, so the send path's own `useTranslation` read is false.
+
+**The bottom bar** (`v90_w`/`v90_x`): `#corner-pills` = user · settings · ✨ model · jobs;
+`#corner-pills-right` = mic · mute · tutor. ⚠️ `#bottom-bar-toggle` (collapse) is a SIBLING of
+`#bottom-bar`, never a child — a control that hides the bar cannot live inside it. The ✨ pill is
+`#bpill-wrap` MOVED from the wizard, so `renderPill`/`renderModelPicker` are unchanged; its popover
+is re-anchored upward (`#corner-pills .bmodels-pop`) or it renders off-screen. Its tooltip is synced
+on `mouseenter` (`_syncPillTitle`), deliberately — see the `v90_x` entry for why the init order was
+a dead end.
+
+**Reading a URL** (`news-article.js`, `v90_m`…`v90_r`)
+
+| what | where |
+|---|---|
+| fetch, ≤5 redirects, 5MB cap, 15s timeout, http AND https | `fetchPage(url, opts)` — `http` is what makes the guards driveable against a stub |
+| the JSON-LD parse | `extractNewsArticle(html, status)`. ⚠️ **`status` is a REQUIRED argument, not an option** — it is the gate a measured `tagesschau.de` 404 defeats when left out |
+| paragraph recovery | `restoreParagraphs(body, html)` — `<p>` supplies BOUNDARY POSITIONS only, never text |
+| Wikipedia | `wikipediaTarget(url)` + `fetchWikipediaArticle()` — MediaWiki's own API, and the only source that yields a machine-readable LICENCE |
+| the route | `POST /api/fetch-url` — not a job (no model call), not gated on a backend |
+
 ## 7. Maintaining this file
 
 Add an entry when a session discovers something a future session would otherwise rediscover:

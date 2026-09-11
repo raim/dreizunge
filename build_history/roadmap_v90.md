@@ -494,6 +494,131 @@ content, not a translatable string).
 - **A maintainer (~10):** "Rebuild docs/index.html", "Import lessons.json", "Teacher dashboard",
   "✓ docs/index.html rebuilt".
 
+# 🆕 FOUR USER-REPORTED ISSUES, HANDED TO A FRESH SESSION (reported at the `v90_y` cut)
+
+Reported after live testing. **None is built.** Two are diagnosed to the line; two need design
+decisions from the user first. Listed in the order I would take them.
+
+---
+
+## ⭐ 1. TEXT ANALYSIS RETURNS ALL-NULL SENTENCES — DIAGNOSED TO THE LINE, NOT FIXED
+
+User: *"text-analysis is often missing sentences, and returning null-filled entries in
+canonical-analysis.json. I ran this again … with the option to only fill up missing, and the same
+entries just stayed null in both cases. The console also didn't report on how many analyses were
+successful and how many just contain nulls."*
+
+### The measurement — a hard threshold, not a quality problem
+
+Across the whole of `canonical-analysis.json` (24 chapters, 87 sentences with tokens):
+
+| sentence length | all-null |
+|---|---|
+| 1–24 tokens | **0 of 78** |
+| 25 tokens | 1 of 8 |
+| **26+ tokens** | **8 of 8 — 100%** |
+
+Longest success: **24 tokens**. Shortest failure: **25**. 4 of 24 chapters are affected.
+
+### The mechanism, end to end
+
+1. `canonical-analysis.js:174` — `await callLLM(model, sys, user, **1536**, {...})`. A fixed
+   **1536-token output cap**.
+2. The reply is one JSON object per token (`lemma`, `form`, `sense`, `confidence`). At roughly
+   55–60 output tokens each, ~24 tokens fits in 1536 and ~26 does not. **The reply is truncated.**
+3. `parseAnalysisReply()` — `try { parsed = extractJSON(raw); } catch (e) { parsed = {}; }`.
+   Truncated JSON throws, and the catch **silently substitutes an empty object**.
+4. With `byIdx` empty, every token takes the `!m` branch and becomes
+   `{lemma:null, form:null, sense:null, confidence:'unresolved'}` — a full-length, fully-null entry.
+5. A re-run does exactly the same thing. ⚠️ **This is why "fill only missing" does not help, and the
+   user was RIGHT to correct the first guess**: the re-run is not skipping those sentences, it is
+   re-running them and failing identically. Do not re-derive the presence-test theory; it was wrong.
+
+⚠️ **The irony worth reading**: `analyzeChapter`'s own comment already says sentences are analysed
+one call each *"deliberately not batched into one whole-chapter call, which risks truncation on
+longer chapters"*. The same risk at the SENTENCE level was never considered.
+
+### What a fix has to decide (user input wanted)
+
+- **Raise the cap?** Simplest, but it is a fixed number again — it just moves the cliff, and it
+  interacts with `num_ctx`. If taken, size it from the token count, not from a new constant.
+- **Split long sentences for analysis** and stitch the results? Robust, and it matches how the
+  chapter path already avoids the same problem. More work; token indices must survive the split.
+- **Both**, with the split as the safety net.
+
+### ⚠️ Two things to fix REGARDLESS of which is chosen
+
+- **The silent catch.** `catch (e) { parsed = {} }` turns a truncation into 39 null tokens with no
+  log, no throw and no counter. That is the reason a user had to notice this, and it is the same
+  class as every other silent-failure incident in this file.
+- **The console report the user asked for.** ⚠️ **The signal already exists and needs no new field**:
+  every failed token is written with `confidence:'unresolved'`. Counting those per chapter gives
+  "N of M sentences unresolved" for free, and would make a repeat visible immediately.
+
+---
+
+## ⭐ 2. THE TUTOR SILENTLY DROPS ~1 IN 5 QUESTIONS — MEASURED, NOT DIAGNOSED
+
+User: *"the tutor job did appear in the job popover, but I never received a reply or a console
+message about a failure, time-out etc. … You will find several unanswered questions in
+learners.json."*
+
+Measured in `learners.json` → `users.raim.state.tutorThread` (60 messages, roles `student`/`tutor`):
+
+- **6 of 33 student messages got no `tutor` reply — 18%**, at indices 24, 31, 52, 57, 58, 59.
+- ⚠️ **The last three are consecutive**, and the *"in fila indiana"* question appears **three times**
+  (52, 58, 59) — the user asked, got nothing, asked again, got nothing, asked again.
+- The failures are not a single language or topic: `"Lei studiano ogni giorno?"`, `"le agnolotto"`,
+  a Dutch sentence, and the long German question.
+
+### Where to start
+
+**Not diagnosed** — deliberately, rather than guessing. The job reaches the popover, so the job is
+created; what is unknown is whether the model call fails, the reply fails to parse, or the append to
+`tutorThread` is lost. ⚠️ The `v90_n`/`v90_p` pattern is worth checking first: a `CANCELLED` or an
+error that is swallowed by a `catch` and never reaches `jobFail`. Compare with `/api/tutor`'s own
+error path, and check whether a failed reply still writes a `tutor` turn.
+
+⚠️ `learners.json` is the user's live file — **read it, never write it**.
+
+---
+
+## 3. VOCAB: GERMAN WITH ARTICLE vs ITALIAN WITHOUT — needs a product decision
+
+User: *"we still get a lot of mismatches of german with and italian w/o article … In Italian nouns
+do have sex/gender, so it would be relevant information. A QC (perhaps an option on QC for vocab)
+could specifically catch that and add the correct missing article."*
+
+⚠️ **Measure the actual rate first** — the user says "a lot", which is a report, not a number. Count
+pairs in `lessons.json` where the source side carries an article and the target side does not (and
+the reverse) before designing anything.
+
+**The decision**: is this a new QC MODE (the engine already has two, and four surfaces), or a
+generation-prompt change, or both? A QC mode is the safer shape — it is opt-in, reviewable, and the
+machinery exists. ⚠️ A prompt change alone risks the `v86`-line lesson: two independently measured
+prompt-reinforcement attempts that both moved nothing.
+
+---
+
+## 4. PHRASE-LEVEL ANALYSIS DISPLAY — needs a design decision
+
+User: *"The text contains the phrase 'in fila indiana' which the translation translates as 'in einer
+Reihe', in canonical-analysis.json the phrase is recorded as 'im Einermarsch'. Can we amend our text
+analysis display such that it really shows phrase-level analysis instead of the single word analysis,
+that gives just 'indisch' as a translation for the word 'indiana'? Clicking on indiana should provide
+the whole phrase."*
+
+⚠️ **The data is already there.** `parseAnalysisReply` returns `phrases` alongside `tokens`, with
+`start`/`end` token indices — the display simply does not prefer them. So this is a DISPLAY change
+first, not a pipeline change: when a clicked token falls inside a phrase span, show the phrase.
+
+**And the larger request, explicitly for the roadmap** (user: *"Perhaps rather for the roadmap"*):
+*"in the future we want to provide the user the availability to browse text analysis through
+different levels, e.g. from paragraph to sentences to phrases to single words."* That is a design
+piece in its own right — four levels, one surface — and should not be started as part of the
+one-token fix above.
+
+
 # 🆕 ONE INPUT FIELD FOR THE GENERATION WIZARD (user, at the `v90_r` cut) — SPEC ONLY, NO CODE
 
 User: *"clean up generation wizard… have one field for file drop and text input… The field's title
@@ -3156,6 +3281,73 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v90_y — three small user requests, and a diagnosis worth more than all of them
+
+**ZERO `ui.json` keys.** Three quick items built; four larger user reports written up for a fresh
+session (see *"FOUR USER-REPORTED ISSUES"* in the open part of this file).
+
+### 1. The wizard stops asking the same question twice
+
+User, with a screenshot: *"the Scan button recognized that we want to generate a story. Now the 'Foto
+aufnehmen', 'Dokument hochladen' and 'Scan' buttons are not needed anymore and we don't need to
+repeat the text field."* Once Scan decides **topic**, the three input buttons retire and
+`#topic-label`/`#topic-input` are no longer revealed — what remains is the text, the style selector
+and the two sliders.
+
+⚠️ **`#topic-input` IS STILL WRITTEN, because `doGenerate()` reads the topic from there.** Hiding a
+field that a downstream path still reads is how you generate the wrong thing silently, so
+`_genInputEdited()` mirrors the scan field into it on every keystroke and brings the Scan button
+back. ⚠️ **It deliberately does NOT classify** — that is what the button is for; classifying on
+input would reclassify mid-sentence and fetch the instant a pasted URL completed.
+
+### 2. The story-length floor drops to 10 — superseding `v90_r`
+
+User: *"reduce minimal length to 10 … We do want to allow very short chapters, as we already get
+from comic panels."* ⚠️ **This overrules a judgement made two releases ago.** `v90_r` lowered the
+floor only for chunk size and kept the story floor at 50, reasoning that "a 10-word generated story
+would ask the model for something absurd". A comic panel routinely yields a handful of words, so 50
+was an assumption about what a chapter is FOR, not a limit. Changed in the JS **and in the markup** —
+the element's own `min`/`step` clamp the value before any JS runs.
+
+### 3. The UI language follows the operating system
+
+⚠️ **Order is the feature**: saved `imp3_uilang` → saved `imp3_srclang` → **OS locale** → `en`. The
+srclang step is kept ahead of the OS so no existing learner's UI changes on this release, which is
+the promise that fallback was added with. `navigator.languages` (the ordered preference list) is
+tried before `navigator.language`, and a tag is reduced to its primary subtag (`de-AT` → `de`).
+
+⚠️ **NO validation against the available languages, and that is safe rather than lazy.**
+`loadUiLang()` is synchronous and runs before `languages.json` is fetched, so it cannot check —
+and it need not: `/api/ui/lang` answers an unknown code with `{}` and `t()` falls back through
+`window._UI_EN` to English. The worst case is the English UI that would have been shown anyway.
+
+### ⚠️ TWO OF THIS SESSION'S OWN GUARDS WERE SUPERSEDED — RE-SCOPED, NOT DELETED
+
+- **`unit-wikipedia-source` §6** asserted the story-length floor *stays 50*, with `v90_r`'s reasoning
+  quoted in it. The user overruled the reasoning, so the assertion flips and now pins 10 in BOTH
+  modes **and in the markup** — the second half added because a JS-only fix would be clamped on
+  first paint.
+- **`unit-gen-input-router` §6** banned *any* `oninput` on the scan field, as a proxy for "does not
+  classify while typing". The field now has one that does not classify at all, so the ban was
+  forbidding the wrong thing. Re-scoped to assert the HANDLER'S BODY never calls `genScan`/
+  `_genClassify` — the actual claim — plus that it mirrors into the hidden topic field.
+
+**Seven mutations red** across the three changes, including the OS fallback removed, the OS
+overriding a SAVED preference, the full tag kept instead of the primary subtag, the floor back at 50
+in JS, the floor back at 50 in the MARKUP, the duplicate topic field revealed again, and the input
+buttons never returning on re-entry.
+
+⚠️ **A HARNESS BUG, NOT A CODE BUG, ate three mutations first**: the patch strings ended in `'en'`
+and `'pt'`, and a trailing quote adjacent to Python's closing `'''` is a syntax error — so the patch
+never applied and the test printed `ALL PASSED`, which reads exactly like a survivor. **Fifth time
+this line of work has had a mutation that silently failed to apply.** Re-run via `cat` heredocs, which
+is what `CLAUDE.md` rule 25 already prescribes for escape-heavy blocks — the rule is not about emoji.
+
+### Also in this release
+
+`INTERNALS.md` §6b gained the wizard router, the bottom bar and `news-article.js` — the map a fresh
+session reads before grepping. It had said nothing about work spanning `v90_m`…`v90_y`.
 
 ## ✅ v90_x — every bottom-bar control opens AND closes from its own button
 

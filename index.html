@@ -1423,9 +1423,9 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
               placeholder="e.g. cooking, architecture, medicine…"
               ondragover="event.preventDefault();this.classList.add('drop-hot')"
               ondragleave="this.classList.remove('drop-hot')"
-              ondrop="genOnDrop(event)"></textarea>
+              ondrop="genOnDrop(event)" oninput="_genInputEdited()"></textarea>
             <div id="gen-input-files" style="display:none;font-size:12px;color:var(--gray-dark);margin:4px 0"></div>
-            <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+            <div id="gen-input-actions" style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
               <input type="file" id="gen-file-input" multiple style="display:none"
                 accept=".pdf,.txt,.md,.markdown,.text,image/png,image/jpeg" onchange="genOnFilePick(this)">
               <!-- v90_u (user request): the camera is elevated out of #comic-panel to sit beside the
@@ -1477,7 +1477,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <span class="story-len-val" id="story-len-val">300 words · 3-4 paragraphs</span>
           </div>
           <input type="range" class="story-len-slider" id="story-len-slider"
-            min="50" max="1000" step="50" value="300"
+            min="10" max="1000" step="10" value="300"
             oninput="onStoryLenSlider(this.value)">
         </div>
         <div class="story-len-row" id="num-chapters-row">
@@ -3838,7 +3838,29 @@ function saveSrcLang(){ localStorage.setItem('imp3_srclang',APP.formSrcLang); }
 // `imp3_srclang` value when no dedicated UI-language preference has ever been saved, so an
 // existing learner's UI does not silently change on this release — it just becomes independently
 // adjustable going forward.
-function loadUiLang(){ try { return localStorage.getItem('imp3_uilang') || loadSrcLang(); } catch(_) { return 'en'; } }
+// v90_y (user request): fall back to the OPERATING SYSTEM's language before falling back to English.
+// ⚠️ ORDER MATTERS AND IS DELIBERATE: an explicit choice (`imp3_uilang`) wins, then the existing
+// `imp3_srclang` — so no existing learner's UI changes on this release, which is the same promise
+// the src-lang fallback was added with — and only then the OS. English stays the last resort.
+// ⚠️ NO VALIDATION AGAINST THE AVAILABLE LANGUAGES, deliberately. `loadUiLang()` is synchronous and
+// runs before `languages.json` is fetched, so it cannot check. It does not need to: `/api/ui/lang`
+// answers an unknown code with `{}`, and `t()` falls back through `window._UI_EN` to English. The
+// worst case is therefore exactly the English UI that would have been shown anyway.
+function _osUiLang(){
+  try{
+    // `navigator.languages` is the user's ORDERED preference list; `navigator.language` is only the
+    // first of it, so the list is tried first and the singular is a fallback for older browsers.
+    for(const c of [...(navigator.languages||[]), navigator.language]){
+      const primary = String(c||'').toLowerCase().split(/[-_]/)[0].trim();
+      if(primary) return primary;   // 'de-AT' → 'de', 'pt-BR' → 'pt'
+    }
+  }catch(_){}
+  return '';
+}
+function loadUiLang(){
+  try { return localStorage.getItem('imp3_uilang') || localStorage.getItem('imp3_srclang') || _osUiLang() || 'en'; }
+  catch(_) { return _osUiLang() || 'en'; }
+}
 function saveUiLang(){ try { localStorage.setItem('imp3_uilang', APP.uiLang); } catch(_) {} }
 function loadOverruleStorylineLang(){ try { return localStorage.getItem('imp3_overrule_sl') === '1'; } catch(_) { return false; } }
 // v89_j: absent reads as OFF — `=== '1'`, never `!== '0'`. Default-not-active is the ruling.
@@ -7835,7 +7857,12 @@ function _updateUploadSliderVis(){
   // label already switches for exactly this reason, so the range switches with it.
   const sl=document.getElementById('story-len-slider');
   if(sl){
-    const min = asChunkSize ? 10 : 50, step = asChunkSize ? 10 : 50;
+    // ⚠️ v90_y — 10 IN BOTH MODES NOW, superseding v90_r. That release kept the STORY-length floor
+    // at 50 on the reasoning that "a 10-word generated story would ask the model for something
+    // absurd". The user has overruled it explicitly: "we do want to allow very short chapters, as we
+    // already get from comic panels" — a comic panel routinely yields a handful of words, so the
+    // floor was an assumption about what a chapter is for, not a technical limit.
+    const min = 10, step = 10;
     if(sl.min !== String(min)) sl.min = String(min);
     if(sl.step !== String(step)) sl.step = String(step);
     // A value left below the new floor (switching back out of chunk mode) would be silently
@@ -8538,6 +8565,7 @@ function _genClassify(text, files){
 
 // Card 2 starts showing ONLY the new panel. One class, so the inverse is one class removal.
 function _genRouterCollapse(){
+  _genShowInputActions(true);   // a fresh arrival is a fresh input — the buttons are needed again
   document.getElementById('gen-card-2')?.classList.add('router-collapsed');
   const k=document.getElementById('gen-kind-row'); if(k) k.style.display='none';
   const st=document.getElementById('gen-input-status'); if(st) st.textContent='';
@@ -8552,7 +8580,11 @@ function _genRouterCollapse(){
 // `_applyLessonCardUI` withholds the start button, and so on). A CSS rule that force-showed with
 // `display:revert !important` would override those inline decisions and silently break them.
 const _GEN_MODE_SHOW = {
-  llm:     ['topic-label','topic-input','style-wrap','num-chapters-row','story-len-row'],
+  // ⚠️ v90_y: `topic-label`/`topic-input` are NOT here any more (user request). Once Scan has
+  // decided "topic", the scan field already shows the text and #topic-input was a second copy of it
+  // asking the same question again — "we don't need to repeat the text field". The value is still
+  // WRITTEN to #topic-input, because `doGenerate()` reads it there; only the duplicate UI is gone.
+  llm:     ['style-wrap','num-chapters-row','story-len-row'],
   paste:   ['user-story-panel','style-wrap'],
   pdf:     ['user-story-panel','pdf-panel','story-len-row'],
   comic:   ['comic-panel'],
@@ -8629,6 +8661,7 @@ async function genScan(){
   // left the old topic in `#topic-input`, and the fetch's own "only fill a blank field" rule
   // (correctly) declined to overwrite it — so the article arrived under the previous topic's title.
   _genClearRouted();
+  _genShowInputActions(false);
   // url and document both end in #pdf-panel's chunk list, so they share its reveal.
   _genRevealFor(d.kind==='image' ? 'comic' : d.kind==='story' ? 'paste' : 'pdf');
   if(d.kind==='image'){
@@ -8685,11 +8718,33 @@ function _genClearRouted(){
   const story=document.getElementById('user-story-input'); if(story) story.value='';
 }
 
+// ⚠️ v90_y: once a route is chosen, the three INPUT buttons have done their job — "the 'Foto
+// aufnehmen', 'Dokument hochladen' and 'Scan' buttons are not needed anymore". They come back the
+// moment the text is edited (see _genInputEdited), so changing your mind costs one keystroke.
+function _genShowInputActions(on){
+  const r=document.getElementById('gen-input-actions'); if(r) r.style.display = on ? 'flex' : 'none';
+}
+// ⚠️ NOT A CLASSIFIER. This runs on every keystroke and deliberately does NOT call `_genClassify`
+// or `genScan` — classifying while typing would reclassify mid-sentence and fire a network fetch the
+// instant a pasted URL completed, which is why Scan is a button. It does exactly two things:
+//   • brings the Scan button back, because the text no longer matches the last decision;
+//   • keeps #topic-input in step, since the visible topic field is gone in `llm` mode and
+//     `doGenerate()` still reads the topic from there. Without this, editing the text after
+//     choosing "topic" would generate the OLD topic — silently, with the new one on screen.
+function _genInputEdited(){
+  _genShowInputActions(true);
+  if(typeof _genInputMode === 'function' && _genInputMode() === 'llm'){
+    const ta=document.getElementById('gen-input'), topic=document.getElementById('topic-input');
+    if(ta && topic) topic.value = ta.value.trim();
+  }
+}
+
 function genChooseKind(kind){
   const ta=document.getElementById('gen-input');
   const text=(ta?ta.value:'').trim();
   const row=document.getElementById('gen-kind-row'); if(row) row.style.display='none';
   _genClearRouted();
+  _genShowInputActions(false);
   _genRevealFor(kind==='story' ? 'paste' : 'llm');
   const cb=document.getElementById('use-story-cb');
   if(kind==='story'){

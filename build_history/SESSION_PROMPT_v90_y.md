@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_x` cut
+# Session prompt — written at the `v90_y` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_x`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_y`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -64,32 +64,42 @@ current one) carries the protocol, the open items and the RULES, but none of tha
 
 # WHERE TO START
 
-**NOTHING IS OWED.** The URL scrape — the one thing that was teed up and costed — **shipped at
-`v90_m`**. **Ask the user what they want next** — that is the right first move here.
+⚠️⚠️ **FOUR USER-REPORTED ISSUES ARE WAITING, AND THIS SESSION WAS CUT SO YOU COULD TAKE THEM WITH A
+FULL CONTEXT BUDGET.** They are written up in `roadmap_v90.md` → **"FOUR USER-REPORTED ISSUES,
+HANDED TO A FRESH SESSION"**, in the order to take them. **Read that section before anything else.**
+Two are diagnosed to the line and two need a decision from the user first.
 
-✅ **SCRAPE A STORY FROM A URL IS BUILT** (`v90_m`), scoped to the schema.org Article subtree, with
-`news-article.js` + `POST /api/fetch-url` + `fetchStoryFromUrl()` + `e2e-fetch-url` (7 sections).
-**TWO `ui.json` keys**, granted against an estimate of 3–4. Read its roadmap entry before touching
-it — ⚠️ **it corrected the roadmap's own prescribed defence**: the `tagesschau.de` 404 page carries a
-`NewsArticle` with a REAL 133-word `articleBody` (a German error message), so the "test for
-`articleBody`, not for a block" rule that section prescribed **passes on it**. Two gates are needed
-(HTTP status 2xx *and* a non-empty body) and neither is sufficient alone.
+🥇 **1. Text analysis returns all-null sentences — DIAGNOSED, NOT FIXED. Start here.**
+Measured across the whole corpus: sentences of **1–24 tokens never fail (0 of 78); sentences of 26+
+tokens ALWAYS fail (8 of 8)**. The cause is `canonical-analysis.js:174`'s fixed **1536-token output
+cap** — a per-token JSON reply overruns it, `parseAnalysisReply`'s
+`try { extractJSON } catch { parsed = {} }` swallows the truncation, and every token is written
+`null` with `confidence:'unresolved'`. ⚠️ **A re-run fails identically — the user corrected an early
+guess that "fill only missing" was skipping them. It is not; it re-runs and fails again. Do not
+re-derive the presence-test theory.** The fix needs a choice (raise the cap vs split long sentences)
+— but the silent `catch` and the missing console report should be fixed either way, and the report
+needs NO new field: `confidence:'unresolved'` is already written on every failed token.
 
-⚠️ **THE PAYWALL CHECK WAS ASKED FOR, BUILT AND WITHDRAWN ON THE MEASUREMENT** — do not re-derive it.
-Both plausible signals are WRONG on this project's own test case (the Corriere article, known
-complete): the prose ratio's full-article band is 0.555–1.003 with Corriere itself at the 0.555
-floor, and `isAccessibleForFree` is declared `"False"` — the STRING, not a boolean — on that complete
-article. The roadmap entry has the numbers and the reasoning. What ships instead is the word count on
-the status line, and the review card, which has no false positives.
+🥈 **2. The tutor silently drops ~1 in 5 questions — MEASURED, NOT DIAGNOSED.**
+`learners.json` → `users.raim.state.tutorThread`: **6 of 33 student messages got no reply (18%)**,
+the last three consecutively, and one question asked three times. The job reaches the popover, so it
+is created; where it dies is unknown. ⚠️ Check the swallowed-error pattern first (`v90_n`/`v90_p`).
+⚠️ `learners.json` is the user's live file — read it, never write it.
 
-🟢 **THREE THINGS THE URL WORK LEFT, NONE OWED, ALL COSTED IN ITS ROADMAP ENTRY:**
-- **Wikipedia is refused, correctly** — it serves `@type: Article` with `articleBody: ""` (measured on
-  `en.` and `de.`). Its own REST API returns clean article text and would be a separate, easy source.
-- **SSRF is stated, not solved.** The route makes the SERVER fetch a caller-supplied URL. Fine on a
-  localhost personal tool; it belongs in **TIER 0** of *"PUTTING THIS ON THE INTERNET"* and needs a
-  scheme/host allow-list — **re-checked after every redirect hop** — before any exposure.
-- **The generic (non-JSON-LD) extractor is still unbuilt and still a different project** — the
-  Readability problem, several hundred lines, and this repo has no HTML parser.
+🥉 **3 and 4 need a user decision before code**: the German-with-article vs Italian-without vocab
+mismatch (measure the real rate first — "a lot" is a report, not a number; then decide QC mode vs
+prompt), and phrase-level analysis display (⚠️ **the `phrases` data already exists** in
+`parseAnalysisReply`'s output with start/end indices — the display simply does not prefer it, so the
+first fix is DISPLAY, not pipeline). The multi-level browsing idea the user raised alongside it is
+explicitly a roadmap item, not part of that fix.
+
+✅ **NOTHING ELSE IS OWED.** The whole `v90_s`…`v90_y` run — the one-field wizard, the bottom-bar
+reorder, the URL/Wikipedia scrape — is shipped, guarded and live-verified. One question is open and
+it is small: **`translate-select`** (generate a storyline in another source language) is deliberately
+left OUTSIDE the new input field, because it takes no input text at all. Confirm or move it.
+
+⚠️ **`INTERNALS.md` §6b NOW COVERS THE WIZARD ROUTER, THE BOTTOM BAR AND `news-article.js`** — added
+at `v90_y` after it had said nothing about `v90_m`…`v90_y`. Read it before grepping.
 
 ⚠️ **THE USER WAS TRANSLATING `ui.json` BY HAND ACROSS THE WHOLE v90 LINE SO FAR** and will commit it themselves.
 Do not touch that file until `git log ui.json` shows their commit, and do not trust any translated
@@ -236,8 +246,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 376 checks
-node test/run.js --quick                  → expect 310
+node test/run.js                          → expect 377 checks
+node test/run.js --quick                  → expect 311
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -270,7 +280,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **363 topics, 101 storylines, 33 languages, 746 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_x'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_y'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

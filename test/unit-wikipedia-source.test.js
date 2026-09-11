@@ -120,12 +120,14 @@ const client = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   console.log('  the ruler reports words AND chapters, from two existing translated keys: OK');
 }
 
-// ── 6. The ruler's FLOOR moves with the slider's meaning (v90_r) ─────────────
-// User request: "lowest size could be 10 words per chapter". ⚠️ Lowered only where the slider is a
-// CHUNK-SIZE control. The same element is the story-length control for GENERATED stories, where 10
-// words would ask the model for something absurd — the label already switches for exactly that
-// reason, so the range switches with it. Both branches are asserted, because lowering it globally
-// is the tempting one-character version of this change.
+// ── 6. ⚠️ RE-SCOPED at `v90_y`: the floor is 10 in BOTH modes now ───────────
+// `v90_r` lowered it only where the slider is a CHUNK-SIZE control, and asserted that the
+// STORY-LENGTH floor stayed 50, on the reasoning that "a 10-word generated story would ask the model
+// for something absurd". ⚠️ THE USER HAS OVERRULED THAT EXPLICITLY: "we do want to allow very short
+// chapters, as we already get from comic panels" — a comic panel routinely yields a handful of
+// words, so 50 was an assumption about what a chapter is FOR, not a technical limit. The assertion
+// flips with the ruling rather than being deleted, and its history is kept here because the old
+// reasoning was plausible and someone will be tempted to restore it.
 {
   const at = client.indexOf('\nfunction _updateUploadSliderVis(');
   assert.ok(at > 0, 'found _updateUploadSliderVis');
@@ -143,12 +145,15 @@ const client = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
     fn();
     return slider;
   };
-  const chunk = run(true), story = run(false);
-  assert.strictEqual(chunk.min, '10', `as a chunk-size control the floor is 10 words (got ${chunk.min})`);
-  assert.strictEqual(chunk.step, '10', 'and it steps in tens, so 10 is actually reachable');
-  assert.strictEqual(story.min, '50',
-    `as the STORY-LENGTH control the floor stays 50 — a 10-word generated story is nonsense (got ${story.min})`);
-  console.log('  the slider floor is 10 for chunk size and stays 50 for story length: OK');
+  for (const [label, asChunk] of [['as a chunk-size control', true], ['as the story-length control', false]]) {
+    const sl = run(asChunk);
+    assert.strictEqual(sl.min, '10', `${label} the floor is 10 words`);
+    assert.strictEqual(sl.step, '10', `${label} it steps in tens, so 10 is actually reachable`);
+  }
+  // ⚠️ And the MARKUP must agree, or the browser clamps the value before any JS runs.
+  assert.ok(/id="story-len-slider"[\s\S]{0,120}min="10"[^>]*step="10"/.test(client),
+    'the slider element itself declares min/step 10 — JS alone would be clamped on first paint');
+  console.log('  the slider floor is 10 in BOTH modes, in JS and in the markup: OK');
 }
 
 // ── 7. The label the user asked to rename ────────────────────────────────────
