@@ -80,7 +80,7 @@ const srv = http.createServer(async (req, res) => {
     try { body = JSON.parse(raw) || {}; msgs = body.messages || []; } catch (_) {}
     const sys = (msgs.find(m => m.role === 'system') || {}).content || '';
     const usr = msgs.filter(m => m.role === 'user').map(m => m.content).join('\n') || '';
-    let kind, content;
+    let kind, content, truncated = false, noDoneReason = false;
     if (/You divide a text into chapters/i.test(sys)) {
       // v71_b chapter split: answer with paragraph NUMBERS only, never text — the same contract
       // the server enforces. Cuts at 1 and the midpoint so the grouping is visibly not 1:1 with
@@ -376,6 +376,51 @@ const srv = http.createServer(async (req, res) => {
           lemma: toks[0].surface + ' ' + toks[1].surface, gloss: 'fake phrase gloss', confidence: 'low' });
       }
       content = JSON.stringify(out);
+      // v90_z: simulate the OUTPUT CAP, which is what the all-null-sentences defect actually was.
+      // A token whose surface is exactly "ZZZBIG" marks the sentence as one whose reply does not fit
+      // a small budget: below ZZZBIG_NEEDS the content comes back CUT OFF mid-object (unparseable
+      // JSON, exactly as a real truncation arrives) together with Ollama's own `done_reason:'length'`.
+      // Both halves matter — a test that only shortened the text would never prove the caller reads
+      // the stop reason, and one that only set the flag would never prove it survives a real parse
+      // failure. Sized so that canonical-analysis.js's 1536 FLOOR truncates and its one doubling
+      // retry (3072) clears it, which is the behaviour under test.
+      const _np = (body.options && body.options.num_predict) || 0;
+      if (toks.some(t => t.surface === 'ZZZBIG') && _np < 3000) {
+        content = content.slice(0, Math.floor(content.length * 0.6));
+        truncated = true;
+      }
+      // ⚠️ "ZZZHUGE": truncates at EVERY budget, so a test can observe the sentence that is still
+      // unresolved after the one retry — the state the console report has to count and the record
+      // has to mark. Without it, "a doubly-failed sentence is marked truncated" is untestable.
+      if (toks.some(t => t.surface === 'ZZZHUGE')) {
+        content = content.slice(0, Math.floor(content.length * 0.6));
+        truncated = true;
+      }
+      // ⚠️⚠️ "ZZZCUT": the case that keeps the two truncation signals DISTINGUISHABLE. The reply is
+      // VALID JSON — it simply stops after the first token — and carries `done_reason:'length'`.
+      // A caller reading only the parse failure sees nothing wrong here and never retries; only one
+      // reading the stop reason does. Mutation-testing found this gap: with ZZZBIG alone, deleting
+      // the `done_reason` arm outright left the guard GREEN, because the broken JSON covered for it.
+      // ⚠️ "ZZZNODR": broken JSON and NO `done_reason` at all — a backend that does not report why
+      // it stopped, which llm.js's own header says must be read as "unknown", never as "not
+      // truncated". This is the only fixture that exercises the parse-failure arm on its own; with
+      // ZZZBIG alone (broken JSON *and* done_reason:length) deleting that arm left the guard GREEN.
+      if (toks.some(t => t.surface === 'ZZZNODR') && _np < 3000) {
+        content = content.slice(0, Math.floor(content.length * 0.6));
+        noDoneReason = true;
+      }
+      // ⚠️ "ZZZWORSE": the retry comes back WORSE than the first attempt — a partial-but-valid reply
+      // at the small budget, invalid JSON at the large one (a model given more room to ramble).
+      // Without it, "keep the better of the two attempts" has no fixture that can tell it from
+      // "always keep the retry", and a retry could silently throw away real work.
+      if (toks.some(t => t.surface === 'ZZZWORSE')) {
+        if (_np < 3000) { content = JSON.stringify({ tokens: out.tokens.slice(0, 1), phrases: [] }); truncated = true; }
+        else { content = content.slice(0, Math.floor(content.length * 0.6)); noDoneReason = true; }
+      }
+      if (toks.some(t => t.surface === 'ZZZCUT') && _np < 3000) {
+        content = JSON.stringify({ tokens: out.tokens.slice(0, 1), phrases: [] });
+        truncated = true;
+      }
     } else {
       kind = 'vocab'; content = JSON.stringify(vocabLessonWithSkills(sys, usr));
     }
@@ -428,12 +473,14 @@ const srv = http.createServer(async (req, res) => {
         if (done) return;
         done = true;
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: { role: 'assistant', content }, done: true }));
+        res.end(JSON.stringify({ message: { role: 'assistant', content }, done: true,
+          ...(noDoneReason ? {} : truncated ? { done_reason: 'length' } : { done_reason: 'stop' }) }));
       }, slowMs);
       return;
     }
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify({ message: { role: 'assistant', content }, done: true }));
+    return res.end(JSON.stringify({ message: { role: 'assistant', content }, done: true,
+      ...(noDoneReason ? {} : truncated ? { done_reason: 'length' } : { done_reason: 'stop' }) }));
   }
   if (req.method === 'POST' && req.url === '/__slow') {
     let b = ''; req.on('data', c => b += c);

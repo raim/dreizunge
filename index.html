@@ -1904,7 +1904,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
              alone — already automatic server-side (confirmed by reading _runBookJob's post-pass), and
              the original assessment's own "storyboard and QC... as toggles" sentence never named it. -->
         <div id="post-gen-row" style="display:none;margin-top:10px">
-          <label class="user-story-check-row">
+          <label class="user-story-check-row" id="post-gen-storyboard-row">
             <input type="checkbox" id="post-gen-storyboard-cb">
             <span id="post-gen-storyboard-lbl">🎬 Generate a storyboard</span>
           </label>
@@ -1926,7 +1926,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
                straight into the INITIAL /api/generate-book request (gbody.postGenAnalysis) the same
                way pdf/comic-storyboard-cb are — no post-hoc orchestration needed, since
                _kickOffAnalysisJob already fires fire-and-forget per chapter server-side. -->
-          <label class="user-story-check-row">
+          <label class="user-story-check-row" id="post-gen-analysis-row">
             <input type="checkbox" id="post-gen-analysis-cb">
             <span id="post-gen-analysis-lbl">🔤 Analyse words for the text explorer</span>
           </label>
@@ -4077,7 +4077,21 @@ function _applyLessonCardUI(){
   // Storyboard/analysis are NOT gated on skip-lessons: they enrich the story/chapter itself, not
   // lesson content (item AK settled this) — and both are threaded into the same initial
   // /api/generate-book request all three modes send.
-  show('post-gen-row', arcOk);
+  // ⚠️ v90_z (user report: "we still get a lot of mismatches of german with and italian w/o
+  // article"). QC was riding on the ARC gate (`_genArcApplicable()`, which is `n > 1` on the LLM
+  // path), so a SINGLE-chapter generation was never offered it — the whole `#post-gen-row` was
+  // hidden. That gate is right for the arc and for a storyboard ("a board of anything needs >1
+  // chapter") and was never right for QC, which is per-chapter work.
+  //
+  // ⚠️ WHY THIS AND NOT A NEW QC MODE, which is what the request literally asked for: measured
+  // across the live corpus, `qcCheckPair`'s ARTICLE SYMMETRY rule already WORKS. de→it pairs in
+  // lessons that have been QC'd are 0 of 64 asymmetric; de→it pairs in lessons that have not are 65
+  // of 274 (23.7%), and 21 of the 23 affected chapters have never had vocab QC run at all. It is a
+  // coverage problem, not a rule problem, and a second copy of a working rule would not have fixed
+  // one existing pair. Making the opt-in REACHABLE where chapters are actually made does.
+  show('post-gen-row', arcOk || llm);
+  show('post-gen-storyboard-row', arcOk);   // a storyboard of one chapter is not a board
+  show('post-gen-analysis-row', arcOk);     // unchanged: threaded into the book request, book path only
   show('post-gen-qc-row', llm);   // see its own markup comment: client-orchestrated, LLM path only
   if(!llm){ const qc=document.getElementById('post-gen-qc-cb'); if(qc) qc.checked=false; }
   show('format-wrap', !skip);
@@ -4135,7 +4149,9 @@ function onNumChaptersSlider(v){
   // reason: an upload's chunk count changing is not the learner changing their mind.
   if(APP.numChapters<=1 && _genInputMode()==='llm'){
     const sbCb=document.getElementById('post-gen-storyboard-cb'); if(sbCb) sbCb.checked=false;
-    const qcCb=document.getElementById('post-gen-qc-cb'); if(qcCb) qcCb.checked=false;
+    // ⚠️ v90_z: the QC checkbox is NO LONGER unchecked here. It was, because the whole row vanished
+    // at one chapter and leaving a hidden box ticked would have been a promise nothing kept. The row
+    // now stays for a single chapter, so forgetting the choice would be the bug instead.
     const anCb=document.getElementById('post-gen-analysis-cb'); if(anCb) anCb.checked=false;
   }
   _applyLessonCardUI();
@@ -10988,11 +11004,15 @@ function onGenStatusClick(){
   }
 }
 
-function startBackgroundJob(jobId, topic, genAttribution){
+// ⚠️ v90_z: `postGenQc` rides on APP.activeJob the same way `genAttribution` does (v85_i), for the
+// same reason — the checkbox lives on a screen the learner leaves the moment generation starts, and
+// a page reload mid-generation must not forget what they asked for. Read back by
+// resumeBackgroundJob()'s own branches.
+function startBackgroundJob(jobId, topic, genAttribution, postGenQc){
   // v85_i: genAttribution rides on APP.activeJob (and so on its persisted localStorage copy) so a
   // page reload mid-generation doesn't lose it — resumeBackgroundJob()'s own re-attach branch reads
   // it back the same way.
-  APP.activeJob={jobId, topic, genAttribution: genAttribution || null};
+  APP.activeJob={jobId, topic, genAttribution: genAttribution || null, postGenQc: !!postGenQc};
   saveActiveJob(APP.activeJob);
   updateStopBtn();
   document.getElementById('gen-btn').disabled=true;
@@ -11008,10 +11028,18 @@ function startBackgroundJob(jobId, topic, genAttribution){
       if(j.status==='done'){
         clearInterval(iv);
         if(genAttribution) await _applyGenAttribution([j.data.id], genAttribution);
-        APP.activeJob={jobId, topic: j.data.topic}; // use server-confirmed topic (may differ)
+        APP.activeJob={jobId, topic: j.data.topic, postGenQc: !!postGenQc}; // use server-confirmed topic (may differ)
         saveActiveJob(APP.activeJob);
         if(!APP.progress.completed[j.data.topic]) APP.progress.completed[j.data.topic]={};
         saveProg();
+        // ⚠️ v90_z: the SINGLE-chapter half of the post-generation QC opt-in. `_applyPostGenFeatures`
+        // covers the multi-chapter book path and has exactly one call site, inside `doGenerate`'s
+        // `resp.bookId` branch — so until now a chapter generated on its own (including every
+        // "continue this storyline" chapter) could not be QC'd automatically at all. `qcRun` is the
+        // same function and the same endpoint the chapter's own manual 🔍 button calls, scoped by
+        // `topicId`; it toasts and logs its own failures and never throws, which is why its one
+        // existing caller wraps it in no try/catch either.
+        if(postGenQc) await qcRun({ topicId: j.data.id });
         await loadSavedList();
         // If user is on the home screen viewing a lesson, refresh the path
         if(document.getElementById('lesson-set')?.classList.contains('active')) try{ buildPath(); }catch(e){}
@@ -11058,6 +11086,9 @@ async function resumeBackgroundJob(){
       if(saved.genAttribution) await _applyGenAttribution([j.data.id], saved.genAttribution);
       if(!APP.progress.completed[j.data.topic]) APP.progress.completed[j.data.topic]={};
       saveProg();
+      // v90_z: the chapter finished while the page was closed — the opt-in survived on the persisted
+      // activeJob, so honour it here rather than losing it to a reload.
+      if(saved.postGenQc) await qcRun({ topicId: j.data.id });
       await loadSavedList();
       saveActiveJob(null);
       setGenStatus('done', '"'+j.data.topic+'" ready — tap to open');
@@ -11283,7 +11314,10 @@ async function doGenerate(forceRegen){
       showLessonSet();
     } else {
       // Fire and forget — user can browse while this runs
-      startBackgroundJob(resp.jobId, topic, genAttribution);
+      // ⚠️ v90_z: read HERE, not inside the poll — same reason genAttribution/perChapterTypes/postGen
+      // are all captured before their request fires: the checkbox is on a screen the learner leaves.
+      startBackgroundJob(resp.jobId, topic, genAttribution,
+        !!document.getElementById('post-gen-qc-cb')?.checked);
       showToast(t('toast.generating',{topic}));
       showGeneration();
     }
@@ -24972,6 +25006,64 @@ function _teEscText(t){ return escHtml(t).replace(/\n/g, '<br>'); }
 // both can be in the DOM at once, and a shared mutable "current" would let a click on one address
 // the other. Absent ctx (any caller that has not been updated) simply renders read-only, which is
 // the pre-v88_ad behaviour.
+// ⚠️ v90_z (user report): "The text contains the phrase 'in fila indiana' which the translation
+// translates as 'in einer Reihe', in canonical-analysis.json the phrase is recorded as 'im
+// Einermarsch'. Can we amend our text analysis display such that it really shows phrase-level
+// analysis instead of the single word analysis, that gives just 'indisch' as a translation for the
+// word 'indiana'? Clicking on indiana should provide the whole phrase."
+//
+// ⚠️ THE DATA WAS ALREADY THERE, and that is the whole shape of this fix. `parseAnalysisReply` has
+// returned `phrases` — start/end token indices, a citation `lemma`, a `gloss` in the source language
+// and its own `confidence` — since CP2 shipped, `analysisShadowFor` passes each sentence through
+// whole so they reach the client, and `build-static.js` bakes them. Measured across the live store:
+// 136 phrases over 67 of 87 sentences. Nothing in index.html read the array — `grep phrases` found
+// zero consumers. So this is a DISPLAY change, not a pipeline change.
+//
+// Maps every token of a phrase to that phrase, so the popover can answer "what larger unit is this
+// word part of" from the token's own dataset, the way it already answers everything else.
+function _tePhraseByToken(s){
+  const phrases = Array.isArray(s && s.phrases) ? s.phrases : [];
+  if (!phrases.length) return null;
+  const text = String((s && s.text) || '');
+  const tokens = Array.isArray(s && s.tokens) ? s.tokens : [];
+  // The SAME forward cursor walk _teSentenceHtml does below, for POSITIONS ONLY — no rendering and
+  // no occurrence counting, so that function's own loop is left exactly as it was (its comment about
+  // matching the server's occurrence count literally is load-bearing, and splitting it would put
+  // that agreement at risk for a display feature).
+  const span = new Map();
+  let cursor = 0;
+  tokens.forEach(tok => {
+    const surface = String((tok && tok.surface) || '');
+    if (!surface) return;
+    const p = text.indexOf(surface, cursor);
+    if (p < 0) return;
+    span.set(tok && tok.tokenId, [p, p + surface.length]);
+    cursor = p + surface.length;
+  });
+  const out = new Map();
+  phrases.forEach(ph => {
+    const ids = Array.isArray(ph && ph.tokenIds) ? ph.tokenIds : [];
+    if (ids.length < 2) return;
+    const first = span.get(ids[0]), last = span.get(ids[ids.length - 1]);
+    // The phrase as the STORY actually writes it — sliced out of the sentence text between the first
+    // and last token, so the real separators come along. Joining surfaces with a space would be
+    // wrong for any script that does not space its words, which is exactly the language knowledge
+    // this project keeps out of the client. Falls back to the model's citation form when a token
+    // could not be aligned — the same miss `_teSentenceHtml` skips a mark for.
+    let surface = (first && last && last[1] > first[0]) ? text.slice(first[0], last[1]) : String(ph.lemma || '');
+    // Trailing punctuation belongs to the SENTENCE, not to the phrase: CP1 tokenises "indiana." as
+    // one token, so a phrase ending the sentence would otherwise read "in fila indiana." and stop
+    // matching its own citation lemma, showing a redundant second row. `\p{P}` is Unicode machinery,
+    // not a hand-written table — the distinction the standing "no language knowledge in the code"
+    // principle actually draws. Only the DISPLAYED phrase is trimmed; the token marks are untouched.
+    surface = surface.replace(/[\s\p{P}]+$/u, '') || surface;
+    if (!surface) return;
+    // First phrase wins where two overlap: a token can only belong to one row in the popover, and
+    // the alternative (showing both) buys a rare case at the cost of every common one.
+    ids.forEach(id => { if (id && !out.has(id)) out.set(id, { surface, lemma: ph.lemma, gloss: ph.gloss, conf: ph.confidence }); });
+  });
+  return out.size ? out : null;
+}
 function _teSentenceHtml(s, ctx){
   const text = String((s && s.text) || '');
   const tokens = Array.isArray(s && s.tokens) ? s.tokens : [];
@@ -24990,6 +25082,7 @@ function _teSentenceHtml(s, ctx){
   // so a surface absent from `cursor` onward is absent from every later cursor too. The ordering is
   // kept because it mirrors the server's loop literally, not because it is load-bearing.
   const seen = new Map();
+  const phraseOf = _tePhraseByToken(s);   // v90_z; null when this sentence has no multiword unit
   tokens.forEach(tok => {
     const surface = String((tok && tok.surface) || '');
     const occ = seen.get(surface) || 0;
@@ -24998,13 +25091,13 @@ function _teSentenceHtml(s, ctx){
     const p = text.indexOf(surface, cursor);
     if (p < 0) return;
     out += _teEscText(text.slice(cursor, p));
-    out += _teTokenMarkHtml(tok, surface, ctx, occ);
+    out += _teTokenMarkHtml(tok, surface, ctx, occ, phraseOf && phraseOf.get(tok && tok.tokenId));
     cursor = p + surface.length;
   });
   out += _teEscText(text.slice(cursor));
   return out;
 }
-function _teTokenMarkHtml(tok, surface, ctx, occ){
+function _teTokenMarkHtml(tok, surface, ctx, occ, phrase){
   const conf = (tok && tok.confidence) || 'unresolved';
   const cls = 'te-tok' + (conf === 'low' ? ' te-tok-low' : conf === 'unresolved' ? ' te-tok-unresolved' : '')
     // item AI: a token a human has corrected is marked, so curation is visible as such rather than
@@ -25019,7 +25112,14 @@ function _teTokenMarkHtml(tok, surface, ctx, occ){
   // the same cache entry it was rendered from.
   const idcs = ctx ? ` data-cid="${escAttr(ctx.chapterId || '')}" data-si="${Number(ctx.si) || 0}"`
     + ` data-occ="${Number(occ) || 0}"` : '';
-  return `<mark class="${cls}" role="button" tabindex="0" data-surface="${escAttr(surface)}" data-conf="${escAttr(conf)}" ${attrs}${idcs}`
+  // v90_z: the phrase this token belongs to, carried on the token itself so the popover keeps
+  // reading ONE place (`el.dataset`) rather than growing a second lookup into the cache. Emitted
+  // only when there IS a phrase, so a token that belongs to none is byte-identical to before.
+  const ph = phrase
+    ? ` data-psurface="${escAttr(phrase.surface || '')}" data-plemma="${escAttr(phrase.lemma || '')}"`
+      + ` data-pgloss="${escAttr(phrase.gloss || '')}" data-pconf="${escAttr(phrase.conf || '')}"`
+    : '';
+  return `<mark class="${cls}" role="button" tabindex="0" data-surface="${escAttr(surface)}" data-conf="${escAttr(conf)}" ${attrs}${idcs}${ph}`
     + ` onclick="event.stopPropagation();_teShowWordPopover(event,this)">${escHtml(surface)}</mark>`;
 }
 // Same fixed-position, click-to-dismiss popup shape as openRetitleMenu (storyline retitle menu) —
@@ -25401,6 +25501,28 @@ function _teShowWordPopover(ev, el){
     + 'background:var(--white);border:1.5px solid var(--gray-mid);border-radius:10px;'
     + 'box-shadow:0 4px 16px rgba(0,0,0,.18);padding:10px 12px;font-size:13px;line-height:1.5;color:var(--text)';
   const rows = [`<div style="font-weight:900;font-size:15px;margin-bottom:4px">${escHtml(ds.surface || '')}</div>`];
+  // ⚠️ v90_z (user request): "Clicking on indiana should provide the whole phrase." When the clicked
+  // token sits inside a multiword unit the model identified, the PHRASE is shown FIRST — its own
+  // words as the story writes them, then its meaning — and the single-word analysis follows below.
+  // The user ruling was explicitly "phrase above token", not "phrase INSTEAD of token": `indiana` on
+  // its own really does mean `indisch`, and that is sometimes the thing being asked. Nothing is
+  // hidden; the order says which answer is the more useful one.
+  //
+  // Both labels are EXISTING keys — `text_explorer.sense` ("Meaning here") reads correctly for a
+  // phrase gloss, and the phrase's own words need no label because they are the heading. One new key
+  // (`text_explorer.phrase`) marks the block, because without it the card shows two "Meaning here"
+  // rows one above the other with nothing saying which is which.
+  if (ds.psurface) {
+    rows.push(`<div style="margin:2px 0 8px;padding:6px 8px;background:var(--gray-light);border-radius:8px">`
+      + `<div style="font-size:11px;font-weight:800;opacity:.6;text-transform:uppercase">${escHtml(t('text_explorer.phrase'))}</div>`
+      + `<div style="font-weight:800">${escHtml(ds.psurface)}</div>`
+      + (ds.pgloss ? `<div><span style="opacity:.6">${escHtml(t('text_explorer.sense'))}:</span> ${escHtml(ds.pgloss)}</div>` : '')
+      + (ds.plemma && ds.plemma !== ds.psurface
+          ? `<div><span style="opacity:.6">${escHtml(t('text_explorer.lemma'))}:</span> ${escHtml(ds.plemma)}</div>` : '')
+      + (ds.pconf === 'low'
+          ? `<div style="color:#b06000;font-weight:700">⚠ ${escHtml(t('text_explorer.low_confidence'))}</div>` : '')
+      + `</div>`);
+  }
   const editable = _teCanEdit() && ds.cid;
   if (editable) {
     // The three fields CP2 produces, in the same order the read-only card showed them, with the
@@ -25501,6 +25623,23 @@ const _TUTOR_KEY = 'dz_tutor_thread';
 const _TUTOR_MAX_TURNS = 60;     // keep the stored thread bounded; the server also caps what it reads
 let _tutorState = { history: [], busy: false, open: false, unread: false };
 let _tutorStreaming = '';   // v64: text of the reply currently streaming in (not yet in history)
+// ⚠️ v90_z (user report: "the tutor job did appear in the job popover, but I never received a reply
+// or a console message about a failure ... You will find several unanswered questions").
+//
+// MEASURED, not guessed: 6 of 33 student turns in the user's own thread got no reply, and FOUR of
+// the six are `tutor.sel_meaning_q` turns — the text-selection path. Reproduced in the DOM harness:
+// `_storySelExplain` and `askTutorAboutQuestion` PUSH a student turn (which `_tutorSaveThread`
+// persists, and `_learnerSyncSoon` syncs into learners.json) and then call `_tutorSend`, whose very
+// first line is `if(_tutorState.busy) return;` — so while a previous reply is still streaming the
+// question is stored and never sent. No toast, no console line, nothing: exactly what was reported,
+// and exactly why the three consecutive drops at the end of the thread happened (one slow reply on a
+// 35B reasoning model is minutes long, and the learner kept selecting text).
+//
+// Dropping it was never right and refusing it is not much better — the learner asked a question. So
+// ONE pending turn is remembered and fired when the current reply lands. It collapses correctly by
+// construction: the payload sends the WHOLE history, so N turns queued during one reply become one
+// send carrying all of them, which is also what the server wants to see. Costs no ui.json key.
+let _tutorPending = false;
 
 function _tutorLoadThread(){
   try{
@@ -26586,7 +26725,11 @@ function _tutorRender(){
 // so the learner reads along instead of waiting on "thinking…". Falls back to the whole-reply JSON
 // path if streaming isn't usable (no ReadableStream, or the stream errors before any text).
 async function _tutorSend(opening){
-  if(_tutorState.busy) return;
+  // ⚠️ NOT a bare `return` any more — see `_tutorPending` above. Two of this function's three
+  // callers push the student turn BEFORE calling it, so a silent return here loses a question the
+  // learner can see sitting in the thread with no answer.
+  if(_tutorState.busy){ _tutorPending = true; return; }
+  _tutorPending = false;
   _tutorState.busy = true; _tutorStreaming = ''; _tutorRender();
   try{ _jobsUpdateBadgeAndList(); }catch(_){}   // item U follow-up: reflect immediately, not on the next poll
   const btn = document.getElementById('tutor-widget-send');
@@ -26610,6 +26753,13 @@ async function _tutorSend(opening){
     _tutorRender();
     try{ _jobsUpdateBadgeAndList(); }catch(_){}
     if(btn) btn.disabled = false; if(inp){ inp.disabled = false; inp.focus(); }
+    // Drain the one turn that arrived while this reply was in flight. Last thing in `finally`, so
+    // `busy` is already false and this re-entry takes the normal path — it disables the controls
+    // again synchronously on its way in, and CLEARS the flag on entry.
+    // ⚠️ The flag is cleared in exactly ONE place (`_tutorSend`'s entry), not here as well. Clearing
+    // it in both is what mutation-testing found: the two lines masked each other, so deleting either
+    // left the guard green, and the pair could not be told apart from a single correct one.
+    if(_tutorPending) _tutorSend(false);
   }
 }
 
@@ -26642,6 +26792,12 @@ async function _tutorReadStream(body){
   if(!finished && _tutorStreaming.trim()){
     _tutorState.history.push({ role:'tutor', text:_tutorStreaming.trim() }); _tutorSaveThread(); _tutorNoteReplyLanded();
   }
+  // ⚠️ v90_z, the SECOND silent path in this feature: a stream that ends with no terminal `done`
+  // frame, no `error` frame and nothing buffered left the learner with a question in the thread, no
+  // reply and NO indication anything had gone wrong — the same end state as the dropped-send bug
+  // above, reached a different way. The two typed questions in the user's thread that got no reply
+  // (the selection path explains the other four) are this shape. `tutor.failed` already exists.
+  else if(!finished){ showToast(t('tutor.failed')); }
   _tutorStreaming = '';
 }
 

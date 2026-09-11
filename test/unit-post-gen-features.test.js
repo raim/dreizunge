@@ -55,23 +55,46 @@ async function main() {
 }
 console.log('  markup: #post-gen-row (storyboard + qc checkboxes) lives on the wizard lesson card: OK');
 
-// ── 2. onNumChaptersSlider(): shows/hides with the same gate, resets on drop to 1 ─
+// ── 2. onNumChaptersSlider(): the multi-chapter gate, RE-SCOPED at v90_z ─────────
+// ⚠️ THE RULING CHANGED, AND THIS SECTION WAS RE-SCOPED RATHER THAN DELETED. It used to assert
+// "1 chapter: #post-gen-row hidden" and "dropping to 1 unchecks the QC toggle" — both true of the
+// v85_g design, where all three toggles shared the arc gate (`_genArcApplicable()`, `n > 1` on the
+// LLM path). v90_z separates them: a storyboard and an arc genuinely need more than one chapter,
+// and QC never did. The STORYBOARD half of the original claim is unchanged and still asserted here,
+// which is what keeps the re-scoping honest — the gate was not simply removed.
+//
+// ⚠️ Why the ruling changed, measured rather than argued: `qcCheckPair` already carries an ARTICLE
+// SYMMETRY rule, and across the live corpus de→it pairs in QC'd lessons are 0 of 64 asymmetric
+// against 65 of 274 (23.7%) in lessons never QC'd — with 21 of the 23 affected chapters having had
+// no vocab QC at all. The defect the user reported ("a lot of mismatches of german with and italian
+// w/o article") was QC never being REACHABLE where they generate, not QC being wrong.
 {
   const C = client();
   const r = JSON.parse(C.run(`onNumChaptersSlider(3);
     var threeCh = document.getElementById('post-gen-row').style.display;
+    var threeSb = document.getElementById('post-gen-storyboard-row').style.display;
     document.getElementById('post-gen-storyboard-cb').checked = true;
     document.getElementById('post-gen-qc-cb').checked = true;
     onNumChaptersSlider(1);
-    JSON.stringify({ threeCh: threeCh, oneCh: document.getElementById('post-gen-row').style.display,
+    JSON.stringify({ threeCh: threeCh, threeSb: threeSb,
+       oneCh: document.getElementById('post-gen-row').style.display,
+       oneSb: document.getElementById('post-gen-storyboard-row').style.display,
+       oneAn: document.getElementById('post-gen-analysis-row').style.display,
+       oneQc: document.getElementById('post-gen-qc-row').style.display,
        sbAfter: document.getElementById('post-gen-storyboard-cb').checked,
        qcAfter: document.getElementById('post-gen-qc-cb').checked })`));
   assert.strictEqual(r.threeCh, '', '3 chapters: #post-gen-row visible');
-  assert.strictEqual(r.oneCh, 'none', '1 chapter: #post-gen-row hidden');
-  assert.strictEqual(r.sbAfter, false, 'dropping to 1 chapter unchecks the storyboard toggle');
-  assert.strictEqual(r.qcAfter, false, 'dropping to 1 chapter unchecks the QC toggle');
+  assert.strictEqual(r.threeSb, '', '3 chapters: the storyboard toggle is offered');
+  // The half that CHANGED.
+  assert.strictEqual(r.oneCh, '', '⚠️ v90_z: 1 chapter still offers #post-gen-row — QC is per-chapter work');
+  assert.strictEqual(r.oneQc, '', '1 chapter: the QC toggle is offered, which is the whole change');
+  assert.strictEqual(r.qcAfter, true, 'dropping to 1 chapter no longer FORGETS a QC choice the learner made');
+  // The half that did NOT change — without this the re-scope would read as "the gate was deleted".
+  assert.strictEqual(r.oneSb, 'none', '1 chapter: the storyboard toggle is still hidden — a board of one is not a board');
+  assert.strictEqual(r.oneAn, 'none', '1 chapter: the analysis toggle is still hidden (book-request path, unchanged)');
+  assert.strictEqual(r.sbAfter, false, 'dropping to 1 chapter still unchecks the storyboard toggle');
 }
-console.log('  onNumChaptersSlider(): #post-gen-row follows the multi-chapter-only gate, resets both toggles at 1: OK');
+console.log('  onNumChaptersSlider(): storyboard/analysis stay multi-chapter-only, QC is offered at one chapter too (v90_z): OK');
 
 // ── 3. doGenerate(): captures postGen, calls _applyPostGenFeatures only when needed ──
 // Mutation-tested: dropping the `postGen.storyboard || postGen.qc` guard must turn the "neither

@@ -30,7 +30,7 @@ const { compareWithExistingLessons } = require('./curriculum-plan.js');
 // port as a side effect of an offline analysis script), so server.js requiring THEM is the
 // established, already-precedented direction, not a new risk.
 const { buildCanonicalText } = require('./canonical-text.js');
-const { analyzeChapter, scriptsForLangCP2, cp2Provenance } = require('./canonical-analysis.js');
+const { analyzeChapter, analysisCoverage, scriptsForLangCP2, cp2Provenance } = require('./canonical-analysis.js');
 // item AI (v88_ad): the curator's overlay over CP2's output. Its own module rather than more of
 // this file because build-static.js must apply the SAME merge when it bakes the analysis into the
 // published build, and it cannot require server.js. See analysis-corrections.js's header for why
@@ -287,7 +287,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v90_y';
+const APP_VERSION  = 'v90_z';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -1224,6 +1224,18 @@ async function _runAnalysisJob(jobId, topic, jobOpts) {
       langName: langName(topic.lang), srcLangName: langName(topic.srcLang || 'en'),
       reuse: reuseMap ? (s => { const hit = reuseMap.get(s && s.text); if (hit) reusedCount++; return hit || null; }) : null,
       onProgress: (i, soFar) => {
+        // v90_z: report a failed sentence AT THE MOMENT IT HAPPENS, not only in the summary. This is
+        // the half the user actually asked for — a chapter that takes many minutes should not wait
+        // until it finishes to admit that a sentence came back empty, and a silent failure that is
+        // visible only by opening canonical-analysis.json is how four chapters went unnoticed.
+        const last = soFar[soFar.length - 1];
+        if (last && !_analysisSentenceUsable(last)) {
+          console.warn(`  [analysis] ⚠ ${topic.id} sentence ${i + 1}/${chapter.sentenceCount}: `
+            + `${((last.tokens) || []).length} token(s) UNRESOLVED`
+            + (last.truncated ? ' — reply truncated at the output cap' : '')
+            + (last.retried ? ' (retried at a larger budget, still failed)' : '')
+            + (last.parseError ? ` — ${last.parseError}` : ''));
+        }
         jobStep(jobId, `[${OLLAMA_ANALYSIS_MODEL}] CP2: ${soFar.length}/${chapter.sentenceCount} sentence(s)…`);
         // A partial write must never be the thing that fails the run — the analysis in hand is worth
         // more than the checkpoint. Same "degrade, don't lose" convention the rest of this path uses.
@@ -1231,8 +1243,18 @@ async function _runAnalysisJob(jobId, topic, jobOpts) {
       },
     });
     persist(result.sentences, false);
+    // v90_z: the summary the user asked for — "how many analyses were successful and how many just
+    // contain nulls". Counted by `analysisCoverage` off `confidence:'unresolved'`, which every failed
+    // token has always carried; no new field, and a repeat of this defect is now visible in one line.
+    const _cov = analysisCoverage(result.sentences);
     console.log(`  [analysis] ${topic.id}: ${result.sentenceCount} sentence(s), ${result.tokenCount} token(s)`
-      + (resume ? `, ${reusedCount} reused` : '') + ' — cached');
+      + (resume ? `, ${reusedCount} reused` : '')
+      + `, ${result.sentenceCount - _cov.unresolvedSentences}/${result.sentenceCount} resolved`
+      + (_cov.unresolvedSentences
+          ? ` — ⚠ ${_cov.unresolvedSentences} UNRESOLVED (${_cov.unresolvedTokens} token(s)`
+            + (_cov.truncatedSentences ? `, ${_cov.truncatedSentences} truncated` : '') + ')'
+          : '')
+      + ' — cached');
     jobDone(jobId, { chapterId: topic.id, available: true,
       sentenceCount: result.sentenceCount, tokenCount: result.tokenCount });
   } catch (e) {
@@ -10825,6 +10847,14 @@ http.createServer(async (req, res) => {
         userMsg = `Conversation so far:\n${transcript}\n\nReply as the tutor (one short turn).`;
       }
       const _logReply = (reply) => console.log(`  Tutor [${scope.kind}] reply (${lang}←${uiLang}): ${reply.length} chars${wrongWords.length ? `, focus ${wrongWords.length}w` : ''}${retrieved.used.length ? `, ctx: ${retrieved.used.join(' | ')}` : ''}`);
+      // ⚠️ v90_z (user: "I never received a reply or a console message about a failure, time-out
+      // etc."). Both failure paths below — the stream's catch and the whole-reply catch — reported
+      // to the CLIENT and wrote nothing to the console, so a failed turn left an `asked` line with
+      // no `reply` line after it and no reason anywhere. `v86_h` added the `asked` line for exactly
+      // this class of diagnosis and stopped one line short of the failure itself. Every other
+      // long-running path in this file logs its own failure (`_runAnalysisJob`'s `[analysis] failed`
+      // is the pattern); the tutor simply never did.
+      const _logFail = (why) => console.warn(`  Tutor [${scope.kind}] FAILED (${lang}←${uiLang}): ${why}`);
 
       // v64: STREAMING (opt-in via body.stream). Server-Sent Events, so the learner sees the reply
       // appear word by word instead of waiting on "thinking…". The whole-reply JSON path below is
@@ -10848,10 +10878,11 @@ http.createServer(async (req, res) => {
           });
           const reply = sanitizeTutorReply(stripRaw(acc));
           if (!aborted) {
-            if (!reply) send({ error: 'Tutor returned an empty reply — try again.' });
+            if (!reply) { _logFail('empty reply after sanitising'); send({ error: 'Tutor returned an empty reply — try again.' }); }
             else { _logReply(reply); send({ done: true, reply, promptTokens, completionTokens }); }
-          }
+          } else { _logFail('the learner disconnected mid-stream'); }
         } catch(e) {
+          _logFail(e.message);
           if (!aborted) send({ error: `Tutor failed: ${e.message}` });
         }
         return res.end();
@@ -10860,10 +10891,11 @@ http.createServer(async (req, res) => {
       try {
         const { text, promptTokens, completionTokens } = await callLLMTutor(sys, userMsg, 500);
         const reply = sanitizeTutorReply(stripRaw(String(text || '')));
-        if (!reply) return json(res, 502, { error: 'Tutor returned an empty reply — try again.' });
+        if (!reply) { _logFail('empty reply after sanitising'); return json(res, 502, { error: 'Tutor returned an empty reply — try again.' }); }
         _logReply(reply);
         return json(res, 200, { reply, promptTokens, completionTokens });
       } catch(e) {
+        _logFail(e.message);
         return json(res, 502, { error: `Tutor failed: ${e.message}` });
       }
     }

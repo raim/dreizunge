@@ -2573,6 +2573,49 @@ a dead end.
 | Wikipedia | `wikipediaTarget(url)` + `fetchWikipediaArticle()` — MediaWiki's own API, and the only source that yields a machine-readable LICENCE |
 | the route | `POST /api/fetch-url` — not a job (no model call), not gated on a backend |
 
+**CP2's output budget, and the truncation signal** (`canonical-analysis.js` / `llm.js`, `v90_z`)
+
+| what | where |
+|---|---|
+| the per-sentence output budget | `analysisTokenBudget(tokenCount)` — `n × 90 + 400`, floored at the old constant **1536**, ceilinged at 12288. ⚠️ **Sized from the TOKEN COUNT and not a constant**: the reply is one JSON object per token, measured at ~**66 output tokens per input token** on `qwen3.6:35b-a3b`. A fixed 1536 is what produced four chapters of fully-`null` sentences |
+| "was the reply cut off" | `_cp2NeedsBiggerBudget(r)` — `doneReason === 'length'` OR a parse failure that left every token unresolved. ⚠️ **Both arms are needed and neither is redundant**: a truncation can land between token objects and still parse, and a backend need not report a stop reason at all |
+| the stop reason itself | `llm.js` now returns **`doneReason`** from BOTH `_callOllama` and `callLLMStream`. ⚠️ **`null` means "unknown", never "not truncated"** — the streaming path's `res.on('end')` fallback has no terminal frame to read it from |
+| the retry | one, at DOUBLE, keeping whichever attempt resolved more. Bounded at one deliberately — CP2 is already one call per sentence on a slow local model |
+| ⚠️ **`ctxTokens` is NOT optional once the budget can exceed ~2700** | `analyzeSentence` passes `estimateCtxTokens(sys.length + user.length, budget)`. It was safe to omit at 1536 (prompt ~1100 + reply 1520 fits Ollama's ~4096 default). Omitting it with a larger budget makes Ollama truncate the PROMPT instead — silently, per `llm.js`'s own `v71_t` note — which is strictly worse than the bug being fixed |
+| "how many sentences actually worked" | `analysisCoverage(sentences)` → `{unresolvedSentences, unresolvedTokens, truncatedSentences}`, logged by `_runAnalysisJob` as `N/M resolved`. ⚠️ **Needed NO new field**: `confidence:'unresolved'` has been written on every failed token since CP2 shipped and was simply never counted |
+| the failure markers on a record | `truncated` / `retried` / `parseError` / `unresolved`, present ONLY when something went wrong, so a healthy record is unchanged |
+| the guard | `unit-analysis-truncation.test.js`, over HTTP against the real fake-Ollama (the defect lived in the request OPTIONS, which a stubbed `callLLM` cannot see). Fixtures `ZZZBIG` / `ZZZCUT` / `ZZZNODR` / `ZZZWORSE` in `test/fake-ollama.js` — ⚠️ **three of the four exist only because mutation testing showed the arms were indistinguishable without them** |
+
+**The tutor's two silent drops** (`index.html` / `server.js`, `v90_z`)
+
+| what | where |
+|---|---|
+| ⚠️ **the queued turn** | `_tutorPending`. `_storySelExplain` and `askTutorAboutQuestion` PUSH a student turn and THEN call `_tutorSend`, which used to `return` silently when busy — so a question asked during a reply was persisted (and synced into `learners.json`) but never sent. **6 of 33 turns, 18%, four of them from the selection path.** Now remembered and fired from `_tutorSend`'s `finally` |
+| ⚠️ where the flag is cleared | EXACTLY ONE place, `_tutorSend`'s entry. Clearing it in the drain as well is a mutually-masking pair — deleting either left the guard green |
+| the collapse | N turns queued during one reply become ONE send: the payload carries the whole history |
+| ⚠️ the OTHER silent path | `_tutorReadStream` finishing with no `done` frame, no `error` frame and an empty buffer. Now toasts the existing `tutor.failed` |
+| ⚠️ **why nothing was in the console** | `/api/tutor` logged only on SUCCESS. `_logFail(why)` now covers the stream catch, the whole-reply catch, an empty sanitised reply and a mid-stream disconnect |
+| ⚠️ **the jobs-popover entry is SYNTHETIC** | rendered off `_tutorState.busy` alone — `/api/tutor` is stateless and not in the server's job store. "The job appeared in the popover" is NEVER evidence a request reached the server |
+
+**Phrase-level analysis display** (`index.html`, `v90_z`)
+
+| what | where |
+|---|---|
+| token → its phrase | `_tePhraseByToken(s)` — a positions-only cursor walk, deliberately separate from `_teSentenceHtml`'s own loop so that function's occurrence counting (which must match the server's byte for byte) is untouched |
+| what is displayed | the run SLICED OUT OF THE SENTENCE TEXT, not the citation lemma and not surfaces joined by a space — so an inflected phrase reads `si misero in fila`, and an unspaced script is right for free. Trailing sentence punctuation trimmed with `\p{P}` (Unicode machinery, not a table) because CP1 tokenises `indiana.` as one token |
+| where it lands | `data-psurface` / `data-plemma` / `data-pgloss` / `data-pconf` on the `<mark>`, emitted only when a phrase exists, so a token in none is byte-identical to before. `_teShowWordPopover` renders it ABOVE the word's own rows (user ruling — the word analysis is kept, not replaced) |
+| ⚠️ the data was always there | `parseAnalysisReply` has returned `phrases` since CP2 shipped and NOTHING read it — 136 phrases over 67 of 87 sentences in the live store |
+
+**Post-generation vocab QC on a single chapter** (`index.html`, `v90_z`)
+
+| what | where |
+|---|---|
+| ⚠️ **the article rule already existed** | `qcCheckPair`'s ARTICLE SYMMETRY instruction, with the lesson's other pairs as context. Measured: de→it pairs in QC'd lessons **0 of 64** asymmetric, never-QC'd **65 of 274 (23.7%)**; 21 of 23 affected chapters had never been QC'd. **A coverage problem, not a rule problem** |
+| what was unreachable | `#post-gen-qc-cb` rode on `_genArcApplicable()` (`n > 1` on the LLM path), and `_applyPostGenFeatures` had ONE call site, in `doGenerate`'s multi-chapter branch. Every "continue this storyline" chapter is a single-chapter generation |
+| the split | `show('post-gen-row', arcOk \|\| llm)`; storyboard and analysis keep the arc gate via their own `#post-gen-storyboard-row` / `#post-gen-analysis-row`, QC does not |
+| the wiring | `startBackgroundJob(jobId, topic, genAttribution, postGenQc)` → `qcRun({topicId})` on done. The flag rides on `APP.activeJob` (the `v85_i` pattern) so a reload cannot lose it, and `resumeBackgroundJob` honours it |
+| ⚠️ harness trap | a never-settling `fetch` stub leaves `startBackgroundJob`'s `setInterval` alive and hangs the whole test file AFTER it prints its results — `v89` rule 16 |
+
 ## 7. Maintaining this file
 
 Add an entry when a session discovers something a future session would otherwise rediscover:

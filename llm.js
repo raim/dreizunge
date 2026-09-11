@@ -3,7 +3,10 @@
 // llm.js — backend-agnostic LLM interface for Dreizunge
 //
 // Exports:
-//   callLLM(model, system, userMsg, maxTokens, opts) → { text, promptTokens, completionTokens }
+//   callLLM(model, system, userMsg, maxTokens, opts) → { text, doneReason, promptTokens, completionTokens }
+//     `doneReason` is Ollama's own stop reason; `'length'` means the reply was TRUNCATED at
+//     num_predict. Null when the backend did not say (e.g. a stream that ended without a terminal
+//     frame), which a caller must read as "unknown", never as "not truncated".
 //   ping()        → boolean  (is the backend reachable?)
 //   release(model)           (free model from VRAM — no-op for non-Ollama)
 //   warmup(model, log)       (load model into VRAM — no-op for non-Ollama)
@@ -279,7 +282,14 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
           // story, a translation, or a JSON payload no matter which caller invoked us.
           const text = stripThink(rawText);
           if (!text) return reject(new Error('Ollama returned only a reasoning block (no answer) — raise num_predict or disable thinking'));
-          resolve({ text, promptTokens: p.prompt_eval_count || 0, completionTokens: p.eval_count || 0 });
+          // v90_z: `done_reason` is Ollama's own answer to "why did generation stop", and it was
+          // being thrown away. `'length'` means the reply was CUT OFF at num_predict — the exact,
+          // non-inferred truncation signal. Without it every caller had to guess from the shape of
+          // a broken reply, which is how canonical-analysis.js turned a truncated JSON object into
+          // 39 null tokens with no error for four chapters of the live corpus. Purely additive:
+          // nothing read this field before, so no existing branch changes.
+          resolve({ text, doneReason: p.done_reason || null,
+            promptTokens: p.prompt_eval_count || 0, completionTokens: p.eval_count || 0 });
         } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0, 200))); }
       });
     });
@@ -495,7 +505,8 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
             if (tail) { full += tail; try { onDelta && onDelta(tail); } catch(_) {} }
             const text = full.trim();
             if (!text) return reject(new Error('Ollama returned only a reasoning block (no answer) — raise num_predict or disable thinking'));
-            return resolve({ text, promptTokens, completionTokens });
+            // v90_z: same truncation signal as the whole-reply path above, from the terminal frame.
+            return resolve({ text, doneReason: p.done_reason || null, promptTokens, completionTokens });
           }
         }
       });
@@ -505,7 +516,7 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
         const tail = filter.end(); if (tail) full += tail;
         const text = full.trim();
         if (!text) return reject(new Error('Ollama returned empty response'));
-        resolve({ text, promptTokens, completionTokens });
+        resolve({ text, doneReason: null, promptTokens, completionTokens });
       });
     });
     // item AU cancel (v88_k): the streaming path gets the SAME seam. Only the tutor streams today,

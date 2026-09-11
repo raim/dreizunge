@@ -30,7 +30,7 @@
 // data). Prompt text below is plain U+002D hyphen and ASCII quotes throughout -- no non-ASCII
 // literals to worry about escaping (unlike canonical-text.js's ported jaTokenize).
 'use strict';
-const { callLLM, extractJSON } = require('./llm.js');
+const { callLLM, extractJSON, estimateCtxTokens } = require('./llm.js');
 
 let _scriptsData = {};
 try { _scriptsData = require('./scripts.json'); } catch (e) { _scriptsData = {}; }
@@ -110,9 +110,16 @@ function buildAnalysisPrompt(sentenceText, tokens, langName, srcLangName) {
 // concept's stable identity); `surface` is what the learner will ACTUALLY see in the story, in the
 // SAME grammatical register the sense gloss now (also v83_p, see buildAnalysisPrompt) is instructed
 // to match. CP4 pairs `surface`+`sense` for the target/source shown to a learner, not `lemma`+`sense`.
+// ⚠️ v90_z (user report: "text-analysis is often missing sentences, and returning null-filled
+// entries"). The `catch` below used to be BARE — `catch (e) { parsed = {} }` — and that single line
+// is what turned a truncated model reply into 39 fully-null tokens with no log, no throw and no
+// counter, across 4 of 24 chapters of the live corpus. The degrade itself is right and stays (one
+// bad reply must not abort a chapter that takes many minutes); what was wrong is that it was
+// SILENT. `parseError` now carries the reason out to the caller, which is what lets analyzeSentence
+// retry and the job report a real number instead of a user having to notice.
 function parseAnalysisReply(raw, tokens) {
-  let parsed;
-  try { parsed = extractJSON(raw); } catch (e) { parsed = {}; }
+  let parsed, parseError = null;
+  try { parsed = extractJSON(raw); } catch (e) { parsed = {}; parseError = e.message || String(e); }
   const byIdx = new Map();
   (Array.isArray(parsed.tokens) ? parsed.tokens : []).forEach(t => {
     if (t && Number.isInteger(t.i)) byIdx.set(t.i, t);
@@ -155,7 +162,10 @@ function parseAnalysisReply(raw, tokens) {
     };
   }).filter(Boolean);
 
-  return { tokens: tokenResults, phrases, phrasesDropped };
+  // v90_z: `unresolved` is counted here rather than re-derived by every caller — it is the signal
+  // the user asked the console to report, and it already existed on every failed token.
+  const unresolved = tokenResults.filter(t => t.confidence === 'unresolved').length;
+  return { tokens: tokenResults, phrases, phrasesDropped, parseError, unresolved };
 }
 
 // One model call for ONE sentence record (as produced by canonical-text.js's buildCanonicalText).
@@ -168,15 +178,99 @@ function parseAnalysisReply(raw, tokens) {
 // and simply never inherited the fix. Without it, a reasoning-capable model burns its whole token
 // budget "thinking" before ever emitting an answer, and the call fails with "Ollama returned empty
 // response" -- the exact error a live qwen3.6:35b-a3b run produced before this fix.
+// ⚠️ v90_z — THE OUTPUT BUDGET, and why it is no longer a constant.
+//
+// The call above this line used to pass a FIXED 1536, and that number was the whole of a
+// user-reported defect: "text-analysis is often missing sentences, and returning null-filled
+// entries in canonical-analysis.json". Measured across the live store, the failure was not a
+// quality problem at all but a hard threshold — sentences of 1-24 tokens NEVER failed (0 of 78),
+// sentences of 26+ tokens ALWAYS did (8 of 8). The reply is one JSON object per token, so its
+// length is a function of the token count, and past ~24 tokens it simply did not fit.
+//
+// Proven end to end against the real production model (qwen3.6:35b-a3b) on real corpus sentences,
+// not inferred from the shape of the output:
+//
+//   n=24  cap=1536  done_reason=stop    eval=1520   24/24 resolved   <- cleared it by 16 tokens
+//   n=25  cap=1536  done_reason=length  eval=1536    0/25 resolved
+//   n=25  cap=6144  done_reason=stop    eval=1663   25/25 resolved
+//   n=39  cap=1536  done_reason=length  eval=1536    0/39 resolved
+//   n=39  cap=6144  done_reason=stop    eval=2563   39/39 resolved
+//
+// That is ~66 output tokens per input token (63.3 / 66.5 / 65.7 across the three), stable enough to
+// size from and NOT stable enough to trust blindly — which is why the retry below exists as well.
+// 90 is that ratio with headroom; 1536 stays as the FLOOR so nothing short gets a smaller budget
+// than it has always had; the ceiling stops a pathological token list from asking for the world.
+const CP2_TOKENS_PER_TOKEN = 90;
+const CP2_MIN_OUTPUT_TOKENS = 1536;
+const CP2_MAX_OUTPUT_TOKENS = 12288;
+function analysisTokenBudget(tokenCount) {
+  const want = Math.ceil(Math.max(0, Number(tokenCount) || 0) * CP2_TOKENS_PER_TOKEN) + 400;
+  return Math.max(CP2_MIN_OUTPUT_TOKENS, Math.min(CP2_MAX_OUTPUT_TOKENS, want));
+}
+
+// Did THIS attempt fail in the way a bigger budget can fix? Two signals, deliberately OR-ed:
+//   • `doneReason === 'length'` — Ollama's own word for "I was cut off at num_predict". Exact, and
+//     the one the measurement above confirms. But a backend that does not report it yields null,
+//     and null must be read as "unknown", never as "not truncated".
+//   • a parse failure that left EVERY token unresolved — the observable shape of the same event,
+//     and the one signal that survives a backend with no done_reason at all.
+//     ⚠️ `r.unresolved === r.tokens.length` is TODAY equivalent to `!!r.parseError` alone, because a
+//     throw from extractJSON leaves `byIdx` empty and therefore every token unresolved — mutation
+//     testing confirmed it as an equivalent mutant, not a gap. It is kept deliberately: the moment
+//     parseAnalysisReply learns any partial salvage (llm.js already has `salvageArray` next door),
+//     "some tokens came back" must stop counting as a truncation, and this is the conjunct that
+//     makes that true without anyone having to remember.
+// A sentence with SOME resolved tokens is a good analysis with a gap in it and is never retried:
+// that is `_analysisSentenceUsable`'s own distinction (server.js), reused rather than re-invented.
+function _cp2NeedsBiggerBudget(r) {
+  if (r.doneReason === 'length') return true;
+  return !!r.parseError && r.tokens.length > 0 && r.unresolved === r.tokens.length;
+}
+
 async function analyzeSentence(model, sentenceRec, opts) {
   opts = opts || {};
-  const { sys, user } = buildAnalysisPrompt(sentenceRec.text, sentenceRec.tokens, opts.langName, opts.srcLangName);
-  const { text } = await callLLM(model, sys, user, 1536, { temperature: 0.1, think: false });
-  const { tokens, phrases, phrasesDropped } = parseAnalysisReply(text, sentenceRec.tokens);
+  const toks = sentenceRec.tokens || [];
+  const { sys, user } = buildAnalysisPrompt(sentenceRec.text, toks, opts.langName, opts.srcLangName);
+  // ⚠️ ctxTokens is NOT optional once the budget can exceed ~2700. It was safe to omit while the cap
+  // was 1536 (prompt ~1100 + reply 1520 fits Ollama's ~4096 default), and it stops being safe the
+  // moment the budget grows: llm.js's own v71_t note spells out that an over-long prompt is
+  // truncated SILENTLY, with no error and a plausible-looking answer. Raising the output cap without
+  // this would trade one silent truncation for a strictly worse one — the PROMPT losing the tokens
+  // the model is being asked to annotate.
+  const attempt = async (budget) => {
+    const r = await callLLM(model, sys, user, budget, {
+      temperature: 0.1, think: false,
+      ctxTokens: estimateCtxTokens(sys.length + user.length, budget),
+    });
+    return Object.assign(parseAnalysisReply(r.text, toks), { doneReason: r.doneReason || null, budget });
+  };
+  const budget = analysisTokenBudget(toks.length);
+  let res = await attempt(budget), retried = false;
+  // ONE retry, at double. The formula is right for every sentence measured; the retry is what makes
+  // a wrong formula loud and recoverable instead of silent and permanent. Bounded at one deliberately
+  // — CP2 is already one call per sentence on a slow local model, and an unbounded escalation on a
+  // sentence the model simply cannot answer would stall a whole chapter.
+  if (_cp2NeedsBiggerBudget(res)) {
+    retried = true;
+    const bigger = Math.min(CP2_MAX_OUTPUT_TOKENS, res.budget * 2);
+    if (bigger > res.budget) {
+      const second = await attempt(bigger);
+      // Keep the retry only if it actually resolved something — a second failure must not throw away
+      // a first attempt that had partially succeeded.
+      if (second.unresolved < res.unresolved) res = second;
+    }
+  }
   return {
     sentenceId: sentenceRec.sentenceId,
-    tokens, phrases, phrasesDropped,
-    provenance: cp2Provenance({ sentenceId: sentenceRec.sentenceId, model }),
+    tokens: res.tokens, phrases: res.phrases, phrasesDropped: res.phrasesDropped,
+    // The failure markers travel WITH the sentence, so a null-filled entry in canonical-analysis.json
+    // says why it is null instead of leaving a reader to guess. Present only when something actually
+    // went wrong, so a healthy record is unchanged from what this module has always written.
+    ...(res.unresolved ? { unresolved: res.unresolved } : {}),
+    ...(res.parseError ? { parseError: res.parseError } : {}),
+    ...(res.doneReason === 'length' ? { truncated: true } : {}),
+    ...(retried ? { retried: true } : {}),
+    provenance: cp2Provenance({ sentenceId: sentenceRec.sentenceId, model, outputBudget: res.budget }),
   };
 }
 
@@ -214,8 +308,31 @@ async function analyzeChapter(model, chapter, opts) {
     sentenceCount: sentences.length,
     tokenCount: sentences.reduce((n, s) => n + s.tokens.length, 0),
     sentences,
+    // v90_z (user: "The console also didn't report on how many analyses were successful and how many
+    // just contain nulls"). ⚠️ NO new field was needed to answer this — `confidence:'unresolved'` is
+    // already written on every token the model never answered for, and has been since CP2 shipped.
+    // The number simply was never counted or shown, which is why four chapters of null entries could
+    // sit in the store unnoticed until a person opened the JSON.
+    ...analysisCoverage(sentences),
     provenance: cp2Provenance({ chapterId: chapter.chapterId, model }),
   };
+}
+
+// "N of M sentences unresolved", computed from what is already on every token. `unresolvedSentences`
+// counts sentences with token slots and NOT ONE resolved lemma — a recorded FAILURE, the same
+// definition `_analysisSentenceUsable` (server.js) and `computeFrequency` (below) both already use,
+// rather than a third opinion on what "analysed" means.
+function analysisCoverage(sentences) {
+  let unresolvedSentences = 0, unresolvedTokens = 0, truncatedSentences = 0;
+  (sentences || []).forEach(s => {
+    const toks = (s && s.tokens) || [];
+    if (!toks.length) return;
+    const bad = toks.filter(t => t && t.confidence === 'unresolved').length;
+    unresolvedTokens += bad;
+    if (bad === toks.length) unresolvedSentences++;
+    if (s && s.truncated) truncatedSentences++;
+  });
+  return { unresolvedSentences, unresolvedTokens, truncatedSentences };
 }
 
 // Deterministic frequency over whatever chapters were actually analysed in ONE run -- explicitly a
@@ -243,6 +360,8 @@ module.exports = {
   cp2Provenance,
   buildAnalysisPrompt,
   parseAnalysisReply,
+  analysisTokenBudget,
+  analysisCoverage,
   analyzeSentence,
   analyzeChapter,
   computeFrequency,

@@ -129,6 +129,7 @@ run('unit: tutor retrieval — spoiler-safe + scoped (v62)', 'node', [path.join(
 run('unit: tutor streaming replies (v64)', 'node', [path.join(__dirname, 'unit-tutor-streaming.test.js')]);
 run('unit: select story text → ask the tutor (PLAN §12, v83_b)', 'node', [path.join(__dirname, 'unit-tutor-selection.test.js')]);
 run('unit: tutor "I have an answer" badge (v84_g)', 'node', [path.join(__dirname, 'unit-tutor-reply-badge.test.js')]);
+run('unit: a question asked while the tutor is answering is queued, not silently dropped (v90_z)', 'node', [path.join(__dirname, 'unit-tutor-queued-turn.test.js')]);
 run('unit: learner accounts + server-side state (v65)', 'node', [path.join(__dirname, 'unit-learners.test.js')]);
 run('unit: TLS warning predicates + wiring (v70_b)', 'node', [path.join(__dirname, 'unit-tls-transport.test.js')]);
 run('unit: lesson-id integrity (v67.1)', 'node', [path.join(__dirname, 'unit-lesson-id-integrity.test.js')]);
@@ -296,6 +297,7 @@ run('unit: bottom-bar hide/show toggle (v85_b)', 'node', [path.join(__dirname, '
 run('unit: generator-page wizard shell (PLAN §13 milestone 1, v85_c)', 'node', [path.join(__dirname, 'unit-gen-wizard.test.js')]);
 run('unit: per-chapter lesson-type override (PLAN §13 milestone 3, v85_f)', 'node', [path.join(__dirname, 'unit-per-chapter-types.test.js')]);
 run('unit: post-generation storyboard/QC toggles (PLAN §13 milestone 4, v85_g)', 'node', [path.join(__dirname, 'unit-post-gen-features.test.js')]);
+run('unit: post-generation vocab QC reaches the SINGLE-chapter path (v90_z)', 'node', [path.join(__dirname, 'unit-single-chapter-qc.test.js')]);
 run('unit: generation-time attribution fields (PLAN §13 milestone 5, v85_i)', 'node', [path.join(__dirname, 'unit-gen-attribution.test.js')]);
 run('unit: comic upload + panel-drawing UI (PLAN §2.4 Track A4 milestone 1, v85_j)', 'node', [path.join(__dirname, 'unit-comic-panel-ui.test.js')]);
 run('unit: comic panel batch extraction, client side (PLAN §2.4 Track A4 milestone 2, v85_k)', 'node', [path.join(__dirname, 'unit-comic-extraction.test.js')]);
@@ -335,6 +337,7 @@ run('unit: QC collect-and-compare per model', 'node', [path.join(__dirname, 'uni
 run('unit: feedback animations + mixed source icons', 'node', [path.join(__dirname, 'unit-ui-feedback-mixed-icons.test.js')]);
 run('unit: storyline theme by story style', 'node', [path.join(__dirname, 'unit-storyline-theme.test.js')]);
 run('unit: PLAN §7.0 CP1/CP2, item W step 4 — text explorer client fetch/render logic', 'node', [path.join(__dirname, 'unit-text-explorer.test.js')]);
+run('unit: the token popover shows the PHRASE a word belongs to, above its own analysis (v90_z)', 'node', [path.join(__dirname, 'unit-text-explorer-phrase.test.js')]);
 run('unit: item AI — the curator overlay over CP2 token analysis (v88_ad)', 'node', [path.join(__dirname, 'unit-analysis-corrections.test.js')]);
 run('unit: item Y — the storyline header edit popover (v88_aj)', 'node', [path.join(__dirname, 'unit-storyline-edit-menu.test.js')]);
 run('unit: the card edit popover — library storyline + chapter cards (v88_am)', 'node', [path.join(__dirname, 'unit-card-edit-popover.test.js')]);
@@ -353,6 +356,7 @@ if (!quick) {
   run('e2e: PLAN §7.0 CP4 — vocabulary lesson through the existing contract, validated via real buildStandardExercises', 'node', [path.join(__dirname, 'unit-curriculum-lesson.test.js')]);
   run('e2e: PLAN §7.0 CP5 — silent shadow-mode consumption of the curriculum plan (progress card unchanged)', 'node', [path.join(__dirname, 'unit-cp5-shadow.test.js')]);
   run('e2e: PLAN §7.0 CP1/CP2, item W step 2-3 — background analysis job + per-chapter cache + GET shadow', 'node', [path.join(__dirname, 'e2e-analysis.test.js')]);
+  run('e2e: CP2 sizes its output budget and retries a TRUNCATED reply — the all-null-sentences defect (v90_z)', 'node', [path.join(__dirname, 'unit-analysis-truncation.test.js')]);
   run('e2e: llm.js warmup() sends think:false on the wire (v83_r)', 'node', [path.join(__dirname, 'e2e-warmup-think.test.js')]);
   run('e2e: stopping the server frees model VRAM (item AU shutdown half, v88_g)', 'node', [path.join(__dirname, 'e2e-shutdown-release.test.js')]);
   run('e2e: cancelling a job aborts the in-flight model call (item AU cancel, v88_k)', 'node', [path.join(__dirname, 'e2e-job-cancel.test.js')]);

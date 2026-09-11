@@ -1,11 +1,11 @@
-# Session prompt — written at the `v90_y` cut
+# Session prompt — written at the `v90_z` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v90_y`**. `roadmap_v90.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v90_z`**. `roadmap_v90.md` was cut at
 `v90` and is the current roadmap.
 
 **IMPORTANT — the user is translating `ui.json` locally by hand.** Before adding or editing ANY `en`
@@ -13,7 +13,18 @@ key, tell them explicitly and let them pause first. Every cut in the `v87` and `
 first and was given an explicit budget, often smaller than proposed. **Ask again fresh THIS
 session** — and try ZERO first: whole stretches of the `v88` line (`v88_ab`, `v88_ad`, `v88_af`,
 `v88_ag`, `v88_ai`, `v88_al`, `v88_am`) shipped real features with no new keys at all, by reusing
-strings the app already had.
+strings the app already had. **`v90_z` was granted a budget of FOUR and spent ONE**, by proposing
+that one key on its own with what it bought, and reusing existing strings for the other three fixes.
+
+⚠️ **THE CHECK BEFORE WRITING THE FILE IS `git status --short ui.json`, NOT the `git log` date.**
+A CLEAN status means there is no in-flight hand translation to clobber; a dirty one means STOP and
+ask. (It was clean at the `v90_m` and `v90_z` cuts, and both wrote safely.) Add to **`en` only** —
+the translated blocks word these differently, so a replace that matches more than once is a bug, not
+a convenience.
+
+⚠️⚠️ **BEFORE SPENDING A KEY ON A "NEW" FEATURE, CHECK WHETHER THE FEATURE ALREADY EXISTS.** Twice
+in the `v90_z` session a request for a new mechanism turned out to be a request for an existing one
+that was merely unreachable — see WHERE TO START below. Zero keys were needed for either.
 
 **The user's own server runs on port 3000 across sessions** and WRITES to `lessons.json` while you
 work. Check `git status --short lessons.json` at the start and again at commit time — the corpus
@@ -64,59 +75,63 @@ current one) carries the protocol, the open items and the RULES, but none of tha
 
 # WHERE TO START
 
-⚠️⚠️ **FOUR USER-REPORTED ISSUES ARE WAITING, AND THIS SESSION WAS CUT SO YOU COULD TAKE THEM WITH A
-FULL CONTEXT BUDGET.** They are written up in `roadmap_v90.md` → **"FOUR USER-REPORTED ISSUES,
-HANDED TO A FRESH SESSION"**, in the order to take them. **Read that section before anything else.**
-Two are diagnosed to the line and two need a decision from the user first.
+✅ **ALL FOUR OF THE USER-REPORTED ISSUES THE LAST SESSION WAS HANDED ARE SHIPPED (`v90_z`).**
+The full write-up is `roadmap_v90.md` → the `v90_z` entry; the original report section is kept there
+too, marked CLOSED with a note on exactly where its own framing turned out to be wrong. **Nothing
+from that list is owed.**
 
-🥇 **1. Text analysis returns all-null sentences — DIAGNOSED, NOT FIXED. Start here.**
-Measured across the whole corpus: sentences of **1–24 tokens never fail (0 of 78); sentences of 26+
-tokens ALWAYS fail (8 of 8)**. The cause is `canonical-analysis.js:174`'s fixed **1536-token output
-cap** — a per-token JSON reply overruns it, `parseAnalysisReply`'s
-`try { extractJSON } catch { parsed = {} }` swallows the truncation, and every token is written
-`null` with `confidence:'unresolved'`. ⚠️ **A re-run fails identically — the user corrected an early
-guess that "fill only missing" was skipping them. It is not; it re-runs and fails again. Do not
-re-derive the presence-test theory.** The fix needs a choice (raise the cap vs split long sentences)
-— but the silent `catch` and the missing console report should be fixed either way, and the report
-needs NO new field: `confidence:'unresolved'` is already written on every failed token.
+⚠️⚠️ **THE ONE LESSON FROM `v90_z` THAT IS WORTH MORE THAN THE FOUR FIXES, because it happened
+TWICE in one session: for BOTH items that asked for a "new" mechanism, the mechanism already existed
+and already worked.** The vocab article check the user asked to have built has been in
+`qcCheckPair` for releases (QC'd de→it pairs: **0 of 64** asymmetric; never-QC'd: **65 of 274**), and
+the post-generation QC checkbox they then asked for already existed too — it was merely unreachable
+for a single-chapter generation. **Measure the thing the request assumes is missing, BEFORE building
+it.** Both would otherwise have shipped a second copy of working code.
 
-🥈 **2. The tutor silently drops ~1 in 5 questions — MEASURED, NOT DIAGNOSED.**
-`learners.json` → `users.raim.state.tutorThread`: **6 of 33 student messages got no reply (18%)**,
-the last three consecutively, and one question asked three times. The job reaches the popover, so it
-is created; where it dies is unknown. ⚠️ Check the swallowed-error pattern first (`v90_n`/`v90_p`).
-⚠️ `learners.json` is the user's live file — read it, never write it.
+⚠️ **`ASK THE USER WHAT THEY WANT NEXT.`** These are the only things left open from the `v90_z` work,
+and all three are small:
 
-🥉 **3 and 4 need a user decision before code**: the German-with-article vs Italian-without vocab
-mismatch (measure the real rate first — "a lot" is a report, not a number; then decide QC mode vs
-prompt), and phrase-level analysis display (⚠️ **the `phrases` data already exists** in
-`parseAnalysisReply`'s output with start/end indices — the display simply does not prefer it, so the
-first fix is DISPLAY, not pipeline). The multi-level browsing idea the user raised alongside it is
-explicitly a roadmap item, not part of that fix.
+1. **The `en` key `text_explorer.phrase` = "Phrase"** was added (`en` only, granted from a budget of
+   four after being proposed on its own). It **awaits hand translation**, alongside `v90_m`'s
+   `form.fetch_url` and `pdf.no_article`.
+2. **The existing corpus backlog is untouched.** `v90_z` fixed the FLOW (new single chapters can now
+   be QC'd on generation); the **126 already-written asymmetric vocab pairs across 21 chapters** are
+   still there, and the fix for them is to run the existing QC — no code. The worst are all `de→it`
+   and `de→nl`: *Richiamando la figura di Alcide De Gasperi* (16/16), *Naturraum für Biodiversität*
+   (14/16), *Verantwortung und Demokratie*, *Jubiläum der Autonomie*, *Esempio a livello mondiale*
+   (8/8 each). Re-derive the list with `node build_history/probe_article_symmetry_v80j.js`.
+3. **`translate-select`** (generate a storyline in another source language) is still deliberately
+   OUTSIDE the new input field, because it takes no input text at all. Confirm or move it.
 
-✅ **NOTHING ELSE IS OWED.** The whole `v90_s`…`v90_y` run — the one-field wizard, the bottom-bar
-reorder, the URL/Wikipedia scrape — is shipped, guarded and live-verified. One question is open and
-it is small: **`translate-select`** (generate a storyline in another source language) is deliberately
-left OUTSIDE the new input field, because it takes no input text at all. Confirm or move it.
+✅ **AND CARRIED ITEM `T` CLOSED FOR FREE — it was the SAME BUG.** "Two questions initiated via
+text-selection → grammar click were never answered" had sat open since the `v86` line waiting for a
+live reproduction; it is `_storySelExplain('grammar')` hitting the very lines `v90_z` fixed. ⚠️ **The
+protocol says to cross-check a carried item against the SHIPPED list before carrying it again — this
+one also needed checking against the fix about to be made.** Worth one grep per release.
 
-⚠️ **`INTERNALS.md` §6b NOW COVERS THE WIZARD ROUTER, THE BOTTOM BAR AND `news-article.js`** — added
-at `v90_y` after it had said nothing about `v90_m`…`v90_y`. Read it before grepping.
+⚠️ **THE FOUR-LEVEL ANALYSIS BROWSING IDEA IS A ROADMAP ITEM, NOT STARTED** — the user's own framing
+("Perhaps rather for the roadmap": paragraph → sentence → phrase → word). `v90_z` shipped only the
+one-token fix (clicking a word shows the phrase it belongs to), deliberately.
 
-⚠️ **THE USER WAS TRANSLATING `ui.json` BY HAND ACROSS THE WHOLE v90 LINE SO FAR** and will commit it themselves.
-Do not touch that file until `git log ui.json` shows their commit, and do not trust any translated
-count in this document until then. ⚠️ **At the `v90_m` cut the file was CLEAN in `git status`** (no
-in-flight hand translation to clobber), which is the check to repeat before adding a key — not the
-`git log` date alone. **`v90_m` added exactly two `en` keys, `form.fetch_url` and `pdf.no_article`,
-`en` only**; they are the two awaiting hand translation.
+⚠️ **THREE THINGS `v90_z` LEARNED THE HARD WAY, all about GUARDS rather than about the code:**
 
-⚠️ **AND `docs/index.html` BAKES `lessons.json`, WHICH THE USER'S SERVER REWRITES CONSTANTLY.** At
-the `v90_m` cut `unit-static-freshness` was RED on session entry for exactly this — `docs/` had been
-built from a `lessons.json`/`canonical-analysis.json` snapshot the live server had since moved past.
-**It is not a finding**, and the fix is one command; expect to run it again right before committing,
-because the corpus can move during a 9-minute suite run:
+1. **⚠️⚠️ TWO SIGNALS THAT ALWAYS FIRE TOGETHER ARE ONE SIGNAL.** `unit-analysis-truncation` checks
+   truncation two ways (`done_reason === 'length'`, and a parse failure). Its first fixture triggered
+   BOTH, so deleting *either* arm left the file GREEN — and then, after adding a fixture for the
+   first, deleting the *second* arm did too. It took three fixtures (`ZZZCUT`, `ZZZNODR`,
+   `ZZZWORSE`) to make the branches distinguishable. **When a guard covers an OR, every arm needs a
+   fixture that fires it ALONE.**
+2. **⚠️ A MUTATION THAT SILENTLY MATCHED NOTHING READS EXACTLY LIKE A SURVIVING ONE.** Two "survivors"
+   in this session were `str.replace` calls whose anchor did not exist (quoting mangled in the shell).
+   **Assert the file actually changed** before believing a survivor.
+3. **⚠️ `v89` RULE 16 FIRED AGAIN, IMMEDIATELY.** A never-settling `fetch` stub — the natural way to
+   write "a job still in flight" — left `startBackgroundJob`'s `setInterval` alive and hung the whole
+   test file *after* it printed its results. Use a terminating stub and an explicit `process.exit(0)`.
 
-```
-node build-static.js && node test/run.js --quick
-```
+⚠️ **AND ONE HYPOTHESIS THAT WAS CHECKED AND IS WRONG — do not re-derive it.** `test/fake-ollama.js`'s
+own comment says an `IncomingMessage`'s `close` has ALREADY fired by the time a handler is added,
+which would make `/api/tutor`'s streaming `aborted` flag dead. **Measured on Node 24: it has not** —
+`close` fires at response end. That abort detection is correct and was not the cause of anything.
 
 ✅ **THE `⚠ Ollama unreachable` FLAPPING IS SOLVED — it was never the wlan** (`v90_l`). The user's
 own book-job log carried the answer: `ECONNREFUSED ::1:11434`, refused in 1-5ms. `::1` is IPv6
@@ -246,8 +261,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 377 checks
-node test/run.js --quick                  → expect 311
+node test/run.js                          → expect 381 checks
+node test/run.js --quick                  → expect 314
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -279,8 +294,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **363 topics, 101 storylines, 33 languages, 746 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_y'`.
+Corpus at this cut: **363 topics, 101 storylines, 33 languages, 747 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v90_z'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

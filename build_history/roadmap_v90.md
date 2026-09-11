@@ -494,10 +494,29 @@ content, not a translatable string).
 - **A maintainer (~10):** "Rebuild docs/index.html", "Import lessons.json", "Teacher dashboard",
   "✓ docs/index.html rebuilt".
 
-# 🆕 FOUR USER-REPORTED ISSUES, HANDED TO A FRESH SESSION (reported at the `v90_y` cut)
+# ✅ FOUR USER-REPORTED ISSUES — ALL FOUR SHIPPED AT `v90_z`
 
-Reported after live testing. **None is built.** Two are diagnosed to the line; two need design
-decisions from the user first. Listed in the order I would take them.
+> ⚠️ **CLOSED. The write-up below is KEPT as the record of what was reported and how it was
+> diagnosed** — not as open work. What actually shipped, and the two places where MEASUREMENT
+> DESTROYED THE PREMISE of the section below, is in the `v90_z` entry in the shipped list.
+>
+> **Where the text below is now WRONG, and would mislead a session that built to it:**
+> - **§3's framing.** "Is this a new QC MODE, or a generation-prompt change, or both?" — **neither.**
+>   `qcCheckPair` already carries an ARTICLE SYMMETRY rule and it WORKS: de→it pairs in QC'd lessons
+>   are **0 of 64** asymmetric against **65 of 274 (23.7%)** in lessons never QC'd, and 21 of the 23
+>   affected chapters had never had vocab QC run at all. It was a COVERAGE problem. The instruction
+>   to "measure the actual rate first" was the right one and is what found this.
+> - **§4's "the display simply does not prefer them"** was exactly right, and the fix was that small.
+> - **§1's mechanism** was correct to the line; §2 was correctly left undiagnosed, and the shape it
+>   turned out to be (the client dropping a turn it had already persisted) is not what the
+>   "where to start" note guessed.
+>
+> **One thing in §2 is worth carrying forward**: the tutor entry in the jobs popover is SYNTHETIC,
+> rendered off `_tutorState.busy` alone. "The job appeared in the popover" is never evidence that a
+> request reached the server.
+
+Reported after live testing. ~~**None is built.**~~ Two were diagnosed to the line; two needed design
+decisions from the user first. Listed in the order they were taken.
 
 ---
 
@@ -1025,9 +1044,23 @@ VERBS, distinct from case (genuinely absent for some languages)? Two live-model 
 failed to move this via wording alone — a third attempt without answering this question first is not
 recommended.
 
-### T. Two questions initiated via text-selection → grammar click were never answered (needs reproduction)
+### ~~T. Two questions initiated via text-selection → grammar click were never answered~~ — ✅ CLOSED at `v90_z`
 
-Still open, from a screenshot report; needs live reproduction.
+⚠️ **This was the SAME DEFECT as the `v90_z` tutor report, and it had been carried open since the
+`v86` line waiting for a "live reproduction" that nobody ran.** It is the `_storySelExplain('grammar')`
+path: the turn is PUSHED to `_tutorState.history` (and so persisted, and so visible in
+`learners.json`) and `_tutorSend` then returned silently because `_tutorState.busy` was still true
+from the previous reply. "Two questions … never answered" is exactly what that produces, and
+"text-selection → grammar click" names the caller.
+
+Reproduced in the DOM harness at `v90_z` — history grew 3→4→5→6 while `fetch` stayed at 1 — and
+fixed there (`_tutorPending`), guarded by `unit-tutor-queued-turn.test.js`. **Both selection modes go
+through the same two lines**, so `grammar` and `meaning` are covered by one fix.
+
+⚠️ **The lesson is the protocol's own**: *a carried-forward open item must be cross-checked against
+the shipped list before being carried again.* This one needed the opposite check as well — cross-check
+it against the item you are ABOUT to ship. It was closed for free, four release lines late, only
+because someone re-read it after fixing the tutor.
 
 ### V. Multiple image upload for comic generation — each image its own chapter; "add images" after the first upload
 
@@ -3281,6 +3314,214 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v90_z — the four handed-over user reports: two diagnosed to the line, and two whose premise measurement destroyed
+
+**ONE `ui.json` key** (`text_explorer.phrase`, `en` only, granted from a budget of four after being
+proposed on its own). **37 mutations run across four new guard files; 35 red, 2 judged equivalent and
+documented as such.** Baseline 377/311 → **381/314**.
+
+⚠️ **THE SESSION'S REAL LESSON, and it happened TWICE: for both items that needed a "new" mechanism,
+the mechanism already existed and worked. Measuring first is what found that; building to the
+request would have shipped a second copy of working code in both cases.**
+
+### ⭐ 1. Text analysis returned all-null sentences — a fixed 1536-token output cap
+
+`canonical-analysis.js:174` passed a **constant `1536`** as `num_predict`. The reply is one JSON
+object per token, so its length is a function of the TOKEN COUNT; past ~24 tokens it did not fit,
+`extractJSON` threw, and a bare `catch (e) { parsed = {} }` turned the truncation into a full set of
+`null` tokens with no log, no throw and no counter.
+
+**Re-measured across the live store, independently of the handover:** 1–24 tokens **0 of 78** failed;
+25 tokens 1 of 1; 26+ tokens **8 of 8**. Longest success 24, shortest failure 25. 4 of 24 chapters
+affected.
+
+⚠️ **Then PROVEN against the real production model** (`qwen3.6:35b-a3b`) on real corpus sentences,
+rather than inferred from the shape of the output — this table is the whole diagnosis:
+
+| n | cap | `done_reason` | `eval_count` | resolved |
+|---|---|---|---|---|
+| 24 (longest success) | 1536 | stop | **1520** | 24/24 |
+| 25 | 1536 | **length** | 1536 | **0/25** |
+| 25 | 6144 | stop | 1663 | **25/25** |
+| 39 | 1536 | **length** | 1536 | **0/39** |
+| 39 | 6144 | stop | 2563 | **39/39** |
+
+The longest sentence that ever succeeded cleared the cap by **16 tokens**. The ratio is ~**66 output
+tokens per input token** (63.3 / 66.5 / 65.7) — stable enough to size from, and not stable enough to
+trust blindly.
+
+**The fix, on the user's ruling ("size from tokens + retry on truncation"):**
+- `analysisTokenBudget(n)` = `n × 90 + 400`, floored at the old **1536** (so nothing short gets less
+  than it always had) and ceilinged at 12288.
+- ⚠️ **`ctxTokens` is the half that is easy to forget and fatal to omit.** `llm.js` omits `num_ctx`
+  unless the caller asks, and Ollama then truncates an over-long PROMPT *silently* (its own `v71_t`
+  note). At 1536 that was safe (prompt ~1100 + reply 1520 fits the ~4096 default); past ~2700 it
+  stops being. Raising the output cap alone would have traded one silent truncation for a strictly
+  worse one.
+- **`done_reason` is now forwarded by `llm.js`** (both the whole-reply and the streaming path,
+  purely additive) — Ollama's own, exact answer to "why did generation stop". It was being discarded.
+- One retry at **double**, on either signal, keeping the BETTER of the two attempts.
+- The silent catch now reports `parseError`; `analysisCoverage()` counts unresolved sentences/tokens
+  and `_runAnalysisJob` logs **"N/M resolved"** per chapter plus a ⚠ line per failed sentence *as it
+  happens*. ⚠️ **No new field was needed** — `confidence:'unresolved'` has been on every failed token
+  since CP2 shipped and was simply never counted.
+
+⚠️ **LIVE-VERIFIED END TO END ON THE USER'S OWN DATA, on COPIES of the store**
+(`LESSONS_FILE`/`CANONICAL_ANALYSIS_FILE` pointed at `/tmp`, killed by PID; their
+`canonical-analysis.json` provably untouched afterwards — still `0/28`, no `outputBudget` anywhere).
+Chapter `tp_17851387238120000029`, resume mode: the 28-token sentence went **0/28 → 28/28**, at the
+sized budget of 2920 with **no retry needed**, and recovered **2 phrases** that truncation had also
+been destroying. A 35-token sentence the story had grown since analysed cleanly at 35/35 — it would
+have been all-null. Console read `6 sentence(s), 103 token(s), 4 reused, 6/6 resolved`.
+
+**Guard**: `unit-analysis-truncation.test.js` (10 checks), driven over HTTP against the real
+fake-Ollama so the request OPTIONS are observable — a stubbed `callLLM` would have been asserting
+against the test's own idea of the call. **13 mutations, 12 red.**
+
+⚠️⚠️ **TWO MUTATION-TESTING FINDINGS THAT ARE THE REASON THIS FILE IS NOT VACUOUS**, both the same
+shape in mirror image — *two signals that always fire together are one signal*:
+1. With one fixture (broken JSON **and** `done_reason:length`), deleting the `done_reason` arm
+   outright left the guard GREEN: the parse-error arm covered for it. Fixed with **`ZZZCUT`** — a
+   reply that is VALID JSON and carries `done_reason:length`.
+2. Once `ZZZCUT` existed, deleting the **parse-error** arm also left it green. Fixed with
+   **`ZZZNODR`** — broken JSON and *no* `done_reason` at all, the backend `llm.js`'s own header says
+   must be read as "unknown, never as not-truncated".
+3. And a third: "keep the better attempt" was indistinguishable from "always keep the retry" until
+   **`ZZZWORSE`** (partial-but-valid at the small budget, invalid at the large one).
+
+The surviving 13th mutation — widening the retry predicate to `!!r.parseError` — is a **genuine
+equivalent mutant**: a throw from `extractJSON` leaves `byIdx` empty, so every token is unresolved by
+construction. The conjuncts are kept and documented, because they become load-bearing the moment
+`parseAnalysisReply` learns any partial salvage.
+
+### ⭐ 2. The tutor silently dropped ~1 in 5 questions — TWO independent silent paths
+
+Counted in the user's own thread: **6 of 33 student turns got no reply (18%)**, the last three
+consecutive. ⚠️ **FOUR of the six are `tutor.sel_meaning_q` turns** — the text-selection path, not a
+random spread. That is the clue the handover did not have.
+
+**Reproduced in the DOM harness before anything was changed**, and the probe emitted byte-for-byte
+the text of the user's own last unanswered message: `_storySelExplain` and `askTutorAboutQuestion`
+**push** the student turn — which `_tutorSaveThread` persists and `_learnerSyncSoon` syncs into
+`learners.json`, which is exactly why the question is *visible* there — and then call `_tutorSend`,
+whose first line was `if(_tutorState.busy) return;`. History went 3→4→5→6 while `fetch` stayed at 1.
+On a 35B reasoning model one reply is minutes long; that is the whole of "the last three are
+consecutive". `sendTutorMessage` was never part of it — it checks `busy` *before* pushing.
+
+⚠️ **"The tutor job did appear in the job popover" proves LESS than it looks.** That entry is
+SYNTHETIC, rendered purely off `_tutorState.busy` (`/api/tutor` is stateless and not in the server's
+job store at all). It says `_tutorSend` started; it says nothing about a request reaching the server.
+
+**Fix: one pending turn is remembered and fired when the current reply lands.** It collapses
+correctly by construction — the payload carries the WHOLE history, so N turns queued during one
+reply become ONE send carrying all of them. **Zero keys.**
+
+**The second silent path**, which fits the two TYPED drops the selection path cannot explain:
+`_tutorReadStream` ending with no `done` frame, no `error` frame and an empty buffer pushed nothing
+and said nothing. Now surfaces the EXISTING `tutor.failed`.
+
+**And the reason none of this was in the console: the tutor's failure paths logged NOTHING.**
+`_logReply` fired only on success; both catches reported to the client and wrote nothing. `v86_h`
+added the "asked" line for exactly this class of diagnosis and stopped one line short of the failure.
+`_logFail` now covers the stream catch, the whole-reply catch, an empty sanitised reply, and a
+mid-stream disconnect.
+
+⚠️ **A checked-and-discarded hypothesis, recorded so it is not re-derived**: `/api/tutor`'s streaming
+path sets `aborted` from `req.on('close')`, and `test/fake-ollama.js`'s own comment says
+IncomingMessage `close` has already fired by the time a handler is added. **Measured on Node 24: it
+has not** — `close` fires at response end, not after the body is read. The abort detection is
+correct and is not the cause.
+
+**Guard**: `unit-tutor-queued-turn.test.js` (5 checks), driving the real functions with a `fetch`
+that hands back a resolver per call so the test controls exactly when each reply lands. **7
+mutations, all red — after a simplification the mutation testing forced.**
+
+⚠️ **A MUTUALLY-MASKING PAIR, found and REMOVED rather than documented.** The pending flag was
+cleared in two places (`_tutorSend`'s entry and the drain); deleting either left the guard green,
+because the other covered it. Rule 3's "mutually-masking pair of defensive guards", exactly. The
+drain's clear was deleted, one clear kept as the invariant *"being inside a send means nothing is
+queued"* — and both mutations then went red against **simpler** code.
+
+### 3. German-with-article vs Italian-without — ⚠️ THE PREMISE WAS FALSE, AND THE MEASUREMENT IS THE FINDING
+
+The request was *"a QC (perhaps an option on QC for vocab) could specifically catch that"*. **The
+option already exists**: `qcCheckPair` has carried an explicit **ARTICLE SYMMETRY** rule for
+releases, with the lesson's other pairs supplied as context so it infers the convention rather than
+being told one (the `v71_x` "no language knowledge in the code" line, respected).
+
+Corpus-wide the rate is 4.1%, which badly misdescribes the user's experience. Split by whether QC has
+ever run, it stops being ambiguous:
+
+| pair | never QC'd | QC'd |
+|---|---|---|
+| **de→it** | 274 pairs, **23.7%** | 64 pairs, **0.0%** |
+| de→en | 270 pairs, 8.1% | 72 pairs, **0.0%** |
+| de→nl | 97 pairs, 34.0% | *(no sample)* |
+
+**0 of 64 is not luck** — at a 23.7% underlying rate that has probability ~4e-8. And of the **23
+chapters** with any asymmetric pair, **21 have had no vocab QC run at all**; the one with full
+coverage is an `en→de` case ("love ↔ die Liebe") where keeping the German article is what the rule's
+own instruction *tells* it to do. Only **51 of 660** vocab lessons (7.7%) have ever been QC'd.
+
+**So it is a COVERAGE problem, not a RULE problem** — and a second copy of a working rule would not
+have corrected one existing pair. Put back to the user, who redirected to *"post-generation vocab QC
+checkbox"*.
+
+**Which also already existed** — `#post-gen-qc-cb`, "🔍 Proofread with QC after generating" — and was
+**unreachable where the user actually generates**: it rode on `_genArcApplicable()` (`n > 1` on the
+LLM path), so the whole `#post-gen-row` was hidden for a single chapter, the slider *unchecked* it on
+a drop to 1, and `_applyPostGenFeatures` had exactly one call site, inside `doGenerate`'s
+multi-chapter `resp.bookId` branch. **Every "continue this storyline" chapter is a single-chapter
+generation.**
+
+⚠️ The arc gate is right for an arc and for a storyboard ("a board of one is not a board") and was
+never right for QC. It is now split: storyboard and analysis stay multi-chapter-only, QC is offered
+at one chapter, the slider no longer forgets the choice, the opt-in rides on `APP.activeJob` (so a
+reload mid-generation cannot lose it, the `v85_i` pattern) and `resumeBackgroundJob` honours it.
+**Zero keys** — the checkbox and its label already existed.
+
+⚠️ **`unit-post-gen-features.test.js` §2 asserted the OLD ruling and was RE-SCOPED, not deleted** —
+the storyboard half of its claim is unchanged and still asserted, which is what keeps the re-scoping
+honest. **Guard**: `unit-single-chapter-qc.test.js` (6 checks). **8 mutations, all red.**
+
+⚠️ **`v89` rule 16 caught this file on its first run**: a never-settling `fetch` stub for "a job still
+in flight" left `startBackgroundJob`'s `setInterval` alive and hung the whole file after printing
+its results. Terminating stub + explicit `process.exit(0)`.
+
+### 4. Phrase-level analysis display — the data was already there
+
+User: *"Clicking on indiana should provide the whole phrase."* ⚠️ **`parseAnalysisReply` has returned
+`phrases` — start/end indices, citation `lemma`, source-language `gloss`, own `confidence` — since
+CP2 shipped**; `analysisShadowFor` passes each sentence through whole and `build-static.js` bakes
+them. Measured: **136 phrases over 67 of 87 sentences**, and `grep phrases index.html` found **zero
+consumers**. A DISPLAY change, not a pipeline change.
+
+`_tePhraseByToken(s)` maps every token of a phrase to it, so the popover keeps reading ONE place
+(`el.dataset`). The phrase shown is **sliced out of the sentence text** — the story's own words with
+their real separators, which is what makes it right for an unspaced script, and what makes an
+INFLECTED phrase read `si misero in fila` rather than `mettersi in fila`. Trailing sentence
+punctuation is trimmed via `\p{P}` (Unicode machinery, not a hand-written table) because CP1
+tokenises `indiana.` as one token.
+
+On the user's ruling the phrase goes **ABOVE** the word, not instead of it — `indiana` really does
+mean `indisch`, and that is sometimes the thing being asked. **Verified against the user's actual
+chapter** `tp_17889394908430000140`, which now renders:
+
+```
+indiana.
+  PHRASE  in fila indiana
+  Meaning here: im Einermarsch
+  Dictionary form: indiana · Grammatical form: Adjektiv, Singular, Feminin · Meaning here: indisch
+```
+
+**Guard**: `unit-text-explorer-phrase.test.js` (7 checks), driving the real renderer and the real
+popover. **9 mutations, all red** — two only after fixtures were added: a mutation replacing the text
+slice with `ph.lemma` survived until a fixture where the two *differ*, and "phrase replaces the word"
+survived a mis-applied `str.replace` that matched nothing (⚠️ **a silent no-op mutation reads exactly
+like a surviving one** — verify the anchor changed).
+
+**The four-level browsing idea stays a roadmap item**, as the user said, and is untouched here.
 
 ## ✅ v90_y — three small user requests, and a diagnosis worth more than all of them
 
