@@ -3157,6 +3157,65 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v90_x — every bottom-bar control opens AND closes from its own button
+
+User request, completing the bar work. **ZERO `ui.json` keys.**
+
+### The inconsistency it fixes, stated as it actually was
+
+| control | before | after |
+|---|---|---|
+| ⏳ jobs | toggled (always has) | unchanged |
+| 👤 login | **opened only** — a second press re-opened an open modal | toggles |
+| ⚙ settings | **opened only** | toggles |
+| 🦉 tutor | widget toggled, but **the FAB HID itself** while open | FAB stays, so it toggles like the rest |
+
+A second press on an already-open modal does nothing visible, which reads as a dead button; and
+hiding the tutor FAB left its widget with only its own ✕, making the tutor the one bar control you
+could not press twice.
+
+### ⚠️ THE TOGGLES WRAP THE OPENERS — THEY DO NOT REPLACE THEM
+
+`openAccount()`/`openSettings()` do real work on **every** open — the TLS warning, the
+overrule-language checkbox sync, the answer-check row — and both are still called programmatically
+after login and logout. **Re-implementing the open inside a toggle would have silently dropped that
+setup**, which is exactly what a two-line `display = x?'none':'flex'` version looks like and why §5
+of the guard mutates to precisely that.
+
+### ⚠️ THE BACKDROP TEST IS `e.target === e.currentTarget`
+
+The backdrop **is** the modal element, so a press that originated on the card — or on any control
+inside it — bubbles up with a different target and must be ignored. Without that test, typing a
+password and pressing a button inside the card would dismiss the dialog. Verified live in both
+directions: a synthetic click on the card leaves it `flex`, the same click on the modal element
+closes it.
+
+### Verified live at the layer the user touches
+
+Driven by clicking the REAL buttons, not by calling the functions (`v89` rule 12): settings
+`flex → none` across two presses, account the same, card-click leaves it open, backdrop-click closes.
+The tutor needed a faked backend to be reachable at all (the FAB is gated on `canGenerate`); with one,
+the FAB stays `block` while the widget is open, a second press closes it, and at 1280×800 the FAB
+(1205, 746) and the widget (869, 581, 380×143) **do not overlap**.
+
+⚠️ **The first geometry reading was garbage and saying so was the useful part**: the browser pane
+reported `viewport [0,0]`, so every rect came back negative and degenerate. Measuring again after
+setting a real 1280×800 viewport gave the numbers above. **A measurement taken in a zero-size
+viewport is not evidence of anything.**
+
+### The guard — `unit-bar-toggles.test.js`, four sections, five mutations red
+
+Settings back to open-only; the backdrop test weakened to "any click"; the account modal losing its
+backdrop handler; the tutor FAB hiding itself again; and a toggle that re-implements the open
+instead of delegating. §3 is **driven** rather than read — the helper is lifted and called with a
+backdrop target, a bubbled target and a missing event.
+
+⚠️ **A FOURTH BROKEN MUTATION, caught the same way as the previous three.** The tutor mutation's
+patch matched `fab.style.display = '';` **twice** in the file and aborted, and the test then printed
+`ALL PASSED` — which reads exactly like a survivor. Re-applied scoped to `refreshTutorAvailability`
+(a 693-char span) it dies on its own assertion. **The habit that catches this is asserting the patch
+applied, not reading the test's output**: `v90_n`, `v90_p`, `v90_u` and now here.
+
 ## ✅ v90_w — the model selector moves to the bottom bar as a ✨ circle; the bar is reordered
 
 User request, agreed in detail before building. **ZERO `ui.json` keys.**

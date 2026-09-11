@@ -764,11 +764,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <div id="bottom-bar" style="position:fixed;left:0;right:0;bottom:0;z-index:900;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));background:rgba(255,255,255,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1.5px solid var(--gray-mid);box-sizing:border-box">
   <div id="corner-pills" style="display:flex;align-items:center;gap:8px">
     <div id="acct-badge" style="display:none">
-      <button id="acct-btn" onclick="openAccount()" style="display:flex;align-items:center;gap:6px;background:var(--white);border:2px solid var(--gray-mid);border-radius:24px;padding:6px 12px;cursor:pointer;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
+      <button id="acct-btn" onclick="toggleAccount()" style="display:flex;align-items:center;gap:6px;background:var(--white);border:2px solid var(--gray-mid);border-radius:24px;padding:6px 12px;cursor:pointer;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
         <span>👤</span><span id="acct-name">Sign in</span>
       </button>
     </div>
-    <button id="settings-pill" onclick="openSettings()" title="Settings" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">⚙️</button>
+    <button id="settings-pill" onclick="toggleSettings()" title="Settings" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--white);border:2px solid var(--gray-mid);border-radius:50%;cursor:pointer;font-size:16px;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.15)">⚙️</button>
     <!-- PLAN §C4 "keep going": the global mute pill. class="mute-btn" so updateMuteButtons()'s
          existing document.querySelectorAll('.mute-btn') sync picks it up with no code change —
          that updater was already generic, only the BUTTON was scattered. Always visible, same
@@ -869,7 +869,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <div id="cw-options" style="display:flex;gap:14px;align-items:center;margin-top:10px;flex-wrap:wrap;font-size:11px;font-weight:700;color:var(--gray-dark)"></div>
       </div>
     </div>
-<div id="acct-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px">
+<div id="acct-modal" onclick="modalBackdropClose(event, closeAccount)" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px">
   <div style="background:var(--white);border-radius:var(--radius-lg);max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)">
     <div style="display:flex;align-items:center;margin-bottom:12px">
       <span style="font-size:18px;font-weight:900" id="acct-title">Sign in</span>
@@ -902,7 +902,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
      lesson-set footer, the storyline footer) by explicit user ruling, "reachable from every page
      that has the footer controls" — folding it into one shared instance here would reverse that
      ruling, not just relocate a control, and deserves its own decision. -->
-<div id="settings-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px">
+<div id="settings-modal" onclick="modalBackdropClose(event, closeSettings)" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;padding:16px">
   <div style="background:var(--white);border-radius:var(--radius-lg);max-width:360px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35);max-height:calc(100vh - 32px);overflow-y:auto;box-sizing:border-box">
     <div style="display:flex;align-items:center;margin-bottom:12px">
       <span style="font-size:18px;font-weight:900" id="settings-title">⚙️ Settings</span>
@@ -3726,6 +3726,21 @@ function openAccount(){
   const so=document.getElementById('acct-signout-btn'); if(so) so.textContent = t('acct.signout');
 }
 function closeAccount(){ const m=document.getElementById('acct-modal'); if(m) m.style.display='none'; }
+// ── v90_x: every pill in the bottom bar opens AND closes from its own button ──
+// User request. ⚠️ The jobs pill has toggled since it was built (`toggleJobsPop`) and the tutor FAB
+// toggles too, so login and settings were the odd ones out: pressing the pill again re-opened an
+// already-open modal, which does nothing visible and reads as a dead button.
+// `openAccount`/`openSettings` are left untouched — both do real setup work on open (TLS warning,
+// checkbox sync) and both are still called programmatically — so the toggle wraps them rather than
+// replacing them.
+function _isModalOpen(id){ const m=document.getElementById(id); return !!m && m.style.display === 'flex'; }
+function toggleAccount(){ _isModalOpen('acct-modal') ? closeAccount() : openAccount(); }
+function toggleSettings(){ _isModalOpen('settings-modal') ? closeSettings() : openSettings(); }
+// ⚠️ Closing on a BACKDROP press, not on any press inside the card. `e.target === e.currentTarget`
+// is the whole test: the backdrop IS the modal element, so a click that originated on the card or
+// any control within it has a different target and must be ignored — otherwise typing a password
+// and pressing a button inside the card would dismiss it.
+function modalBackdropClose(e, closer){ if(e && e.target === e.currentTarget) closer(); }
 
 // PLAN §C4 stage 1: the Settings Card. Most rows need no refresh on open — #ui-translate-row,
 // #export-static-btn, #teacher-dash-btn already keep their own visibility current via
@@ -174238,12 +174253,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v90_w', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v90_x', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"0127a8f49b44","lessons.json":"56a36c05dadf","ui.json":"23a062d0f45e","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"7266745f9f05","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
+  APP.buildSources = {"index.html":"81cf6ab33423","lessons.json":"56a36c05dadf","ui.json":"23a062d0f45e","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"7266745f9f05","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -188879,7 +188894,10 @@ function refreshTutorAvailability(){
   if(!fab || !w) return;
   const ok = !!APP.info?.canGenerate;
   if(!ok){ fab.style.display='none'; w.style.display='none'; return; }
-  fab.style.display = _tutorState.open ? 'none' : '';
+  // ⚠️ v90_x: the FAB stays VISIBLE while the widget is open (user request). It used to hide
+  // itself, which left the widget with only its own ✕ to close it and made the tutor the one
+  // bar control you could not press twice. Every other pill in the bar now behaves the same way.
+  fab.style.display = '';
   w.style.display   = _tutorState.open ? 'flex' : 'none';
   _tutorApplyLabels();
   _tutorRenderScope();
