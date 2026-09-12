@@ -341,6 +341,76 @@ problem**, and the fragment work must not be justified by it.
 
 ---
 
+## 🆕 MAKE THE ARTICLE PASS AUTOMATIC AFTER GENERATION (user, at the `v91_a` cut) — NOT BUILT, AND CONDITIONAL
+
+User, after live-testing `v91_a`: *"the article QC seems to work good and fast, i will test it a bit
+more and we could make it a default post-generation pass for language combinations that require it
+w/o requiring user confirmation if it keeps working."*
+
+⚠️ **NOT APPROVED YET — it is explicitly conditional on "if it keeps working", and the user is still
+testing.** Do not build this on the strength of the sentence above. What follows is the shape it
+would take and the four things that already constrain it, recorded now so the next session does not
+rediscover them.
+
+### The live verdict so far
+
+**"Works good and fast"** — the user's own words, from their own chapters, which is the first
+independent confirmation of `v91_a` beyond the measurements in its own entry. ⚠️ Note it is FAST in
+their judgement despite ~22s per pair; a whole 8-item lesson is ~3 minutes. That is worth knowing
+before anyone "optimises" it.
+
+### "Language combinations that require it" is ALREADY computed, and costs nothing
+
+⚠️ **No new gating logic is needed, and adding a language allowlist would be a `v80_j` violation.**
+`article-symmetry.js` already answers this per language, from the corpus:
+
+- `articleEvidence()` returns `attested:false` for any language whose declared articles no corpus
+  entry supports — Japanese, Polish, Serbian, Croatian, Swahili in this corpus.
+- `checkPair` then returns null with **zero model calls** when either side is article-less.
+
+So an automatic pass over a de→ja chapter costs one cached declaration and nothing else. **The pass
+is already self-limiting; "combinations that require it" needs no list, only the existing veto.**
+⚠️ The measured priors, for sizing expectations rather than for gating: German-as-SOURCE 11.6%,
+German-as-TARGET 1.3%, neither side German 0.1%.
+
+### ⚠️ FOUR CONSTRAINTS, and the first two are prior USER RULINGS
+
+1. **⚠️ `v77_w` — the user ruled that QC must NOT run automatically during generation**, because it
+   was the slowest part of a book job and "is not urgent". This proposal does not reverse that: it
+   adds ONE narrow, cheap, self-limiting check, not the full QC pass. **Say so explicitly when
+   building it**, or the next reader sees a contradiction and "fixes" it back.
+2. **⚠️ PROPOSE-ONLY IS A SEPARATE RULING AND IS NOT AFFECTED.** "Without requiring user
+   confirmation" is about whether the PASS RUNS unasked. It is NOT permission to APPLY findings
+   automatically. ⚠️ **These are two different questions and must not be merged** — the check writes
+   a QC flag for a curator precisely because a wrong verdict would otherwise corrupt an entry.
+   **Confirm this reading with the user before building**; the sentence is genuinely ambiguous and
+   the expensive misreading is the silent one.
+3. **⚠️ `v90_o` — it must be DEFERRED until the book job finishes, not run per chapter.** That
+   release measured the cost of getting this wrong for the ANALYSIS post-pass: requests SERIALISE at
+   a single-model Ollama, so an inline pass starved the generation it was attached to — chapter 2's
+   translation went 69.6s → 295.2s, chapter 2's lesson hit 716.4s against a 720s timeout, and
+   chapter 3 timed out entirely. **Use `_runDeferredAnalyses`' own shape**, not a per-chapter kick-off.
+4. **The single-chapter path needs it too.** `v90_z` found that `_applyPostGenFeatures` had exactly
+   one call site, in the multi-chapter book branch — so every "continue this storyline" chapter was
+   silently excluded from post-generation work. `v90_z` wired the QC checkbox into
+   `startBackgroundJob`/`resumeBackgroundJob` for that reason; an automatic article pass must ride
+   the same two places or it will miss most of how chapters are actually made.
+
+### What it would cost, and the one number to check first
+
+8 pairs × ~22s ≈ **3 minutes per vocabulary lesson**, plus a cached ~13s declaration per language.
+⚠️ **Measure that against a real book job before defaulting it on** — deferred or not, it is added
+wall-clock on a machine where a 3-chapter book already runs for many minutes, and `v90_o`'s table is
+the reminder of what happens when that is assumed instead of measured.
+
+### If it is built, the backlog is still separate
+
+**126 asymmetric pairs across 21 chapters already exist.** An automatic pass fixes the FLOW; it
+cannot reach a chapter generated before it shipped. Those still need the ⚓ button run over them and
+the proposals accepted.
+
+---
+
 ## 🆕 THE SHORT LIST — everything genuinely open, reconciled at the v91 cut
 
 *Each line below was cross-checked against **both** `roadmap_v89.md`'s and `roadmap_v90.md`'s shipped

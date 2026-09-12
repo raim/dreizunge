@@ -84,6 +84,23 @@ item's letter, against the shipped lists at every cut** — that is `v90` rule 8
 8 on the chapter the shipped QC passed clean with 0 of 4 false findings, and the ⚓ button sits beside
 🔍 on each vocabulary lesson. Full write-up in `roadmap_v91.md`'s `v91_a` entry.
 
+🆕 **THE USER LIVE-TESTED `v91_a`'s ARTICLE PASS AND IT WORKS**: *"the article QC seems to work good
+and fast, i will test it a bit more and we could make it a default post-generation pass for language
+combinations that require it w/o requiring user confirmation if it keeps working."*
+⚠️ **NOT APPROVED — explicitly conditional on "if it keeps working", and they are still testing.**
+Full shape and constraints in `roadmap_v91.md` → *"MAKE THE ARTICLE PASS AUTOMATIC AFTER
+GENERATION"*. The four things to read before building it:
+- **"Language combinations that require it" is ALREADY computed** by the corpus veto, at zero cost —
+  an article-less language costs one cached declaration and no per-pair calls. **Do not add a
+  language allowlist**; that would be a `v80_j` violation for no gain.
+- ⚠️ **"Without user confirmation" is about whether the PASS RUNS, not about APPLYING findings.**
+  Propose-only is a separate ruling and is untouched. **Confirm this reading before building** — the
+  expensive misreading is the silent one.
+- ⚠️ **`v90_o`: it must be DEFERRED until a book job finishes.** An inline post-pass starved the
+  generation it was attached to — chapter 2's lesson hit 716.4s against a 720s timeout.
+- ⚠️ **`v90_z`: the SINGLE-chapter path needs it too**, or every "continue this storyline" chapter is
+  silently excluded, which is how most chapters are actually made.
+
 🆕 **TWO MEASURED FINDINGS ARE WAITING, both recorded in `roadmap_v91.md` under "🔬 TWO MEASURED
 FINDINGS ABOUT VOCABULARY LESSONS". Neither is built; one needs a user decision.**
 
