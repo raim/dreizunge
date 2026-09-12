@@ -173,6 +173,174 @@ re-derive it with `node build_history/probe_article_symmetry_v80j.js`.
 
 ---
 
+# 🔬 TWO MEASURED FINDINGS ABOUT VOCABULARY LESSONS (user questions, at the `v91_a` cut)
+
+*Measurement only — no code was changed for either. The first explains a defect `v91_a` now CATCHES
+but does not PREVENT; the second is a new report and answers a direct question with a direct no.*
+
+---
+
+## 1. ⭐ WHY THE MODELS KEEP PRODUCING ARTICLE ASYMMETRY — it is ONE decision per lesson, not eight mistakes
+
+⚠️ **The generation prompt is not the weak link, and a session that "improves" it is wasting a
+release.** `prompts.json` `vocab.system` already carries an explicit ARTICLE SYMMETRY rule, worked
+examples in BOTH directions (`"der Hund" ↔ "il cane"`, `"il cane" ↔ "the dog"`), and a sentence
+naming this exact failure: *"This rule OVERRIDES each language's own dictionary convention … German
+dictionaries cite a noun WITH its article because the article carries the gender, while French and
+Italian dictionaries cite the bare noun."* It is about as well-written as such an instruction gets.
+
+### The defect is not per-item, and the arithmetic is not close
+
+Per LESSON, over 343 lessons with ≥4 comparable pairs:
+
+| | lessons | |
+|---|---|---|
+| fully symmetric (0%) | 317 | 92.4% |
+| 1–49% | 11 | 3.2% |
+| 50–99% | 6 | 1.7% |
+| **fully ASYMMETRIC (100%)** | **9** | 2.6% |
+
+**95% of lessons are all-or-nothing.** If each of 8 items failed INDEPENDENTLY at the corpus rate of
+4.1%, a fully-asymmetric lesson would have probability **8×10⁻¹²** — expected count in 343 lessons:
+**2.7×10⁻⁹**. Observed: **nine**. Independence is not merely unlikely, it is off by nine orders of
+magnitude. **The model makes ONE decision per lesson and then applies it to all eight items.**
+
+### And it is almost always the same decision
+
+| | asymmetric |
+|---|---|
+| German as **SOURCE** (learner speaks German) | **121 / 1043 — 11.6%** |
+| German as **TARGET** (learner learns German) | 8 / 608 — 1.3% |
+| neither side German | 2 / 1603 — 0.1% |
+
+**121 of the 131 asymmetries keep the article on the SOURCE side only.** So it is one specific event:
+German on the right WITH its article, the target on the left WITHOUT.
+
+### The mechanism, and it is mundane
+
+⚠️ **The schema writes `target` FIRST**: `{"target":"{L} word…","source":"{S} translation…"}`.
+Generating an Italian entry, the model's overwhelming prior is the Italian glossary convention — bare
+`autonomia` — and it emits that. THEN it writes the German side, where its equally strong prior is
+the German dictionary convention, `die Autonomie`. By then the target is already emitted and cannot
+be revised. An instruction read once at the top competes with a prior that reasserts itself at every
+token, and the prior wins whenever the instruction is not actively in mind at the moment of writing.
+Once item 1 has set the pattern, items 2–8 are generated in a context that already contains it.
+
+⚠️⚠️ **THIS IS THE SAME PROPERTY THAT MADE THE CHECK HARD TO BUILD** (`v91_a`), and that is why it is
+worth recording rather than just fixing. Asked for two verdicts in ONE reply, the detector scored
+7/10 and **every failure was literally `NO NO`, only ever when the LEFT side had no article** — the
+model copying its own first answer. Generation: item 1 sets the convention, items 2–8 follow.
+Detection: side 1 sets the answer, side 2 follows. **One cause: the model conditions on what it has
+already written.** Any task needing two INDEPENDENT judgements cannot be asked for in one reply, and
+any list that must not be self-consistent cannot be generated in one pass.
+
+### ⚠️ A CHEAP, HIGH-VALUE EXPERIMENT — NOT YET RUN
+
+If the schema-order story is right, **putting `source` BEFORE `target` in the vocab schema should
+measurably reduce the rate**: the model would write the German side first, and its article would then
+be in context when it writes the Italian. Generate N lessons each way over the same topics and count.
+⚠️ **Measure it; do not just do it** — this project has twice shipped prompt changes that measured
+zero effect (the `v86`-line rules), and a schema reorder touches every lesson type's parser.
+**This attacks the defect at GENERATION; `v91_a` only catches it afterwards.**
+
+---
+
+## 2. 🆕 "HALF SENTENCES" IN VOCABULARY LESSONS (user report at the `v91_a` cut)
+
+User: *"we try to avoid too long sentences, but sometimes we get half sentences that are not
+translated correctly … do we have rules to use only existing sentences from the story, and cut those
+at punctuation to avoid too long sentences?"*
+
+### The direct answer: NO, to both halves
+
+`prompts.json` `vocab.system` says only:
+
+```
+- sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
+- sentence length: {sentLen} — vary lengths naturally
+- sentences must be complete natural {L} sentences — do NOT provide a words[] array
+```
+
+and the schema asks for *"A natural {L} sentence"*. So:
+
+- **There is NO rule to take sentences from the story.** They are freshly generated.
+- **There is NO rule to cut at punctuation**, and no post-processing that truncates a sentence
+  anywhere — `sentLen` (`sentenceLengthSpec(difficulty)`) is advice about LENGTH, not a splitter.
+- **There IS a rule saying "sentences must be complete natural sentences"** — which is precisely the
+  rule the reported fragments violate.
+
+### What the corpus actually shows
+
+**18.5% of vocabulary sentences (590 of 3197) appear VERBATIM in their own chapter's story.** Nothing
+instructs that — the model reuses story text on its own, and does so a lot. That matters, because it
+means the reported fragments are not invented: they are story sentences **cut at a CLAUSE boundary
+instead of a sentence boundary.**
+
+⚠️ **THE FRAGMENT RATE DEPENDS ENTIRELY ON HOW YOU MEASURE IT, and the honest range is wide:**
+
+| detector | rate | what it over-counts |
+|---|---|---|
+| no terminal punctuation OR lowercase start, **Latin-centric** | 457 / 3197 — 14.3% | ⚠️ WRONG. Arabic/Japanese/Hebrew have NO uppercase, so every one of their sentences fails the capital test — 220 of the 457 were `en→ar` alone |
+| same, but the capital test skipped for caseless scripts (decided from the corpus, not a table) | 303 / 3197 — 9.5% | still over-counts Arabic: classical Arabic prose often carries no sentence-final mark at all, and 143 `en→ar` hits are that, not fragments |
+| **BOTH signals must fire, cased languages only** | **18 / 2887 — 0.6%** | a floor, not a total: it cannot see a fragment that happens to be capitalised and full-stopped |
+
+⚠️ **The 0.6% floor is the defensible number, and its composition is the finding: 17 of those 18
+(94%) are VERBATIM from the story.** By pair: `de→it` 6, `hi→en` 3, `de→lb` 3, `it→en` 2, `lb→lb` 2.
+
+### The reported case, in full
+
+Chapter *"Richiamando la figura di Alcide De Gasperi, aveva inoltre…"* — ⚠️ note the chapter TITLE is
+itself a fragment ending in `…`, which is its own finding. Three of its five sentences are clauses
+carved out of one long story sentence, and **both sides are fragmentary**, so the translation is
+faithful to a fragment rather than wrong:
+
+```
+T: l'autonomia non può essere considerata soltanto «un fatto contabile»
+S: Autonomie nicht lediglich als „eine buchhalterische Angelegenheit" betrachtet werden darf
+T: ma deve rappresentare «un investimento in positivo»
+S: sondern als „positive Investition" verstanden werden muss
+T: sono necessari «un supplemento di responsabilità»
+S: seien, fügte er hinzu, ein Mehr an Verantwortung sowie ... erforderlich
+```
+
+`ma …` ("but rather…"), `sondern als …`, `… betrachtet werden darf` — subordinate clauses with no
+main clause on either side. **The model split at `,` and at `«»`, which are clause boundaries, not
+sentence boundaries.**
+
+⚠️ **The two chapters the user first pointed at (`Verantwortung und Demokratie`,
+`Jubiläum der Autonomie`) are CLEAN** — all ten sentences well-formed. The user said they had
+manually corrected some; that is consistent, and it is why the fragments had to be found by scanning
+the whole corpus rather than by opening the chapter that was named.
+
+### ⚠️ Also visible, and a DIFFERENT defect — do not conflate them
+
+In `Jubiläum der Autonomie`, a well-formed sentence carries a real mistranslation: *"nella città del
+Passirio"* → *"in der Stadt am Pustertal"*. The Passirio/Passer is Merano's river; the Pustertal is a
+different valley entirely. **That is a translation-quality problem for `qcCheckPair`, not a fragment
+problem**, and the fragment work must not be justified by it.
+
+### What a fix would have to decide (USER INPUT WANTED — nothing is built)
+
+1. **Extract from the story, or keep generating?** Extraction gives grammatical sentences for free
+   and guarantees the vocabulary appears in context the learner has actually read. It also removes
+   the model's freedom to build a sentence AROUND a target word, which is what `- sentences: each
+   using vocabulary words naturally` currently asks for. ⚠️ CP1 (`canonical-text.js`) **already
+   produces exactly this**: real sentence boundaries over the real story, with tokens. A sentence
+   picker over `buildCanonicalText(topic).sentences` needs no model call at all.
+2. **If extracting, what about length?** The user's framing is "cut those at punctuation" — but the
+   measured problem is that cutting at punctuation is what PRODUCED the fragments. CP1's boundaries
+   are SENTENCE boundaries; a long sentence would have to be dropped and another chosen, not cut.
+3. **Translation.** An extracted sentence needs a source-side rendering. The chapter's
+   `storyTranslation` may already contain one — ⚠️ **check whether it is sentence-aligned before
+   assuming it can be indexed into**; alignment is exactly what CP1 does not guarantee across two
+   independently generated texts.
+4. **A cheap guard either way**: the "complete sentence" rule already exists and is unenforced. A
+   deterministic post-check (terminal punctuation + capital start, skipped for caseless scripts as
+   above) would catch the clearest cases at generation. ⚠️ It is a FLOOR, not a total, and it must not
+   be presented as a fragment detector.
+
+---
+
 ## 🆕 THE SHORT LIST — everything genuinely open, reconciled at the v91 cut
 
 *Each line below was cross-checked against **both** `roadmap_v89.md`'s and `roadmap_v90.md`'s shipped

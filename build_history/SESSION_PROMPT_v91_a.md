@@ -84,6 +84,25 @@ item's letter, against the shipped lists at every cut** — that is `v90` rule 8
 8 on the chapter the shipped QC passed clean with 0 of 4 false findings, and the ⚓ button sits beside
 🔍 on each vocabulary lesson. Full write-up in `roadmap_v91.md`'s `v91_a` entry.
 
+🆕 **TWO MEASURED FINDINGS ARE WAITING, both recorded in `roadmap_v91.md` under "🔬 TWO MEASURED
+FINDINGS ABOUT VOCABULARY LESSONS". Neither is built; one needs a user decision.**
+
+1. **WHY the models produce article asymmetry at all** — and it is NOT the prompt, which already
+   carries the rule, both worked examples and the German/Italian case by name. **95% of lessons are
+   all-or-nothing**, and independence is ruled out by NINE ORDERS OF MAGNITUDE (expected 2.7e-9
+   fully-asymmetric lessons, observed 9). The model makes ONE decision per lesson. It is almost
+   always German-as-SOURCE (11.6% vs 1.3% as target), and 121 of 131 keep the article on the source
+   side — because **the schema writes `target` FIRST**, so the bare Italian form is committed before
+   the German side supplies its article. ⚠️ **A cheap, unrun experiment**: swap `source` before
+   `target` and measure. That attacks it at GENERATION; `v91_a` only catches it afterwards.
+2. **🆕 "Half sentences" in vocabulary lessons** (user report). ⚠️ **Answer to the question asked:
+   NO — there is no rule to take sentences from the story, and none to cut at punctuation.** They are
+   freshly generated. But **18.5% turn out to be verbatim from the story anyway**, and the confirmed
+   fragments are story sentences cut at a CLAUSE boundary. ⚠️ The rate depends entirely on the
+   detector (0.6% floor … 14.3% with a Latin-centric test that mis-flags every Arabic and Japanese
+   sentence) — the roadmap has the full table and the reason. **A fix needs a user decision**; CP1
+   already produces real sentence boundaries for free.
+
 ⚠️ **WHAT IS STILL OWED IS THE BACKLOG, NOT THE CHECK**: **126 asymmetric pairs across 21 chapters**
 already in the corpus. No code fixes those — the pass has to be run and the proposals accepted.
 Re-derive with `node build_history/probe_article_symmetry_v80j.js`. And separately, only **51 of 660**
