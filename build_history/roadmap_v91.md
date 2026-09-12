@@ -3313,6 +3313,76 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v91_d — "I speak" drives the UI language again, unless **Fix** is on
+
+**ZERO `ui.json` keys.** No new control. A previous USER RULING was NARROWED by a later one, and both
+are preserved in the code and the guard.
+
+User: *"source language should update ui language, unless 'x fix' is selected in settings"*.
+
+### ⚠️ "x fix" is a control that ALREADY EXISTED — and finding that is the whole reason this cost nothing
+
+`settings.overrule_sl_lang` = **"Fix"**, tooltip *"Keep the UI language fixed here, even while playing
+storylines in other languages"*, backed by `APP.overruleStorylineLang`. It was introduced by the
+user's own follow-up after `v81_ab` and **shortened to "Fix"** by a second follow-up after that — the
+history is in `unit-ui-lang-decouple.test.js`'s header, which is where it was found. It is already
+translated in **32 of 32** languages.
+
+⚠️ **Deliberately NOT a second checkbox.** Two controls both answering "should the UI language follow
+the content" is how a settings card becomes unreadable, and it would have cost keys the user
+hand-translates. The flag's default is OFF, so **the requested behaviour is the default**.
+
+### The ruling that was narrowed, and why both halves are kept
+
+`v81_ab`'s follow-up ruled that "I speak" (`fromForm=true`) must touch the UI language **"AT ALL"** —
+full decoupling — *"specifically so generating a story asks for a source language independent of
+which language the app's own chrome is in"*. That is now conditional: the decoupling is what **Fix**
+BUYS, at one more entry point than before.
+
+⚠️ **Both statements are real user rulings, so the code quotes the old one beside the new one** and
+says explicitly: do not restore either from the other's comment alone.
+
+⚠️ **Scoped to `fromForm=true` ON PURPOSE.** The `fromForm=false` branch is the lesson-set footer's
+mid-story glance, which changes `APP.uiLang` **transiently** and never persists it
+(`_restoreFormLang` puts the preference back). That distinction is untouched, and the guard now
+asserts it directly — the follow path calls `saveUiLang`, the glance path must not.
+
+### Verified live, on the running app
+
+| | source | UI language |
+|---|---|---|
+| start | `en` | `en` |
+| **Fix OFF** → pick `de` | `de` | **`de`** |
+| **Fix ON** → pick `fr` | `fr` | **`de`** (pinned) |
+
+⚠️ The Fix-OFF row was confirmed by reading a real translated string back (`"Behalten Sie die
+UI-Sprache hier fest…"`), not just the variable — the claim is that the STRINGS reload, and
+`APP.uiLang` alone would not have shown that.
+
+### ⚠️ THE GUARD ASSERTED THE OPPOSITE, AND TWO OF ITS BLOCKS WERE RE-SCOPED
+
+`unit-ui-lang-decouple.test.js` §3 grepped the `fromForm` block for `loadUIStrings` and required its
+ABSENCE — the old ruling, correctly guarded. Re-scoped, not deleted:
+
+- The claim is now **driven, not grepped** (`v89` rule 12): `selectSrcLang('de', true)` is run with
+  the flag both ways and `APP.uiLang` observed. Off and on return DIFFERENT results from the same
+  path, which is the non-vacuity.
+- ⚠️ **Its own mutation-check block had become VACUOUS** and was replaced rather than left: it
+  existed to prove the deleted assertion could fail, and what remained asserted only that adding
+  text to a string changes it — under a console line claiming something no longer true.
+- ⚠️ **And the replacement caught its own bug immediately**: `selectSrcLang` contains **TWO**
+  `if(fromForm){` blocks, so `indexOf` extracted the persist block and the assertion failed on
+  correct code. `lastIndexOf`, plus an assertion that there really are two — which is the argument
+  for writing the check at all.
+
+### ⚠️ One thing left alone, deliberately, and worth a decision later
+
+The tooltip still reads *"…even while playing storylines in other languages"*. **Fix now governs the
+"I speak" picker too, so that sentence is INCOMPLETE — though not false.** Rewording the `en` string
+would make **32 existing translations** subtly stale for one clause, which is a real cost to the
+person who wrote them. Left as-is and recorded here rather than spent silently; it is the user's call
+whether the precision is worth the re-translation.
+
 ## ✅ v91_c — the landing title and motto, sized closer and coloured from the globe
 
 **ZERO `ui.json` keys.** No behaviour change; presentation only. Two user requests, the second

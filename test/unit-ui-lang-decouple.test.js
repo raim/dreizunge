@@ -89,39 +89,91 @@ assert.ok(!/flex-basis:100%/.test(html.slice(html.indexOf('id="overrule-sl-lang-
   'THE REGRESSION: the checkbox row must not be forced onto its own line anymore — it shares the picker\'s row');
 console.log('  the checkbox: shortened "Fix" label, tooltip wired, shares the picker\'s row: OK');
 
-// ── 3. THE CORE CLAIM: "I speak" (fromForm=true) no longer touches the UI language ────────────
+// ── 3. THE CORE CLAIM, NARROWED BY A LATER USER RULING (v91_d) ────────────────────────────────
+// ⚠️ THIS SECTION ASSERTED THE OPPOSITE AND WAS RE-SCOPED, NOT DELETED. The v81_ab follow-up ruled
+// that "I speak" (fromForm=true) must NEVER touch the UI language — and this checked it by grepping
+// the fromForm block for `loadUIStrings`. The user has since narrowed that ruling:
+//
+//     "source language should update ui language, unless 'x fix' is selected in settings"
+//
+// So the decoupling is no longer unconditional — it is what the **Fix** checkbox
+// (`settings.overrule_sl_lang`, `APP.overruleStorylineLang`) now BUYS, at one more entry point than
+// before. Both halves are still real rulings, so both are asserted, and the source-grep is replaced
+// by DRIVING the function: "does changing 'I speak' change the UI language" is a behavioural claim,
+// and `v89` rule 12 is that a source pin cannot fail when the behaviour is wrong.
 {
+  const drive = (fix) => {
+    const C = loadClient({ quiet: true });
+    C.run(`UI_STRINGS = ${JSON.stringify(uiJson.en)};
+      loadUIStrings = async function(code){ window.__loaded = code; APP.uiLang = code; };
+      loadSavedList = async function(){}; updateTranslationLangHint = function(){};
+      refreshScriptPickers = function(){}; refreshAccountBadge = function(){};
+      topicLabelText = function(){ return 'x'; }; saveSrcLang = function(){}; saveUiLang = function(){};
+      window.__loaded = null;
+      APP.overruleStorylineLang = ${fix ? 'true' : 'false'};
+      APP.srcLang = 'en'; APP.uiLang = 'en'; APP.formSrcLang = 'en';
+      selectSrcLang('de', true);
+      true;`, 'drive');
+    return JSON.parse(C.run(`JSON.stringify({ ui: APP.uiLang, src: APP.srcLang, loaded: window.__loaded })`, 'read'));
+  };
+  const off = drive(false);
+  assert.strictEqual(off.src, 'de', 'either way, "I speak" itself changes — that was never in question');
+  assert.strictEqual(off.loaded, 'de',
+    '⚠️ v91_d: with Fix OFF (the default), changing "I speak" DOES reload the UI strings');
+  assert.strictEqual(off.ui, 'de', 'and the UI language follows it');
+
+  const on = drive(true);
+  assert.strictEqual(on.src, 'de', 'with Fix ON the source language still changes');
+  assert.strictEqual(on.loaded, null,
+    'THE ORIGINAL REGRESSION, still guarded: with Fix ON, "I speak" must NOT reload UI strings');
+  assert.strictEqual(on.ui, 'en', 'and the UI language stays exactly where the user pinned it');
+  // ⚠️ The fromForm=FALSE branch is untouched by v91_d and must stay that way: the lesson-set
+  // footer's mid-story glance changes APP.uiLang TRANSIENTLY (never persisted — `_restoreFormLang`
+  // puts the preference back), which is a different thing from the form picker's new persisted
+  // follow. Asserted on the source because that branch's distinguishing property is what it does
+  // NOT call (saveUiLang), which a driven test would have to prove by absence anyway.
   const fn = body(html, 'selectSrcLang');
-  // The fromForm block (everything inside `if(fromForm){...}`) must not call loadUIStrings.
-  const formBlockStart = fn.indexOf('if(fromForm){');
-  const formBlockEnd = (() => {
-    let d = 0, i = fn.indexOf('{', formBlockStart);
-    for (; i < fn.length; i++) { const c = fn[i]; if (c === '{') d++; else if (c === '}') { d--; if (!d) return i + 1; } }
-  })();
-  const formBlock = fn.slice(formBlockStart, formBlockEnd);
-  assert.ok(!/loadUIStrings/.test(formBlock),
-    'THE REGRESSION: fromForm=true must not call loadUIStrings — that is "I speak" re-conflating with UI language');
-  // And there must be an early return for fromForm before the (still-present) loadUIStrings call
-  // reachable only by fromForm=false.
-  assert.ok(/if\(fromForm\)\{[\s\S]*?return;\s*\}/.test(fn.slice(fn.indexOf('// "I speak"'))),
-    'fromForm=true returns before reaching the fromForm=false-only UI-language branch');
   assert.ok(/APP\.uiLang = code;\s*\n\s*loadUIStrings\(code\)/.test(fn),
     'the fromForm=false branch (lesson-set footer, the one remaining caller) still sets APP.uiLang and reloads UI strings');
+  {
+    const at = fn.lastIndexOf('APP.uiLang = code;');
+    assert.ok(at > 0 && !/saveUiLang/.test(fn.slice(at)),
+      '…and does NOT persist it — a mid-story glance is not a preference (v81_ab), unlike the ' +
+      'fromForm=true follow v91_d added, which does persist');
+  }
 }
-console.log('  selectSrcLang: fromForm=true no longer touches UI language, fromForm=false still does: OK');
+console.log('  selectSrcLang: "I speak" drives the UI language unless Fix is on; the footer glance still transient (v91_d): OK');
 
-// Mutation check: the "no loadUIStrings in the fromForm block" assertion must be able to fail.
+// ⚠️ v91_d: THIS BLOCK WAS VACUOUS AFTER THE RE-SCOPE ABOVE, AND IS REPLACED RATHER THAN DELETED.
+// It existed to prove that §3's old assertion — "no loadUIStrings anywhere in the fromForm block" —
+// could fail, by showing the block was detectably mutable. That assertion is gone: `loadUIStrings`
+// now belongs in that block, conditionally. What was left asserted only that adding text to a string
+// changes it, under a console line claiming something no longer true.
+//
+// The non-vacuity that matters now is already carried by §3 itself: `drive(false)` and `drive(true)`
+// return DIFFERENT results from the same code path, so neither outcome can be a constant. What is
+// worth adding is the one thing a driven test cannot show — that the branch consults the Fix flag by
+// name, rather than reaching the right answers for some unrelated reason.
 {
   const fn = body(html, 'selectSrcLang');
-  const formBlockStart = fn.indexOf('if(fromForm){');
+  // ⚠️ There are TWO `if(fromForm){` blocks in this function — the early one persists the form's own
+  // selection, the later one is the UI-language follow. `indexOf` finds the first and the assertion
+  // below then fails on correct code; `lastIndexOf` is the one that means what this check says.
+  // (Caught immediately by this very assertion, which is the argument for writing it at all.)
+  const formBlockStart = fn.lastIndexOf('if(fromForm){');
+  assert.ok(formBlockStart > fn.indexOf('if(fromForm){'),
+    'there really are two fromForm blocks — if that changes, this extraction needs revisiting');
   let d = 0, i = fn.indexOf('{', formBlockStart);
   for (; i < fn.length; i++) { const c = fn[i]; if (c === '{') d++; else if (c === '}') { d--; if (!d) { i++; break; } } }
   const formBlock = fn.slice(formBlockStart, i);
-  const mutated = formBlock.replace('APP.formSrcLang=code;', 'APP.formSrcLang=code; loadUIStrings(code);');
-  assert.notStrictEqual(mutated, formBlock, 'the mutation must actually add a loadUIStrings call');
-  assert.ok(/loadUIStrings/.test(mutated), 'sanity: mutated block is detectably different');
+  assert.ok(/APP\.overruleStorylineLang/.test(formBlock),
+    'the fromForm branch consults the Fix flag itself — the same flag the storyline path uses, not a second one');
+  assert.ok(/loadUIStrings/.test(formBlock),
+    'and it does reload the UI strings on the follow path (v91_d) — this is the claim that inverted');
+  assert.ok(/saveUiLang/.test(formBlock),
+    'and PERSISTS the choice, unlike the fromForm=false glance');
 }
-console.log('  mutation check: reintroducing loadUIStrings into the fromForm block is detectable: OK');
+console.log('  the fromForm branch consults the Fix flag by name, reloads and persists (v91_d): OK');
 
 // ── 4. updateDocDir() follows APP.uiLang, not APP.srcLang ──────────────────────────────────────
 {

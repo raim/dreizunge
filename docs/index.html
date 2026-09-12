@@ -6048,12 +6048,37 @@ function selectSrcLang(code, fromForm){
   // v78_q: only when it really changed (see selectLang).
   if (_srcChanged) APP.srcScript = null;
   try { refreshScriptPickers(); } catch(_){}
-  // "I speak" (fromForm=true, the generation form/library filter) no longer touches the UI
-  // language AT ALL — user follow-up after v81_ab explicitly decoupled the two, specifically so
-  // generating a story asks for a source language independent of which language the app's own
-  // chrome is in. Still need to re-render the library (libSrcFilter changed), just not gated
-  // behind a UI-string reload that no longer happens.
+  // ⚠️⚠️ v91_d — A USER RULING WAS NARROWED HERE, AND THE OLD ONE IS QUOTED BELOW BECAUSE IT WAS
+  // ALSO A USER RULING. Do not "restore" either from the other's comment alone.
+  //
+  // The v81_ab follow-up ruled that "I speak" (fromForm=true) "no longer touches the UI language AT
+  // ALL" — full decoupling — so that generating a story could ask for a source language independent
+  // of the app's own chrome. The user has now narrowed that:
+  //
+  //   "source language should update ui language, unless 'x fix' is selected in settings"
+  //
+  // So the decoupling is no longer UNCONDITIONAL; it is what the **Fix** checkbox BUYS. That is the
+  // same control, the same flag and the same meaning it already had — `settings.overrule_sl_lang`
+  // ("Fix", tooltip "Keep the UI language fixed here…") — simply governing one more entry point.
+  // ⚠️ Deliberately NOT a second checkbox: two controls for "should the UI language follow content"
+  // is exactly the kind of split that makes a settings card unreadable, and it would have cost keys
+  // the user hand-translates. `APP.overruleStorylineLang` defaults to OFF, so the user's requested
+  // behaviour is the default.
+  //
+  // ⚠️ Scoped to fromForm=true ON PURPOSE. The fromForm=false branch below is the lesson-set
+  // footer's mid-story glance, which already changes `APP.uiLang` TRANSIENTLY and must keep doing
+  // exactly that — it is not a preference, and persisting it would be a different bug.
   if(fromForm){
+    if(!APP.overruleStorylineLang && APP.uiLang !== code){
+      APP.uiLang = code; saveUiLang();     // PERSISTED — this one is a preference, unlike the glance
+      loadUIStrings(code).then(() => {
+        try { refreshAccountBadge(); } catch(_) {}
+        const lbl=document.getElementById('topic-label');
+        if(lbl && !document.getElementById('use-story-cb')?.checked) lbl.textContent=topicLabelText();
+        if(document.getElementById('saved-list')) loadSavedList();
+      }).catch(()=>{});
+      return;                              // loadSavedList runs in the .then above, not twice
+    }
     if(document.getElementById('saved-list')) loadSavedList();
     return;
   }
@@ -174386,12 +174411,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v91_c', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v91_d', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"f46a873dd19a","lessons.json":"7296ba82bef9","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8c7381fba29f","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
+  APP.buildSources = {"index.html":"6ed574cc928c","lessons.json":"7296ba82bef9","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8c7381fba29f","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
