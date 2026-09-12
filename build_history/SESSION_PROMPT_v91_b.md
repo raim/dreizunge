@@ -1,11 +1,11 @@
-# Session prompt — written at the `v91_a` cut
+# Session prompt — written at the `v91_b` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v91_a`**. `roadmap_v91.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v91_b`**. `roadmap_v91.md` was cut at
 `v91` — as a RECONCILIATION, see below — and is the current roadmap. **`roadmap_v90.md` is kept as
 the record for the whole `v90` line** (`v90`…`v90_aa`, twenty-seven point releases): go there for how
 anything in it was built, or why a guard is shaped the way it is.
@@ -84,10 +84,18 @@ item's letter, against the shipped lists at every cut** — that is `v90` rule 8
 8 on the chapter the shipped QC passed clean with 0 of 4 false findings, and the ⚓ button sits beside
 🔍 on each vocabulary lesson. Full write-up in `roadmap_v91.md`'s `v91_a` entry.
 
+✅ **THE WIZARD NOW PRE-TICKS THE ARTICLE PASS (`v91_b`)** for a language pair already known to need
+it, and the per-language verdict is persisted in `articles.json` (learned from real runs, cached
+forever — never warmed eagerly, on the user's ruling). ⚠️ **`articleLangs` is THREE-STATE**: `true`,
+`false` (measured article-less), and **ABSENT = never measured**, which must NOT pre-tick. ⚠️ That
+distinction is real in the DATA and **not observable in the BEHAVIOUR**, so `!!map[x]` is a
+documented EQUIVALENT mutant — if the distinction ever needs to be real, make it observable first.
+
 🆕 **THE USER LIVE-TESTED `v91_a`'s ARTICLE PASS AND IT WORKS**: *"the article QC seems to work good
 and fast, i will test it a bit more and we could make it a default post-generation pass for language
 combinations that require it w/o requiring user confirmation if it keeps working."*
-⚠️ **NOT APPROVED — explicitly conditional on "if it keeps working", and they are still testing.**
+⚠️ **STILL NOT APPROVED as a DEFAULT-ON pass — explicitly conditional on "if it keeps working", and
+they are still testing. `v91_b` shipped the OPT-IN checkbox, which is the step before it.**
 Full shape and constraints in `roadmap_v91.md` → *"MAKE THE ARTICLE PASS AUTOMATIC AFTER
 GENERATION"*. The four things to read before building it:
 - **"Language combinations that require it" is ALREADY computed** by the corpus veto, at zero cost —
@@ -303,8 +311,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 383 checks
-node test/run.js --quick                  → expect 315
+node test/run.js                          → expect 384 checks
+node test/run.js --quick                  → expect 316
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -337,7 +345,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **363 topics, 101 storylines, 33 languages, 748 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_a'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_b'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

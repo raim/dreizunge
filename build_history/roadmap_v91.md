@@ -3313,6 +3313,84 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v91_b — the wizard pre-ticks the article pass for pairs already known to need it
+
+**ZERO `ui.json` keys** — the checkbox label reuses `qc.btn.articles`. **8 mutations red, 1 judged
+equivalent and documented.** Baseline 383/315 → **384/316**.
+
+User: *"in the generation wizard: can we make it a checkbox that is automatically marked for language
+combinations where we know its required?"* — after live-testing `v91_a` and reporting it *"works good
+and fast"*.
+
+### ⚠️ "Where we know it's required" needed a source of truth that did not exist
+
+`v91_a`'s per-language verdict lived in `const _artEv = new Map()` **inside `_runQc`** — created per
+job and thrown away when it ended. The wizard had nothing to consult. So the real work here was
+making the verdict durable, not drawing a checkbox.
+
+- **`articles.json`** (env `ARTICLES_FILE`), atomic writes, shape `{languages: {it: {attested,
+  supported, declared, corpusSize, at}}}`. ⚠️ **This is NOT an article table and must never become
+  one** (`v80_j`): it records what the model DECLARED and what the corpus was able to ATTEST, the
+  same way `canonical-analysis.json` records what the model said about tokens.
+- **Learned from real runs only** (user ruling — *"learn from real runs, cache forever"*), never
+  warmed eagerly. A language an article pass has never covered simply stays unknown.
+- `/api/info` exposes `articleLangs`, the booleans alone.
+
+### ⚠️ THREE STATES, AND THE THIRD IS THE POINT
+
+`articleLangs[x]` is `true` (uses articles), `false` (measured NOT to — Japanese, Polish, Serbian),
+or **ABSENT (never measured)**. The user's ruling was that an unknown pair must NOT be pre-ticked:
+an unticked box claims no knowledge. `_articlesLikelyNeeded()` therefore tests `=== true` on BOTH
+sides and returns false on `undefined`.
+
+⚠️⚠️ **AND THE HONEST LIMIT, found by mutation-testing the guard**: `!!map[x]` gives the SAME ANSWER
+for every case, because "not ticked" is the outcome for both `false` and `undefined`. **The three
+states are real in the DATA and are NOT observable in the BEHAVIOUR**, so no test can tell the two
+forms apart — that mutation is a genuine equivalent, not a gap, and it is recorded in the guard's own
+header so the next reader does not "simplify" it believing a test will catch them. **If the
+distinction ever needs to be real** (the wizard explaining WHY a box is unticked — "not measured yet"
+vs "this pair does not need it") **make it observable FIRST, then assert it.**
+
+### The rest of the wiring
+
+- **`#post-gen-articles-cb`** beside the QC checkbox, same `llm`-path gate.
+- ⚠️ **A hand-toggled box is never overwritten.** `_syncArticlesCb` runs on every language change AND
+  every slider move; `dataset.touched` is what stops it quietly undoing a deliberate choice — the
+  failure `onNumChaptersSlider`'s own hygiene note was written about.
+- **Book path**: through `_applyPostGenFeatures`, which is ALREADY the deferred position — `v90_o`
+  measured what an inline post-pass costs on a single-model backend (chapter 2's lesson 716.4s
+  against a 720s timeout, chapter 3 timed out). Sequential after QC, not concurrent.
+- **Single-chapter path**: `startBackgroundJob`/`resumeBackgroundJob`, riding `APP.activeJob` so a
+  reload cannot lose it — the two places `v90_z` had to add for the QC checkbox, and for the same
+  reason: every "continue this storyline" chapter goes through them.
+
+### Verified live, end to end
+
+- Seeded cache `{it:true, de:true, ja:false}`: **de→it ticked; de→ja not; de→sw (never measured) not;
+  xx→it not**; a hand-toggled box survived a language change. Label rendered translated.
+- **The learning loop, from empty**: `/api/info` → `{}` (nothing pre-ticked) → one real article run →
+  `articles.json` holds `it` (10 declared, 5 attested over 1077 entries) and `de` (9 declared, 4 over
+  1379) → `/api/info` → `{"it":true,"de":true}`. A second run logged `⚑ articles [it] from cache` and
+  spent no declaration call.
+- ⚠️ **An unexpected negative control from the real corpus**: the `Jubiläum der Autonomie` vocab
+  lesson, recorded as 8/8 asymmetric earlier in the same session, now measures **8 checked, 0
+  flagged** — every Italian entry carries its article (`l'autonomia`, `lo strumento`, `la comunità`).
+  The user had corrected it in between, plausibly with `v91_a`'s ⚓ button. The check stays quiet on
+  good pairs, on data nobody constructed for it.
+- A lesson with no `vocab` costs **nothing at all** — the evidence lookup is never reached, so an
+  article pass over a comprehension lesson spends zero model calls.
+
+### ⚠️ Two guard defects this found in itself, both worth carrying
+
+1. **A source-position assertion was too weak.** §6 checked that the cache write sits before the
+   `catch` — and a mutation that moved the write into a **`finally`** still satisfied that while
+   caching every failed declaration as "this language has no articles". One bad model call would have
+   permanently disabled the check for a language, looking exactly like a correct verdict. The guard
+   now also forbids a `finally` and pins the write to exactly one site.
+2. **A mutation anchored on a line that appears SEVEN times** in `server.js` refused to apply, and the
+   harness's own `assert count == 1` is what caught it. ⚠️ Without that assert it would have read as a
+   SURVIVING mutant — `v90` rule 4, enforced rather than remembered.
+
 ## ✅ v91_a — the vocabulary ARTICLE check: measured into existence, and propose-only
 
 **ONE `ui.json` key** (`qc.btn.articles`, `en` only, granted after being proposed on its own).

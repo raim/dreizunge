@@ -288,7 +288,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v91_a';
+const APP_VERSION  = 'v91_b';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -313,6 +313,12 @@ const CURRICULUM_PLAN_FILE = process.env.CURRICULUM_PLAN_FILE || path.join(__dir
 // artifact server.js never writes) this store IS written by the server itself — the first read/write
 // path CP1/CP2 output has ever had from server.js, rather than only from the standalone CLI scripts.
 const ANALYSIS_STORE_FILE = process.env.CANONICAL_ANALYSIS_FILE || path.join(__dirname, 'canonical-analysis.json');
+// v91_b: which languages are ATTESTED to use articles — model-declared, corpus-vetoed, then cached
+// FOREVER, because it is a property of the LANGUAGE and not of any chapter. ⚠️ This is not an
+// article TABLE and must never become one (`v80_j`): it is a record of what the model said and what
+// the corpus was able to attest, exactly as `canonical-analysis.json` records what the model said
+// about tokens. The wizard reads only the boolean.
+const ARTICLES_STORE_FILE = process.env.ARTICLES_FILE || path.join(__dirname, 'articles.json');
 // item R (roadmap_v87.md): "unfinished project" persistence. Deliberately its OWN file, same
 // reasoning as SKILLS_FILE above — this is ephemeral, pre-lesson-generation state (parsed chapter
 // titles/text, not yet a playable topic), never read by build-static.js or the learner-progress
@@ -1037,6 +1043,31 @@ function cp5ShadowFor(chapterId) {
 // disk each call" reasoning as cp5ShadowFor above (low-traffic, not a live-edited file) — absence is
 // the NORMAL case here too: `{schemaVersion:1, chapters:{}}` for a store that has never been written,
 // exactly like the file never having existed.
+// ⚠️ v91_b — the article-language cache. Learned from REAL runs (the user's ruling), never warmed
+// eagerly: a language it has not seen simply stays unknown, and an unknown language is never
+// pre-ticked in the wizard. That is the honest behaviour — an unticked box claims no knowledge.
+function readArticleStore() {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(ARTICLES_STORE_FILE, 'utf8'));
+    if (parsed && typeof parsed === 'object') { parsed.languages = parsed.languages || {}; return parsed; }
+  } catch (e) { /* absent or unreadable — the common case, and the case on a fresh install */ }
+  return { schemaVersion: 1, languages: {} };
+}
+function writeArticleLang(lang, rec) {
+  if (!lang) return;
+  const store = readArticleStore();
+  store.schemaVersion = 1;
+  store.languages[lang] = { ...rec, at: new Date().toISOString() };
+  writeFileAtomic(ARTICLES_STORE_FILE, JSON.stringify(store, null, 2));
+}
+// Just the booleans, for /api/info. A language absent from here is UNKNOWN, which the client must
+// treat as "do not pre-tick" — deliberately distinct from `false` ("known to have no articles").
+function articleLangFlags() {
+  const out = {};
+  const langs = readArticleStore().languages || {};
+  for (const k of Object.keys(langs)) if (langs[k] && typeof langs[k].attested === 'boolean') out[k] = langs[k].attested;
+  return out;
+}
 function readAnalysisStore() {
   try {
     const parsed = JSON.parse(fs.readFileSync(ANALYSIS_STORE_FILE, 'utf8'));
@@ -2972,6 +3003,16 @@ async function _runQc(jobId, topics, opts) {
   const _articleEvidenceFor = async (lang) => {
     if (!articlesOnly) return [];
     if (_artEv.has(lang)) return _artEv.get(lang);
+    // v91_b: a verdict already learned in an EARLIER run costs nothing — it is a property of the
+    // language, so it is cached across runs and across restarts, not just within one job.
+    const _cached = (readArticleStore().languages || {})[lang];
+    if (_cached && typeof _cached.attested === 'boolean') {
+      const ev0 = _cached.attested ? (_cached.supported || []) : [];
+      _artEv.set(lang, ev0);
+      console.log(`    ⚑ articles [${lang}] from cache: `
+        + (_cached.attested ? ev0.join(' ') : 'no articles in this language'));
+      return ev0;
+    }
     let ev = [];
     try {
       const declared = await _articles.declareArticles(OLLAMA_ANALYSIS_MODEL, langName(lang));
@@ -2980,6 +3021,11 @@ async function _runQc(jobId, topics, opts) {
       console.log(`    ⚑ articles [${lang}] declared ${declared.length}, `
         + (res.attested ? `attested by the corpus (${res.corpusSize} entries): ${ev.join(' ')}`
                         : `NOT attested in ${res.corpusSize} corpus entries — treating as article-less`));
+      // ⚠️ Persisted ONLY on a successful declaration. A failure below must not cache "no articles"
+      // as if it were a verdict — that would make one bad model call permanently disable the check
+      // for a language, and it would look exactly like a correct answer.
+      writeArticleLang(lang, { attested: res.attested, supported: res.supported,
+                               declared: declared.length, corpusSize: res.corpusSize });
     } catch (e) {
       // ⚠️ A CANCEL IS NOT A FAILED DECLARATION. Caught by `e2e-job-cancel`'s own sweep the first
       // time this ran: a per-item catch inside a cancellable runner that swallows CANCELLED "makes
@@ -8358,6 +8404,10 @@ http.createServer(async (req, res) => {
     }
     if (M === 'GET' && url.pathname === '/api/info') {
       return json(res, 200, { backend: active, version: APP_VERSION, ollamaModel: OLLAMA_MODEL,
+        // v91_b: which languages are known to use articles, so the wizard can pre-tick the article
+        // pass for a pair that needs it. ⚠️ A language ABSENT from this map is UNKNOWN, which is a
+        // third state and not the same as `false` — the client must not pre-tick on unknown.
+        articleLangs: articleLangFlags(),
         ollamaTranslationModel: OLLAMA_TRANSLATION_MODEL,
         ollamaLessonModel: OLLAMA_LESSON_MODEL,
         ollamaQcModel: OLLAMA_QC_MODEL,

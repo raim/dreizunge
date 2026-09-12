@@ -297,6 +297,7 @@ run('unit: bottom-bar hide/show toggle (v85_b)', 'node', [path.join(__dirname, '
 run('unit: generator-page wizard shell (PLAN §13 milestone 1, v85_c)', 'node', [path.join(__dirname, 'unit-gen-wizard.test.js')]);
 run('unit: per-chapter lesson-type override (PLAN §13 milestone 3, v85_f)', 'node', [path.join(__dirname, 'unit-per-chapter-types.test.js')]);
 run('unit: post-generation storyboard/QC toggles (PLAN §13 milestone 4, v85_g)', 'node', [path.join(__dirname, 'unit-post-gen-features.test.js')]);
+run('unit: the wizard pre-ticks the article pass for pairs known to need it (v91_b)', 'node', [path.join(__dirname, 'unit-article-autotick.test.js')]);
 run('unit: post-generation vocab QC reaches the SINGLE-chapter path (v90_z)', 'node', [path.join(__dirname, 'unit-single-chapter-qc.test.js')]);
 run('unit: generation-time attribution fields (PLAN §13 milestone 5, v85_i)', 'node', [path.join(__dirname, 'unit-gen-attribution.test.js')]);
 run('unit: comic upload + panel-drawing UI (PLAN §2.4 Track A4 milestone 1, v85_j)', 'node', [path.join(__dirname, 'unit-comic-panel-ui.test.js')]);

@@ -1920,6 +1920,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <input type="checkbox" id="post-gen-qc-cb">
             <span id="post-gen-qc-lbl">🔍 Proofread with QC after generating</span>
           </label>
+          <!-- v91_b (user request): the ARTICLE pass, PRE-TICKED for a language pair already known
+               to need it. ⚠️ "Known" is a THIRD state, not a boolean: APP.info.articleLangs holds a
+               verdict only for languages an article pass has actually run for, and a language absent
+               from it is UNKNOWN — which must NOT pre-tick, on the user's own ruling ("auto-mark only
+               where we know it's required"). The label reuses qc.btn.articles, so this cost no key. -->
+          <label class="user-story-check-row" id="post-gen-articles-row">
+            <input type="checkbox" id="post-gen-articles-cb" onchange="this.dataset.touched='1'">
+            <span id="post-gen-articles-lbl">⚓ Check article symmetry</span>
+          </label>
           <!-- item W follow-up (v86_o): the THIRD postGenStoryboard-shaped caller — mirrors
                post-gen-storyboard-row exactly. Unlike storyboard/QC (client-orchestrated via
                _applyPostGenFeatures, a post-hoc call after the book completes), analysis is threaded
@@ -4116,6 +4125,8 @@ function _applyLessonCardUI(){
   show('post-gen-analysis-row', arcOk);     // unchanged: threaded into the book request, book path only
   show('post-gen-qc-row', llm);   // see its own markup comment: client-orchestrated, LLM path only
   if(!llm){ const qc=document.getElementById('post-gen-qc-cb'); if(qc) qc.checked=false; }
+  show('post-gen-articles-row', llm);   // v91_b: same orchestration path as the QC row above
+  _syncArticlesCb();
   show('format-wrap', !skip);
   show('lesson-type-hdr', !skip);
   // The start button. On the LLM/paste paths it is always offered, exactly as before. On the upload
@@ -11446,7 +11457,7 @@ const STATIC_LESSONS = [
         "icon": "🏔️",
         "vocab": [
           {
-            "target": "autonomia",
+            "target": "l'autonomia",
             "source": "die Autonomie",
             "skillId": null,
             "skillProposal": {
@@ -11457,10 +11468,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T06:50:46.024Z"
           },
           {
-            "target": "investimento",
+            "target": "l'investimento",
             "source": "die Investition",
             "skillId": null,
             "skillProposal": {
@@ -11471,10 +11483,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T06:50:49.518Z"
           },
           {
-            "target": "responsabilità",
+            "target": "la responsabilità",
             "source": "die Verantwortung",
             "skillId": null,
             "skillProposal": {
@@ -11485,10 +11498,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T06:50:52.046Z"
           },
           {
-            "target": "partecipazione",
+            "target": "la partecipazione",
             "source": "die Teilhabe",
             "skillId": null,
             "skillProposal": {
@@ -11499,10 +11513,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T06:50:55.242Z"
           },
           {
-            "target": "esperienza",
+            "target": "l'esperienza",
             "source": "die Erfahrung",
             "skillId": null,
             "skillProposal": {
@@ -11513,10 +11528,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T06:50:58.924Z"
           },
           {
-            "target": "percorso",
+            "target": "il percorso",
             "source": "der Weg",
             "skillId": null,
             "skillProposal": {
@@ -11527,7 +11543,8 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T06:51:00.648Z"
           },
           {
             "target": "tutela",
@@ -11544,7 +11561,7 @@ const STATIC_LESSONS = [
             }
           },
           {
-            "target": "statuto",
+            "target": "lo statuto",
             "source": "das Statut",
             "skillId": null,
             "skillProposal": {
@@ -11555,7 +11572,8 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T06:51:25.953Z"
           }
         ],
         "sentences": [
@@ -11925,7 +11943,7 @@ const STATIC_LESSONS = [
       }
     },
     "generatedAt": "2026-09-08T06:55:21.624Z",
-    "updatedAt": "2026-09-11T11:42:05.176Z",
+    "updatedAt": "2026-09-12T06:51:25.957Z",
     "createdBy": "admin",
     "source": {
       "author": "Andrea Dalla Serra",
@@ -12159,61 +12177,6 @@ const STATIC_LESSONS = [
         "_arcMode": "reinforce"
       },
       {
-        "id": 9,
-        "type": "comprehension",
-        "title": "Das Autonomiestatut von Südtirol",
-        "desc": "Verstehen Sie den historischen Kontext und die Bedeutung der bevorstehenden Begegnung?",
-        "icon": "🧠",
-        "questions": [
-          {
-            "q": "Warum treffen sich die Staatspräsidenten Mattarella und Van der Bellen in Merano?",
-            "choices": [
-              "Um den 80. Jahrestag des Abkommens von Paris zu gedenken.",
-              "Um über die wirtschaftlichen Beziehungen zwischen Italien und Österreich zu sprechen.",
-              "Um die Gründung einer neuen politischen Partei vorzustellen.",
-              "Um die Ergebnisse der letzten Wahlen in Trentino-Alto Adige zu besprechen."
-            ],
-            "correctIndex": 0,
-            "why": "Der Text beginnt mit dem Hinweis auf den 80. Jahrestag des Abkommens von Paris am 5. September 1946 als Anlass für die Veranstaltung."
-          },
-          {
-            "q": "Welche Rolle spielt die Autonomie laut Mattarella?",
-            "choices": [
-              "Sie ist ein Werkzeug zur Bewahrung der Identitäten und zum Zusammenleben verschiedener Gemeinschaften.",
-              "Sie führt zu einer politischen Trennung von Italien und Europa.",
-              "Sie dient hauptsächlich dem wirtschaftlichen Vorteil der Region Südtirol.",
-              "Sie ist nur für die deutsche Minderheit in Italien relevant."
-            ],
-            "correctIndex": 0,
-            "why": "Mattarella betonte in seinen früheren Reden den Wert der Autonomie als Instrument des Zusammenlebens und des Schutzes der Identitäten."
-          },
-          {
-            "q": "Was ist ein gemeinsames Merkmal der bisherigen Treffen zwischen Mattarella und Van der Bellen?",
-            "choices": [
-              "Sie fanden beide in Merano statt.",
-              "Sie bezogen sich auf historische Jubiläen im Zusammenhang mit Südtirol.",
-              "Sie wurden von lokalen Politikern organisiert.",
-              "Sie behandelten ausschließlich militärische Themen."
-            ],
-            "correctIndex": 1,
-            "why": "Das Treffen 2017 war anlässlich des 25. Jahrestags der Beilegung des Südtirol-Streits und des 45. Jahrestags des zweiten Autonomiestatuts; das aktuelle Treffen markiert den 80. Jahrestag des Abkommens."
-          }
-        ],
-        "_genMeta": {
-          "type": "comprehension",
-          "model": "qwen3.6:35b-a3b",
-          "attempts": 1,
-          "valid": 3,
-          "rejected": 0,
-          "rejectReasons": null,
-          "promptTokens": 701,
-          "completionTokens": 549,
-          "ms": 155119,
-          "at": "2026-09-08T06:53:35.886Z"
-        },
-        "_arcMode": "reinforce"
-      },
-      {
         "difficulty": 1,
         "id": "ls_1788881227217",
         "title": "Autonomie Trentino-Südtirol",
@@ -12221,7 +12184,7 @@ const STATIC_LESSONS = [
         "icon": "🏔️",
         "vocab": [
           {
-            "target": "autonomia",
+            "target": "l'autonomia",
             "source": "die Autonomie",
             "skillId": null,
             "skillProposal": {
@@ -12232,10 +12195,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T14:38:36.577Z"
           },
           {
-            "target": "accordo",
+            "target": "l'accordo",
             "source": "das Abkommen",
             "skillId": null,
             "skillProposal": {
@@ -12246,10 +12210,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T14:38:37.903Z"
           },
           {
-            "target": "presidente",
+            "target": "il presidente",
             "source": "der Präsident",
             "skillId": null,
             "skillProposal": {
@@ -12260,10 +12225,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T14:38:40.453Z"
           },
           {
-            "target": "incontro",
+            "target": "l'incontro",
             "source": "das Treffen",
             "skillId": null,
             "skillProposal": {
@@ -12274,10 +12240,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T14:38:42.920Z"
           },
           {
-            "target": "valore",
+            "target": "il valore",
             "source": "der Wert",
             "skillId": null,
             "skillProposal": {
@@ -12288,10 +12255,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T14:38:44.713Z"
           },
           {
-            "target": "strumento",
+            "target": "lo strumento",
             "source": "das Instrument",
             "skillId": null,
             "skillProposal": {
@@ -12302,10 +12270,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T14:38:48.126Z"
           },
           {
-            "target": "identità",
+            "target": "l'identità",
             "source": "die Identität",
             "skillId": null,
             "skillProposal": {
@@ -12316,10 +12285,11 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T14:38:49.872Z"
           },
           {
-            "target": "comunità",
+            "target": "la comunità",
             "source": "die Gemeinschaft",
             "skillId": null,
             "skillProposal": {
@@ -12330,7 +12300,8 @@ const STATIC_LESSONS = [
               "targetLang": "it",
               "sourceLang": "de",
               "entry": null
-            }
+            },
+            "editedAt": "2026-09-12T14:38:52.596Z"
           }
         ],
         "sentences": [
@@ -12461,6 +12432,61 @@ const STATIC_LESSONS = [
           "ms": 262442,
           "at": "2026-09-08T15:27:07.217Z"
         }
+      },
+      {
+        "id": 9,
+        "type": "comprehension",
+        "title": "Das Autonomiestatut von Südtirol",
+        "desc": "Verstehen Sie den historischen Kontext und die Bedeutung der bevorstehenden Begegnung?",
+        "icon": "🧠",
+        "questions": [
+          {
+            "q": "Warum treffen sich die Staatspräsidenten Mattarella und Van der Bellen in Merano?",
+            "choices": [
+              "Um den 80. Jahrestag des Abkommens von Paris zu gedenken.",
+              "Um über die wirtschaftlichen Beziehungen zwischen Italien und Österreich zu sprechen.",
+              "Um die Gründung einer neuen politischen Partei vorzustellen.",
+              "Um die Ergebnisse der letzten Wahlen in Trentino-Alto Adige zu besprechen."
+            ],
+            "correctIndex": 0,
+            "why": "Der Text beginnt mit dem Hinweis auf den 80. Jahrestag des Abkommens von Paris am 5. September 1946 als Anlass für die Veranstaltung."
+          },
+          {
+            "q": "Welche Rolle spielt die Autonomie laut Mattarella?",
+            "choices": [
+              "Sie ist ein Werkzeug zur Bewahrung der Identitäten und zum Zusammenleben verschiedener Gemeinschaften.",
+              "Sie führt zu einer politischen Trennung von Italien und Europa.",
+              "Sie dient hauptsächlich dem wirtschaftlichen Vorteil der Region Südtirol.",
+              "Sie ist nur für die deutsche Minderheit in Italien relevant."
+            ],
+            "correctIndex": 0,
+            "why": "Mattarella betonte in seinen früheren Reden den Wert der Autonomie als Instrument des Zusammenlebens und des Schutzes der Identitäten."
+          },
+          {
+            "q": "Was ist ein gemeinsames Merkmal der bisherigen Treffen zwischen Mattarella und Van der Bellen?",
+            "choices": [
+              "Sie fanden beide in Merano statt.",
+              "Sie bezogen sich auf historische Jubiläen im Zusammenhang mit Südtirol.",
+              "Sie wurden von lokalen Politikern organisiert.",
+              "Sie behandelten ausschließlich militärische Themen."
+            ],
+            "correctIndex": 1,
+            "why": "Das Treffen 2017 war anlässlich des 25. Jahrestags der Beilegung des Südtirol-Streits und des 45. Jahrestags des zweiten Autonomiestatuts; das aktuelle Treffen markiert den 80. Jahrestag des Abkommens."
+          }
+        ],
+        "_genMeta": {
+          "type": "comprehension",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 3,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 701,
+          "completionTokens": 549,
+          "ms": 155119,
+          "at": "2026-09-08T06:53:35.886Z"
+        },
+        "_arcMode": "reinforce"
       }
     ],
     "generationStats": {
@@ -12489,7 +12515,7 @@ const STATIC_LESSONS = [
       }
     },
     "generatedAt": "2026-09-07T22:39:25.177Z",
-    "updatedAt": "2026-09-08T15:27:07.217Z",
+    "updatedAt": "2026-09-12T14:39:36.992Z",
     "createdBy": "admin",
     "source": {
       "author": "Andrea Dalla Serra",
@@ -174345,12 +174371,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v91_a', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v91_b', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"1a54ed020fce","lessons.json":"8c11df9e4b6c","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8c7381fba29f","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
+  APP.buildSources = {"index.html":"6bcde655edda","lessons.json":"7296ba82bef9","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8c7381fba29f","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -177893,6 +177919,15 @@ async function _applyPostGenFeatures(finalJob, opts){
     // qcRun() already toasts/logs its own errors and never throws uncaught — no extra try/catch
     // needed, matching how its one existing caller (the storyline screen's manual QC button) uses it.
     await qcRun({ storylineId: sl ? sl.id : undefined, topicId: sl ? undefined : chapterIds[0] });
+  }
+  // ⚠️ v91_b: the article pass, AFTER the book job has finished — never per chapter. `v90_o` measured
+  // what an inline post-pass costs on a single-model backend: requests serialise, so chapter 2's
+  // lesson ran 716.4s against a 720s timeout and chapter 3 timed out entirely. This function is
+  // already the deferred position, which is exactly why the pass rides it.
+  // ⚠️ SEQUENTIAL after QC, not concurrent — same "gentle on the backend" reasoning the caller's own
+  // ordering comment gives for running per-chapter types before these.
+  if(opts.articles){
+    await articleRun({ storylineId: sl ? sl.id : undefined, topicId: sl ? undefined : chapterIds[0] });
   }
   await loadSavedList();
 }

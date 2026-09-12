@@ -1920,6 +1920,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             <input type="checkbox" id="post-gen-qc-cb">
             <span id="post-gen-qc-lbl">🔍 Proofread with QC after generating</span>
           </label>
+          <!-- v91_b (user request): the ARTICLE pass, PRE-TICKED for a language pair already known
+               to need it. ⚠️ "Known" is a THIRD state, not a boolean: APP.info.articleLangs holds a
+               verdict only for languages an article pass has actually run for, and a language absent
+               from it is UNKNOWN — which must NOT pre-tick, on the user's own ruling ("auto-mark only
+               where we know it's required"). The label reuses qc.btn.articles, so this cost no key. -->
+          <label class="user-story-check-row" id="post-gen-articles-row">
+            <input type="checkbox" id="post-gen-articles-cb" onchange="this.dataset.touched='1'">
+            <span id="post-gen-articles-lbl">⚓ Check article symmetry</span>
+          </label>
           <!-- item W follow-up (v86_o): the THIRD postGenStoryboard-shaped caller — mirrors
                post-gen-storyboard-row exactly. Unlike storyboard/QC (client-orchestrated via
                _applyPostGenFeatures, a post-hoc call after the book completes), analysis is threaded
@@ -4111,6 +4120,8 @@ function _applyLessonCardUI(){
   show('post-gen-analysis-row', arcOk);     // unchanged: threaded into the book request, book path only
   show('post-gen-qc-row', llm);   // see its own markup comment: client-orchestrated, LLM path only
   if(!llm){ const qc=document.getElementById('post-gen-qc-cb'); if(qc) qc.checked=false; }
+  show('post-gen-articles-row', llm);   // v91_b: same orchestration path as the QC row above
+  _syncArticlesCb();
   show('format-wrap', !skip);
   show('lesson-type-hdr', !skip);
   // The start button. On the LLM/paste paths it is always offered, exactly as before. On the upload
@@ -10817,6 +10828,32 @@ async function deleteSaved(ref){
 // are all things a copy would have had to re-derive, and `_runQc` on the server took the same
 // decision for the same reason.
 function articleRun(scope, btn){ return qcRun({ ...scope, articles: true }, btn); }
+// ⚠️ v91_b — pre-tick the article pass ONLY for a pair we actually know needs it.
+//
+// `APP.info.articleLangs` maps a language code to whether it is ATTESTED to use articles. A code
+// ABSENT from that map is UNKNOWN, and unknown is a third state: the server only learns a language's
+// verdict when an article pass has genuinely run for it (the user's ruling — learn from real runs,
+// never warm eagerly). So `!!map[x]` would be wrong in the one way that matters, silently treating
+// "never measured" as "has no articles".
+//
+// ⚠️ It only ever pre-ticks. A box the learner has ticked or unticked by hand is never overwritten,
+// because this runs on every language change and on every slider move — quietly undoing a deliberate
+// choice is the failure mode `onNumChaptersSlider`'s own hygiene note was written about.
+function _articlesLikelyNeeded(){
+  const m = APP.info?.articleLangs;
+  if(!m) return false;                                   // server too old, or nothing learned yet
+  const a = m[APP.lang], b = m[APP.srcLang];
+  if(a === undefined || b === undefined) return false;   // UNKNOWN on either side → do not claim
+  return a === true && b === true;                       // asymmetry needs articles on BOTH sides
+}
+function _syncArticlesCb(){
+  const cb = document.getElementById('post-gen-articles-cb');
+  const lbl = document.getElementById('post-gen-articles-lbl');
+  if(lbl) lbl.textContent = '⚓ ' + t('qc.btn.articles');
+  if(!cb) return;
+  if(cb.dataset.touched === '1') return;                 // the learner decided; leave it alone
+  cb.checked = _articlesLikelyNeeded();
+}
 async function qcRun(scope, btn){
   if(!APP.info?.canGenerate){ showToast(t('qc.toast.no_backend')); return; }
   // Shift-click = force a full re-check, bypassing the "already QC'd & unedited" skip (useful
@@ -11030,11 +11067,12 @@ function onGenStatusClick(){
 // same reason — the checkbox lives on a screen the learner leaves the moment generation starts, and
 // a page reload mid-generation must not forget what they asked for. Read back by
 // resumeBackgroundJob()'s own branches.
-function startBackgroundJob(jobId, topic, genAttribution, postGenQc){
+function startBackgroundJob(jobId, topic, genAttribution, postGenQc, postGenArticles){
   // v85_i: genAttribution rides on APP.activeJob (and so on its persisted localStorage copy) so a
   // page reload mid-generation doesn't lose it — resumeBackgroundJob()'s own re-attach branch reads
   // it back the same way.
-  APP.activeJob={jobId, topic, genAttribution: genAttribution || null, postGenQc: !!postGenQc};
+  APP.activeJob={jobId, topic, genAttribution: genAttribution || null, postGenQc: !!postGenQc,
+    postGenArticles: !!postGenArticles};   // v91_b, same persistence reason as postGenQc
   saveActiveJob(APP.activeJob);
   updateStopBtn();
   document.getElementById('gen-btn').disabled=true;
@@ -11050,7 +11088,7 @@ function startBackgroundJob(jobId, topic, genAttribution, postGenQc){
       if(j.status==='done'){
         clearInterval(iv);
         if(genAttribution) await _applyGenAttribution([j.data.id], genAttribution);
-        APP.activeJob={jobId, topic: j.data.topic, postGenQc: !!postGenQc}; // use server-confirmed topic (may differ)
+        APP.activeJob={jobId, topic: j.data.topic, postGenQc: !!postGenQc, postGenArticles: !!postGenArticles}; // use server-confirmed topic (may differ)
         saveActiveJob(APP.activeJob);
         if(!APP.progress.completed[j.data.topic]) APP.progress.completed[j.data.topic]={};
         saveProg();
@@ -11062,6 +11100,11 @@ function startBackgroundJob(jobId, topic, genAttribution, postGenQc){
         // `topicId`; it toasts and logs its own failures and never throws, which is why its one
         // existing caller wraps it in no try/catch either.
         if(postGenQc) await qcRun({ topicId: j.data.id });
+        // v91_b: the article pass on the SINGLE-chapter path. `v90_z` found `_applyPostGenFeatures`
+        // had exactly one call site — inside doGenerate's multi-chapter branch — so every
+        // "continue this storyline" chapter was silently excluded from post-generation work. This
+        // rides the same two places that fix wired, for the same reason.
+        if(postGenArticles) await articleRun({ topicId: j.data.id });
         await loadSavedList();
         // If user is on the home screen viewing a lesson, refresh the path
         if(document.getElementById('lesson-set')?.classList.contains('active')) try{ buildPath(); }catch(e){}
@@ -11111,6 +11154,7 @@ async function resumeBackgroundJob(){
       // v90_z: the chapter finished while the page was closed — the opt-in survived on the persisted
       // activeJob, so honour it here rather than losing it to a reload.
       if(saved.postGenQc) await qcRun({ topicId: j.data.id });
+      if(saved.postGenArticles) await articleRun({ topicId: j.data.id });   // v91_b
       await loadSavedList();
       saveActiveJob(null);
       setGenStatus('done', '"'+j.data.topic+'" ready — tap to open');
@@ -11263,7 +11307,8 @@ async function doGenerate(forceRegen){
     // perChapterTypes is — #post-gen-row lives on a screen the learner may leave long before the
     // book job completes.
     const postGen = { storyboard: !!document.getElementById('post-gen-storyboard-cb')?.checked,
-                       qc: !!document.getElementById('post-gen-qc-cb')?.checked };
+                       qc: !!document.getElementById('post-gen-qc-cb')?.checked,
+                       articles: !!document.getElementById('post-gen-articles-cb')?.checked };   // v91_b
     // v85_p FIX: this flag used to go UNSENT — _runBookJob's own storyboard post-pass ran
     // unconditionally regardless of this checkbox, making it a silent no-op for this flow (the
     // server had already drawn the board by the time postGen.storyboard's own post-job call below
@@ -11292,7 +11337,7 @@ async function doGenerate(forceRegen){
       // useful content once any per-chapter extras have already landed.
       _bookPromise.then(async finalJob => {
         if(perChapterTypes) await _applyPerChapterTypes(finalJob, perChapterTypes);
-        if(postGen.storyboard || postGen.qc) await _applyPostGenFeatures(finalJob, postGen);
+        if(postGen.storyboard || postGen.qc || postGen.articles) await _applyPostGenFeatures(finalJob, postGen);
       });
     }catch(e){ showToast('⚠ '+e.message); }
     return;
@@ -11339,7 +11384,8 @@ async function doGenerate(forceRegen){
       // ⚠️ v90_z: read HERE, not inside the poll — same reason genAttribution/perChapterTypes/postGen
       // are all captured before their request fires: the checkbox is on a screen the learner leaves.
       startBackgroundJob(resp.jobId, topic, genAttribution,
-        !!document.getElementById('post-gen-qc-cb')?.checked);
+        !!document.getElementById('post-gen-qc-cb')?.checked,
+        !!document.getElementById('post-gen-articles-cb')?.checked);
       showToast(t('toast.generating',{topic}));
       showGeneration();
     }
@@ -14486,6 +14532,15 @@ async function _applyPostGenFeatures(finalJob, opts){
     // qcRun() already toasts/logs its own errors and never throws uncaught — no extra try/catch
     // needed, matching how its one existing caller (the storyline screen's manual QC button) uses it.
     await qcRun({ storylineId: sl ? sl.id : undefined, topicId: sl ? undefined : chapterIds[0] });
+  }
+  // ⚠️ v91_b: the article pass, AFTER the book job has finished — never per chapter. `v90_o` measured
+  // what an inline post-pass costs on a single-model backend: requests serialise, so chapter 2's
+  // lesson ran 716.4s against a 720s timeout and chapter 3 timed out entirely. This function is
+  // already the deferred position, which is exactly why the pass rides it.
+  // ⚠️ SEQUENTIAL after QC, not concurrent — same "gentle on the backend" reasoning the caller's own
+  // ordering comment gives for running per-chapter types before these.
+  if(opts.articles){
+    await articleRun({ storylineId: sl ? sl.id : undefined, topicId: sl ? undefined : chapterIds[0] });
   }
   await loadSavedList();
 }

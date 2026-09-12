@@ -128,7 +128,16 @@ console.log('  onNumChaptersSlider(): storyboard/analysis stay multi-chapter-onl
   await settle();
   const r = JSON.parse(C2.run(`JSON.stringify({ calls: window._applyPostGenCalls, opts: window._lastOpts })`));
   assert.strictEqual(r.calls, 1, '_applyPostGenFeatures IS called exactly once when the QC toggle alone is checked');
-  assert.deepStrictEqual(r.opts, { storyboard: false, qc: true }, 'the captured opts reflect exactly which toggles were checked');
+  // ⚠️ v91_b: RE-SCOPED, not weakened. This was `deepStrictEqual(r.opts, {storyboard:false, qc:true})`,
+  // which broke the moment a THIRD toggle (`articles`) joined the row — while its claim, "the captured
+  // opts reflect exactly which toggles were checked", stayed true. A whole-object equality on a set
+  // that is designed to grow fails on every correct addition, so assert PER TOGGLE and require every
+  // other one to be off, which is the same claim and survives a fourth.
+  assert.strictEqual(r.opts.qc, true, 'the QC toggle is captured as checked');
+  const _others = Object.keys(r.opts).filter(k => k !== 'qc');
+  assert.ok(_others.length >= 1, 'non-vacuity: there ARE other toggles, so "only qc" means something');
+  assert.deepStrictEqual(_others.filter(k => r.opts[k] !== false), [],
+    'and every other toggle is captured as unchecked — the captured opts reflect exactly what was ticked');
 }
 console.log('  doGenerate(): captures postGen, calls _applyPostGenFeatures only when at least one toggle is on: OK');
 
