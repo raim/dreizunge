@@ -16,6 +16,17 @@
   --green:#58cc02;--green-dark:#46a502;--green-light:#d7ffb2;
   --blue:#1cb0f6;--blue-dark:#0a93d3;--blue-light:#ddf4ff;
   --red:#ff4b4b;--red-light:#ffd4d4;
+  /* ⚠️ v91_c (user): "align colors of title and subtitle also with the colors of our rotating
+     earth icon". These two are MEASURED, not chosen: the 🌍 glyph was rendered to a canvas in the
+     browser and its opaque pixels bucketed by hue. Its real palette on this machine is
+     land #7add8b (2433px), OCEAN #1b7cf4 (2308px), deep ocean #1161ee, desert sand #dedda5.
+     --globe-blue IS that ocean, exactly, which is why the title reads as the same blue as the icon.
+     ⚠️ The globe contains NO RED. So the motto's red cannot be sampled — it is DERIVED: the ocean's
+     hue family mirrored to ~355°, with saturation pulled back from the ocean's 91% (which renders
+     fire-engine hot at text size) to ~72%. Contrast 4.61:1 on the landing gradient — AA for normal
+     text, and the best of the five candidates that were rendered side by side against the glyph. */
+  --globe-blue:#1b7cf4;
+  --red-soft:#d32438;
   --yellow:#ffc800;
   --gray:#afafaf;--gray-light:#f7f7f7;--gray-mid:#e5e5e5;--gray-dark:#777;
   --text:#3c3c3c;--white:#fff;
@@ -45,7 +56,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .flag{font-size:56px;display:inline-block;flex:none;animation:spin-globe 4s linear infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes spin-globe{0%{transform:translateY(0) rotateY(0deg)}25%{transform:translateY(-4px) rotateY(90deg)}50%{transform:translateY(-7px) rotateY(180deg)}75%{transform:translateY(-4px) rotateY(270deg)}100%{transform:translateY(0) rotateY(360deg)}}
-.app-name{font-size:34px;font-weight:900;color:var(--green);letter-spacing:-1px;margin-bottom:4px}
+/* ⚠️ v91_c (user request): the title/motto pair was 34px green over 13px grey — a 2.6x size gap
+   and two unrelated colours. Now 30px over 17px (1.8x), the title BLUE rather than green, and
+   the motto a warm red so the two read as one pair. The gap is reduced, not removed: the
+   hierarchy is still unambiguous. Both halves are guarded in unit-app-motto.test.js. */
+.app-name{font-size:30px;font-weight:900;color:var(--globe-blue);letter-spacing:-1px;margin-bottom:4px}
 
 
 .backend-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
@@ -1043,7 +1058,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <div class="app-name">dreizunge</div>
       <!-- Tagline (localized via app.motto); the running version stays reachable as its
            tooltip — the visible version display was retired in v49. -->
-      <span id="app-tagline" style="font-size:13px;font-weight:800;color:var(--gray-dark);opacity:.7">we are the world</span>
+      <span id="app-tagline" style="font-size:17px;font-weight:800;color:var(--red-soft)">we are the world</span>
     </div>
   </div>
 

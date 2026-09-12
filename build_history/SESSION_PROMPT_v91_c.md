@@ -1,11 +1,11 @@
-# Session prompt — written at the `v91_b` cut
+# Session prompt — written at the `v91_c` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v91_b`**. `roadmap_v91.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v91_c`**. `roadmap_v91.md` was cut at
 `v91` — as a RECONCILIATION, see below — and is the current roadmap. **`roadmap_v90.md` is kept as
 the record for the whole `v90` line** (`v90`…`v90_aa`, twenty-seven point releases): go there for how
 anything in it was built, or why a guard is shaped the way it is.
@@ -345,7 +345,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **363 topics, 101 storylines, 33 languages, 748 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_b'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_c'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

@@ -3313,6 +3313,69 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v91_c — the landing title and motto, sized closer and coloured from the globe
+
+**ZERO `ui.json` keys.** No behaviour change; presentation only. Two user requests, the second
+arriving while the first was being built.
+
+User: *"on the main page decrease font size difference between 'dreizunge' and the ui.json entry for
+the subtitle… also align the colors between title, more blue, less green, and subtitle, a nice
+reddish tone"* — then: *"align colors of title and subtitle also with the colors of our rotating
+earth icon"*.
+
+### Sizes: 34/13 → 30/17
+
+A **2.6× gap became 1.8×**. Reduced, not removed — the hierarchy is still unambiguous.
+
+### ⚠️ THE COLOURS ARE MEASURED, NOT CHOSEN — and that is the part worth keeping
+
+The second request could have been answered by eye. Instead the 🌍 glyph was **rendered to a canvas
+in the browser and its opaque pixels bucketed by hue**, giving its real palette on this machine:
+
+| | colour | pixels |
+|---|---|---|
+| land green | `#7add8b` | 2433 |
+| **ocean blue** | `#1b7cf4` | 2308 |
+| deep ocean | `#1161ee` | 1636 |
+| desert sand | `#dedda5` | 1279 |
+
+**`--globe-blue` IS that ocean, exactly**, which is why the title now reads as the same blue as the
+icon rather than merely as another bluish colour. It also satisfies the first request's "more blue,
+less green" by construction — it replaced `var(--green)` (`#58cc02`).
+
+⚠️⚠️ **THE GLOBE CONTAINS NO RED, so the motto's colour CANNOT be sampled.** The two requests are in
+genuine tension and the write-up says so rather than pretending otherwise. `--red-soft` is therefore
+**derived**: the ocean's hue family mirrored to ~355°, with saturation pulled back from the ocean's
+**91%** — which renders fire-engine hot at text size — to ~72%.
+
+Five candidates were rendered side by side against the real glyph before choosing, and contrast
+decided it:
+
+| | hex | contrast on the landing gradient |
+|---|---|---|
+| globe-matched (S91 L53) | `#f41b2d` | 3.73:1 |
+| deeper (S91 L45) | `#dc0b1c` | 4.58:1 |
+| **softened (S72 L48) ← chosen** | **`#d32438`** | **4.61:1 — AA for normal text** |
+| warm rose (S60 L52) | `#cc4256` | 4.20:1 |
+| the first attempt | `#d9525e` | 3.54:1 |
+
+⚠️ The title's own 3.59:1 is fine and is not an oversight: at 30px/900 it is "large text", whose
+threshold is 3:1. The motto at 17px is not, which is why 4.5:1 was the bar for it.
+
+⚠️ **`opacity:.7` was removed from the motto.** It washed the colour toward grey — asking for "a nice
+reddish tone" and then rendering it at 70% opacity would have half-undone the request.
+
+### ⚠️ A DELIBERATE v49 RULING WAS REPLACED, AND THE GUARD WAS RE-SCOPED RATHER THAN DELETED
+
+`unit-app-motto` pinned `font-size:13px` — a real ruling from `v49` ("the motto is rendered slightly
+larger" than the old 11px version span). The user has now replaced it. ⚠️ **A single pinned literal
+cannot express the new ruling at all**, because the new one is about the RELATIONSHIP between two
+sizes. The guard now asserts that relationship — motto still bigger than the 11px it replaced, still
+smaller than the title, and the ratio under 2.2 (it was 2.6 when the user asked for it to come down)
+— so it survives the next adjustment instead of going quiet or firing spuriously. The colour half is
+guarded too, including that the two values are DISTINCT and that each is dominant in the right
+channel, which is the one thing a copy-paste slip would break silently.
+
 ## ✅ v91_b — the wizard pre-ticks the article pass for pairs already known to need it
 
 **ZERO `ui.json` keys** — the checkbox label reuses `qc.btn.articles`. **8 mutations red, 1 judged
