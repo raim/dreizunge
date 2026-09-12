@@ -2,6 +2,255 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_1162706092",
+      "title": "Stille Prüfung",
+      "titleAuto": false,
+      "icon": "📝",
+      "chapters": [
+        "tp_17889392258520000042",
+        "tp_17889394908430000140"
+      ],
+      "lang": "it",
+      "srcLang": "de",
+      "createdAt": "2026-09-09T07:36:44.852Z",
+      "updatedAt": "2026-09-09T07:43:05.399Z",
+      "tokenUsage": {
+        "totalPromptTokens": 997,
+        "totalCompletionTokens": 151,
+        "tokensByType": {
+          "retitle": 694,
+          "summary": 454
+        }
+      },
+      "summary": "In einer ruhigen Prüfungssituation konzentrieren sich die Schüler auf das Schreiben, während die Zeit schnell vergeht und sie ihre Blätter abgeben. Nach dem Ende der Klausel räumen die Studenten ihre leeren Plätze auf, während der Professor seine Aufgaben sorgfältig sammelt und ordnet. Als er den Raum verlässt und die Tür schließt, bleibt nur ein leerer Flur zurück, der dieselbe Stille wie vor Beginn der Prüfung atmet.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 355,
+        "completionTokens": 99,
+        "ms": 35787,
+        "at": "2026-09-09T07:43:05.399Z"
+      }
+    },
+    {
+      "id": "sl_1338244003",
+      "title": "Autonomie und Freiheit",
+      "titleAuto": false,
+      "icon": "🕊️",
+      "chapters": [
+        "tp_17888207651760000028",
+        "tp_17888505216240000062",
+        "tp_17888516368920000117"
+      ],
+      "lang": "it",
+      "srcLang": "de",
+      "createdAt": "2026-09-08T06:44:07.182Z",
+      "updatedAt": "2026-09-08T08:54:10.227Z",
+      "tokenUsage": {
+        "totalPromptTokens": 2538,
+        "totalCompletionTokens": 1133,
+        "tokensByType": {
+          "retitle": 929,
+          "summary": 747,
+          "storyboard": 1995
+        }
+      },
+      "summary": "Anlässlich des 80. Jahrestags des Autonomieabkommens treffen die Staatspräsidenten Italiens und Österreichs in Merano zusammen, um die Bedeutung der historischen Vereinbarung zu würdigen. Der italienische Präsident betont, dass die Autonomie mehr als nur eine administrative Maßnahme ist, sondern eine positive Investition in die Demokratie und die gemeinsame Identität erfordert. Er anerkennt den komplexen Weg der Umsetzung als weltweit einzigartiges Beispiel für konstruktive Zusammenarbeit und friedliches Zusammenleben. Die Veranstaltung dient dazu, die geleistete Verantwortung zu reflektieren und die Einheit der Region durch demokratische Teilhabe weiter zu stärken.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 615,
+        "completionTokens": 132,
+        "ms": 61853,
+        "at": "2026-09-08T07:36:04.544Z"
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Präsidenten treffen sich im Kursaal Meran.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><rect x=\"20\" y=\"30\" width=\"60\" height=\"30\" fill=\"#faf7f0\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"35\" cy=\"45\" r=\"8\" fill=\"#2b2b2b\"/><circle cx=\"65\" cy=\"45\" r=\"8\" fill=\"#e07a5f\"/><line x1=\"35\" y1=\"53\" x2=\"35\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"65\" y1=\"53\" x2=\"65\" y2=\"70\" stroke=\"#e07a5f\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Autonomie ist ein positives Invest.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><circle cx=\"50\" cy=\"30\" r=\"15\" fill=\"#f2cc8f\"/><rect x=\"40\" y=\"45\" width=\"20\" height=\"30\" fill=\"#81b29a\"/><line x1=\"50\" y1=\"60\" x2=\"50\" y2=\"80\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><rect x=\"20\" y=\"70\" width=\"60\" height=\"10\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"85\" r=\"3\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"3\"><title>Der Zug der Freiheit fährt weiter.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"80\" width=\"100\" height=\"20\" fill=\"#8d6e63\"/><path d=\"M 10 70 L 30 50 L 60 50 L 90 70 Z\" fill=\"#2b2b2b\"/><circle cx=\"20\" cy=\"60\" r=\"4\" fill=\"#f2cc8f\"/><circle cx=\"35\" cy=\"60\" r=\"4\" fill=\"#f2cc8f\"/><circle cx=\"50\" cy=\"60\" r=\"4\" fill=\"#f2cc8f\"/><line x1=\"90\" y1=\"70\" x2=\"100\" y2=\"70\" stroke=\"#2b2b2b\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"85\" cy=\"65\" r=\"2\" fill=\"#ffffff\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 3,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 1103,
+        "completionTokens": 892,
+        "ms": 197199,
+        "at": "2026-09-08T08:54:10.226Z",
+        "storyStyle": "neutral"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Präsidenten treffen sich im Kursaal Meran.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 30,
+              "w": 60,
+              "h": 30,
+              "fill": "paper",
+              "stroke": "ink",
+              "sw": 1
+            },
+            {
+              "type": "circle",
+              "cx": 35,
+              "cy": 45,
+              "r": 8,
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 65,
+              "cy": 45,
+              "r": 8,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 35,
+              "y1": 53,
+              "x2": 35,
+              "y2": 70,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 65,
+              "y1": 53,
+              "x2": 65,
+              "y2": 70,
+              "stroke": "accent",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Autonomie ist ein positives Invest.",
+          "chapter": 2,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 30,
+              "r": 15,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 40,
+              "y": 45,
+              "w": 20,
+              "h": 30,
+              "fill": "leaf"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 60,
+              "x2": 50,
+              "y2": 80,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 70,
+              "w": 60,
+              "h": 10,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 85,
+              "r": 3,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Der Zug der Freiheit fährt weiter.",
+          "chapter": 3,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 80,
+              "w": 100,
+              "h": 20,
+              "fill": "earth"
+            },
+            {
+              "type": "path",
+              "d": "M 10 70 L 30 50 L 60 50 L 90 70 Z",
+              "fill": "ink"
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 60,
+              "r": 4,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 35,
+              "cy": 60,
+              "r": 4,
+              "fill": "sun"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 60,
+              "r": 4,
+              "fill": "sun"
+            },
+            {
+              "type": "line",
+              "x1": 90,
+              "y1": 70,
+              "x2": 100,
+              "y2": 70,
+              "stroke": "ink",
+              "sw": 3
+            },
+            {
+              "type": "circle",
+              "cx": 85,
+              "cy": 65,
+              "r": 2,
+              "fill": "white"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
       "id": "sl_1448974954",
       "title": "Silent Rain Glitch",
       "titleAuto": false,
@@ -53,7 +302,7 @@
       "lang": "de",
       "srcLang": "en",
       "createdAt": "2026-09-05T18:15:34.386Z",
-      "updatedAt": "2026-09-05T19:02:46.762Z",
+      "updatedAt": "2026-09-07T11:58:15.631Z",
       "tokenUsage": {
         "totalPromptTokens": 1201,
         "totalCompletionTokens": 298,
@@ -74,6 +323,10 @@
         "completionTokens": 113,
         "ms": 61980,
         "at": "2026-09-05T19:02:46.762Z"
+      },
+      "source": {
+        "author": "König Lü.Q.",
+        "url": "http://www.murmel-comics.org/stories/2640/"
       }
     },
     {
@@ -12239,6 +12492,3784 @@
   ],
   "topics": [
     {
+      "id": "tp_17889394908430000140",
+      "topic": "Leere Aula",
+      "topicEmoji": "🚪",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "I banchi si svuotarono rapidamente. Gli studenti raccolsero i propri effetti e uscirono dall’aula in fila indiana. Il professore rimase seduto alla sua scrivania, osservando il vuoto. Raccogliò le copie con metodo, ordinandole per numero di matricola. La luce del pomeriggio entrava dalle finestre alte, illuminando la polvere nell’aria. Chiuse l’ultima porta a chiave e spense la luce. Il corridoio era deserto, silenzioso come prima dell’inizio della lezione.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (full):\nIl professore distribuì i fogli bianchi con calma. Gli studenti aprirono le penne e iniziarono a scrivere. La stanza era silenziosa, interrotta solo dal rumore della carta e dei tasti. Ognuno concentrava la propria attenzione sulle domande poste nella prima pagina. Il tempo scorreva veloce mentre le mani si muovevano rapidamente. Alla fine della campanella, tutti consegnarono il lavoro senza commenti.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 312,
+        "completionTokens": 120,
+        "ms": 56698,
+        "at": "2026-09-09T07:37:41.633Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 178,
+        "completionTokens": 113,
+        "ms": 29210,
+        "at": "2026-09-09T07:38:10.843Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Die Bänke leerten sich rasch. Die Studierenden sammelten ihre Sachen und verließen den Hörsaal in einer Reihe. Der Professor blieb an seinem Schreibtisch sitzen und betrachtete die Leere. Er sammelte die Klausuren methodisch ein und ordnete sie nach der Matrikelnummer. Das Nachmittagslicht fiel durch die hohen Fenster und erhellte den Staub in der Luft. Er schloss die letzte Tür ab und schaltete das Licht aus. Der Flur war leer, still wie vor Beginn der Vorlesung.",
+      "continuedFrom": "Stille Prüfung",
+      "continuedFromId": "tp_17889392258520000042",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lezione che finisce",
+          "desc": "Studenti lasciano l'aula dopo la lezione",
+          "icon": "🎓",
+          "vocab": [
+            {
+              "target": "svuotare",
+              "source": "leeren",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:svuotare",
+                "canonicalId": "it:vocab:svuotare",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "raccogliere",
+              "source": "sammeln",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:raccogliere",
+                "canonicalId": "it:vocab:raccogliere",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "professore",
+              "source": "der Professor",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:professore",
+                "canonicalId": "it:vocab:professore",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "scrivania",
+              "source": "der Schreibtisch",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:scrivania",
+                "canonicalId": "it:vocab:scrivania",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "chiudere",
+              "source": "schließen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:chiudere",
+                "canonicalId": "it:vocab:chiudere",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "corridoio",
+              "source": "der Flur",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:corridoio",
+                "canonicalId": "it:vocab:corridoio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "deserto",
+              "source": "leer",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:deserto",
+                "canonicalId": "it:vocab:deserto",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "silenzioso",
+              "source": "still",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:silenzioso",
+                "canonicalId": "it:vocab:silenzioso",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I banchi si svuotarono rapidamente.",
+              "source": "Die Bänke leerten sich rasch.",
+              "words": [
+                "I",
+                "banchi",
+                "si",
+                "svuotarono",
+                "rapidamente."
+              ]
+            },
+            {
+              "target": "Gli studenti raccolsero i propri effetti.",
+              "source": "Die Studierenden sammelten ihre Sachen.",
+              "words": [
+                "Gli",
+                "studenti",
+                "raccolsero",
+                "i",
+                "propri",
+                "effetti."
+              ]
+            },
+            {
+              "target": "Il professore rimase seduto alla sua scrivania.",
+              "source": "Der Professor blieb an seinem Schreibtisch sitzen.",
+              "words": [
+                "Il",
+                "professore",
+                "rimase",
+                "seduto",
+                "alla",
+                "sua",
+                "scrivania."
+              ]
+            },
+            {
+              "target": "Chiuse l’ultima porta a chiave.",
+              "source": "Er schloss die letzte Tür ab.",
+              "words": [
+                "Chiuse",
+                "l’ultima",
+                "porta",
+                "a",
+                "chiave."
+              ]
+            },
+            {
+              "target": "Il corridoio era deserto, silenzioso come prima.",
+              "source": "Der Flur war leer, still wie vor Beginn der Vorlesung.",
+              "words": [
+                "Il",
+                "corridoio",
+                "era",
+                "deserto,",
+                "silenzioso",
+                "come",
+                "prima."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1251,
+            "completionTokens": 570,
+            "ms": 191375,
+            "at": "2026-09-09T07:41:22.302Z"
+          }
+        },
+        {
+          "id": "ls_1788942605942_1_standard",
+          "title": "Leere Aula",
+          "desc": "Wörter für eine leere Klasse",
+          "icon": "🏫",
+          "vocab": [
+            {
+              "target": "l'aula",
+              "source": "die Klasse",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:aula",
+                "canonicalId": "it:vocab:aula",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il banco",
+              "source": "der Schreibtisch",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:banco",
+                "canonicalId": "it:vocab:banco",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il vuoto",
+              "source": "die Leere",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:vuoto",
+                "canonicalId": "it:vocab:vuoto",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la polvere",
+              "source": "der Staub",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:polvere",
+                "canonicalId": "it:vocab:polvere",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il corridoio",
+              "source": "der Flur",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:corridoio",
+                "canonicalId": "it:vocab:corridoio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la porta",
+              "source": "die Tür",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:porta",
+                "canonicalId": "it:vocab:porta",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il professore",
+              "source": "der Professor",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:professore",
+                "canonicalId": "it:vocab:professore",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la finestra",
+              "source": "das Fenster",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:finestra",
+                "canonicalId": "it:vocab:finestra",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "L'aula è vuota.",
+              "source": "Der Raum ist leer.",
+              "words": [
+                "L'aula",
+                "è",
+                "vuota."
+              ]
+            },
+            {
+              "target": "Il professore chiude la porta.",
+              "source": "Der Professor schließt die Tür.",
+              "words": [
+                "Il",
+                "professore",
+                "chiude",
+                "la",
+                "porta."
+              ]
+            },
+            {
+              "target": "La polvere danza nella luce.",
+              "source": "Der Staub tanzt im Licht.",
+              "words": [
+                "La",
+                "polvere",
+                "danza",
+                "nella",
+                "luce."
+              ]
+            },
+            {
+              "target": "Il corridoio è silenzioso.",
+              "source": "Der Flur ist still.",
+              "words": [
+                "Il",
+                "corridoio",
+                "è",
+                "silenzioso."
+              ]
+            },
+            {
+              "target": "Le finestre sono alte.",
+              "source": "Die Fenster sind hoch.",
+              "words": [
+                "Le",
+                "finestre",
+                "sono",
+                "alte."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1138,
+            "completionTokens": 524,
+            "ms": 171806,
+            "at": "2026-09-09T08:30:05.942Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1788943000093_1_inflections",
+          "type": "inflections",
+          "title": "Italienische Verben im Präteritum",
+          "desc": "Lernen Sie die Formen des Passato Remoto.",
+          "icon": "📜",
+          "items": [
+            {
+              "sentence": "I banchi si svuotarono rapidamente.",
+              "surfaceForm": "svuotarono",
+              "translation": "Die Tische leerten sich schnell.",
+              "lemma": "svuotare",
+              "lemmaChoices": [
+                "svuotare",
+                "svuotano",
+                "svuotava",
+                "svuotato"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato Remoto, 3. Person Plural",
+              "formChoices": [
+                "Passato Remoto, 3. Person Plural",
+                "Passato Prossimo, 3. Person Plural",
+                "Imperfetto, 3. Person Plural",
+                "Passato Remoto, 3. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato Remoto von 'svuotare', 3. Person Plural, gebildet mit der Endung -arono."
+            },
+            {
+              "sentence": "Il professore rimase seduto alla sua scrivania, osservando il vuoto.",
+              "surfaceForm": "rimase",
+              "translation": "Der Professor blieb an seinem Schreibtisch sitzen und beobachtete die Leere.",
+              "lemma": "restare",
+              "lemmaChoices": [
+                "restare",
+                "resta",
+                "restava",
+                "rimasto"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato Remoto, 3. Person Singular",
+              "formChoices": [
+                "Passato Remoto, 3. Person Singular",
+                "Passato Prossimo, 3. Person Singular",
+                "Imperfetto, 3. Person Singular",
+                "Passato Remoto, 1. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato Remoto von 'restare', 3. Person Singular, eine unregelmäßige Form mit der Endung -ese."
+            },
+            {
+              "sentence": "Chiuse l’ultima porta a chiave e spense la luce.",
+              "surfaceForm": "spense",
+              "translation": "Er schloss die letzte Tür mit Schlüssel und schaltete das Licht aus.",
+              "lemma": "spegnere",
+              "lemmaChoices": [
+                "spegnere",
+                "spegne",
+                "spegneva",
+                "spento"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato Remoto, 3. Person Singular",
+              "formChoices": [
+                "Passato Remoto, 3. Person Singular",
+                "Passato Prossimo, 3. Person Singular",
+                "Imperfetto, 3. Person Singular",
+                "Futuro, 3. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato Remoto von 'spegnere', 3. Person Singular, unregelmäßige Form mit der Endung -ense."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 1,
+            "rejectReasons": {
+              "surfaceForm not found as a whole word in sentence": 1,
+              "surfaceForm equals lemma — not an inflection": 1
+            },
+            "promptTokens": 2486,
+            "completionTokens": 1146,
+            "ms": 394064,
+            "at": "2026-09-09T08:36:40.093Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 277368,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 5365,
+        "totalCompletionTokens": 2473,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 191374,
+            "promptTokens": 1251,
+            "completionTokens": 570
+          }
+        ],
+        "tokensByType": {
+          "recreate": 5294
+        }
+      },
+      "generatedAt": "2026-09-09T07:38:10.843Z",
+      "updatedAt": "2026-09-09T08:36:40.093Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17889392258520000042",
+      "topic": "Stille Prüfung",
+      "topicEmoji": "📝",
+      "userTopic": "kurzes testthema",
+      "userPrompt": "kurzes testthema",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "Il professore distribuì i fogli bianchi con calma. Gli studenti aprirono le penne e iniziarono a scrivere. La stanza era silenziosa, interrotta solo dal rumore della carta e dei tasti. Ognuno concentrava la propria attenzione sulle domande poste nella prima pagina. Il tempo scorreva veloce mentre le mani si muovevano rapidamente. Alla fine della campanella, tutti consegnarono il lavoro senza commenti.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Clear, factual, neutral tone — no narrative flourish.\n\nWrite a story for the topic: \"kurzes testthema\". Plain prose, no headings.",
+      "storyMeta": {
+        "type": "story",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 135,
+        "completionTokens": 92,
+        "ms": 16323,
+        "at": "2026-09-09T07:33:23.487Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 150,
+        "completionTokens": 93,
+        "ms": 22356,
+        "at": "2026-09-09T07:33:45.843Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Der Professor verteilte ruhig die weißen Blätter. Die Schüler öffneten ihre Stifte und begannen zu schreiben. Der Raum war still, unterbrochen nur vom Rauschen des Papiers und dem Klicken der Tasten. Jeder konzentrierte seine Aufmerksamkeit auf die Fragen auf der ersten Seite. Die Zeit verging schnell, während sich die Hände rasch bewegten. Am Ende des Glockenschlags reichten alle ihre Arbeiten ohne Kommentare ab.",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Im Klassenzimmer",
+          "desc": "Wortschatz und Sätze zum Thema Schule",
+          "icon": "🏫",
+          "vocab": [
+            {
+              "target": "distribuire",
+              "source": "verteilen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:distribuire",
+                "canonicalId": "it:vocab:distribuire",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "foglio",
+              "source": "das Blatt",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:foglio",
+                "canonicalId": "it:vocab:foglio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "studente",
+              "source": "der Schüler",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:studente",
+                "canonicalId": "it:vocab:studente",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "scrivere",
+              "source": "schreiben",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:scrivere",
+                "canonicalId": "it:vocab:scrivere",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "stanza",
+              "source": "der Raum",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:stanza",
+                "canonicalId": "it:vocab:stanza",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "silenzioso",
+              "source": "still",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:silenzioso",
+                "canonicalId": "it:vocab:silenzioso",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "tempo",
+              "source": "die Zeit",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:tempo",
+                "canonicalId": "it:vocab:tempo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "consegnare",
+              "source": "abgeben",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:consegnare",
+                "canonicalId": "it:vocab:consegnare",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Il professore distribuì i fogli bianchi con calma.",
+              "source": "Der Professor verteilte ruhig die weißen Blätter.",
+              "words": [
+                "Il",
+                "professore",
+                "distribuì",
+                "i",
+                "fogli",
+                "bianchi",
+                "con",
+                "calma."
+              ]
+            },
+            {
+              "target": "Gli studenti aprirono le penne e iniziarono a scrivere.",
+              "source": "Die Schüler öffneten ihre Stifte und begannen zu schreiben.",
+              "words": [
+                "Gli",
+                "studenti",
+                "aprirono",
+                "le",
+                "penne",
+                "e",
+                "iniziarono",
+                "a",
+                "scrivere."
+              ]
+            },
+            {
+              "target": "La stanza era silenziosa, interrotta solo dal rumore della carta.",
+              "source": "Der Raum war still, unterbrochen nur vom Rauschen des Papiers.",
+              "words": [
+                "La",
+                "stanza",
+                "era",
+                "silenziosa,",
+                "interrotta",
+                "solo",
+                "dal",
+                "rumore",
+                "della",
+                "carta."
+              ]
+            },
+            {
+              "target": "Il tempo scorreva veloce mentre le mani si muovevano rapidamente.",
+              "source": "Die Zeit verging schnell, während sich die Hände rasch bewegten.",
+              "words": [
+                "Il",
+                "tempo",
+                "scorreva",
+                "veloce",
+                "mentre",
+                "le",
+                "mani",
+                "si",
+                "muovevano",
+                "rapidamente."
+              ]
+            },
+            {
+              "target": "tutti consegnarono il lavoro senza commenti.",
+              "source": "alle reichten ihre Arbeiten ohne Kommentare ab.",
+              "words": [
+                "tutti",
+                "consegnarono",
+                "il",
+                "lavoro",
+                "senza",
+                "commenti."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1173,
+            "completionTokens": 476,
+            "ms": 178826,
+            "at": "2026-09-09T07:36:44.762Z"
+          }
+        },
+        {
+          "id": "ls_1788942039945_0_standard",
+          "title": "Stille Prüfung Grundlagen",
+          "desc": "Wortschatz für eine Klassenarbeit",
+          "icon": "📝",
+          "vocab": [
+            {
+              "target": "la penna",
+              "source": "der Stift",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:penna",
+                "canonicalId": "it:vocab:penna",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il foglio",
+              "source": "das Blatt",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocabulary:foglio",
+                "canonicalId": "it:vocab:foglio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "scrivere",
+              "source": "schreiben",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:scrivere",
+                "canonicalId": "it:vocab:scrivere",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il silenzio",
+              "source": "die Stille",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:silenzio",
+                "canonicalId": "it:vocab:silenzio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la domanda",
+              "source": "die Frage",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:domanda",
+                "canonicalId": "it:vocab:domanda",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il tempo",
+              "source": "die Zeit",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:tempo",
+                "canonicalId": "it:vocab:tempo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "consegnare",
+              "source": "abgeben",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:consegnare",
+                "canonicalId": "it:vocab:consegnare",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la campanella",
+              "source": "das Schulklingeln",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:campanella",
+                "canonicalId": "it:vocab:campanella",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Lo studente apre la penna.",
+              "source": "Der Schüler öffnet den Stift.",
+              "words": [
+                "Lo",
+                "studente",
+                "apre",
+                "la",
+                "penna."
+              ]
+            },
+            {
+              "target": "Scrivo sul foglio bianco.",
+              "source": "Ich schreibe auf das weiße Blatt.",
+              "words": [
+                "Scrivo",
+                "sul",
+                "foglio",
+                "bianco."
+              ]
+            },
+            {
+              "target": "C'è un grande silenzio.",
+              "source": "Es gibt eine große Stille.",
+              "words": [
+                "C'è",
+                "un",
+                "grande",
+                "silenzio."
+              ]
+            },
+            {
+              "target": "La domanda è difficile.",
+              "source": "Die Frage ist schwierig.",
+              "words": [
+                "La",
+                "domanda",
+                "è",
+                "difficile."
+              ]
+            },
+            {
+              "target": "Suona la campanella.",
+              "source": "Das Schulklingeln ertönt.",
+              "words": [
+                "Suona",
+                "la",
+                "campanella."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1110,
+            "completionTokens": 530,
+            "ms": 162757,
+            "at": "2026-09-09T08:20:39.945Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1788942433966_0_inflections",
+          "type": "inflections",
+          "title": "Verben im Italienischen",
+          "desc": "Lernung der Verbformen",
+          "icon": "📝",
+          "items": [
+            {
+              "sentence": "Il professore distribuì i fogli bianchi con calma.",
+              "surfaceForm": "distribuì",
+              "translation": "Der Professor verteilte die weißen Blätter mit Ruhe.",
+              "lemma": "distribuire",
+              "lemmaChoices": [
+                "distribuire",
+                "distribuisce",
+                "distribuito",
+                "distribuendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato remoto, 3. Person Singular",
+              "formChoices": [
+                "Passato remoto, 3. Person Singular",
+                "Passato prossimo, 3. Person Singular",
+                "Imperfetto, 3. Person Singular",
+                "Futuro semplice, 3. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato remoto von 'distribuire', 3. Person Singular, gebildet mit der Endung -ì."
+            },
+            {
+              "sentence": "Gli studenti aprirono le penne e iniziarono a scrivere.",
+              "surfaceForm": "aprirono",
+              "translation": "Die Studenten öffneten die Stifte und begannen zu schreiben.",
+              "lemma": "aprire",
+              "lemmaChoices": [
+                "aprire",
+                "apre",
+                "aperto",
+                "aprendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato remoto, 3. Person Plural",
+              "formChoices": [
+                "Passato remoto, 3. Person Plural",
+                "Passato prossimo, 3. Person Plural",
+                "Imperfetto, 3. Person Plural",
+                "Futuro semplice, 3. Person Plural"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato remoto von 'aprire', 3. Person Plural, gebildet mit der Endung -ono."
+            },
+            {
+              "sentence": "La stanza era silenziosa, interrotta solo dal rumore della carta e dei tasti.",
+              "surfaceForm": "era",
+              "translation": "Der Raum war still, unterbrochen nur vom Geräusch des Papiers und der Tasten.",
+              "lemma": "essere",
+              "lemmaChoices": [
+                "essere",
+                "è",
+                "stato",
+                "essendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Imperfetto, 3. Person Singular",
+              "formChoices": [
+                "Imperfetto, 3. Person Singular",
+                "Passato remoto, 3. Person Singular",
+                "Passato prossimo, 3. Person Singular",
+                "Futuro semplice, 3. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Imperfetto von 'essere', 3. Person Singular, eine unregelmäßige Form."
+            },
+            {
+              "sentence": "Il tempo scorreva veloce mentre le mani si muovevano rapidamente.",
+              "surfaceForm": "scorreva",
+              "translation": "Die Zeit verging schnell, während sich die Hände schnell bewegten.",
+              "lemma": "scorrere",
+              "lemmaChoices": [
+                "scorrere",
+                "scorre",
+                "corso",
+                "scorrendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Imperfetto, 3. Person Singular",
+              "formChoices": [
+                "Imperfetto, 3. Person Singular",
+                "Passato remoto, 3. Person Singular",
+                "Passato prossimo, 3. Person Singular",
+                "Futuro semplice, 3. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Imperfetto von 'scorrere', 3. Person Singular, gebildet mit der Endung -eva."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 2504,
+            "completionTokens": 1195,
+            "ms": 393940,
+            "at": "2026-09-09T08:27:13.966Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 217598,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": "qwen3.6:35b-a3b",
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 5072,
+        "totalCompletionTokens": 2386,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 178825,
+            "promptTokens": 1173,
+            "completionTokens": 476
+          }
+        ],
+        "tokensByType": {
+          "recreate": 5339
+        }
+      },
+      "generatedAt": "2026-09-09T07:33:45.852Z",
+      "updatedAt": "2026-09-09T08:27:13.966Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17888516368920000117",
+      "topic": "Der Zug der Freiheit",
+      "topicEmoji": "🚂",
+      "userTopic": "A fine novembre dello stesso anno, ancora a Merano,…",
+      "userPrompt": "A fine novembre dello stesso anno, ancora a Merano,…\n\n[story]\nA fine novembre dello stesso anno, ancora a Merano, Mattarella è tornato sul tema in occasione del centenario del Trattato di Saint-Germain e del cinquantesimo anniversario del «Pacchetto». Ha riconosciuto che l’attuazione dell’autonomia ha seguito «un percorso complesso, tortuoso, non sempre veloce», sottolineando però i risultati raggiunti. «Il treno dell’autonomia dell’Alto Adige non soltanto procede, ma ha compiuto un lungo e positivo percorso —  aveva dichiarato —, l’Alto Adige costituisce un esempio di autonomia a livello mondiale, che assicura non soltanto la serena convivenza, ma lo sviluppo armonioso di questo straordinario territorio, portando benessere e prosperità anche nelle sue aree più periferiche.». Domani, dopo l’incontro con Van der Bellen a cui parteciperà anche il presidente della Provincia di Bolzano Arno Kompatscher, nel pomeriggio il Capo dello Stato  si sposterà a Trento per una cerimonia al Teatro Sociale dedicata al tema «1946-2026: 80 anni di una Repubblica e di un’Autonomia speciale». Sarà anche un momento per riflettere sul valore dell’autonomia speciale e sul ruolo che è chiamata a svolgere nel presente.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 170,
+      "story": "A fine novembre dello stesso anno, ancora a Merano, Mattarella è tornato sul tema in occasione del centenario del Trattato di Saint-Germain e del cinquantesimo anniversario del «Pacchetto». Ha riconosciuto che l’attuazione dell’autonomia ha seguito «un percorso complesso, tortuoso, non sempre veloce», sottolineando però i risultati raggiunti. «Il treno dell’autonomia dell’Alto Adige non soltanto procede, ma ha compiuto un lungo e positivo percorso —  aveva dichiarato —, l’Alto Adige costituisce un esempio di autonomia a livello mondiale, che assicura non soltanto la serena convivenza, ma lo sviluppo armonioso di questo straordinario territorio, portando benessere e prosperità anche nelle sue aree più periferiche.». Domani, dopo l’incontro con Van der Bellen a cui parteciperà anche il presidente della Provincia di Bolzano Arno Kompatscher, nel pomeriggio il Capo dello Stato  si sposterà a Trento per una cerimonia al Teatro Sociale dedicata al tema «1946-2026: 80 anni di una Repubblica e di un’Autonomia speciale». Sarà anche un momento per riflettere sul valore dell’autonomia speciale e sul ruolo che è chiamata a svolgere nel presente.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-09-08T07:12:29.967Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 324,
+        "completionTokens": 291,
+        "ms": 86924,
+        "at": "2026-09-08T07:13:56.891Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Ende November desselben Jahres kehrte Mattarella in Meran anlässlich des 100. Jahrestags des Vertrags von Saint-Germain und des 50. Jahrestags des „Pakets“ erneut zu diesem Thema zurück. Er erkannte an, dass die Umsetzung der Autonomie „einen komplexen, gewundenen und nicht immer schnellen Weg“ genommen habe, betonte jedoch die erreichten Ergebnisse. „Der Zug der Autonomie Südtirols schreitet nicht nur voran, sondern hat einen langen und positiven Weg zurückgelegt – hatte er erklärt –, Südtirol stellt ein weltweit anerkanntes Beispiel für Autonomie dar, das nicht nur das harmonische Zusammenleben sichert, sondern auch die ausgewogene Entwicklung dieses außergewöhnlichen Territoriums fördert und Wohlstand und Prosperität auch in seinen abgelegensten Gebieten bringt.“ Morgen wird der Staatspräsident nach dem Treffen mit Van der Bellen, an dem auch der Landeshauptmann von Bozen Arno Kompatscher teilnehmen wird, am Nachmittag nach Trient reisen, wo im Teatro Sociale eine Zeremonie zum Thema „1946–2026: 80 Jahre einer Republik und einer besonderen Autonomie“ stattfindet. Dies wird auch ein Moment sein, um über den Wert der Sonderautonomie und die Rolle nachzudenken, die sie in der Gegenwart zu erfüllen hat.",
+      "userStory": "A fine novembre dello stesso anno, ancora a Merano, Mattarella è tornato sul tema in occasione del centenario del Trattato di Saint-Germain e del cinquantesimo anniversario del «Pacchetto». Ha riconosciuto che l’attuazione dell’autonomia ha seguito «un percorso complesso, tortuoso, non sempre veloce», sottolineando però i risultati raggiunti. «Il treno dell’autonomia dell’Alto Adige non soltanto procede, ma ha compiuto un lungo e positivo percorso —  aveva dichiarato —, l’Alto Adige costituisce un esempio di autonomia a livello mondiale, che assicura non soltanto la serena convivenza, ma lo sviluppo armonioso di questo straordinario territorio, portando benessere e prosperità anche nelle sue aree più periferiche.». Domani, dopo l’incontro con Van der Bellen a cui parteciperà anche il presidente della Provincia di Bolzano Arno Kompatscher, nel pomeriggio il Capo dello Stato  si sposterà a Trento per una cerimonia al Teatro Sociale dedicata al tema «1946-2026: 80 anni di una Repubblica e di un’Autonomia speciale». Sarà anche un momento per riflettere sul valore dell’autonomia speciale e sul ruolo che è chiamata a svolgere nel presente.",
+      "continuedFrom": "Verantwortung und Demokratie",
+      "continuedFromId": "tp_17888505216240000062",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Autonomia e storia",
+          "desc": "Mattarella parla di autonomia a Merano",
+          "icon": "🚂",
+          "vocab": [
+            {
+              "target": "tornare",
+              "source": "zurückkehren",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:tornare",
+                "canonicalId": "it:vocab:tornare",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "tema",
+              "source": "Thema",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:tema",
+                "canonicalId": "it:vocab:tema",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "anniversario",
+              "source": "Jahrestag",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:anniversario",
+                "canonicalId": "it:vocab:anniversario",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "riconoscere",
+              "source": "anerkennen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:riconoscere",
+                "canonicalId": "it:vocab:riconoscere",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "attuazione",
+              "source": "Umsetzung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:attuazione",
+                "canonicalId": "it:vocab:attuazione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "percorso",
+              "source": "Weg",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:percorso",
+                "canonicalId": "it:vocab:percorso",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "risultato",
+              "source": "Ergebnis",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:risultato",
+                "canonicalId": "it:vocab:risultato",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "spostarsi",
+              "source": "sich versetzen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:spostarsi",
+                "canonicalId": "it:vocab:spostarsi",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Mattarella è tornato sul tema.",
+              "source": "Mattarella kehrte zum Thema zurück.",
+              "words": [
+                "Mattarella",
+                "è",
+                "tornato",
+                "sul",
+                "tema."
+              ]
+            },
+            {
+              "target": "Ha riconosciuto che l’attuazione ha seguito un percorso complesso.",
+              "source": "Er erkannte an, dass die Umsetzung einen komplexen Weg genommen habe.",
+              "words": [
+                "Ha",
+                "riconosciuto",
+                "che",
+                "l’attuazione",
+                "ha",
+                "seguito",
+                "un",
+                "percorso",
+                "complesso."
+              ]
+            },
+            {
+              "target": "Sottolineando però i risultati raggiunti.",
+              "source": "betonte jedoch die erreichten Ergebnisse.",
+              "words": [
+                "Sottolineando",
+                "però",
+                "i",
+                "risultati",
+                "raggiunti."
+              ]
+            },
+            {
+              "target": "Il treno dell’autonomia procede.",
+              "source": "Der Zug der Autonomie schreitet voran.",
+              "words": [
+                "Il",
+                "treno",
+                "dell’autonomia",
+                "procede."
+              ]
+            },
+            {
+              "target": "Domani il Capo dello Stato si sposterà a Trento.",
+              "source": "Morgen wird der Staatspräsident nach Trient reisen.",
+              "words": [
+                "Domani",
+                "il",
+                "Capo",
+                "dello",
+                "Stato",
+                "si",
+                "sposterà",
+                "a",
+                "Trento."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1552,
+            "completionTokens": 578,
+            "ms": 214760,
+            "at": "2026-09-08T07:17:31.790Z"
+          }
+        },
+        {
+          "id": 6,
+          "type": "word_forms",
+          "title": "Autonomia Alto Adige",
+          "desc": "Esercizi di forme lessicali",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "Mattarella è tornato sul tema in occasione del ___ del Trattato di Saint-Germain e del cinquantesimo anniversario del «Pacchetto».",
+              "translation": "Mattarella ist zum Thema im Anlass des hundertsten Jahrestags des Vertrags von Saint-Germain und des fünfzigsten Jahrestags des 'Pakets' zurückgekehrt.",
+              "choices": [
+                "centenario",
+                "cinquantenario"
+              ],
+              "correctIndex": 0,
+              "explanation": "Zahlwort „centenario“"
+            },
+            {
+              "sentence": "Ha riconosciuto che l’attuazione dell’autonomia ha seguito «un percorso ___, tortuoso, non sempre veloce», sottolineando però i risultati raggiunti.",
+              "translation": "Er erkannte an, dass die Umsetzung der Autonomie „einen komplexen, gewundenen, nicht immer schnellen Weg“ eingeschlagen hat, betonte aber die erreichten Ergebnisse.",
+              "choices": [
+                "complesso",
+                "complessa"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genus von „percorso“"
+            },
+            {
+              "sentence": "«Il treno dell’autonomia dell’Alto Adige non soltanto procede, ma ha compiuto un lungo e positivo percorso — aveva dichiarato —, l’Alto Adige costituisce un esempio di autonomia a livello ___, che assicura non soltanto la serena convivenza, ma lo sviluppo armonioso di questo straordinario territorio, portando benessere e prosperità anche nelle sue aree più periferiche.».",
+              "translation": "„Der Zug der Autonomie Südtirols schreitet nicht nur voran, sondern hat einen langen und positiven Weg zurückgelegt“ — hatte er erklärt —, Südtirol ist ein Beispiel für Autonomie auf globaler Ebene, das nicht nur das friedliche Zusammenleben sichert, sondern die harmonische Entwicklung dieses außergewöhnlichen Territoriums, was auch in seinen abgelegensten Gebieten Wohlstand und Prosperität bringt.“",
+              "choices": [
+                "mondiale",
+                "mondiali"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genus von „livello“"
+            },
+            {
+              "sentence": "Domani, dopo l’incontro con Van der Bellen a cui parteciperà anche il presidente della Provincia di Bolzano Arno Kompatscher, nel pomeriggio il Capo dello Stato si sposterà a Trento per una cerimonia al Teatro Sociale ___ al tema «1946-2026: 80 anni di una Repubblica e di un’Autonomia speciale».",
+              "translation": "Morgen, nach dem Treffen mit Van der Bellen, an dem auch der Präsident der Provinz Bozen Arno Kompatscher teilnehmen wird, wird der Staatschef am Nachmittag nach Trient verschieben für eine Zeremonie im Teatro Sociale, die dem Thema „1946-2026: 80 Jahre einer Republik und einer besonderen Autonomie“ gewidmet ist.",
+              "choices": [
+                "dedicata",
+                "dedicato"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genus von „cerimonia“"
+            },
+            {
+              "sentence": "Sarà anche un momento per riflettere sul valore dell’autonomia speciale e sul ruolo che è ___ a svolgere nel presente.",
+              "translation": "Es wird auch ein Moment sein, um über den Wert der besonderen Autonomie und die Rolle nachzudenken, die es in der Gegenwart zu erfüllen hat.",
+              "choices": [
+                "chiamata",
+                "chiamato"
+              ],
+              "correctIndex": 0,
+              "explanation": "Genus von „ruolo“"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1632,
+            "completionTokens": 867,
+            "ms": 275088,
+            "at": "2026-09-08T07:22:06.879Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 7,
+          "type": "inflections",
+          "title": "Italienische Flexion üben",
+          "desc": "Lernwörter aus dem Text deklinieren und konjugieren.",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "A fine novembre dello stesso anno, ancora a Merano, Mattarella è tornato sul tema in occasione del centenario del Trattato di Saint-Germain e del cinquantesimo anniversario del «Pacchetto».",
+              "surfaceForm": "tornato",
+              "translation": "Am Ende desselben Jahres im November, noch in Meran, ist Mattarella auf das Thema zurückgekommen anlässlich des hundertsten Jahrestags des Vertrags von Saint-Germain und des fünfzigsten Jahrestags des „Pakets“.",
+              "lemma": "tornare",
+              "lemmaChoices": [
+                "tornare",
+                "tornato",
+                "tornava",
+                "tornerà"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Partizip Perfekt",
+              "formChoices": [
+                "Partizip Perfekt",
+                "Infinitiv",
+                "Partizip Präsens",
+                "Konjunktiv"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'tornare', gebildet mit der Endung -ato."
+            },
+            {
+              "sentence": "Ha riconosciuto che l’attuazione dell’autonomia ha seguito «un percorso complesso, tortuoso, non sempre veloce», sottolineando però i risultati raggiunti.",
+              "surfaceForm": "riconosciuto",
+              "translation": "Er erkannte an, dass die Umsetzung der Autonomie „einen komplexen, gewundenen, nicht immer schnellen Weg“ verfolgt hat, betonte aber die erreichten Ergebnisse.",
+              "lemma": "riconoscere",
+              "lemmaChoices": [
+                "riconoscere",
+                "riconosciuto",
+                "riconosce",
+                "riconoscerà"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Partizip Perfekt",
+              "formChoices": [
+                "Partizip Perfekt",
+                "Infinitiv",
+                "Partizip Präsens",
+                "Konjunktiv"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'riconoscere', gebildet mit der Endung -uto."
+            },
+            {
+              "sentence": "«Il treno dell’autonomia dell’Alto Adige non soltanto procede, ma ha compiuto un lungo e positivo percorso — aveva dichiarato —, l’Alto Adige costituisce un esempio di autonomia a livello mondiale, che assicura non soltanto la serena convivenza, ma lo sviluppo armonioso di questo straordinario territorio, portando benessere e prosperità anche nelle sue aree più periferiche.».",
+              "surfaceForm": "procede",
+              "translation": "„Der Zug der Autonomie Südtirols schreitet nicht nur voran, sondern hat einen langen und positiven Weg zurückgelegt — hatte er erklärt —, Südtirol ist ein Beispiel für Autonomie auf globaler Ebene, das nicht nur das friedliche Zusammenleben sichert, sondern die harmonische Entwicklung dieses außergewöhnlichen Territoriums, das auch in seinen abgelegensten Gebieten Wohlstand und Prosperität bringt.“",
+              "lemma": "procedere",
+              "lemmaChoices": [
+                "procedere",
+                "procede",
+                "procedeva",
+                "procederà"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Präsens, 3. Person Singular",
+              "formChoices": [
+                "Präsens, 3. Person Singular",
+                "Präsens, 1. Person Singular",
+                "Präsens, 3. Person Plural",
+                "Imperfekt, 3. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Präsens von 'procedere', 3. Person Singular, gebildet mit der Endung -e."
+            },
+            {
+              "sentence": "«Il treno dell’autonomia dell’Alto Adige non soltanto procede, ma ha compiuto un lungo e positivo percorso — aveva dichiarato —, l’Alto Adige costituisce un esempio di autonomia a livello mondiale, che assicura non soltanto la serena convivenza, ma lo sviluppo armonioso di questo straordinario territorio, portando benessere e prosperità anche nelle sue aree più periferiche.».",
+              "surfaceForm": "costituisce",
+              "translation": "„Der Zug der Autonomie Südtirols schreitet nicht nur voran, sondern hat einen langen und positiven Weg zurückgelegt — hatte er erklärt —, Südtirol ist ein Beispiel für Autonomie auf globaler Ebene, das nicht nur das friedliche Zusammenleben sichert, sondern die harmonische Entwicklung dieses außergewöhnlichen Territoriums, das auch in seinen abgelegensten Gebieten Wohlstand und Prosperität bringt.“",
+              "lemma": "costituire",
+              "lemmaChoices": [
+                "costituire",
+                "costituisce",
+                "costituiva",
+                "costituirà"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Präsens, 3. Person Singular",
+              "formChoices": [
+                "Präsens, 3. Person Singular",
+                "Präsens, 1. Person Singular",
+                "Präsens, 3. Person Plural",
+                "Imperfekt, 3. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Präsens von 'costituire', 3. Person Singular, gebildet mit der Endung -uisce."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 2636,
+            "completionTokens": 1526,
+            "ms": 490588,
+            "at": "2026-09-08T07:30:17.739Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 9,
+          "type": "comprehension",
+          "title": "Autonomie im Trentino-Südtirol",
+          "desc": "Verstehen Sie den Text über die Bedeutung der autonomen Regelung in Südtirol?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum treffen sich Sergio Mattarella und Alexander Van der Bellen am Kursaal in Meran?",
+              "choices": [
+                "Um den 80. Jahrestag des Abkommens von Paris zu begehen.",
+                "Um die Gründung der Republik Italien zu feiern.",
+                "Um über die Grenzen zwischen Österreich und Deutschland zu sprechen.",
+                "Um das Ende des Zweiten Weltkriegs zu gedenken."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text beginnt mit dem Hinweis auf den 80. Jahrestag des Abkommens von Paris am 5. September 1946 und beschreibt die bevorstehende Begegnung der Staatspräsidenten in Meran."
+            },
+            {
+              "q": "Wie hat Sergio Mattarella die Autonomie Südtirols in seinen früheren Reden charakterisiert?",
+              "choices": [
+                "Als ein reines finanzielles Problem, das gelöst werden muss.",
+                "Als einen Schutzschild gegen ausländische Einmischung.",
+                "Als ein positives Investitionsvorhaben und Werkzeug der Zusammenarbeit.",
+                "Als eine isolierte Lösung ohne Bezug zur europäischen Einheit."
+              ],
+              "correctIndex": 2,
+              "why": "Mattarella betonte, dass Autonomie kein 'Buchhaltungsfaktum' oder 'Schild' sein darf, sondern ein 'positives Investment', das auf Verantwortung und Zusammenarbeit basiert."
+            },
+            {
+              "q": "Welche Entwicklung beschreibt Mattarella bezüglich der Umsetzung der Autonomie?",
+              "choices": [
+                "Sie war schnell und ohne Schwierigkeiten vonstattengegangen.",
+                "Sie verlief komplex, gewunden und nicht immer schnell, aber mit positiven Ergebnissen.",
+                "Sie wurde von der internationalen Gemeinschaft abgelehnt.",
+                "Sie führte zu einem Rückgang des Wohlstands in den peripheren Gebieten."
+              ],
+              "correctIndex": 1,
+              "why": "Mattarella erkannte an, dass der Weg 'komplex und gewunden' war, betonte jedoch, dass der 'Zug der Autonomie' einen langen, positiven Weg zurückgelegt hat und Wohlstand bringt."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1303,
+            "completionTokens": 550,
+            "ms": 197142,
+            "at": "2026-09-08T07:33:35.027Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 301823,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1876,
+        "totalCompletionTokens": 869,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 214758,
+            "promptTokens": 1552,
+            "completionTokens": 578
+          }
+        ]
+      },
+      "generatedAt": "2026-09-08T07:13:56.892Z",
+      "updatedAt": "2026-09-08T07:36:06.204Z",
+      "createdBy": "admin",
+      "source": {
+        "author": "Andrea Dalla Serra",
+        "url": "https://corrieredellaltoadige.corriere.it/notizie/politica/26_settembre_04/accordo-de-gasperi-gruber-tutto-pronto-per-l-arrivo-di-mattarella-alto-adige-esempio-mondiale-di-autonomia-1d91fdd6-658f-4e92-ac79-0f14299e4xlk.shtml",
+        "note": "Corriere della Sera · 2026-09-04"
+      }
+    },
+    {
+      "id": "tp_17888505216240000062",
+      "topic": "Verantwortung und Demokratie",
+      "topicEmoji": "⚖️",
+      "userTopic": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…",
+      "userPrompt": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…\n\n[story]\nRichiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a  Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 195,
+      "story": "Richiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a  Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-09-08T06:53:36.218Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 363,
+        "completionTokens": 342,
+        "ms": 105405,
+        "at": "2026-09-08T06:55:21.623Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Unter Bezugnahme auf die Figur von Alcide De Gasperi hatte er außerdem bemerkt, dass die Autonomie nicht nur als „eine buchhalterische Angelegenheit“ oder als „Schild gegen mutmaßliche Eingriffe in andere Zuständigkeitsbereiche“ betrachtet werden darf, sondern als „positive Investition“ verstanden werden muss. Um sie zu verwirklichen, seien, fügte er hinzu, ein Mehr an Verantwortung und eine demokratische Teilhabe am gesellschaftlichen Leben erforderlich. Mattarella bezeichnete die Erfahrung Südtirols zudem als „ein Unikum“ im europäischen Kontext. Im Juni 2017 erinnerte Mattarella in Meran anlässlich des Jahrestags der Beilegung der Südtirol-Frage und des zweiten Statuts an den Weg, der zum Aufbau der Autonomie geführt hatte. Ein Weg, der auf „Offenheit, Zuhören, gegenseitigem Respekt, Verständnis und Dialog“ beruhte. Nach Ansicht des Präsidenten habe der Schutz der Bevölkerungen und Identitäten in das umfassendere Projekt des europäischen Friedens und der Integration eingebettet sein. Das Statut stelle eine „klare und dynamische Rahmenbedingung“ dar, während Südtirol „eine echte europäische Avantgarde“ repräsentiert habe. Im Juli 2019 behandelte Mattarella während seines Staatsbesuchs in Österreich das Thema Autonomie gemeinsam mit Van der Bellen. Er bezeichnete Südtirol als eine Region, die „Österreich und Italien verbindet“, und erinnerte daran, dass das Modell der Autonomie „weltweit geschätzt wird und als Vorbild angesehen“ werde.",
+      "userStory": "Richiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a  Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+      "continuedFrom": "Jubiläum der Autonomie",
+      "continuedFromId": "tp_17888207651760000028",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Autonomia e identità",
+          "desc": "L'autonomia altoatesina come modello europeo",
+          "icon": "🏔️",
+          "vocab": [
+            {
+              "target": "l'autonomia",
+              "source": "die Autonomie",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:autonomia",
+                "canonicalId": "it:vocab:autonomia",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T06:50:46.024Z"
+            },
+            {
+              "target": "l'investimento",
+              "source": "die Investition",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:investimento",
+                "canonicalId": "it:vocab:investimento",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T06:50:49.518Z"
+            },
+            {
+              "target": "la responsabilità",
+              "source": "die Verantwortung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:responsabilità",
+                "canonicalId": "it:vocab:responsabilità",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T06:50:52.046Z"
+            },
+            {
+              "target": "la partecipazione",
+              "source": "die Teilhabe",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:partecipazione",
+                "canonicalId": "it:vocab:partecipazione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T06:50:55.242Z"
+            },
+            {
+              "target": "l'esperienza",
+              "source": "die Erfahrung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:esperienza",
+                "canonicalId": "it:vocab:esperienza",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T06:50:58.924Z"
+            },
+            {
+              "target": "il percorso",
+              "source": "der Weg",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:percorso",
+                "canonicalId": "it:vocab:percorso",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T06:51:00.648Z"
+            },
+            {
+              "target": "tutela",
+              "source": "der Schutz",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:tutela",
+                "canonicalId": "it:vocab:tutela",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "lo statuto",
+              "source": "das Statut",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:statuto",
+                "canonicalId": "it:vocab:statuto",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T06:51:25.953Z"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "L'autonomia deve rappresentare un investimento in positivo.",
+              "source": "Die Autonomie muss als positive Investition verstanden werden.",
+              "skillId": "it:sent:01",
+              "words": [
+                "L'autonomia",
+                "deve",
+                "rappresentare",
+                "un",
+                "investimento",
+                "in",
+                "positivo."
+              ]
+            },
+            {
+              "target": "Sono necessari un supplemento di responsabilità e una partecipazione democratica.",
+              "source": "Es sind mehr Verantwortung und eine demokratische Beteiligung erforderlich.",
+              "skillId": "it:sent:02",
+              "words": [
+                "Sono",
+                "necessari",
+                "un",
+                "supplemento",
+                "di",
+                "responsabilità",
+                "e",
+                "una",
+                "partecipazione",
+                "democratica."
+              ],
+              "editedAt": "2026-09-11T11:41:57.778Z"
+            },
+            {
+              "target": "Mattarella ha definito l'esperienza altoatesina un unicum.",
+              "source": "Mattarella bezeichnete die Erfahrung Südtirols zudem als ein Unikum.",
+              "skillId": "it:sent:03",
+              "words": [
+                "Mattarella",
+                "ha",
+                "definito",
+                "l'esperienza",
+                "altoatesina",
+                "un",
+                "unicum."
+              ]
+            },
+            {
+              "target": "Il percorso è fondato su apertura, ascolto e rispetto.",
+              "source": "Der Weg beruht auf Offenheit, Zuhören und gegenseitigem Respekt.",
+              "skillId": "it:sent:04",
+              "words": [
+                "Il",
+                "percorso",
+                "è",
+                "fondato",
+                "su",
+                "apertura,",
+                "ascolto",
+                "e",
+                "rispetto."
+              ]
+            },
+            {
+              "target": "Lo Statuto costituisce una cornice chiara e dinamica.",
+              "source": "Das Statut stellt eine klare und dynamische Rahmenbedingung dar.",
+              "skillId": "it:sent:05",
+              "words": [
+                "Lo",
+                "Statuto",
+                "costituisce",
+                "una",
+                "cornice",
+                "chiara",
+                "e",
+                "dinamica."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1645,
+            "completionTokens": 669,
+            "ms": 227839,
+            "at": "2026-09-08T06:59:09.601Z"
+          }
+        },
+        {
+          "id": 6,
+          "type": "word_forms",
+          "title": "Autonomia Alto Adige",
+          "desc": "Esercizi sulle forme grammaticali",
+          "icon": "📜",
+          "items": [
+            {
+              "sentence": "Mattarella ha definito l’esperienza altoatesina ___ nel panorama europeo.",
+              "translation": "Mattarella hat die südtirolerische Erfahrung als ein Unikum im europäischen Panorama definiert.",
+              "choices": [
+                "un",
+                "uno",
+                "una"
+              ],
+              "correctIndex": 1,
+              "explanation": "Articolo prima di 'u' + consonante"
+            },
+            {
+              "sentence": "Secondo il presidente, la tutela delle popolazioni e delle identità si è ___ nel più ampio progetto di pace e integrazione europea.",
+              "translation": "Nach Ansicht des Präsidenten hat sich der Schutz der Völker und Identitäten in das umfassendere Projekt des europäischen Friedens und der Integration eingefügt.",
+              "choices": [
+                "inserita",
+                "inserito",
+                "inseriti"
+              ],
+              "correctIndex": 0,
+              "explanation": "Concordanza con 'tutela' (femminile singolare)"
+            },
+            {
+              "sentence": "Lo Statuto, aveva evidenziato, costituisce una cornice chiara e dinamica, mentre l’Alto Adige ha ___ un’autentica avanguardia europea.",
+              "translation": "Das Statut, wie er hervorhob, stellt einen klaren und dynamischen Rahmen dar, während Südtirol eine echte europäische Avantgarde repräsentiert hat.",
+              "choices": [
+                "rappresentato",
+                "rappresentata",
+                "rappresentati"
+              ],
+              "correctIndex": 0,
+              "explanation": "Participio passato con 'avere' e oggetto prima del verbo"
+            },
+            {
+              "sentence": "Ha definito l’Alto Adige una terra che lega Austria e Italia e ha ricordato che il modello di autonomia è ___ in tutto il mondo e visto come modello cui ispirarsi.",
+              "translation": "Er hat Südtirol als ein Land definiert, das Österreich und Italien verbindet, und daran erinnert, dass das Autonomiemodell weltweit geschätzt wird und als Vorbild dient.",
+              "choices": [
+                "apprezzato",
+                "apprezzata",
+                "apprezzati"
+              ],
+              "correctIndex": 0,
+              "explanation": "Aggettivo/participio riferito a 'modello' (maschile singolare)"
+            },
+            {
+              "sentence": "Mattarella ha inoltre ___ l’esperienza altoatesina un unicum nel panorama europeo.",
+              "translation": "Mattarella hat außerdem die südtirolerische Erfahrung als ein Unikum im europäischen Panorama definiert.",
+              "choices": [
+                "definito",
+                "definita",
+                "definire"
+              ],
+              "correctIndex": 0,
+              "explanation": "Ausilio 'avere' con soggetto maschile singolare"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1671,
+            "completionTokens": 667,
+            "ms": 225906,
+            "at": "2026-09-08T07:02:55.508Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 7,
+          "type": "inflections",
+          "title": "Italienische Flexion üben",
+          "desc": "Lemmata und Formen erkennen",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "Richiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo».",
+              "surfaceForm": "presunte",
+              "translation": "Indem er die Figur Alcide De Gasperis heraufbeschwor, hatte außerdem beobachtet, dass die Autonomie nicht nur als „ein buchhalterischer Fakt“ oder „ein Schild gegen mutmaßliche Invasionen“ betrachtet werden kann, sondern „eine positive Investition“ darstellen muss.",
+              "lemma": "presunto",
+              "lemmaChoices": [
+                "presunto",
+                "presunta",
+                "presunti",
+                "presunte"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Plural, feminin",
+              "formChoices": [
+                "Plural, feminin",
+                "Singular, feminin",
+                "Plural, maskulin",
+                "Singular, maskulin"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plural Femininum von 'presunto', gebildet durch die Endung -e."
+            },
+            {
+              "sentence": "Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale.",
+              "surfaceForm": "necessari",
+              "translation": "Um sie zu verwirklichen, fügte er hinzu, sind „ein Zusatz an Verantwortung“ und eine demokratische Teilnahme am sozialen Leben erforderlich.",
+              "lemma": "necessario",
+              "lemmaChoices": [
+                "necessario",
+                "necessaria",
+                "necessarie",
+                "necessari"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Plural, maskulin",
+              "formChoices": [
+                "Plural, maskulin",
+                "Singular, maskulin",
+                "Plural, feminin",
+                "Singular, feminin"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plural Maskulinum von 'necessario', gebildet durch die Endung -i."
+            },
+            {
+              "sentence": "Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo.",
+              "surfaceForm": "definito",
+              "translation": "Mattarella hat das altoadige Erlebnis außerdem als „ein Unikat“ im europäischen Panorama definiert.",
+              "lemma": "definire",
+              "lemmaChoices": [
+                "definire",
+                "definisce",
+                "definito",
+                "definendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Partizip Perfekt",
+              "formChoices": [
+                "Partizip Perfekt",
+                "Infinitiv",
+                "Partizip Präsens",
+                "Konjunktiv"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'definire', verwendet in der zusammengesetzten Zeit mit 'ha'."
+            },
+            {
+              "sentence": "Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea».",
+              "surfaceForm": "rappresentato",
+              "translation": "Das Statut, hatte er hervorgehoben, bildet einen „klaren und dynamischen Rahmen“, während das Alto Adige eine „echte europäische Avantgarde“ dargestellt hat.",
+              "lemma": "rappresentare",
+              "lemmaChoices": [
+                "rappresentare",
+                "rappresenta",
+                "rappresentato",
+                "rappresentando"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Partizip Perfekt",
+              "formChoices": [
+                "Partizip Perfekt",
+                "Infinitiv",
+                "Partizip Präsens",
+                "Konjunktiv"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'rappresentare', verwendet in der zusammengesetzten Zeit mit 'ha'."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 2641,
+            "completionTokens": 1198,
+            "ms": 406878,
+            "at": "2026-09-08T07:09:42.658Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 9,
+          "type": "comprehension",
+          "title": "Autonomie und Diplomatie",
+          "desc": "Verstehen Sie die Bedeutung der autonomen Regelung für Trentino-Südtirol aus der Perspektive von Staatspräsident Mattarella.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum bezeichnet Mattarella das Südtiroler Autonomiemodell als \"unicum\" (Einzigartigkeit) im europäischen Kontext?",
+              "choices": [
+                "Weil es weltweit als Vorbild für die Lösung ethnischer Konflikte gilt.",
+                "Weil es ausschließlich auf finanziellen Vorteilen für die Region basiert.",
+                "Weil es den politischen Einfluss Österreichs in Italien verringert hat.",
+                "Weil es erst nach dem Jahr 2017 vollständig umgesetzt wurde."
+              ],
+              "correctIndex": 0,
+              "why": "Mattarella betont, dass das Modell weltweit geschätzt wird und als Vorbild dient."
+            },
+            {
+              "q": "Welche Werte nennt Mattarella als Grundlage für den Aufbau der Autonomie?",
+              "choices": [
+                "Offenheit, Zuhören, gegenseitiger Respekt, Verständnis und Dialog.",
+                "Strenge Gesetze, militärische Kontrolle und wirtschaftliche Isolation.",
+                "Politische Dominanz Italiens und kulturelle Assimilation der Minderheit.",
+                "Wirtschaftliche Unabhängigkeit von Europa und nationale Abschottung."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text listet explizit Offenheit, Zuhören, Respekt, Verständnis und Dialog als Fundament auf."
+            },
+            {
+              "q": "Wie soll die Autonomie laut Mattarella nicht verstanden werden?",
+              "choices": [
+                "Als reines Buchhaltungsthema oder Schutzschild gegen Einmischung.",
+                "Als Möglichkeit zur Stärkung der europäischen Integration.",
+                "Als Instrument zum Schutz kultureller Identitäten.",
+                "Als Beitrag zur regionalen Zusammenarbeit."
+              ],
+              "correctIndex": 0,
+              "why": "Mattarella warnt davor, Autonomie nur als 'Buchhaltungsfakt' oder 'Schild' zu sehen, sondern fordert eine positive Investition."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1023,
+            "completionTokens": 508,
+            "ms": 166889,
+            "at": "2026-09-08T07:12:29.690Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 333384,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 7123,
+        "totalCompletionTokens": 1067,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 227838,
+            "promptTokens": 1645,
+            "completionTokens": 669
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 5171
+        }
+      },
+      "generatedAt": "2026-09-08T06:55:21.624Z",
+      "updatedAt": "2026-09-12T06:51:25.957Z",
+      "createdBy": "admin",
+      "source": {
+        "author": "Andrea Dalla Serra",
+        "url": "https://corrieredellaltoadige.corriere.it/notizie/politica/26_settembre_04/accordo-de-gasperi-gruber-tutto-pronto-per-l-arrivo-di-mattarella-alto-adige-esempio-mondiale-di-autonomia-1d91fdd6-658f-4e92-ac79-0f14299e4xlk.shtml",
+        "note": "Corriere della Sera · 2026-09-04"
+      }
+    },
+    {
+      "id": "tp_17888207651760000028",
+      "topic": "Jubiläum der Autonomie",
+      "topicEmoji": "🏛️",
+      "userTopic": "A ottant’anni dall’Accordo di Parigi del 5 settembre 1946,…",
+      "userPrompt": "A ottant’anni dall’Accordo di Parigi del 5 settembre 1946,…\n\n[story]\nA ottant’anni dall’Accordo di Parigi del 5 settembre 1946, l’autonomia del Trentino-Alto Adige torna protagonista. Nella mattinata di domani, al Kursaal di Merano, sono attesi il presidente della Repubblica Sergio Mattarella e il suo omologo austriaco Alexander Van der Bellen. I due si erano già incontrati nella città del Passirio nel 2017, in occasione del 25esimo anniversario della chiusura della controversia altoatesina e del 45esimo anniversario del secondo Statuto di autonomia. Nei suoi interventi passati, Mattarella ha più volte sottolineato il valore dell’autonomia come strumento di convivenza, tutela delle identità e collaborazione tra comunità diverse. Nella Lectio degasperiana pronunciata a Pieve Tesino ormai dieci anni fa, nell’agosto 2016, il Capo dello Stato aveva affermato che «anche l’autonomia del Trentino e dell’Alto Adige va letta in modo propositivo e nello spirito dell’unità nazionale ed europea».",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 134,
+      "story": "A ottant’anni dall’Accordo di Parigi del 5 settembre 1946, l’autonomia del Trentino-Alto Adige torna protagonista. Nella mattinata di domani, al Kursaal di Merano, sono attesi il presidente della Repubblica Sergio Mattarella e il suo omologo austriaco Alexander Van der Bellen. I due si erano già incontrati nella città del Passirio nel 2017, in occasione del 25esimo anniversario della chiusura della controversia altoatesina e del 45esimo anniversario del secondo Statuto di autonomia. Nei suoi interventi passati, Mattarella ha più volte sottolineato il valore dell’autonomia come strumento di convivenza, tutela delle identità e collaborazione tra comunità diverse. Nella Lectio degasperiana pronunciata a Pieve Tesino ormai dieci anni fa, nell’agosto 2016, il Capo dello Stato aveva affermato che «anche l’autonomia del Trentino e dell’Alto Adige va letta in modo propositivo e nello spirito dell’unità nazionale ed europea».",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-09-08T06:35:09.767Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 282,
+        "completionTokens": 241,
+        "ms": 50829,
+        "at": "2026-09-08T06:36:00.596Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Achtzig Jahre nach dem Abkommen von Paris vom 5. September 1946 rückt die Autonomie des Trentino-Südtirol wieder ins Zentrum der Aufmerksamkeit. Am Vormittag des morgigen Tages sind der italienische Staatspräsident Sergio Mattarella und sein österreichischer Amtskollege Alexander Van der Bellen im Kursaal von Meran erwartet worden. Die beiden hatten sich bereits 2017 in der Stadt am Pustertal getroffen, anlässlich des 25. Jahrestags der Beilegung des Südtirol-Problems und des 45. Jahrestags des zweiten Autonomiestatuts. In seinen früheren Reden hat Mattarella wiederholt den Wert der Autonomie als Instrument des Zusammenlebens, des Schutzes der Identitäten und der Zusammenarbeit zwischen verschiedenen Gemeinschaften betont. In seiner vor nunmehr zehn Jahren, im August 2016, in Pieve Tesino gehaltenen Degasperian-Lecture hatte der Staatspräsident erklärt: „Auch die Autonomie Trentinos und Südtirols ist auf konstruktive Weise und im Geist der nationalen und europäischen Einheit zu verstehen.“",
+      "userStory": "A ottant’anni dall’Accordo di Parigi del 5 settembre 1946, l’autonomia del Trentino-Alto Adige torna protagonista. Nella mattinata di domani, al Kursaal di Merano, sono attesi il presidente della Repubblica Sergio Mattarella e il suo omologo austriaco Alexander Van der Bellen. I due si erano già incontrati nella città del Passirio nel 2017, in occasione del 25esimo anniversario della chiusura della controversia altoatesina e del 45esimo anniversario del secondo Statuto di autonomia. Nei suoi interventi passati, Mattarella ha più volte sottolineato il valore dell’autonomia come strumento di convivenza, tutela delle identità e collaborazione tra comunità diverse. Nella Lectio degasperiana pronunciata a Pieve Tesino ormai dieci anni fa, nell’agosto 2016, il Capo dello Stato aveva affermato che «anche l’autonomia del Trentino e dell’Alto Adige va letta in modo propositivo e nello spirito dell’unità nazionale ed europea».",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 6,
+          "type": "word_forms",
+          "title": "Autonomia Trentino-Alto Adige",
+          "desc": "Esercizi sulle forme grammaticali",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "I due si erano già ___ nella città del Passirio nel 2017.",
+              "translation": "Die beiden hatten sich bereits 2017 in der Stadt des Passeier getroffen.",
+              "choices": [
+                "incontrati",
+                "incontrata",
+                "incontro",
+                "incontrare"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural: 'I due'"
+            },
+            {
+              "sentence": "Mattarella ha più volte sottolineato il valore dell’autonomia come strumento di convivenza, tutela delle ___ e collaborazione tra comunità diverse.",
+              "translation": "Mattarella betonte immer wieder den Wert der Autonomie als Instrument des Zusammenlebens, des Schutzes der Identitäten und der Zusammenarbeit zwischen verschiedenen Gemeinschaften.",
+              "choices": [
+                "identità",
+                "identita'",
+                "identico",
+                "identificare"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural: 'tutela delle'"
+            },
+            {
+              "sentence": "Nella mattinata di domani, al Kursaal di Merano, sono ___ il presidente della Repubblica Sergio Mattarella e il suo omologo austriaco Alexander Van der Bellen.",
+              "translation": "Am Morgenmorgen sind der Präsident der Republik Sergio Mattarella und sein österreichischer Amtskollege Alexander Van der Bellen erwartet.",
+              "choices": [
+                "attesi",
+                "attesa",
+                "atteso",
+                "attendere"
+              ],
+              "correctIndex": 0,
+              "explanation": "Plural: 'sono' + subjects"
+            },
+            {
+              "sentence": "Il Capo dello Stato aveva ___ che «anche l’autonomia del Trentino e dell’Alto Adige va letta in modo propositivo e nello spirito dell’unità nazionale ed europea».",
+              "translation": "Der Staatsoberhaupt hatte behauptet, dass 'auch die Autonomie von Trient und Südtirol positiv gelesen werden muss im Geist der nationalen und europäischen Einheit'.",
+              "choices": [
+                "affermato",
+                "affermare",
+                "afferma",
+                "affermando"
+              ],
+              "correctIndex": 0,
+              "explanation": "Past participle: 'aveva'"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 1,
+            "rejectReasons": {
+              "answer appears elsewhere in sentence": 1
+            },
+            "promptTokens": 1590,
+            "completionTokens": 732,
+            "ms": 241698,
+            "at": "2026-09-08T06:44:07.014Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": 7,
+          "type": "inflections",
+          "title": "Italienische Flexion üben",
+          "desc": "Wörter zurück zu ihrer Grundform führen",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "A ottant’anni dall’Accordo di Parigi del 5 settembre 1946, l’autonomia del Trentino-Alto Adige torna protagonista.",
+              "surfaceForm": "ottant’anni",
+              "translation": "80 Jahre nach dem Abkommen von Paris vom 5. September 1946 kehrt die Autonomie Trentino-Südtirols in den Mittelpunkt.",
+              "lemma": "l'anno",
+              "lemmaChoices": [
+                "l'anno",
+                "il anno",
+                "la anno",
+                "gli anni"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Plural",
+              "formChoices": [
+                "Plural",
+                "Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plural von 'l'anno', gebildet durch Anhängen von -i und Elision des Artikels vor Vokal."
+            },
+            {
+              "sentence": "Nella mattinata di domani, al Kursaal di Merano, sono attesi il presidente della Repubblica Sergio Mattarella e il suo omologo austriaco Alexander Van der Bellen.",
+              "surfaceForm": "attesi",
+              "translation": "Am Vormittag morgen sind im Kursaal von Merano der Präsident der Republik Sergio Mattarella und sein österreichischer Amtskollege Alexander Van der Bellen erwartet.",
+              "lemma": "atteso",
+              "lemmaChoices": [
+                "atteso",
+                "attesa",
+                "attesi",
+                "attese"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Maskulinum Plural",
+              "formChoices": [
+                "Maskulinum Plural",
+                "Femininum Singular",
+                "Maskulinum Singular",
+                "Femininum Plural"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'attendere', maskulin und plural, agreeing with the subject 'il presidente ... e il suo omologo'."
+            },
+            {
+              "sentence": "I due si erano già incontrati nella città del Passirio nel 2017, in occasione del 25esimo anniversario della chiusura della controversia altoatesina e del 45esimo anniversario del secondo Statuto di autonomia.",
+              "surfaceForm": "incontrati",
+              "translation": "Die beiden hatten sich bereits 2017 in der Stadt am Pustertal getroffen, anlässlich des 25. Jahrestags der Beilegung des Südtirol-Streits und des 45. Jahrestags des zweiten Autonomiestatuts.",
+              "lemma": "incontrato",
+              "lemmaChoices": [
+                "incontrato",
+                "incontrata",
+                "incontrati",
+                "incontrate"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Maskulinum Plural",
+              "formChoices": [
+                "Maskulinum Plural",
+                "Femininum Singular",
+                "Maskulinum Singular",
+                "Femininum Plural"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'incontrare', maskulin und plural, agreeing with the reflexive subject 'si' referring to 'I due'."
+            },
+            {
+              "sentence": "Nella Lectio degasperiana pronunciata a Pieve Tesino ormai dieci anni fa, nell’agosto 2016, il Capo dello Stato aveva affermato che «anche l’autonomia del Trentino e dell’Alto Adige va letta in modo propositivo e nello spirito dell’unità nazionale ed europea».",
+              "surfaceForm": "pronunciata",
+              "translation": "In der Degasperian-Lecture, die vor zehn Jahren im August 2016 in Pieve Tesino gehalten wurde, hatte das Staatsoberhaupt erklärt, dass „auch die Autonomie Trentinos und Südtirols propositiv und im Geist der nationalen und europäischen Einheit gelesen werden muss“.",
+              "lemma": "pronunciato",
+              "lemmaChoices": [
+                "pronunciato",
+                "pronunciata",
+                "pronunciati",
+                "pronunciate"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Femininum Singular",
+              "formChoices": [
+                "Femininum Singular",
+                "Maskulinum Singular",
+                "Femininum Plural",
+                "Maskulinum Plural"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'pronunciare', feminin und singular, agreeing with the noun 'Lectio'."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 2534,
+            "completionTokens": 1275,
+            "ms": 413273,
+            "at": "2026-09-08T06:51:00.602Z"
+          },
+          "_arcMode": "reinforce"
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1788881227217",
+          "title": "Autonomie Trentino-Südtirol",
+          "desc": "Geschichte der Autonomie in Italien",
+          "icon": "🏔️",
+          "vocab": [
+            {
+              "target": "l'autonomia",
+              "source": "die Autonomie",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:autonomia",
+                "canonicalId": "it:vocab:autonomia",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T14:38:36.577Z"
+            },
+            {
+              "target": "l'accordo",
+              "source": "das Abkommen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:accordo",
+                "canonicalId": "it:vocab:accordo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T14:38:37.903Z"
+            },
+            {
+              "target": "il presidente",
+              "source": "der Präsident",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:presidente",
+                "canonicalId": "it:vocab:presidente",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T14:38:40.453Z"
+            },
+            {
+              "target": "l'incontro",
+              "source": "das Treffen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:incontro",
+                "canonicalId": "it:vocab:incontro",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T14:38:42.920Z"
+            },
+            {
+              "target": "il valore",
+              "source": "der Wert",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:valore",
+                "canonicalId": "it:vocab:valore",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T14:38:44.713Z"
+            },
+            {
+              "target": "lo strumento",
+              "source": "das Instrument",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:strumento",
+                "canonicalId": "it:vocab:strumento",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T14:38:48.126Z"
+            },
+            {
+              "target": "l'identità",
+              "source": "die Identität",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:identità",
+                "canonicalId": "it:vocab:identità",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T14:38:49.872Z"
+            },
+            {
+              "target": "la comunità",
+              "source": "die Gemeinschaft",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:comunità",
+                "canonicalId": "it:vocab:comunità",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              },
+              "editedAt": "2026-09-12T14:38:52.596Z"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "A ottant’anni dall’Accordo di Parigi del 5 settembre 1946, l’autonomia del Trentino-Alto Adige torna protagonista.",
+              "source": "Achtzig Jahre nach dem Abkommen von Paris vom 5. September 1946 rückt die Autonomie des Trentino-Südtirol wieder ins Zentrum der Aufmerksamkeit.",
+              "words": [
+                "A",
+                "ottant’anni",
+                "dall’Accordo",
+                "di",
+                "Parigi",
+                "del",
+                "5",
+                "settembre",
+                "1946,",
+                "l’autonomia",
+                "del",
+                "Trentino-Alto",
+                "Adige",
+                "torna",
+                "protagonista."
+              ]
+            },
+            {
+              "target": "Nella mattinata di domani, al Kursaal di Merano, sono attesi il presidente della Repubblica Sergio Mattarella e il suo omologo austriaco Alexander Van der Bellen.",
+              "source": "Am Vormittag des morgigen Tages sind der italienische Staatspräsident Sergio Mattarella und sein österreichischer Amtskollege Alexander Van der Bellen im Kursaal von Meran erwartet worden.",
+              "words": [
+                "Nella",
+                "mattinata",
+                "di",
+                "domani,",
+                "al",
+                "Kursaal",
+                "di",
+                "Merano,",
+                "sono",
+                "attesi",
+                "il",
+                "presidente",
+                "della",
+                "Repubblica",
+                "Sergio",
+                "Mattarella",
+                "e",
+                "il",
+                "suo",
+                "omologo",
+                "austriaco",
+                "Alexander",
+                "Van",
+                "der",
+                "Bellen."
+              ]
+            },
+            {
+              "target": "I due si erano già incontrati nella città del Passirio nel 2017.",
+              "source": "Die beiden hatten sich bereits 2017 in der Stadt am Pustertal getroffen.",
+              "words": [
+                "I",
+                "due",
+                "si",
+                "erano",
+                "già",
+                "incontrati",
+                "nella",
+                "città",
+                "del",
+                "Passirio",
+                "nel",
+                "2017."
+              ]
+            },
+            {
+              "target": "Mattarella ha più volte sottolineato il valore dell’autonomia come strumento di convivenza.",
+              "source": "Mattarella hat wiederholt den Wert der Autonomie als Instrument des Zusammenlebens betont.",
+              "words": [
+                "Mattarella",
+                "ha",
+                "più",
+                "volte",
+                "sottolineato",
+                "il",
+                "valore",
+                "dell’autonomia",
+                "come",
+                "strumento",
+                "di",
+                "convivenza."
+              ]
+            },
+            {
+              "target": "Il Capo dello Stato aveva affermato che l’autonomia va letta in modo propositivo.",
+              "source": "Der Staatspräsident hatte erklärt, dass die Autonomie auf konstruktive Weise zu verstehen ist.",
+              "words": [
+                "Il",
+                "Capo",
+                "dello",
+                "Stato",
+                "aveva",
+                "affermato",
+                "che",
+                "l’autonomia",
+                "va",
+                "letta",
+                "in",
+                "modo",
+                "propositivo."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1455,
+            "completionTokens": 717,
+            "ms": 262442,
+            "at": "2026-09-08T15:27:07.217Z"
+          }
+        },
+        {
+          "id": 9,
+          "type": "comprehension",
+          "title": "Das Autonomiestatut von Südtirol",
+          "desc": "Verstehen Sie den historischen Kontext und die Bedeutung der bevorstehenden Begegnung?",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum treffen sich die Staatspräsidenten Mattarella und Van der Bellen in Merano?",
+              "choices": [
+                "Um den 80. Jahrestag des Abkommens von Paris zu gedenken.",
+                "Um über die wirtschaftlichen Beziehungen zwischen Italien und Österreich zu sprechen.",
+                "Um die Gründung einer neuen politischen Partei vorzustellen.",
+                "Um die Ergebnisse der letzten Wahlen in Trentino-Alto Adige zu besprechen."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text beginnt mit dem Hinweis auf den 80. Jahrestag des Abkommens von Paris am 5. September 1946 als Anlass für die Veranstaltung."
+            },
+            {
+              "q": "Welche Rolle spielt die Autonomie laut Mattarella?",
+              "choices": [
+                "Sie ist ein Werkzeug zur Bewahrung der Identitäten und zum Zusammenleben verschiedener Gemeinschaften.",
+                "Sie führt zu einer politischen Trennung von Italien und Europa.",
+                "Sie dient hauptsächlich dem wirtschaftlichen Vorteil der Region Südtirol.",
+                "Sie ist nur für die deutsche Minderheit in Italien relevant."
+              ],
+              "correctIndex": 0,
+              "why": "Mattarella betonte in seinen früheren Reden den Wert der Autonomie als Instrument des Zusammenlebens und des Schutzes der Identitäten."
+            },
+            {
+              "q": "Was ist ein gemeinsames Merkmal der bisherigen Treffen zwischen Mattarella und Van der Bellen?",
+              "choices": [
+                "Sie fanden beide in Merano statt.",
+                "Sie bezogen sich auf historische Jubiläen im Zusammenhang mit Südtirol.",
+                "Sie wurden von lokalen Politikern organisiert.",
+                "Sie behandelten ausschließlich militärische Themen."
+              ],
+              "correctIndex": 1,
+              "why": "Das Treffen 2017 war anlässlich des 25. Jahrestags der Beilegung des Südtirol-Streits und des 45. Jahrestags des zweiten Autonomiestatuts; das aktuelle Treffen markiert den 80. Jahrestag des Abkommens."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 701,
+            "completionTokens": 549,
+            "ms": 155119,
+            "at": "2026-09-08T06:53:35.886Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 295548,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 8221,
+        "totalCompletionTokens": 1649,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 244614,
+            "promptTokens": 1470,
+            "completionTokens": 594
+          }
+        ],
+        "tokensByType": {
+          "lesson_qc": 5111,
+          "add_lesson": 2172
+        }
+      },
+      "generatedAt": "2026-09-07T22:39:25.177Z",
+      "updatedAt": "2026-09-12T14:39:36.992Z",
+      "createdBy": "admin",
+      "source": {
+        "author": "Andrea Dalla Serra",
+        "url": "https://corrieredellaltoadige.corriere.it/notizie/politica/26_settembre_04/accordo-de-gasperi-gruber-tutto-pronto-per-l-arrivo-di-mattarella-alto-adige-esempio-mondiale-di-autonomia-1d91fdd6-658f-4e92-ac79-0f14299e4xlk.shtml",
+        "note": "Corriere della Sera · 2026-09-04"
+      }
+    },
+    {
+      "id": "tp_17888030196250000250",
+      "topic": "Esempio a livello mondiale",
+      "topicEmoji": "📖",
+      "userTopic": "Esempio a livello mondiale",
+      "userPrompt": "Esempio a livello mondiale\n\n[story]\nEsempio a livello mondiale\n\nA fine novembre dello stesso anno, ancora a Merano, Mattarella è tornato sul tema in occasione del centenario del Trattato di Saint-Germain e del cinquantesimo anniversario del «Pacchetto». Ha riconosciuto che l’attuazione dell’autonomia ha seguito «un percorso complesso, tortuoso, non sempre veloce», sottolineando però i risultati raggiunti. «Il treno dell’autonomia dell’Alto Adige non soltanto procede, ma ha compiuto un lungo e positivo percorso — aveva dichiarato —, l’Alto Adige costituisce un esempio di autonomia a livello mondiale, che assicura non soltanto la serena convivenza, ma lo sviluppo armonioso di questo straordinario territorio, portando benessere e prosperità anche nelle sue aree più periferiche.». Domani, dopo l’incontro con Van der Bellen a cui parteciperà anche il presidente della Provincia di Bolzano Arno Kompatscher, nel pomeriggio il Capo dello Stato si sposterà a Trento per una cerimonia al Teatro Sociale dedicata al tema «1946-2026: 80 anni di una Repubblica e di un’Autonomia speciale». Sarà anche un momento per riflettere sul valore dell’autonomia speciale e sul ruolo che è chiamata a svolgere nel presente.\n\n© RIPRODUZIONE RISERVATA",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 177,
+      "story": "Esempio a livello mondiale\n\nA fine novembre dello stesso anno, ancora a Merano, Mattarella è tornato sul tema in occasione del centenario del Trattato di Saint-Germain e del cinquantesimo anniversario del «Pacchetto». Ha riconosciuto che l’attuazione dell’autonomia ha seguito «un percorso complesso, tortuoso, non sempre veloce», sottolineando però i risultati raggiunti. «Il treno dell’autonomia dell’Alto Adige non soltanto procede, ma ha compiuto un lungo e positivo percorso — aveva dichiarato —, l’Alto Adige costituisce un esempio di autonomia a livello mondiale, che assicura non soltanto la serena convivenza, ma lo sviluppo armonioso di questo straordinario territorio, portando benessere e prosperità anche nelle sue aree più periferiche.». Domani, dopo l’incontro con Van der Bellen a cui parteciperà anche il presidente della Provincia di Bolzano Arno Kompatscher, nel pomeriggio il Capo dello Stato si sposterà a Trento per una cerimonia al Teatro Sociale dedicata al tema «1946-2026: 80 anni di una Repubblica e di un’Autonomia speciale». Sarà anche un momento per riflettere sul valore dell’autonomia speciale e sul ruolo che è chiamata a svolgere nel presente.\n\n© RIPRODUZIONE RISERVATA",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-09-07T17:41:54.765Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 338,
+        "completionTokens": 307,
+        "ms": 104859,
+        "at": "2026-09-07T17:43:39.624Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Ein Beispiel für die ganze Welt\n\nEnde November desselben Jahres griff Mattarella in Merano anlässlich des hundertsten Jahrestags des Vertrags von Saint-Germain und des fünfzigsten Jahrestags des „Pakets“ das Thema erneut auf. Er erkannte an, dass die Umsetzung der Autonomie „einen komplexen, gewundenen und nicht immer schnellen Weg“ genommen habe, betonte jedoch die erreichten Ergebnisse. „Der Zug der Autonomie Südtirols schreitet nicht nur voran, sondern hat einen langen und positiven Weg zurückgelegt – hatte er erklärt –, Südtirol stellt ein weltweites Beispiel für Autonomie dar, das nicht nur das harmonische Zusammenleben sichert, sondern auch die harmonische Entwicklung dieses außergewöhnlichen Territoriums fördert und Wohlstand und Prosperität auch in seinen abgelegensten Gebieten bringt.“ Morgen wird sich der Staatschef nach dem Treffen mit Van der Bellen, an dem auch der Präsident der Provinz Bozen, Arno Kompatscher, teilnehmen wird, am Nachmittag nach Trient begeben, wo im Teatro Sociale eine Zeremonie zum Thema „1946–2026: 80 Jahre einer Republik und einer besonderen Autonomie“ stattfindet. Dies wird auch ein Moment sein, um über den Wert der besonderen Autonomie und die Rolle nachzudenken, die sie in der Gegenwart zu erfüllen hat.\n\n© REPRODUKTION VORBEHALTEN",
+      "userStory": "Esempio a livello mondiale\n\nA fine novembre dello stesso anno, ancora a Merano, Mattarella è tornato sul tema in occasione del centenario del Trattato di Saint-Germain e del cinquantesimo anniversario del «Pacchetto». Ha riconosciuto che l’attuazione dell’autonomia ha seguito «un percorso complesso, tortuoso, non sempre veloce», sottolineando però i risultati raggiunti. «Il treno dell’autonomia dell’Alto Adige non soltanto procede, ma ha compiuto un lungo e positivo percorso — aveva dichiarato —, l’Alto Adige costituisce un esempio di autonomia a livello mondiale, che assicura non soltanto la serena convivenza, ma lo sviluppo armonioso di questo straordinario territorio, portando benessere e prosperità anche nelle sue aree più periferiche.». Domani, dopo l’incontro con Van der Bellen a cui parteciperà anche il presidente della Provincia di Bolzano Arno Kompatscher, nel pomeriggio il Capo dello Stato si sposterà a Trento per una cerimonia al Teatro Sociale dedicata al tema «1946-2026: 80 anni di una Repubblica e di un’Autonomia speciale». Sarà anche un momento per riflettere sul valore dell’autonomia speciale e sul ruolo che è chiamata a svolgere nel presente.\n\n© RIPRODUZIONE RISERVATA",
+      "continuedFrom": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…",
+      "continuedFromId": "tp_17888019097780000184",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": "ls_1788862742020_0_standard",
+          "title": "Autonomia Alto Adige",
+          "desc": "Beispiele für Autonomie und Entwicklung",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "target": "autonomia",
+              "source": "die Autonomie",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:autonomia",
+                "canonicalId": "it:vocab:autonomia",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "sviluppo",
+              "source": "die Entwicklung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:sviluppo",
+                "canonicalId": "it:vocab:sviluppo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "prosperità",
+              "source": "der Wohlstand",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:prosperità",
+                "canonicalId": "it:vocab:prosperità",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "territorio",
+              "source": "das Gebiet",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:territorio",
+                "canonicalId": "it:vocab:territorio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "convivenza",
+              "source": "das Zusammenleben",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:convivenza",
+                "canonicalId": "it:vocab:convivenza",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "percorso",
+              "source": "der Weg",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:percorso",
+                "canonicalId": "it:vocab:percorso",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "trattato",
+              "source": "der Vertrag",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:trattato",
+                "canonicalId": "it:vocab:trattato",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "cerimonia",
+              "source": "die Zeremonie",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:cerimonia",
+                "canonicalId": "it:vocab:cerimonia",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "L'autonomia porta prosperità.",
+              "source": "Die Autonomie bringt Wohlstand.",
+              "skillId": "it:sentence:autonomia-prosperità",
+              "words": [
+                "L'autonomia",
+                "porta",
+                "prosperità."
+              ]
+            },
+            {
+              "target": "Il trattato è importante.",
+              "source": "Der Vertrag ist wichtig.",
+              "skillId": "it:sentence:trattato-importante",
+              "words": [
+                "Il",
+                "trattato",
+                "è",
+                "importante."
+              ]
+            },
+            {
+              "target": "Seguiamo questo percorso.",
+              "source": "Folgen wir diesem Weg.",
+              "skillId": "it:sentence:percorso-seguire",
+              "words": [
+                "Seguiamo",
+                "questo",
+                "percorso."
+              ]
+            },
+            {
+              "target": "La convivenza è serena.",
+              "source": "Das Zusammenleben ist friedlich.",
+              "skillId": "it:sentence:convivenza-serena",
+              "words": [
+                "La",
+                "convivenza",
+                "è",
+                "serena."
+              ]
+            },
+            {
+              "target": "Ogni territorio ha valore.",
+              "source": "Jedes Gebiet hat Wert.",
+              "skillId": "it:sentence:territorio-valore",
+              "words": [
+                "Ogni",
+                "territorio",
+                "ha",
+                "valore."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1301,
+            "completionTokens": 486,
+            "ms": 175325,
+            "at": "2026-09-08T10:19:02.020Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generatedAt": "2026-09-07T17:43:39.625Z",
+      "updatedAt": "2026-09-08T10:19:02.020Z",
+      "createdBy": "admin",
+      "generationStats": {
+        "model": "(post-gen)",
+        "totalMs": 0,
+        "totalPromptTokens": 1301,
+        "totalCompletionTokens": 486,
+        "tokensByType": {
+          "recreate": 1787
+        }
+      }
+    },
+    {
+      "id": "tp_17888019097780000184",
+      "topic": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…",
+      "topicEmoji": "📖",
+      "userTopic": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…",
+      "userPrompt": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…\n\n[story]\nRichiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 195,
+      "story": "Richiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-09-07T17:20:14.617Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 362,
+        "completionTokens": 328,
+        "ms": 295161,
+        "at": "2026-09-07T17:25:09.778Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Unter Bezugnahme auf die Figur von Alcide De Gasperi hatte er ferner ausgeführt, dass Autonomie nicht lediglich als „eine buchhalterische Angelegenheit“ oder als „Schild gegen vermeintliche Machtansprüche“ betrachtet werden darf, sondern als „positive Investition“ verstanden werden muss. Um sie zu verwirklichen, seien, fügte er hinzu, ein Mehr an Verantwortung sowie eine demokratische Teilhabe am gesellschaftlichen Leben erforderlich. Mattarella bezeichnete die altoadige Erfahrung zudem als „ein Unikum“ im europäischen Kontext. Im Juni 2017 erinnerte Mattarella in Meran anlässlich des Jahrestags der Beilegung der altoadigen Frage und des zweiten Statuts an den Weg, der zum Aufbau der Autonomie geführt hatte. Dieser Weg sei auf „Offenheit, Zuhören, gegenseitigen Respekt, Verständnis und Dialog“ gegründet. Nach Auffassung des Präsidenten habe der Schutz der Bevölkerungen und Identitäten in das umfassendere Projekt des europäischen Friedens und der Integration eingebettet sein. Das Statut bilde einen „klaren und dynamischen Rahmen“, während Südtirol eine „echte europäische Avantgarde“ dargestellt habe. Im Juli 2019 hingegen behandelte Mattarella während seines Staatsbesuchs in Österreich das Thema der Autonomie gemeinsam mit Alexander Van der Bellen. Er bezeichnete Südtirol als ein Land, das „Österreich und Italien verbindet“, und erinnerte daran, dass das Modell der Autonomie „weltweit geschätzt und als Vorbild angesehen“ werde.",
+      "userStory": "Richiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+      "continuedFrom": null,
+      "continuedFromId": null,
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Autonomia e De Gasperi",
+          "desc": "L'autonomia come investimento positivo",
+          "icon": "📜",
+          "vocab": [
+            {
+              "target": "autonomia",
+              "source": "die Autonomie",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:autonomia",
+                "canonicalId": "it:vocab:autonomia",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "investimento",
+              "source": "die Investition",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:investimento",
+                "canonicalId": "it:vocab:investimento",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "responsabilità",
+              "source": "die Verantwortung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:responsabilità",
+                "canonicalId": "it:vocab:responsabilità",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "partecipazione",
+              "source": "die Teilhabe",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:partecipazione",
+                "canonicalId": "it:vocab:partecipazione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "statuto",
+              "source": "das Statut",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:statuto",
+                "canonicalId": "it:vocab:statuto",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "cornice",
+              "source": "der Rahmen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:cornice",
+                "canonicalId": "it:vocab:cornice",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "avanguardia",
+              "source": "die Avantgarde",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:avanguardia",
+                "canonicalId": "it:vocab:avanguardia",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "dialogo",
+              "source": "der Dialog",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:dialogo",
+                "canonicalId": "it:vocab:dialogo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "l’autonomia non può essere considerata soltanto «un fatto contabile»",
+              "source": "Autonomie nicht lediglich als „eine buchhalterische Angelegenheit“ betrachtet werden darf",
+              "skillId": "it:sentence:autonomia_non_contabile",
+              "words": [
+                "l’autonomia",
+                "non",
+                "può",
+                "essere",
+                "considerata",
+                "soltanto",
+                "«un",
+                "fatto",
+                "contabile»"
+              ]
+            },
+            {
+              "target": "ma deve rappresentare «un investimento in positivo»",
+              "source": "sondern als „positive Investition“ verstanden werden muss",
+              "skillId": "it:sentence:investimento_positivo",
+              "words": [
+                "ma",
+                "deve",
+                "rappresentare",
+                "«un",
+                "investimento",
+                "in",
+                "positivo»"
+              ]
+            },
+            {
+              "target": "sono necessari «un supplemento di responsabilità»",
+              "source": "seien, fügte er hinzu, ein Mehr an Verantwortung sowie ... erforderlich",
+              "skillId": "it:sentence:supplemento_responsabilità",
+              "words": [
+                "sono",
+                "necessari",
+                "«un",
+                "supplemento",
+                "di",
+                "responsabilità»"
+              ]
+            },
+            {
+              "target": "Mattarella ha inoltre definito l’esperienza altoatesina «un unicum»",
+              "source": "Mattarella bezeichnete die altoadige Erfahrung zudem als „ein Unikum“",
+              "skillId": "it:sentence:esperienza_unicum",
+              "words": [
+                "Mattarella",
+                "ha",
+                "inoltre",
+                "definito",
+                "l’esperienza",
+                "altoatesina",
+                "«un",
+                "unicum»"
+              ]
+            },
+            {
+              "target": "Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica»",
+              "source": "Das Statut bilde einen „klaren und dynamischen Rahmen“",
+              "skillId": "it:sentence:statuto_cornice",
+              "words": [
+                "Lo",
+                "Statuto,",
+                "aveva",
+                "evidenziato,",
+                "costituisce",
+                "una",
+                "«cornice",
+                "chiara",
+                "e",
+                "dinamica»"
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1630,
+            "completionTokens": 695,
+            "ms": 421181,
+            "at": "2026-09-07T17:32:11.062Z"
+          }
+        },
+        {
+          "id": "ls_1788802914508_x796ee",
+          "title": "Autonomie und Verantwortung",
+          "desc": "Wörter zur politischen Autonomie",
+          "icon": "🏛️",
+          "vocab": [
+            {
+              "target": "responsabilità",
+              "source": "die Verantwortung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "partecipazione",
+              "source": "die Teilnahme",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "dialogo",
+              "source": "der Dialog",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "rispetto",
+              "source": "der Respekt",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "comprensione",
+              "source": "das Verständnis",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "ascolto",
+              "source": "das Zuhören",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "apertura",
+              "source": "die Offenheit",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "investimento",
+              "source": "die Investition",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Serve un supplemento di responsabilità.",
+              "source": "Es ist ein Mehr an Verantwortung nötig.",
+              "words": [
+                "Serve",
+                "un",
+                "supplemento",
+                "di",
+                "responsabilità."
+              ]
+            },
+            {
+              "target": "La partecipazione è fondamentale.",
+              "source": "Die Teilnahme ist grundlegend.",
+              "words": [
+                "La",
+                "partecipazione",
+                "è",
+                "fondamentale."
+              ]
+            },
+            {
+              "target": "Il dialogo costruisce ponti.",
+              "source": "Der Dialog baut Brücken.",
+              "words": [
+                "Il",
+                "dialogo",
+                "costruisce",
+                "ponti."
+              ]
+            },
+            {
+              "target": "L'ascolto reciproco aiuta.",
+              "source": "Das gegenseitige Zuhören hilft.",
+              "words": [
+                "L'ascolto",
+                "reciproco",
+                "aiuta."
+              ]
+            },
+            {
+              "target": "È un investimento in positivo.",
+              "source": "Es ist eine positive Investition.",
+              "words": [
+                "È",
+                "un",
+                "investimento",
+                "in",
+                "positivo."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1381,
+            "completionTokens": 334,
+            "ms": 583444,
+            "at": "2026-09-07T17:41:54.508Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 716445,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 1992,
+        "totalCompletionTokens": 1023,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 421180,
+            "promptTokens": 1630,
+            "completionTokens": 695
+          }
+        ]
+      },
+      "generatedAt": "2026-09-07T17:25:09.779Z",
+      "updatedAt": "2026-09-07T17:41:54.676Z",
+      "createdBy": "admin"
+    },
+    {
+      "id": "tp_17887907589860000108",
+      "topic": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…",
+      "topicEmoji": "📖",
+      "userTopic": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…",
+      "userPrompt": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…\n\n[story]\nRichiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 195,
+      "story": "Richiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-09-07T14:19:18.984Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "(none)",
+        "attempts": null,
+        "valid": 0,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-09-07T14:19:18.985Z",
+        "origin": "failed",
+        "source": "recorded at generation"
+      },
+      "userStory": "Richiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+      "continuedFrom": null,
+      "continuedFromId": null,
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": "ls_1788862950172_0_standard",
+          "title": "Autonomia e De Gasperi",
+          "desc": "Vocabolario sull'autonomia altoatesina",
+          "icon": "🏔️",
+          "vocab": [
+            {
+              "target": "autonomia",
+              "source": "die Autonomie",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:autonomia",
+                "canonicalId": "it:vocab:autonomia",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "responsabilità",
+              "source": "die Verantwortung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:responsabilità",
+                "canonicalId": "it:vocab:responsabilità",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "dialogo",
+              "source": "der Dialog",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:dialogo",
+                "canonicalId": "it:vocab:dialogo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "rispetto",
+              "source": "der Respekt",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:rispetto",
+                "canonicalId": "it:vocab:rispetto",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "comunicazione",
+              "source": "die Kommunikation",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:comunicazione",
+                "canonicalId": "it:vocab:comunicazione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "progetto",
+              "source": "das Projekt",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:progetto",
+                "canonicalId": "it:vocab:progetto",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "identità",
+              "source": "die Identität",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:identità",
+                "canonicalId": "it:vocab:identità",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "partecipazione",
+              "source": "die Teilnahme",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:partecipazione",
+                "canonicalId": "it:vocab:partecipazione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "L'autonomia è fondamentale.",
+              "source": "Die Autonomie ist fundamental.",
+              "skillId": "it:sentence:autonomia",
+              "words": [
+                "L'autonomia",
+                "è",
+                "fondamentale."
+              ]
+            },
+            {
+              "target": "Serve molta responsabilità.",
+              "source": "Man braucht viel Verantwortung.",
+              "skillId": "it:sentence:responsabilità",
+              "words": [
+                "Serve",
+                "molta",
+                "responsabilità."
+              ]
+            },
+            {
+              "target": "Il dialogo crea pace.",
+              "source": "Der Dialog schafft Frieden.",
+              "skillId": "it:sentence:dialogo",
+              "words": [
+                "Il",
+                "dialogo",
+                "crea",
+                "pace."
+              ]
+            },
+            {
+              "target": "Rispettiamo le identità.",
+              "source": "Wir respektieren die Identitäten.",
+              "skillId": "it:sentence:identità",
+              "words": [
+                "Rispettiamo",
+                "le",
+                "identità."
+              ]
+            },
+            {
+              "target": "La comunicazione unisce.",
+              "source": "Die Kommunikation vereint.",
+              "skillId": "it:sentence:comunicazione",
+              "words": [
+                "La",
+                "comunicazione",
+                "unisce."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1294,
+            "completionTokens": 588,
+            "ms": 207285,
+            "at": "2026-09-08T10:22:30.171Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generatedAt": "2026-09-07T14:19:18.986Z",
+      "updatedAt": "2026-09-08T10:22:30.172Z",
+      "createdBy": "admin",
+      "generationStats": {
+        "model": "(post-gen)",
+        "totalMs": 0,
+        "totalPromptTokens": 1294,
+        "totalCompletionTokens": 588,
+        "tokensByType": {
+          "recreate": 1882
+        }
+      }
+    },
+    {
       "id": "tp_17886861038730000257",
       "topic": "Rainy Notes",
       "topicEmoji": "☕",
@@ -13469,10 +17500,10 @@
         "rejectReasons": null,
         "promptTokens": 69,
         "completionTokens": 9,
-        "ms": 38480,
-        "at": "2026-09-05T18:50:06.613Z",
+        "ms": 9864,
+        "at": "2026-09-07T08:55:41.330Z",
         "origin": "generated",
-        "source": "recorded at generation"
+        "source": "re-translated after a manual story edit"
       },
       "storyTranslation": "She was re-elected  \nHURRAY",
       "userStory": "Sie wurde wiedergewählt\nHURRA",
@@ -13563,8 +17594,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1081,
-        "totalCompletionTokens": 204,
+        "totalPromptTokens": 1150,
+        "totalCompletionTokens": 213,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13572,7 +17603,10 @@
             "promptTokens": 1012,
             "completionTokens": 195
           }
-        ]
+        ],
+        "tokensByType": {
+          "translation": 78
+        }
       },
       "comicPanels": [
         {
@@ -13588,7 +17622,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:50:06.614Z",
-      "updatedAt": "2026-09-05T18:57:10.910Z",
+      "updatedAt": "2026-09-07T08:55:41.330Z",
       "createdBy": "admin"
     },
     {
@@ -13620,19 +17654,19 @@
       },
       "translationMeta": {
         "type": "translation",
-        "model": "qwen3.6:35b-a3b",
+        "model": "(user-provided)",
         "attempts": null,
         "valid": 1,
         "rejected": 0,
         "rejectReasons": null,
         "promptTokens": 81,
         "completionTokens": 19,
-        "ms": 24074,
-        "at": "2026-09-06T10:03:41.113Z",
-        "origin": "generated",
-        "source": "re-translated after a manual story edit"
+        "ms": 13126,
+        "at": "2026-09-07T11:17:27.022Z",
+        "origin": "user-provided",
+        "source": "edited by hand"
       },
-      "storyTranslation": "Of course, the government has boasted that the country is vast and free thanks to it.",
+      "storyTranslation": "Of course, the government has boasted that the country is free of giants, thanks to it.",
       "userStory": "Freilich hat sich die Regierung damit gebrüstet, dass das Land dank ihr riesenfrei ist",
       "continuedFrom": "No Giants Exist",
       "continuedFromId": "tp_17886332486940000399",
@@ -13817,8 +17851,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1276,
-        "totalCompletionTokens": 429,
+        "totalPromptTokens": 1438,
+        "totalCompletionTokens": 466,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13828,7 +17862,7 @@
           }
         ],
         "tokensByType": {
-          "translation": 200
+          "translation": 399
         }
       },
       "comicPanels": [
@@ -13845,8 +17879,9 @@
         }
       ],
       "generatedAt": "2026-09-05T18:44:07.219Z",
-      "updatedAt": "2026-09-06T10:40:24.707Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-09-07T11:17:27.022Z",
+      "createdBy": "admin",
+      "userTranslation": "Of course, the government has boasted that the country is free of giants, thanks to it."
     },
     {
       "id": "tp_17886332486940000399",
@@ -13882,14 +17917,14 @@
         "valid": 1,
         "rejected": 0,
         "rejectReasons": null,
-        "promptTokens": 82,
-        "completionTokens": 22,
-        "ms": 46013,
-        "at": "2026-09-05T18:34:08.693Z",
+        "promptTokens": 74,
+        "completionTokens": 16,
+        "ms": 11486,
+        "at": "2026-09-07T08:55:17.652Z",
         "origin": "generated",
-        "source": "recorded at generation"
+        "source": "re-translated after a manual story edit"
       },
-      "storyTranslation": "OF COURSE, A GIANT NEVER SHOWED UP.  \nAFTER ALL, THERE ARE NONE.",
+      "storyTranslation": "Of course, a giant never showed up.  \nThere are none anyway.",
       "userStory": "NATÜRLICH KAM DANN NIE EIN RIESE.\nGIBT JA KEINE",
       "continuedFrom": "The Warning Sign",
       "continuedFromId": "tp_17886326391250000240",
@@ -14100,8 +18135,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1635,
-        "totalCompletionTokens": 466,
+        "totalPromptTokens": 1709,
+        "totalCompletionTokens": 482,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14111,7 +18146,8 @@
           }
         ],
         "tokensByType": {
-          "story_qc": 520
+          "story_qc": 520,
+          "translation": 90
         }
       },
       "comicPanels": [
@@ -14127,7 +18163,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:34:08.694Z",
-      "updatedAt": "2026-09-05T22:08:42.141Z",
+      "updatedAt": "2026-09-07T08:55:17.652Z",
       "createdBy": "admin",
       "aiStory": "NATÜRLICH KAM DANN NIE EIN RIESE.\nGIBT JA KEINE",
       "storyQcBy": "translategemma:12b",
@@ -14169,8 +18205,8 @@
         "rejectReasons": null,
         "promptTokens": 85,
         "completionTokens": 25,
-        "ms": 12417,
-        "at": "2026-09-06T10:12:03.145Z",
+        "ms": 14127,
+        "at": "2026-09-07T08:55:06.057Z",
         "origin": "generated",
         "source": "re-translated after a manual story edit"
       },
@@ -14395,8 +18431,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1791,
-        "totalCompletionTokens": 558,
+        "totalPromptTokens": 1876,
+        "totalCompletionTokens": 583,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14407,7 +18443,7 @@
         ],
         "tokensByType": {
           "story_qc": 557,
-          "translation": 110
+          "translation": 220
         }
       },
       "comicPanels": [
@@ -14423,7 +18459,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:23:59.125Z",
-      "updatedAt": "2026-09-06T10:12:03.145Z",
+      "updatedAt": "2026-09-07T08:55:06.057Z",
       "createdBy": "admin",
       "aiStory": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT\nRIÉSEN SINd HIER NICHT WILLKOMMEN",
       "storyQcBy": "translategemma:12b",
@@ -14465,8 +18501,8 @@
         "rejectReasons": null,
         "promptTokens": 90,
         "completionTokens": 22,
-        "ms": 11718,
-        "at": "2026-09-06T10:11:50.321Z",
+        "ms": 13076,
+        "at": "2026-09-07T08:54:51.780Z",
         "origin": "generated",
         "source": "re-translated after a manual story edit"
       },
@@ -14674,8 +18710,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1806,
-        "totalCompletionTokens": 585,
+        "totalPromptTokens": 1896,
+        "totalCompletionTokens": 607,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14686,7 +18722,7 @@
         ],
         "tokensByType": {
           "story_qc": 561,
-          "translation": 112
+          "translation": 224
         }
       },
       "comicPanels": [
@@ -14702,7 +18738,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:16:18.124Z",
-      "updatedAt": "2026-09-06T10:11:50.321Z",
+      "updatedAt": "2026-09-07T08:54:51.780Z",
       "createdBy": "admin",
       "aiStory": "WEIL SIE MEINEN, DASS SIE LECKER AUSSEHEN, LEBEN SIE IN DER STÄNDIGEN ANGST, DASS DIE RIESEN KOMMEN, UM SIE AUFZUFRISSEN",
       "storyQcBy": "translategemma:12b",
@@ -14744,12 +18780,12 @@
         "rejectReasons": null,
         "promptTokens": 77,
         "completionTokens": 15,
-        "ms": 6817,
-        "at": "2026-09-06T10:11:38.334Z",
+        "ms": 11584,
+        "at": "2026-09-07T08:54:38.539Z",
         "origin": "generated",
         "source": "re-translated after a manual story edit"
       },
-      "storyTranslation": "There is a land where the heads of all people resemble dumplings.",
+      "storyTranslation": "There is a country where the heads of all people resemble dumplings.",
       "userStory": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN",
       "lessons": [
         {
@@ -14962,8 +18998,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1715,
-        "totalCompletionTokens": 525,
+        "totalPromptTokens": 1792,
+        "totalCompletionTokens": 540,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14974,7 +19010,7 @@
         ],
         "tokensByType": {
           "story_qc": 528,
-          "translation": 92
+          "translation": 184
         }
       },
       "comicPanels": [
@@ -14990,7 +19026,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:12:11.820Z",
-      "updatedAt": "2026-09-06T10:11:38.334Z",
+      "updatedAt": "2026-09-07T08:54:38.539Z",
       "createdBy": "admin",
       "aiStory": "ES GIBT EIN LAND, WO DIE KÖPFE ALLER MENSCHEN KNÖDELN GLEICHEN",
       "storyQcBy": "translategemma:12b",
@@ -112031,9 +116067,211 @@
       "storyLang": "target",
       "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Contemplative, questioning, abstract ideas.\n\nWrite a story for the topic: \"testing our language learning app story generation with a better learning arc\". Plain prose, no headings.",
       "storyStyle": "philosophical",
-      "lessons": [],
+      "lessons": [
+        {
+          "id": "ls_1788863096567_0_standard",
+          "title": "Storia al crepuscolo",
+          "desc": "Lessico per una storia serale",
+          "icon": "🌇",
+          "vocab": [
+            {
+              "target": "crepuscolo",
+              "source": "die Dämmerung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:crepuscolo",
+                "canonicalId": "it:vocab:crepuscolo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "schermo",
+              "source": "der Bildschirm",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:schermo",
+                "canonicalId": "it:vocab:schermo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "tremare",
+              "source": "zittern",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:tremare",
+                "canonicalId": "it:vocab:tremare",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "invio",
+              "source": "die Eingabe",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:invio",
+                "canonicalId": "it:vocab:invio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "paesaggio",
+              "source": "die Landschaft",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:paesaggio",
+                "canonicalId": "it:vocab:paesaggio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "solitario",
+              "source": "einsam",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:solitario",
+                "canonicalId": "it:vocab:solitario",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "oscillare",
+              "source": "schwingen",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:oscillare",
+                "canonicalId": "it:vocab:oscillare",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "viaggio",
+              "source": "die Reise",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:viaggio",
+                "canonicalId": "it:vocab:viaggio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Il crepuscolo copre la città.",
+              "source": "Die Dämmerung bedeckt die Stadt.",
+              "words": [
+                "Il",
+                "crepuscolo",
+                "copre",
+                "la",
+                "città."
+              ]
+            },
+            {
+              "target": "Sofia guarda lo schermo con paura.",
+              "source": "Sofia schaut mit Angst auf den Bildschirm.",
+              "words": [
+                "Sofia",
+                "guarda",
+                "lo",
+                "schermo",
+                "con",
+                "paura."
+              ]
+            },
+            {
+              "target": "Le sue dita iniziano a tremare.",
+              "source": "Ihre Finger beginnen zu zittern.",
+              "words": [
+                "Le",
+                "sue",
+                "dita",
+                "iniziano",
+                "a",
+                "tremare."
+              ]
+            },
+            {
+              "target": "Un albero solitario oscilla nel vento.",
+              "source": "Ein einsamer Baum schwingt im Wind.",
+              "words": [
+                "Un",
+                "albero",
+                "solitario",
+                "oscilla",
+                "nel",
+                "vento."
+              ]
+            },
+            {
+              "target": "Il paesaggio sembra desolato e triste.",
+              "source": "Die Landschaft wirkt öde und traurig.",
+              "words": [
+                "Il",
+                "paesaggio",
+                "sembra",
+                "desolato",
+                "e",
+                "triste."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1140,
+            "completionTokens": 393,
+            "ms": 145490,
+            "at": "2026-09-08T10:24:56.567Z"
+          },
+          "_recreated": true
+        }
+      ],
       "generatedAt": "2026-06-16T08:29:25.053Z",
-      "updatedAt": "2026-06-16T08:29:25.053Z",
+      "updatedAt": "2026-09-08T10:24:56.567Z",
       "continuedFromId": null,
       "continuedFrom": null,
       "id": "tp_17816139770630000089",
@@ -112065,7 +116303,16 @@
         "source": "no record (story present, no generationStats.models)",
         "origin": "unknown"
       },
-      "createdBy": "admin"
+      "createdBy": "admin",
+      "generationStats": {
+        "model": "(post-gen)",
+        "totalMs": 0,
+        "totalPromptTokens": 1140,
+        "totalCompletionTokens": 393,
+        "tokensByType": {
+          "recreate": 1533
+        }
+      }
     },
     {
       "topic": "Peut-être i",

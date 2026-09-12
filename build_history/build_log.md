@@ -9855,7 +9855,426 @@ After re-starting the server, I still see the blue vertical line left of riesenf
 -> v90_c: the audit's remainder — 3 of the 7 were real, and its own list was 57% wrong
 -> v90_d: the blind spot — guards that run the right code on a fixture that cannot disagree
 -> v90_e: the remaining zeros — five repaired, three were never gaps, one probe bug
+-> v90_f: the last four zeros — the orchestration functions, driven
+ 
+* let's also hide the lesson-set page story view buttons behind
+  an edit (pencil) icon: the text-analysis, the edit story button,
+  the QC button and the re-translate button.
+* allow to edit translations on lesson-set pages (teacher view).
+  This could be an option of the re-translate button: the user
+  get's offered to edit an existing translation or to use the LLM 
+  to re-translate.
+* let's move the "generate summary" button from the edit menu of
+  the storyline page header to a new edit menu of the summary with
+  two options: manual edit and generate, using the three stars icon,
+  and QC.
+* on the lesson-set page, subtitle with the chapter title, merge
+  the two edit buttons (manual edit and LLM-based chapter title generation)
+  into an edit menu (pencil icon), same as the edit menus
+  of other levels.
 
+...
+
+* The "clear progress" button on the lesson-set page should be a 🧹
+  icon, as in other buttons with the same function.
+
+-> v90_g: three pencils, an editable translation, and a broom
+-> v90_h: the edit menus read English in every language, and a stamp claimed what the record did not
+-> v90_i: the last English label in the story menu, and a table that keeps it that way
+
+* while at it, can you identify more hard-coded english strings that should better be ui.json entries?
+
+* does the sorting on the main page fully work in static,
+  including the reverse button?
+
+-> v90_k: the i18n audit re-derived — 86 certain, not 143
+
+
+
+
+* How hard would it be to scrape text directly from a URL, e.g. a newspaper
+  article like https://corrieredellaltoadige.corriere.it/notizie/politica/26_settembre_04/accordo-de-gasperi-gruber-tutto-pronto-per-l-arrivo-di-mattarella-alto-adige-esempio-mondiale-di-autonomia-1d91fdd6-658f-4e92-ac79-0f14299e4xlk.shtml ?
+
+...
+
+* note that the laptop had lost contact to wlan, and it again lead to loss of connection to ollama:
+
+  Book generation started: 3 chapter(s) (from upload), id=book_69c67a69e3e207b6
+    lang=it  srcLang=de  difficulty=1  format=standard  script=-  srcScript=-  style=neutral  arc=[review,word_forms,inflections,synonyms,comprehension]  arcScript=off  continuedFrom=-
+  [book book_69c67a69e3e207b6] chapter 1/3: "Accordo De Gasperi-Gruber, tutto pronto per l'arrivo di" arc[+review,word_forms,inflections,synonyms,comprehension] job=d9f0b349b49421a7
+  [qwen3.6:35b-a3b] Generating topic info…
+    Using user-provided story (1187 chars)
+  [qwen3.6:35b-a3b] Translating story to German…
+    [qwen3.6:35b-a3b] Translation (it→de): 117522ms, 1304 chars
+    Story saved early (before lessons)
+  [qwen3.6:35b-a3b] Lesson 1/1…
+    Lesson 1 attempt 1…
+  Done in 397.7s — 2908 total tokens
+  [book book_69c67a69e3e207b6] chapter 1: skipping arc type 'review' — no prior chapter to review
+  [qwen3.6:35b-a3b] word_forms — chapter 1/3…
+  [qwen3.6:35b-a3b] Word-forms lesson attempt 1/3…
+    Word-forms attempt 1…
+    Word-forms: 5 valid item(s) (0 rejected)
+  [qwen3.6:35b-a3b] inflections — chapter 1/3…
+  [qwen3.6:35b-a3b] Inflections lesson attempt 1/3…
+    Inflections attempt 1…
+  ⚠ Ollama unreachable (2 checks, last: ECONNREFUSED after 2ms) — offline mode until it returns.
+  ✓ Ollama is reachable again — generation re-enabled (was offline).
+  Warming up qwen3.6:35b-a3b…     Inflections: 4 valid item(s) (0 rejected)
+  [qwen3.6:35b-a3b] Normalising 16 form label(s) to German…
+ready ✓
+    [qwen3.6:35b-a3b] Form labels → German: 109721ms
+    Form labels normalised to German: 4/4 item(s)
+  [qwen3.6:35b-a3b] synonyms — chapter 1/3…
+  [qwen3.6:35b-a3b] Synonyms lesson attempt 1/3…
+    Synonyms attempt 1…
+  ⚠ Ollama unreachable (2 checks, last: ECONNREFUSED after 1ms) — offline mode until it returns.
+    Synonyms: 6 groups, 6 synonyms, 0 homophones
+    Synonyms context: 3 sentence(s) quoted from the story, 3 rejected as not verbatim (fell back to search)
+  lesson id collision in "Accordo De Gasperi-Gruber, tutto pronto per l'arrivo di": synonyms had id 6 -> ls_1788790551994_me139j
+  [qwen3.6:35b-a3b] comprehension — chapter 1/3…
+  [qwen3.6:35b-a3b] Comprehension lesson attempt 1/3…
+    Comprehension attempt 1…
+  ✓ Ollama is reachable again — generation re-enabled (was offline).
+  Warming up qwen3.6:35b-a3b…     Comprehension: 3/3 questions kept
+  Analyzing chapter: tp_17887890461640000030 model=qwen3.6:35b-a3b job=d485c38a3bd2823d
+  CP1: building canonical text…
+  [qwen3.6:35b-a3b] CP2: analysing 8 sentence(s)…
+  [book book_69c67a69e3e207b6] chapter 2/3: "Richiamando la figura di Alcide De Gasperi, aveva inoltre…" cont=Accordo De Gasperi-Gruber, tutto pronto per l'arrivo di arc[+review,word_forms,inflections,synonyms,comprehension] job=a5b4da3d2e965d46
+  [qwen3.6:35b-a3b] Generating topic info…
+    Using user-provided story (1366 chars)
+  [qwen3.6:35b-a3b] Translating story to German…
+  Translation failed, falling back to context-only mode: Ollama network: connect ECONNREFUSED ::1:11434
+    Story saved early (before lessons)
+    Lesson context: 2 chapters, 2676 chars
+  [qwen3.6:35b-a3b] Lesson 1/1…
+    Lesson 1 attempt 1…
+    Attempt 1 failed: Ollama network: connect ECONNREFUSED ::1:11434
+    Lesson 1 attempt 2…
+    Attempt 2 failed: Ollama network: connect ECONNREFUSED ::1:11434
+    Lesson 1 attempt 3…
+    Attempt 3 failed: Ollama network: connect ECONNREFUSED ::1:11434
+[...]
+
+-> v90_l: the "Ollama unreachable" flapping was IPv6 loopback, not the wlan
+
+* ok, i guess we can't save the aborted pdf job? how hard would it be
+  to implement the webscrape if first implemented for defined
+  NewArticle class?
+
+-> roadmap: scope the URL scrape to NewsArticle, and record that the aborted book job lost nothin
+-> prompt: tee up the URL scrape and the pending draft recovery for the next se
+ssion
+
+# NEW SESSION - Story scrape from URL
+
+* Dreizunge, fresh session. Read in this order before anything else:
+build_history/SESSION_PROMPT_v90_l.md (whole), then roadmap_v90.md's index table
+and its ⚠️ Session protocol block, then INTERNALS.md §6b.
+
+TASK: implement "scrape a story from a URL", scoped to the JSON-LD NewsArticle
+class only. It is diagnosed, measured and costed in roadmap_v90.md → "SCRAPE A
+STORY STRAIGHT FROM A URL". Read that section in full first — it records two
+traps found by measurement, and the reasoning for scoping to NewsArticle rather
+than writing a generic extractor.
+
+Before you add any en string, ask me for a key budget. I translate ui.json by
+hand. The estimate says 3-4 keys.
+
+Baseline: APP_VERSION v90_l, 365 full / 303 quick.
+
+⚠️ Expect unit-roadmap-version to be RED on your first run, and it is not a
+finding: I regenerated chapters into a book job while the prompt was written, so
+the corpus counts in SESSION_PROMPT_v90_l.md are stale by a chapter or two.
+Re-measure the tree and fix the PROMPT, per the rule in that file. Verify the
+rest of the suite is green before you touch anything.
+
+⚠️ lessons.json, canonical-analysis.json and build_log.md are my live working
+files. Never write to them, never commit them, and never start a second server
+against lessons.json — use LESSONS_FILE=/tmp/x.json PORT=<n> node server.js.
+
+Note that the generation of the Corriere della sera article, our test
+case, is still running. You should have the URL for this, otherwise let me know.
+
+Do not write code until you have read that roadmap section and told me whether you agree with the scoping.
+
+-> v90_m: scrape a story straight from a URL, scoped to the schema.org Article subtree
+-> v90_n: the two loose ends v90_l left — one was real and worse, one dissolved
+    
+* scraping should not break sentences between chapters, see recent draft generated
+from our corriere della sera URL.
+
+-> v90_o: analysis no longer competes with the generation that spawned it; a scraped article is never cut mid-sentence
+
+* i tried to cancel the started bookjob by clicking x in the
+  jobpopover, which recovered the draft. but the job seems to be still
+  running
+    
+-> v90_p: cancelling a book job now actually stops the model, and says so
+	
+* so are the JSON-LD widely supported, eg. also new york times or international newspapers in other languages? 
+
+wikipedia would be nice to have, other ways to scrape wikipedia
+articles?
+
+* C. Whole article. but can we also add a words/chapter ruler, such
+  that we can vary the chapter length and number?
+	
+-> v90_q: Wikipedia via its own API, a chapter-size ruler, and a
+correction — JSON-LD coverage is far worse than claimed
+-> v90_r: a scraped article gets its paragraphs back, so ¶ works for a URL too
+    
+...	[analyzing ideal webpage scraping strategies ...]
+	
+While we are waiting, and for the roadmap (no code yet), consider:
+
+* clean up generation wizard:
+    - text input: have one field for file drop and text input and (a)
+	if file(s) are dropped, automatically recognize if its a pdf or
+	markdown, or an image/comic, and (b) for text if it's a URL, a
+	full story, or just a topic (use current length max for the topic
+	field). The field's title should be "drop a text, image or topic
+	here:" When the user has entered something and pressed a "scan"
+	button, this should automatically open the respective dialogues
+	for pure text input, image-based text extraction, URL scraping, or
+	LLM-based story/chapter generation. We drop the dialect upload
+	for now! For a given upload (image, pdf, url, pasted text) 
+	we could let a model decide whether further user-input is necessary,
+	or whether there is a clean split into chapters.
+
+
+-> roadmap: the one-input-field wizard spec, and field confirmation of the v90_l wlan fix
+-> roadmap: the generic-extraction question, measured to a conclusion; and relocate the wizard spec
+
+
+* back to the generation wizard: can you build first steps now, w/o
+  losing functionality? the first window should merely show a text
+  input field, like the current topic field, but have a file upload
+  button or file drop function. nothing else. from the input there, we
+  decide which paths follow. if it's a short text only, we ask the
+  user whether this is the story already or just a topic for LLM, only
+  then we open the inputs for LLM-based story generation. And similar
+  for all other input roots.
+
+-> v90_s: one input field for the generation wizard — first step, nothing lost
+-> v90_t: a multi-file drop is refused rather than quietly resolved; and a guard repaired 
+
+... [what's next?]
+
+* ok, clear the three lesson-less chapters and then proceed with the per-mode reveal.
+
+* input via camera (button with ui entry form.image_camera) should be elevated
+  to the drop file dialog, next to the button with ui entry form.upload_doc.
+
+-> v90_u: per-mode reveal, the camera as an input root, three orphan chapters cleared
+
+* Can the three lines "i have my own story", dialect-glossar, and "i have an image" 
+  be removed now? Or is it still important to distinguish ambiguous input?
+  Note that we don't need to expose any dialect-functionaly at the moment, and
+  we also don't expose the "i have my own translation" for now. These are experimental
+  features that we can fully hide at the moment.
+
+
+-> v90_v: the four input checkboxes are hidden as a group; dialect and translation go dark
+
+* let's move the model selector from the generation wizard into the
+  bottom row settings bar, using the ✨ icon on a circle (it doesn't
+  need to name the model), and reorder this bottom settings bar:
+  un/collapse button, user, settings, new ✨ model selector on the
+  left, and the microphone, mute button, and tutor button on the right
+  side.
+
+-> v90_w: the model selector moves to the bottom bar as a ✨ circle; the bar is reordered
+-> v90_x: every bottom-bar control opens and closes from its own button
+
+i have tested most of the above and it works. here are some other
+observations. let me know if you want to wrap up for a fresh session
+or do some here:
+
+## new sl_1338244003, tp_17888505216240000062, tp_17888207651760000028
+
+* text-analysis: is often missing sentences, and returning null-filled
+  entries in canonical-analysis.json. I ran this again on the first to
+  chapters of this story line, with the option to only fill up missing, and
+  the same entries just stayed null in both cases. The console
+  also didn't report on how many analyses were successful and how many
+  just contain nulls.
+* vocabulary: we still get a lot of mismatches of german with and
+  italian w/o article, and I don't quite understand why this still happens.
+  In Italian nouns do have sex/gender, so it would be relevant information.
+  A QC (perhaps an option on QC for vocab) could specifically catch that and add
+  the correct missing article.
+  
+## new tp_17889394908430000140
+  
+* The text contains the phrase "in fila indiana" which the translation 
+  translates as "in einer Reihe", in canonical-analysis.json the phrase
+  is recorded as "im Einermarsch". Can we amend our text analysis display
+  such that it really shows phrase-level analysis instead of the single
+  word analysis, that gives just "indisch" as a translation for the
+  word "indiana"? Clicking on indiana should provide the whole phrase.
+  Perhaps rather for the roadmap, in the future we want to provide
+  the user the availability to browse text analysis through different
+  levels, e.g. from paragraph to sentences to phrases to single words.
+* As you can find in learners.json, I asked the tutor about exactly
+  this phrase, the tutor job did appear in the job popover, but I
+  never received a reply or a console message about a failure,
+  time-out etc., and no reply to may actualy question. You will find
+  several unanswered questions in learner.json.
+
+## Others
+   
+* Screenshot_2026-09-09_09-28-35.jpg: the Scan button recognized that
+  we want to generate a story. Now the "Foto aufnehmen", "Dokument
+  hochladen" and "Scan" buttons are not needed anymore and we don't
+  need to repeat the text field. We can just drop the field and
+  ui.json titled here "WOFÜR MÖCHTEST DU ITALIENISCH LERNEN?".  We
+  only need the chapter length and number sliders and story style
+  selectors here.
+* Story length slider (here TEXTLÄNGE) reduce minimal length to 10,
+  or to the same value that we recently aimed to reduce PDF-based
+  chapter length to. We do want to allow very short chapters,
+  as we already get from comic panels.
+
+* Can we auto-select the UI language to the language setting of
+  the operating system we run on?
+
+-> v90_y: three small user requests, and a diagnosis worth more than all of them
+
+
+# NEW SESSION
+
+* Dreizunge, fresh session. Read in this order before anything else:
+build_history/SESSION_PROMPT_v90_y.md (whole), then roadmap_v90.md's index table
+and its ⚠️ Session protocol block, then INTERNALS.md §6b.
+
+TASK: the four items in roadmap_v90.md → "FOUR USER-REPORTED ISSUES, HANDED TO A
+FRESH SESSION", in that order. Read that section in full first.
+
+  #1 all-null text analysis — diagnosed to the line (1536-token output cap +
+     a swallowed parse error). Start here. The fix needs a choice between raising
+     the cap and splitting long sentences — tell me the trade-off before building.
+  #2 tutor silently drops ~18% of questions — measured, NOT diagnosed.
+  #3 and #4 need a decision from me before any code. Ask.
+
+Baseline: APP_VERSION v90_y, 377 full / 311 quick.
+
+⚠️ Before you add any en string, ask me for a key budget. I translate ui.json by hand.
+⚠️ lessons.json, canonical-analysis.json, learners.json and build_log.md are my live
+   working files. Never write to them, never commit them, and never start a second
+   server against lessons.json — use LESSONS_FILE=/tmp/x.json PORT=<n> node server.js.
+⚠️ If unit-roadmap-version is RED on the first run it is usually my server having
+   moved the corpus counts, not a finding — re-measure and fix the PROMPT, per the
+   rule in that file. Verify the rest of the suite is green before touching anything.
+
+
+-> v90_z: the four handed-over user reports — two diagnosed to the line, two whose premise measurement destroyed
+
+
+  
+* how can i access the new article-specific QC? When I pressws
+  QC for a vocabulary lesson on the lesson-set page, I didn't
+  get a choice between the previous QC and the article focussed
+  QC. Is it currently only for generation? Also it did NOT
+  flag or fix the article asymmetry.
+
+* align the settings bar popovers (login, settings, running jobs) with
+  their buttons, like the tutor and the model selection popovers are
+  already aligned.
+
+....
+
+* ok, so we may have to split QC into one pure translation check with
+  translategemma and another lesson consistency check with the bigger
+  model that explicitly also checks the article asymmetry problem?
+  
+  
+-> v90_aa: the bar's panels line up with their buttons; a raw key
+found on screen; and v90_z's central QC claim measured and withdrawn
+
+-> v91: cut to a new line, made as a RECONCILIATION — and the reconciliation is what it found
+-> docs: the article pass works in live use — record the proposal to default it on, and its constraints
+-> docs: why the models produce article asymmetry, and the "half sentences" report — both measured
+-> v91_a: the vocabulary ARTICLE check — measured into existence, and propose-only
+-> v91_b: the wizard pre-ticks the article pass for pairs already known to need it
+
+* on the main page decrease font size difference between "dreizunge"
+  and the ui.json entry for the subtitle, english "we are the
+  world". also align the colors between title, more blue, less green,
+  and subtitle, a nice reddish tone
+   
+...
+
+* align colors of title and subtitle also with the colors of our
+  rotating earth icon
+  
+...
+
+* source language should update ui language, unless "x fix" is selected in settings
+
+-> v91_c: the landing title and motto — sized closer, and coloured from the globe itself
+-> v91_d: "I speak" drives the UI language again, unless Fix is on
+
+
+
+
+
+
+* Re-generation of missing text analysis for tp_17888505216240000062
+  failed with ollama timeout when I ran a QC in parallel. Console messages:
+  
+   Analyzing chapter: tp_17888505216240000062 model=qwen3.6:35b-a3b job=f168f7e5f571ee3e
+  CP1: building canonical text…
+  [qwen3.6:35b-a3b] CP2: analysing 3 sentence(s)…
+  ⚙ QC requested (topic tp_17888505216240000062 lesson 0) → 1 topic(s), job=a5029cd826d71161
+  ⚙ QC starting: 1 topic(s), lesson 0 [translategemma:12b]
+  [translategemma:12b] Starting QC…
+  Models switched → story:qwen3.6:35b-a3b lessons:qwen3.6:35b-a3b tutor:qwen3.6:35b-a3b🧠 timeout:720s threads:1
+  Models switched → story:qwen3.6:35b-a3b lessons:qwen3.6:35b-a3b tutor:qwen3.6:35b-a3b🧠 timeout:720s threads:2
+  Models switched → story:qwen3.6:35b-a3b lessons:qwen3.6:35b-a3b tutor:qwen3.6:35b-a3b🧠 timeout:720s threads:3
+  Models switched → story:qwen3.6:35b-a3b lessons:qwen3.6:35b-a3b tutor:qwen3.6:35b-a3b🧠 timeout:720s threads:4
+  Models switched → story:qwen3.6:35b-a3b lessons:qwen3.6:35b-a3b tutor:qwen3.6:35b-a3b🧠 timeout:720s threads:5
+  [translategemma:12b] QC Verantwortung und Demokratie — 5 checked, 0 flagged…
+  [diacritics] QC Verantwortung und Demokratie — 10 checked, 0 flagged…
+    ⚑ flag [pair] [translategemma:12b] "der Pfad"
+  [analysis] failed: Ollama timeout
+  [translategemma:12b] QC Verantwortung und Demokratie — 15 checked, 1 flagged…
+    ⚑ flag [pair] [translategemma:12b] "Es sind mehr Verantwortung und eine demokratische Beteiligun"
+  [diacritics] QC Verantwortung und Demokratie — 20 checked, 2 flagged…
+  [translategemma:12b] QC Verantwortung und Demokratie — 25 checked, 2 flagged…
+  ✓ QC done: 26 checked, 2 flagged, 0 cleared, 0 skipped, story: 0 proposed / 0 clean, across 1 topic(s)
+  Edited lessons for "Verantwortung und Demokratie"
+  Edited lessons for "Verantwortung und Demokratie"
+  Analyzing chapter: tp_17888505216240000062 model=qwen3.6:35b-a3b job=095b7f8d3a2cf504
+  CP1: building canonical text…
+  [qwen3.6:35b-a3b] CP2: analysing 3 sentence(s)…
+  [qwen3.6:35b-a3b] CP2: 1/9 sentence(s)…
+  [qwen3.6:35b-a3b] CP2: 4/9 sentence(s)…
+
+ 
+...
+
+* BIGGER: focus on learner interface, and work on BTK to show
+  progress: define knowledge and skills for a language, and calculate
+  what is covered by lessons. Also, work on the world map and language
+  tree interface.  Animated read-out and re-design of questions cards
+  Book design of progress cards?
+
+
+
+* Continue on the text analysis- and user progress-based 
+  automatization of generation. 
+* After editing a text, we should allow re-generate all or parts of
+  the associated material: translation, title, lessons, and perhaps
+  globally (storyline) the summary, storyboard, etc. It could
+  be offered after text editing as a check-mark list, which items
+  to re-generate. We probably should offer a general re-generation
+  routine.
+
+* In crosswords: drop the requirement to type accents or umlauts
+  correctly, base letter suffices (e.g. A is ok for À), similar
+  to what we already allow in typing lessons. However, they
+  could be marked as yellow (not red) in the solution view.
 
 
 * For panel recognition, i think we may really just have some scaling
@@ -9863,6 +10282,9 @@ After re-starting the server, I still see the blue vertical line left of riesenf
   panels in /home/raim/programs/dreizunge/texts/koeniglueq.jpg but the
   rectangles panels didn't match the actual 6 panels. 
 
+* One for the long-term roadmap: provide a browser plugin to map our
+  highlighting and text-analysis, with clicks to play lessons or show
+  text analysis, directly ON the text displayed at a website?
 
 [POSTPONE
 * can we apply the pass mark to the new all-green cutoff to unlock
