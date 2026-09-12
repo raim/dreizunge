@@ -119,9 +119,24 @@ article lists live in a PROBE and must never migrate into the app (`v80_j`).
 
 # ⚠️ OPEN AT THE v91 CUT
 
-## 🥇 OWED RIGHT NOW — the one real defect, and it needs building
+## ✅ THE ARTICLE ASYMMETRY IS BUILT (`v91_a`) — what remains is the BACKLOG, not the check
 
-### ⭐ VOCABULARY ARTICLE ASYMMETRY (`der Weg ↔ percorso`) — NOT FIXED, and QC does not catch it
+> ✅ **Closed at `v91_a`.** The check exists, is propose-only, and flags 8 of 8 on the chapter the
+> shipped QC passed clean, with 0 of 4 false findings. The ⚓ button sits beside 🔍 on each vocabulary
+> lesson. **The write-up below is kept as the record of how it was diagnosed** — its measurements are
+> still the reason the check is shaped the way it is.
+>
+> ⚠️ **STILL OPEN, and it is a different problem**: the EXISTING corpus backlog of **126 asymmetric
+> pairs across 21 chapters**, which no code fixes — someone has to run the pass and accept the
+> proposals. Re-derive the list with `node build_history/probe_article_symmetry_v80j.js`. Worst are
+> `de→it` and `de→nl`: *Richiamando la figura di Alcide De Gasperi* (16/16), *Naturraum für
+> Biodiversität* (14/16), then *Verantwortung und Demokratie*, *Jubiläum der Autonomie*,
+> *Esempio a livello mondiale* at 8/8 each.
+>
+> ⚠️ And only **51 of 660** vocab lessons have ever had ANY QC run. That coverage gap is real,
+> separate, and is what `v90_z`'s post-generation checkbox addresses for new chapters.
+
+### ~~⭐ VOCABULARY ARTICLE ASYMMETRY~~ — the diagnosis, kept because it shaped the fix
 
 ⚠️⚠️ **`v90_z` argued a dedicated check was unnecessary because `qcCheckPair`'s existing ARTICLE
 SYMMETRY rule "already worked". That was a CORRELATION reported as causation, and the user's own live
@@ -3059,6 +3074,102 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v91_a — the vocabulary ARTICLE check: measured into existence, and propose-only
+
+**ONE `ui.json` key** (`qc.btn.articles`, `en` only, granted after being proposed on its own).
+**11 mutations, all red**, plus three the guard found and fixed. Baseline 382/315 → **383/315**.
+
+⚠️ **This closes the item `v90_z` wrongly reported closed and `v90_aa` withdrew.** The user's live
+test refuted `v90_z`'s claim that the existing rule worked; `v90_aa` measured it inert; this builds
+the check that actually does the job.
+
+### The shape is MEASURED, not designed — six earlier shapes were rejected
+
+Every row was run against the real production model on the real corpus:
+
+| shape | score | what broke |
+|---|---|---|
+| the rule buried in `qcCheckPair` (shipped for releases) | **0 of 8** on a real lesson; `OK` in 6/6 arms | inert |
+| one focused prompt doing everything at once | **4/7** | ⚠️ its failures CREATE asymmetry |
+| two YES/NO answers in ONE reply | **7/10** | ⚠️ the answers CORRELATE — left "NO" forces right "NO" |
+| one side per call, no article list | **17/24** | every DEFINITE article read as "not an article" |
+| one side per call + a hand-written list | **11/12** | ⚠️ forbidden by `v80_j`; and `de gemeente` failed purely for Dutch being unlisted |
+| one side per call + a MODEL-DECLARED list, "exactly" | **7/11** | a form the list lacks becomes a silent MISS |
+| **one side per call + that list as EVIDENCE** | **11/11** | ← shipped |
+
+⚠️⚠️ **THE SUB-SKILLS WERE NEVER THE PROBLEM, and that is the finding worth carrying.** Asked on
+their own, the model detects an article **9/9** and produces the right one — elisions included —
+**6/6**. Everything above is COMPOSITION: two judgements in one reply agree with each other, and
+judgement-plus-output-format in one prompt makes it guess. **Decompose before rewording.**
+
+### No article table exists in the app, and the corpus is what makes that possible
+
+`v80_j` is a standing rule: *article lists live in a PROBE and must never migrate into the app*. So
+the list is **MODEL-DECLARED** per language — the shape of the user's own `2z` ruling — and then
+checked against **CORPUS STATISTICS**, which the principle explicitly permits.
+
+⚠️ **The veto exists because the declaration hallucinates, badly.** Asked for Polish articles, the
+model produced **51 forms** — demonstratives (`ten`, `ta`), quantifiers (`jeden`, `żadna`), English
+`a`/`an`, and noise like `cieć`. Polish has none. Without a veto, every Polish noun beginning `ten`
+would be flagged asymmetric — false findings across a whole language, which even propose-only makes
+useless.
+
+⚠️⚠️ **AND THE VETO IS A WHOLE-DECLARATION VERDICT, NOT A PER-FORM WHITELIST.** Measured: filtering
+per form kills the hallucination (Polish 34 declared → **0 supported**) but ALSO drops real articles
+the corpus never happens to start an entry with — Italian loses `le`/`gli`/`un'`, French loses
+`les`/`un`/`une`. **A missing article is not a harmless miss**: `gli studenti ↔ die Studenten` would
+then read as asymmetric and propose adding a SECOND article. So the corpus answers only the question
+it can answer honestly — *does this language use articles at all?* — and the supported forms travel
+on as EVIDENCE, which the detector generalises past. That is exactly why the "exactly" framing
+scored 7/11 and "include … EVIDENCE, not a complete set" scored 11/11.
+
+### End to end, on the chapter the shipped QC passed clean
+
+`Verantwortung und Demokratie`, 8 of 8 pairs asymmetric, through the REAL route on a COPY of the
+store: **`8 checked, 8 flagged`** — against the translation QC's `26 checked, 2 flagged` on the same
+lesson, neither of which was an asymmetry. Every proposal correct, elisions and all:
+`l'autonomia`, `l'investimento`, `la responsabilità`, `la partecipazione`, `l'esperienza`,
+`il percorso`, `la tutela`, **`lo statuto`** (the `lo`-before-s+consonant case). **0 of 4 false
+findings**, including the two the 4/7 prompt got wrong. ~22s per pair; the declaration is 13s and
+cached per language.
+
+### Wiring — reuse, not a second copy
+
+- **`article-symmetry.js`**, standalone (no `server.js` require), like `canonical-analysis.js`.
+- **Rides `_runQc` via `articlesOnly`** rather than getting its own runner: the job wiring, the
+  cancel path and — most of all — `v73_j`'s mid-pass item RE-RESOLUTION are not worth
+  re-implementing. **ONE central gate inside `_check`** (`if (articlesOnly && by !== QC_ARTICLE_BY)
+  return;`) rather than seven at the call sites, which makes "touches no other checker's flags" true
+  by construction — load-bearing, because `_check` CLEARS the bucket it writes under.
+- **Files under its own identity `article-symmetry`**, like `diacritics`/`ambiguous-options`, so
+  findings render in the existing editor with ✓ fix / dismiss and **no new display code**.
+- ⚠️ An articles run never takes NOR leaves the `qcAt` stamp — that stamp is about the TRANSLATION
+  pass, and claiming it would suppress a real QC later. Verified: stamp absent, and **zero** vocab
+  items outside the target chapter changed.
+- **PROPOSE ONLY** (user ruling), and only ever ADDS to the bare side — never strips the lone
+  article. The user's framing: *"In Italian nouns do have sex/gender, so it would be relevant
+  information."*
+
+### ⚠️ Three defects the guards found, and one of them was real code
+
+1. **`e2e-job-cancel` caught a swallowed CANCEL** in the new declaration path — *"a per-item catch
+   inside a cancellable runner that swallows a cancel makes the whole cancel a lie"*. Pressing stop
+   during a declaration would have been ignored. Same defect `v88_z` fixed for `_runQc`'s other
+   catches and `v90_n` for `withRetry`. **The sweep test earned its keep.**
+2. **A word-boundary bug in the verdict parser**, found by the guard's own `ZZZGARBLE` fixture:
+   `/YES|NO/` reads *"I am not sure"* as **NO**, because "NOT" contains "NO" — so a hedging model
+   would be recorded as a confident "no article" and the pair flagged against a side that has one.
+   Now `\bYES|NO\b`, and an unparseable verdict is **null** ("unknown"), never `false`.
+3. **Two source-pinned guards broke on reformatting and were RE-SCOPED, not deleted** —
+   `unit-qc-correct`'s `includeStory` pin and `unit-qc-ambiguous-options`'s `checkAmbiguous = false }`
+   pin, whose claims were both still true. ⚠️ **And the re-scope hit the containment trap a fourth
+   time**: the new regex matched a `//` COMMENT that quoted `includeStory:false`. It now strips
+   comments first, and the comment was reworded so it stops being bait.
+
+⚠️ **Mutation testing also removed a mutually-masking pair** (`v90` rule 5): `checkPair`'s "neither
+language has articles" early return and `hasArticle`'s empty-evidence guard hid each other. The
+early return is gone; one guard, in the function every caller goes through, and both mutations red.
 
 ## ✅ v91 — the cut itself, made as a RECONCILIATION
 

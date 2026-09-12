@@ -10812,6 +10812,11 @@ async function deleteSaved(ref){
 
 // Run translation QC over a scope ({topicId[,lessonIdx]} or {storylineId}); the server
 // writes qc:{sug,at} onto flagged items. Polls the job, then refreshes the view.
+// ⚠️ v91_a: the ARTICLE-SYMMETRY pass. Deliberately `qcRun` with one flag rather than a second
+// runner — the polling, the toast, the job registration, the ⏳ button state and the error handling
+// are all things a copy would have had to re-derive, and `_runQc` on the server took the same
+// decision for the same reason.
+function articleRun(scope, btn){ return qcRun({ ...scope, articles: true }, btn); }
 async function qcRun(scope, btn){
   if(!APP.info?.canGenerate){ showToast(t('qc.toast.no_backend')); return; }
   // Shift-click = force a full re-check, bypassing the "already QC'd & unedited" skip (useful
@@ -12196,6 +12201,7 @@ function buildPath(){
           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move up" onclick="moveLessonNode(${i},-1)" ${i===0?'disabled':''}>↑</button>
           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move down" onclick="moveLessonNode(${i},1)" ${i===d.lessons.length-1?'disabled':''}>↓</button>
           ${APP.info.canGenerate&&L.type!=='ai_error_hunt'&&L.type!=='error_hunt'&&(L.vocab||L.sentences||L.items||L.words)?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('qc.btn.lesson')}" onclick="qcRun({topicId:'${d.id}',lessonIdx:${i}},this)">🔍</button>`:''}
+          ${APP.info.canGenerate&&L.vocab?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('qc.btn.articles')}" onclick="articleRun({topicId:'${d.id}',lessonIdx:${i}},this)">⚓</button>`:''}
         </div>`:''}
       </div>`
     if(!isLocked) node.onclick=()=>showLesson(i);

@@ -355,6 +355,41 @@ const srv = http.createServer(async (req, res) => {
       kind = 'comic_detect';
       content = ['Panel 1: <box>20 60 480 390</box>', 'Panel 2: <box>520 60 980 390</box>',
                  'Panel 3: <20 410 480 740>', 'Panel 4: <520 410 980 740>'].join('\n');
+    // v91_a: the three ARTICLE-SYMMETRY prompts. Each is answered the way a COMPETENT model would,
+    // deriving its answer from the evidence list the server actually put in the prompt — so a test
+    // exercises the real plumbing (declaration -> corpus veto -> evidence -> prompt -> verdict)
+    // rather than a canned reply that would pass whatever the server sent.
+    } else if (/List the articles of the language named below/i.test(sys)) {
+      kind = 'article_declare';
+      // "ZZZNOART" is the article-less language; "ZZZFAKE" declares forms the corpus cannot attest,
+      // which is the hallucination the corpus veto exists to stop.
+      content = /ZZZNOART/i.test(usr) ? 'NONE'
+              : /ZZZFAKE/i.test(usr) ? 'zzq zzr zzs'
+              : "il lo la le gli un uno un'";
+    } else if (/Does the following word or phrase BEGIN with an article\?/i.test(sys)) {
+      kind = 'article_detect';
+      const m = /Articles attested in this language include: (.*)/.exec(sys);
+      if (!m) { content = 'NO'; }                       // the "no articles" system prompt
+      else {
+        const ev = m[1].trim().split(/\s+/).filter(Boolean);
+        const t = String(usr || '').trim().toLowerCase().replace(/[\u2019]/g, "'");
+        // ⚠️ Mirrors a competent model, not the evidence list alone: the prompt says the list is
+        // EVIDENCE, not a closed set, so a form of the same kind counts even when unlisted. That is
+        // exactly the behaviour measured at 11/11, and the reason the closed-set wording was dropped.
+        const KIND = ev.concat(["l'", 'le', 'gli', 'i', 'una', "un'"]);
+        const hit = KIND.some(f => f.endsWith("'") ? t.startsWith(f) : t.split(/\s+/)[0] === f);
+        // "ZZZGARBLE": a reply the caller cannot parse. ⚠️ Without this fixture, "unknown" and
+        // "no article" are indistinguishable — and reading unknown as "no article" INVENTS an
+        // asymmetry, which is the one failure a propose-only check must never make.
+        content = /zzzgarble/i.test(t) ? 'I am not sure about this one.' : (hit ? 'YES' : 'NO');
+      }
+    } else if (/missing its article/i.test(sys)) {
+      kind = 'article_produce';
+      const w = String(usr || '').split('\n')[0].trim();
+      // "ZZZREWRITE": a model that TRANSLATES or rewords instead of prefixing an article. Real
+      // behaviour, and the proposal must be refused rather than offered to a curator as a fix.
+      content = /zzzrewrite/i.test(w) ? 'una parola completamente diversa'
+              : (/^[aeiou]/i.test(w) ? "l'" + w : 'la ' + w);
     } else if (/careful linguistic analyst/i.test(sys)) {
       // PLAN §7.0 CP2: token-level lemma/form/sense analysis (canonical-analysis.js). Reads the
       // token list straight back out of the user message so it works for whatever sentence a test

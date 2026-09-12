@@ -43,8 +43,13 @@ async function main() {
 
 // ── 1. ⚠️ OFF unless explicitly asked for ──────────────────────────────────────────────────────
 {
-  assert.ok(/checkAmbiguous = false \} = opts;/.test(server),
+  // ⚠️ v91_a: RE-SCOPED, not weakened. This pinned `checkAmbiguous = false } = opts;` — the CLOSING
+  // BRACE included — so it broke the moment `v91_a` added another option after it and the
+  // destructuring wrapped onto a second line. The claim is about the DEFAULT, not the line break.
+  assert.ok(/checkAmbiguous\s*=\s*false\b/.test(server),
     '_runQc defaults checkAmbiguous to FALSE — an ordinary sweep must never pay for this');
+  assert.ok(/const \{[^}]*\bcheckAmbiguous\b[^}]*\}\s*=\s*opts;/.test(server),
+    'and it is still read off _runQc\'s own opts, not from somewhere else');
   assert.ok(/if \(checkAmbiguous && _lessonQcRan/.test(server),
     'and the pass is gated on it');
   // The client sends it only on the deliberate gesture, and an explicit scope value still wins.

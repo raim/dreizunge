@@ -353,6 +353,7 @@ if (!quick) {
   run('e2e: skill registry API (v81_k, PLAN §8/B2)', 'node', [path.join(__dirname, 'unit-skill-registry-api.test.js')]);
   run('e2e: vocabulary skill tagging (v81_k, PLAN §8/B3)', 'node', [path.join(__dirname, 'e2e-skill-tagging.test.js')]);
   run('e2e: PLAN §7.0 CP2 — lemma/form/phrase/sense/frequency/script analysis via a real (fake) LLM call', 'node', [path.join(__dirname, 'unit-canonical-analysis.test.js')]);
+  run('e2e: vocabulary ARTICLE SYMMETRY — model-declared list, corpus-vetoed, propose-only (v91_a)', 'node', [path.join(__dirname, 'unit-article-symmetry.test.js')]);
   run('e2e: PLAN §7.0 CP3 — proposed curriculum plan (concepts/prerequisites/ordering), report-only', 'node', [path.join(__dirname, 'unit-curriculum-plan.test.js')]);
   run('e2e: PLAN §7.0 CP4 — vocabulary lesson through the existing contract, validated via real buildStandardExercises', 'node', [path.join(__dirname, 'unit-curriculum-lesson.test.js')]);
   run('e2e: PLAN §7.0 CP5 — silent shadow-mode consumption of the curriculum plan (progress card unchanged)', 'node', [path.join(__dirname, 'unit-cp5-shadow.test.js')]);

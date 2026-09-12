@@ -399,6 +399,7 @@
     "ex.badge.syn_antonyms": "🔴 Opposite",
     "qc.btn.lesson": "QC translations in this lesson",
     "qc.btn.topic": "QC all lessons in this chapter",
+    "qc.btn.articles": "Check article symmetry (der Weg \u2194 il percorso)",
     "qc.btn.storyline": "QC all chapters in this storyline",
     "qc.btn.force_hint": "(Shift-click to re-check already-checked lessons)",
     "qc.toast.no_backend": "QC needs an LLM backend",

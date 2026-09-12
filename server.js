@@ -31,6 +31,7 @@ const { compareWithExistingLessons } = require('./curriculum-plan.js');
 // established, already-precedented direction, not a new risk.
 const { buildCanonicalText } = require('./canonical-text.js');
 const { analyzeChapter, analysisCoverage, scriptsForLangCP2, cp2Provenance } = require('./canonical-analysis.js');
+const _articles = require('./article-symmetry.js');
 // item AI (v88_ad): the curator's overlay over CP2's output. Its own module rather than more of
 // this file because build-static.js must apply the SAME merge when it bakes the analysis into the
 // published build, and it cannot require server.js. See analysis-corrections.js's header for why
@@ -287,7 +288,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v91';
+const APP_VERSION  = 'v91_a';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -2278,6 +2279,10 @@ const QC_DIACRITIC_BY = 'diacritics';
 // running this pass with the plain QC model key would silently wipe every translation flag that
 // model had raised. Per-model buckets are what make two independent checks coexist on one item.
 const QC_AMBIGUOUS_BY = 'ambiguous-options';
+// v91_a: the ARTICLE-SYMMETRY pass files under its own identity too, for the reason spelled out
+// two lines up — a checker writing under another's key CLEARS that key's flags. Readable in the
+// flag UI, like 'diacritics'.
+const QC_ARTICLE_BY = 'article-symmetry';
 // ── Deterministic diacritic check (v72) ───────────────────────────────────────
 // Roadmap item, validated against the user's pre-edit export: a word written WITHOUT its diacritics
 // where the same corpus contains the properly-accented form. `naturliche` vs `natürliche` survived
@@ -2943,7 +2948,11 @@ async function generateSummaryQc(summary, srcLang, mode) {
 }
 
 async function _runQc(jobId, topics, opts) {
-  const { lessonIdx, onlyFlagged, force, includeStory = true, checkAmbiguous = false } = opts;
+  // v91_a: `articlesOnly` is the user's "its own opt-in pass, separate from QC" ruling. It reuses
+  // this function's job/cancel/item-resolution machinery rather than copying it — `v73_j`'s
+  // re-resolution alone is worth not re-implementing — but runs NOTHING except the article check.
+  const { lessonIdx, onlyFlagged, force, includeStory = true, checkAmbiguous = false,
+          articlesOnly = false } = opts;
   let checked = 0, flagged = 0, cleared = 0, skipped = 0;
   let storyProposed = 0, storyClean = 0;
   const affected = [];
@@ -2954,6 +2963,36 @@ async function _runQc(jobId, topics, opts) {
   let _diacIdx = null;
   try { _diacIdx = buildDiacriticIndex(store.schemaVersion >= 29 ? store.topics : store.lessons); }
   catch (e) { console.warn(`  QC: diacritic index unavailable (${e.message}) — skipping that check`); }
+  // ⚠️ v91_a: the ARTICLE EVIDENCE for each language in scope — model-DECLARED, then vetoed against
+  // the corpus. Built once per run and memoised per language, exactly like `_diacIdx` above: the
+  // declaration is a model call (~13s) and the answer is a property of the LANGUAGE, not of the
+  // chapter. See article-symmetry.js's header for why the veto is whole-declaration and not
+  // per-form — a hallucinated list for an article-less language is the failure this exists to stop.
+  const _artEv = new Map();
+  const _articleEvidenceFor = async (lang) => {
+    if (!articlesOnly) return [];
+    if (_artEv.has(lang)) return _artEv.get(lang);
+    let ev = [];
+    try {
+      const declared = await _articles.declareArticles(OLLAMA_ANALYSIS_MODEL, langName(lang));
+      const res = _articles.articleEvidence(declared, store.topics || [], lang);
+      ev = res.attested ? res.supported : [];
+      console.log(`    ⚑ articles [${lang}] declared ${declared.length}, `
+        + (res.attested ? `attested by the corpus (${res.corpusSize} entries): ${ev.join(' ')}`
+                        : `NOT attested in ${res.corpusSize} corpus entries — treating as article-less`));
+    } catch (e) {
+      // ⚠️ A CANCEL IS NOT A FAILED DECLARATION. Caught by `e2e-job-cancel`'s own sweep the first
+      // time this ran: a per-item catch inside a cancellable runner that swallows CANCELLED "makes
+      // the whole cancel a lie, however correctly the job was wrapped". The user would press stop
+      // and watch the model keep working — the exact failure `v88_z` fixed for `_runQc`'s other
+      // catches and `v90_n` had to add to `withRetry`. Re-thrown so the job settles as 'cancelled'.
+      if (String(e && e.message) === CANCELLED) throw e;
+      // Otherwise degrade to "no articles", which produces NO findings — never a guessed one.
+      console.warn(`    ⚑ articles [${lang}] declaration failed (${e.message}) — no findings for it`);
+    }
+    _artEv.set(lang, ev);
+    return ev;
+  };
   console.log(`  ⚙ QC starting: ${topics.length} topic(s)${lessonIdx !== null ? `, lesson ${lessonIdx}` : ''}${onlyFlagged ? ', flagged-only' : ''} [${OLLAMA_QC_MODEL}]`);
   jobStep(jobId, `[${OLLAMA_QC_MODEL}] Starting QC…`);
   for (let ti = 0; ti < topics.length; ti++) {
@@ -3011,7 +3050,7 @@ async function _runQc(jobId, topics, opts) {
         // jobs from re-paying for lessons that already passed.
         // Skip only if the SAME model already cleanly passed this (unedited) lesson — a DIFFERENT QC
         // model must still run so its verdicts can be collected for comparison.
-        if (lessonIdx === null && !onlyFlagged && !force && ls.qcAt && ls.qcBy === OLLAMA_QC_MODEL) {
+        if (!articlesOnly && lessonIdx === null && !onlyFlagged && !force && ls.qcAt && ls.qcBy === OLLAMA_QC_MODEL) {
           skipped++;
           console.log(`    ⏭ skip "${ls.title || ls.type}" (QC'd ${ls.qcAt}, unedited)`);
           continue;
@@ -3029,6 +3068,11 @@ async function _runQc(jobId, topics, opts) {
         // The runner still reads the CAPTURED item (its content is what was checked); only the
         // WRITE is redirected to the live object, which is the whole point.
         const _check = async (item, runner, label, by, locate) => {
+          // ⚠️ v91_a — ONE gate, here, rather than seven at the call sites. An article-only pass must
+          // not spend a model call on any other checker AND must not touch any other checker's
+          // flags; enforcing that centrally is what makes the second guarantee true by construction.
+          // (`_check` CLEARS the bucket it writes under, so a stray run would wipe real findings.)
+          if (articlesOnly && by !== QC_ARTICLE_BY) return;
           checked++;
           let res;
           // ⚠️ item AU cancel (v88_z): a CANCEL is not a failed CHECK. This per-item tolerance exists
@@ -3165,6 +3209,23 @@ async function _runQc(jobId, topics, opts) {
               } else {
                 await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment, arr), 'pair', undefined, _at);
               }
+              // ⚠️ v91_a — ARTICLE SYMMETRY, and it runs ONLY on an explicit articles pass.
+              // Measured cost is ~22s per pair on the production model (two detection calls, plus a
+              // third only when the sides disagree), which is why it is not folded into ordinary QC.
+              // ⚠️ PROPOSE ONLY (user ruling): this writes a flag for a curator to accept or dismiss
+              // and never rewrites a pair — earlier shapes of this check scored 4/7 and their
+              // failures CREATED asymmetry, so a wrong verdict must cost a dismissal, not an entry.
+              if (articlesOnly && key === 'vocab') {
+                const _tEv = await _articleEvidenceFor(tp.lang);
+                const _sEv = await _articleEvidenceFor(tp.srcLang);
+                await _check(item, async () => {
+                  const r = await _articles.checkPair(OLLAMA_ANALYSIS_MODEL,
+                    { target: item.target, source: item.source },
+                    { targetEvidence: _tEv, sourceEvidence: _sEv,
+                      targetLangName: langName(tp.lang), sourceLangName: langName(tp.srcLang) });
+                  return r ? { ok: false, field: r.field, sug: r.sug } : { ok: true };
+                }, 'article', QC_ARTICLE_BY, _at);
+              }
               // v72: deterministic, no model call. Runs for every item including dialect ones —
               // a missing diacritic is a spelling fact, not a translation judgement.
               if (_diacIdx) {
@@ -3234,7 +3295,7 @@ async function _runQc(jobId, topics, opts) {
         // skip it. Only when this pass actually ran a checker for the lesson (intro_script is
         // human-QC'd, never stamped) and produced no new flags for it. A flagged-only pass must
         // NOT stamp — it didn't examine the whole lesson.
-        if (!onlyFlagged && _lessonQcRan && flagged === _flaggedBefore && !_lessonHasOpenQcFlag(_liveLesson())) {
+        if (!articlesOnly && !onlyFlagged && _lessonQcRan && flagged === _flaggedBefore && !_lessonHasOpenQcFlag(_liveLesson())) {
           // v73_j: stamp the LIVE lesson, and read the open-flag test from it too — the flags this
           // pass just wrote live there, not on the captured object.
           const _lsLive = _liveLesson();
@@ -9213,6 +9274,9 @@ http.createServer(async (req, res) => {
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
       if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
       const { storylineId, topicId, lessonIdx, onlyFlagged, force, includeStory, checkAmbiguous } = body;
+      // v91_a: the article-symmetry pass rides THIS route with its own flag, rather than getting a
+      // second route that would duplicate the scope resolution, the job wiring and the cancel path.
+      const articlesOnly = body.articles === true;
       // Resolve the topics in scope.
       let topics = [];
       if (storylineId) {
@@ -9224,11 +9288,13 @@ http.createServer(async (req, res) => {
       }
       if (!topics.length) return json(res, 404, { error: 'Nothing in scope to check.' });
       const jobId = newJob({
-        label: `QC: ${storylineId ? (topics[0]?.topic ? `"${topics[0].topic}" +${topics.length-1} more` : 'storyline') : (topics[0]?.topic || 'topic')}`,
+        label: `${articlesOnly ? 'Articles' : 'QC'}: ${storylineId ? (topics[0]?.topic ? `"${topics[0].topic}" +${topics.length-1} more` : 'storyline') : (topics[0]?.topic || 'topic')}`,
         link: storylineId ? { type: 'storyline', id: storylineId } : (topicId ? { type: 'topic', id: topicId } : null),
       });
       console.log(`  ⚙ QC requested (${storylineId?('storyline '+storylineId):topicId?('topic '+topicId+(lessonIdx!==undefined&&lessonIdx!==null?' lesson '+lessonIdx:'')):'?'}) → ${topics.length} topic(s), job=${jobId}`);
-      runCancellable(jobId, () => _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force, checkAmbiguous: !!checkAmbiguous, includeStory: includeStory !== false }))
+      // ⚠️ An articles run turns story QC OFF: it has nothing to say about prose, and a
+      // story proofread would be minutes of model time the user did not ask for.
+      runCancellable(jobId, () => _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force, checkAmbiguous: !!checkAmbiguous, articlesOnly, includeStory: !articlesOnly && includeStory !== false }))
         .catch(e => { console.error('  QC error:', e.message); jobFailOrCancel(jobId, e); });
       return json(res, 202, { jobId, topics: topics.length });
     }

@@ -193,7 +193,25 @@ assert.ok(/tp\.storyQcProposal = \{/.test(runQc), 'a non-clean verdict accumulat
 assert.ok(/if \(tp\.storyQcProposal\) \{ delete tp\.storyQcProposal; \}/.test(runQc),
   'a clean re-check clears a now-obsolete proposal');
 // The route forwards includeStory (default true) and the summary payload exposes the pending flag.
-assert.ok(/includeStory: includeStory !== false/.test(server), 'route defaults includeStory to true');
+// ⚠️ v91_a: RE-SCOPED, not weakened. This pinned the literal `includeStory: includeStory !== false`,
+// which broke when `v91_a` added ` && !articlesOnly` in front of it — the CLAIM ("absent or true =>
+// true; only an explicit false turns it off") was untouched. A source pin that fails on a correct
+// change is the containment trap from the other direction, so assert the semantics instead.
+{
+  // ⚠️ COMMENTS STRIPPED FIRST. The first version of this matched a `//` comment that QUOTED
+  // `includeStory:false` and captured the prose after it — the same containment trap this project
+  // has now hit four times ("the parenthetical-is-gone check fired on the comment quoting the
+  // request"). A guard that reads commentary is asserting on documentation, not on code.
+  const _code = server.split('\n').filter(l => !/^\s*\/\//.test(l)).join('\n');
+  const _fwd = /includeStory:\s*([^,}]+)/.exec(_code);
+  assert.ok(_fwd, 'the /api/qc route still forwards includeStory');
+  const _expr = _fwd[1];
+  assert.ok(/includeStory !== false/.test(_expr),
+    'route defaults includeStory to true — only an explicit false disables it');
+  // Non-vacuity: a `=== true` default (which would turn story QC OFF for every ordinary call) must
+  // not satisfy the assertion above.
+  assert.ok(!/includeStory === true/.test(_expr), 'and does NOT require it to be passed explicitly');
+}
 assert.ok(/storyQcPending: !!l\.storyQcProposal/.test(server), 'topic-summary payload exposes storyQcPending');
 
 // v55_l regression guard: _runQc is defined at MODULE scope (before boot()), so every function it

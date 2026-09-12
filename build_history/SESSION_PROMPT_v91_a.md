@@ -1,11 +1,11 @@
-# Session prompt — written at the `v91` cut
+# Session prompt — written at the `v91_a` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v91`**. `roadmap_v91.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v91_a`**. `roadmap_v91.md` was cut at
 `v91` — as a RECONCILIATION, see below — and is the current roadmap. **`roadmap_v90.md` is kept as
 the record for the whole `v90` line** (`v90`…`v90_aa`, twenty-seven point releases): go there for how
 anything in it was built, or why a guard is shaped the way it is.
@@ -80,37 +80,26 @@ item's letter, against the shipped lists at every cut** — that is `v90` rule 8
 
 # WHERE TO START
 
-⚠️⚠️ **ONE THING IS OWED, AND IT IS THE ONLY PIECE OF PRODUCT WORK OUTSTANDING.**
+✅ **THE VOCABULARY ARTICLE CHECK IS BUILT AND SHIPPED (`v91_a`).** It is propose-only, it flags 8 of
+8 on the chapter the shipped QC passed clean with 0 of 4 false findings, and the ⚓ button sits beside
+🔍 on each vocabulary lesson. Full write-up in `roadmap_v91.md`'s `v91_a` entry.
 
-**The vocabulary ARTICLE ASYMMETRY (`der Weg ↔ percorso`) is NOT fixed, and QC does not catch it.**
-Full write-up: `roadmap_v91.md` → **"🥇 OWED RIGHT NOW"**, at the top of the file. In short:
+⚠️ **WHAT IS STILL OWED IS THE BACKLOG, NOT THE CHECK**: **126 asymmetric pairs across 21 chapters**
+already in the corpus. No code fixes those — the pass has to be run and the proposals accepted.
+Re-derive with `node build_history/probe_article_symmetry_v80j.js`. And separately, only **51 of 660**
+vocab lessons have ever had ANY QC run at all.
 
-- `v90_z` argued no dedicated check was needed because `qcCheckPair`'s existing ARTICLE SYMMETRY rule
-  "already worked". **That was a correlation reported as causation**, and the user's live test refuted
-  it in a day. `v90_aa` withdrew it and measured the real picture.
-- A forced per-lesson QC over **8 of 8** asymmetric pairs: `26 checked, 2 flagged`, **neither an
-  asymmetry**. The exact prompt, captured from the running server and replayed: **`OK` in all six
-  arms** across both models, with and without the sibling block.
-- ⚠️ **A bigger model is NOT the lever.** A **focused single-question** prompt is a partial one:
-  **4/7** on the 35B model (2 of 3 real fixes vs 0 of 3; verbs and adverbs correctly untouched) —
-  **but both failures CREATE asymmetry, and every failure involves the ELIDED article `l'`**
-  (`la`/`il` succeed). **Fix the elision case and re-measure first.**
-
-**TWO USER RULINGS ARE ALREADY GIVEN — do not re-ask:**
-1. **The shape**: split QC into a pure translation check (`translategemma`) and a lesson-consistency
-   check on the bigger model covering articles — carrying a **DEDICATED single-question check**, not
-   the same buried rule on a bigger model.
-2. **PROPOSE ONLY** — it writes a QC flag with a suggested fix, like every other QC finding, and the
-   user applies or dismisses. ⚠️ **It must not auto-apply**: at 4/7 a wrong verdict CREATES an
-   asymmetry, and a flag costs one dismissal where a write costs a corrupted pair.
-
-⚠️ **The COVERAGE half is real and SEPARATE**: only 51 of 660 vocab lessons have ever been QC'd, and
-21 of the 23 chapters with asymmetric pairs never at all. The existing backlog is **126 pairs across
-21 chapters** — re-derive with `node build_history/probe_article_symmetry_v80j.js`. `v90_z`'s
-post-generation checkbox fixes the FLOW and is worth keeping; it cannot fix an asymmetry until the
-check itself can.
-
----
+⚠️⚠️ **THE METHOD LESSON, worth more than the feature** — `v90` rules 1 and 2, and this session
+proved both twice over:
+- **`v90_z` used a measurement to argue AGAINST building this, and the measurement was a
+  correlation.** The confirming experiment was named in its own write-up and never run. The user's
+  live test refuted it in a day. **Run the falsifying experiment FIRST.**
+- **"It exists" is not "it works."** `qcCheckPair`'s article rule existed for releases and measured
+  **0 of 8**.
+- ⚠️ **And the one from building it: THE SUB-SKILLS WERE NEVER THE PROBLEM.** The model detects an
+  article 9/9 and produces the right one 6/6 — but asked to do both at once it scored 4/7, and asked
+  for two verdicts in one reply the two answers CORRELATED. **Decompose before rewording**; six
+  shapes were measured before one worked.
 
 **Everything else genuinely open is small, and all of it is listed in `roadmap_v91.md`'s SHORT LIST.**
 The four worth knowing at a glance:
@@ -122,10 +111,11 @@ The four worth knowing at a glance:
    `acct.signin` — the key has always existed; it was written before `loadUIStrings()` resolved.
    **`v90_k`'s audit can never find this class: it looks for ABSENT keys.** One instance fixed, the
    class not swept.
-3. **⚠️ TEN `en` keys await hand translation** — measured at the `v91` cut, absent from every one of
+3. **⚠️ ELEVEN `en` keys await hand translation** — ten measured at the `v91` cut plus
+   `qc.btn.articles`, which `v91_a` spent (granted, proposed on its own). Absent from every one of
    the 32 translated languages: `pdf.no_article`, `form.gen_input_lbl`, `form.gen_scan`,
    `form.gen_drop_one`, `form.fetch_url`, `qc.story_btn`, `text_explorer.phrase`,
-   `translation.opt_edit`, `translation.opt_regen`, `toast.translation_saved`. ⚠️ `v90_aa` said
+   `translation.opt_edit`, `translation.opt_regen`, `toast.translation_saved`, `qc.btn.articles`. ⚠️ `v90_aa` said
    "three" because it counted only the keys it had ADDED — a different question from what is still
    untranslated. **Re-derive, never carry the number** (the command is in the SHORT LIST).
    ⚠️ Otherwise the backlog is in far better shape than the `v90` line claimed: 28 languages are
@@ -277,7 +267,7 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 382 checks
+node test/run.js                          → expect 383 checks
 node test/run.js --quick                  → expect 315
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
@@ -310,8 +300,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **363 topics, 101 storylines, 33 languages, 747 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91'`.
+Corpus at this cut: **363 topics, 101 storylines, 33 languages, 748 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_a'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing
