@@ -313,8 +313,20 @@ console.log('  live round-trip: toggleOverruleStorylineLang() flips and persists
   const at = builder.indexOf("'function selectSrcLang(code, fromForm){',");
   const end = builder.indexOf("\n  '}',", at);
   const src = builder.slice(at, end < 0 ? at + 3000 : end);
-  assert.ok(/if\(fromForm\)\{ if\(document\.getElementById\("saved-list"\)\) loadSavedList\(\); return; \}/.test(src),
-    'the static override also short-circuits fromForm=true before reaching loadUIStrings');
+  // ⚠️ v91_e: RE-SCOPED. This asserted that the static override "short-circuits fromForm=true before
+  // reaching loadUIStrings" — correct for the old unconditional decoupling, wrong after `v91_d`
+  // narrowed it to "unless Fix is on". The static copy now mirrors the live one.
+  //
+  // ⚠️⚠️ AND THE LIMITATION THAT LET `v91_d` SHIP BROKEN, recorded where it will be read: this
+  // section pins the SHAPE OF THE STATIC FILE. It therefore fires when the static copy changes, and
+  // stays silent when the LIVE copy gains something the static one never got — which is exactly what
+  // happened at `v91_d` and what the user then reported. **A pairing guard that enumerates known
+  // lines only ever catches yesterday's omission.** Guarding the pairing properly means comparing
+  // the two implementations' BEHAVIOUR, which is its own piece of work; see the roadmap.
+  assert.ok(/APP\.overruleStorylineLang/.test(src),
+    'the static override consults the Fix flag, exactly as the live selectSrcLang does (v91_d/v91_e)');
+  assert.ok(/saveUiLang\(\)/.test(src),
+    'and persists the UI language on the follow path, like the live one');
   assert.ok(/APP\.uiLang=code;/.test(src), 'and still sets APP.uiLang on the fromForm=false path');
   assert.ok(!/\["src-lang-select-footer-ls","src-lang-select-footer-sl"\]/.test(src),
     'THE REGRESSION: the static override must not still list the removed storyline footer id');

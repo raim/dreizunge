@@ -3313,6 +3313,91 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v91_e — the published build threw inside `applyUIStrings`, and had since `v90_w`
+
+**ZERO `ui.json` keys.** Two user-reported static-build defects, one root cause each. **2 mutations,
+both red.** Baseline 384/316 → **385/317**.
+
+User: *"in static docs/index.html the ui selection in settings has an empty dropdown menu, and the
+source language selection doesn't change the ui language"*.
+
+### ⭐ 1. The empty dropdown was a symptom. The bug was an aborted `applyUIStrings`
+
+⚠️ **`_syncPillTitle` was DEFINED INSIDE the `@static-exclude` region and CALLED from outside it.**
+`applyUIStrings` calls it (added at `v90_w`), and `#bpill`'s own `onmouseenter` calls it from markup
+that travels into `docs/`. So the published build threw
+
+```
+ReferenceError: _syncPillTitle is not defined     ← from inside applyUIStrings
+```
+
+**aborting the function part-way**: every `_setText`/`_setAttr` after that line was silently skipped.
+⚠️ **The reported empty dropdown was merely the most visible consequence** — `#ui-lang-select` is
+built near the END of that function, well past the throw. The published build's UI strings have been
+**partially applied since `v90_w`**, several releases.
+
+Fixed by MOVING the function below `@static-exclude-end` — the roadmap's own rule ("when a client
+behaviour must exist in both builds, move it below the marker and call it from both; do not teach
+`build-static.js` a copy"). Safe by inspection: three lines that read two elements and write a
+`title` attribute — nothing `unit-model-picker` forbids in the published build.
+
+⚠️ **This is the FOURTH time this exact split has shipped a call to a function the published bundle
+does not contain** (`v87_k`, `v88_w`, `v90_j`, now this). `v90_j`'s own note, a few lines from the
+moved function, says it in the same words.
+
+### ⭐ 2. `v91_d` never reached the static build at all
+
+`build-static.js` keeps its **own copy** of `selectSrcLang`, and `v91_d` changed only the live one —
+so "source language should update ui language" was true in the app and false on GitHub Pages. Paired
+now, including the `_limitLangOptions` re-application the sibling branch already does.
+
+⚠️ **`unit-ui-lang-decouple` HAS a "build-static.js's own overrides stay paired" check and it passed
+through this.** It pins specific lines, so it cannot notice a NEW line that was added to one file and
+not the other. Recorded here rather than fixed: a pairing guard that enumerates is a guard that only
+ever catches yesterday's omission.
+
+### The guard that should have existed, and why fourteen others missed it
+
+**`unit-static-applyuistrings.test.js`** loads the PUBLISHED bundle (`loadClient({file})`, the
+`v76_k` seam) and RUNS `applyUIStrings()`:
+
+1. it must not throw;
+2. it must reach its LAST writes (`user-story-clear-btn`) — non-vacuity §1 cannot give, since a
+   function can fail to throw and still return early;
+3. `_syncPillTitle` specifically is present, so a future reader hitting §1 need not re-derive the
+   mechanism;
+4. **generalised**: no function `applyUIStrings` calls may be among those the static build DROPS.
+
+⚠️ **Fourteen `unit-static-*` guards existed and not one RAN the built artefact's own string pass.**
+`check-inline.js` proves the bundle PARSES — **a ReferenceError is not a syntax error.**
+
+⚠️ **§4's first implementation was thrown away**: it regex-scanned call sites and produced false
+positives from inside string literals (`Array.from(`). The shipped version compares two exact sets —
+`function NAME(` declared live minus declared static — and intersects with `applyUIStrings`' own
+source. **A guard with false positives is worse than none; it teaches people to ignore the file.**
+
+⚠️ **HARNESS LIMIT, recorded because it shaped §2**: `lib-dom` never builds `<option>` children, so
+`src-lang-select.options.length` is **0** there against 34 in a real browser. The dropdown's own
+count is unobservable in that harness **in either direction**, so asserting it would be a check that
+can never pass. The dropdown was verified in a REAL browser against the built file instead:
+**0 options before the fix, 33 after**, with a clean console on a fresh tab.
+
+### ⚠️ FOUND ALONGSIDE, NOT FIXED — 12 more dropped-but-referenced names
+
+Comparing declarations live-vs-static and stripping comments, **38 functions are dropped by the
+static build and 12 of them still appear as calls in the published bundle**: `toggleModelPop`,
+`_updateReinforcePriorVisibility`, `clearContinuePin`, `_continueFromRef`, `onContinueSelectChange`,
+`onTranslateSelectChange`, `articleRun`, `qcRun`, `continueFromLesson`, `saveActiveJob`,
+`setGenStatus`, `onGenStatusClick`.
+
+⚠️ **Most are almost certainly harmless** — they sit inside template literals for screens the static
+build never renders (the QC/⚓ buttons are behind `APP.info.canGenerate`). **But they were not
+audited**, and at least one looks worth a look on its own: `showSettings(ev){ return
+toggleModelPop(ev); }` is DEFINED in the published bundle while `toggleModelPop` is not, so any
+reachable caller of `showSettings` throws. **Do not sweep these blindly** — the distinction between
+"dangling in dead markup" and "dangling on a reachable path" is the whole question, and a
+regex cannot answer it. Worth one deliberate pass.
+
 ## ✅ v91_d — "I speak" drives the UI language again, unless **Fix** is on
 
 **ZERO `ui.json` keys.** No new control. A previous USER RULING was NARROWED by a later one, and both

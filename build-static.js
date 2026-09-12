@@ -813,10 +813,29 @@ const staticOverrides = [
   // Only "-ls" (lesson-set) still exists — the storyline footer moved into Settings (user
   // follow-up after v81_ab; both files' selectSrcLang stay paired, matching every other line here).
   '  ["src-lang-select-footer-ls"].forEach(function(id){var f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});',
-  // "I speak" (fromForm=true) no longer touches the UI language at all — decoupled the same way
-  // the live selectSrcLang was. fromForm=false (the lesson-set footer, the ONLY remaining caller)
-  // still does, same as before decoupling — this IS the mid-story UI-language glance.
-  '  if(fromForm){ if(document.getElementById("saved-list")) loadSavedList(); return; }',
+  // ⚠️ v91_e: PAIRED WITH v91_d's live change, and it was NOT paired when that shipped — the user
+  // reported "the source language selection doesn't change the ui language" in the published build.
+  // This file keeps its OWN selectSrcLang, so a change to the live one reaches docs/ only if it is
+  // made here too. That is the `build-static.js` re-implementation trap the roadmap names, and this
+  // is the second half of it biting in one release.
+  //
+  // The ruling (user): "source language should update ui language, unless 'x fix' is selected in
+  // settings" — Fix being `APP.overruleStorylineLang`, default OFF. fromForm=false below is the
+  // lesson-set footer's TRANSIENT mid-story glance and is deliberately left alone.
+  '  if(fromForm){',
+  '    if(!APP.overruleStorylineLang && APP.uiLang!==code){',
+  '      APP.uiLang=code; saveUiLang();',
+  '      loadUIStrings(code).then(function(){',
+  // Same re-apply the fromForm=false path below does — applyUIStrings() rebuilds these option
+  // lists from scratch, so the "hide languages absent from this build" filter must go back on.
+  '        _limitLangOptions(document.getElementById("lang-select"));',
+  '        _limitLangOptions(document.getElementById("lib-lang-select"));',
+  '        loadSavedList();',
+  '      });',
+  '      return;',
+  '    }',
+  '    if(document.getElementById("saved-list")) loadSavedList(); return;',
+  '  }',
   '  APP.uiLang=code;',
   '  loadUIStrings(code).then(function(){',
   // PLAN §C5 stage 2: applyUIStrings() just rebuilt lib-lang-select's options from scratch —

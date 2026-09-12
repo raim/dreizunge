@@ -174411,12 +174411,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v91_d', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v91_e', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"6ed574cc928c","lessons.json":"7296ba82bef9","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8c7381fba29f","analysis-corrections.json":"e64c06e5700a","build-static.js":"7904da55615a"};
+  APP.buildSources = {"index.html":"5c735833c1db","lessons.json":"7296ba82bef9","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8c7381fba29f","analysis-corrections.json":"e64c06e5700a","build-static.js":"f780cfbb9fa1"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -174855,6 +174855,27 @@ async function loadSaved(ref) {
 function setTopic(t){ document.getElementById('topic-input').value=t; }
 
 // @static-exclude-end — static build resumes here. The client engine below
+
+// ⚠️ v91_e — MOVED BELOW @static-exclude-end, and this is the FOURTH time this class has bitten.
+//
+// `_syncPillTitle` was defined INSIDE the excluded region while `applyUIStrings` — which is not
+// excluded — calls it, and `#bpill`'s own `onmouseenter` calls it from markup that travels into
+// docs/. So the published build threw `ReferenceError: _syncPillTitle is not defined` from inside
+// applyUIStrings, ABORTING IT PART-WAY: every `_setText` after that line was skipped, which is why
+// the Settings card's UI-language dropdown was empty (it is filled near the end of that function).
+// Introduced at `v90_w`; reported by the user several releases later.
+//
+// ⚠️ Same shape as `v90_j`'s own note a few lines down ("leaving them here meant the static build's
+// markup called two functions that did not exist in its bundle") and as `v87_k`/`v88_w`. The rule
+// is the roadmap's own: when a client behaviour must exist in BOTH builds, move it below this
+// marker and call it from both — do not teach `build-static.js` a second copy.
+//
+// Safe here by inspection: it reads two elements and writes a title attribute. No backend, no model
+// picker, nothing `unit-model-picker` forbids in the published build.
+function _syncPillTitle(){
+  const p=document.getElementById('bpill'), l=document.getElementById('blbl');
+  if(p && l) p.title = l.textContent || '';
+}
 // (buildPath, play UI, lesson editor, renderers, exercise builders) IS included in
 // docs; define any static-reachable client helper at/after this point.
 // ── The library sort — ONE implementation, both builds (v90_j) ─────────────────────────────────
@@ -192877,7 +192898,18 @@ function selectSrcLang(code, fromForm){
   try{ refreshScriptPickers(); }catch(_e){}
   if(fromForm){ APP.formSrcLang=code; saveSrcLang(); APP.libSrcFilter=code; const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code; const libSel=document.getElementById("lib-src-lang-select"); if(libSel&&libSel.value!==code) libSel.value=code; }
   ["src-lang-select-footer-ls"].forEach(function(id){var f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});
-  if(fromForm){ if(document.getElementById("saved-list")) loadSavedList(); return; }
+  if(fromForm){
+    if(!APP.overruleStorylineLang && APP.uiLang!==code){
+      APP.uiLang=code; saveUiLang();
+      loadUIStrings(code).then(function(){
+        _limitLangOptions(document.getElementById("lang-select"));
+        _limitLangOptions(document.getElementById("lib-lang-select"));
+        loadSavedList();
+      });
+      return;
+    }
+    if(document.getElementById("saved-list")) loadSavedList(); return;
+  }
   APP.uiLang=code;
   loadUIStrings(code).then(function(){
     _limitLangOptions(document.getElementById("lang-select"));
