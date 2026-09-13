@@ -411,6 +411,79 @@ the proposals accepted.
 
 ---
 
+## 🔬 THE 12 DANGLING NAMES, AUDITED (user request, after `v91_e`) — NO LIVE BUG, 5 LATENT
+
+`v91_e` recorded that 38 functions are dropped by the static build and 12 still appear as calls in
+the published bundle, and said *"do not sweep these blindly — the distinction between 'dangling in
+dead markup' and 'dangling on a reachable path' is the whole question."* The user asked for that
+pass. **Done, on the running published build, not by reading.** Result: **no live defect**, one false
+positive, and **five latent ones sitting behind a single `display:none`.**
+
+### ⚠️ The source scan was wrong in BOTH directions — which is the methodological finding
+
+- **FALSE POSITIVE**: `_updateReinforcePriorVisibility` is not called anywhere. It appears inside an
+  **HTML comment** (`<!-- … -->`), and the scan stripped only `//` and `/* */`. Comments travel into
+  `docs/`, so any source-level scan of the built file must strip HTML comments too.
+- **FALSE NEGATIVE**: the scan **missed `analyzeChaptersRun`** entirely (on `#ls-story-analyze-btn`),
+  because it only compared *declared* names and that handler's name never appears as a `function`
+  declaration difference in the way the diff was built.
+
+⚠️ **So the reliable method is to ask the BUILT DOM, not the source**: walk every `on*` attribute in
+the published build, extract the called identifier, and `typeof` it in that page. Exact, and it
+answers reachability at the same time.
+
+### The verdicts
+
+| name | verdict |
+|---|---|
+| `_updateReinforcePriorVisibility` | **false positive** — inside an HTML comment |
+| `toggleModelPop` | **dead** — reached only from `showSettings`, which is defined in the bundle but never called and appears in no markup |
+| `continueFromLesson` (via `slBottomContinue`) | **unreachable** — `#sl-bottom-continue`'s display is `APP.info.canGenerate ? '' : 'none'`, and that is `false` in the static build |
+| `continueFromLesson` (library row markup) | **unreachable** — rendered only inside `APP.info.canGenerate ? {...}` |
+| `qcRun`, `articleRun` (lesson-row markup) | **unreachable** — same `canGenerate` gate; `_renderStorylineScreen`'s own qcBtn is display-gated the same way |
+| `qcRun`, `articleRun` (in `_applyPostGenFeatures`) | **unreachable** — book-generation path only |
+| `_continueFromRef` ×4 | **unreachable** — comic extract/create, draft save, PDF generate |
+| `saveActiveJob`, `setGenStatus` ×9 | **unreachable** — `stopGeneration`, `_pollBookJob`, `_applyBookProgress`, `pdfGenerateAll` |
+| **`onContinueSelectChange`** | ⚠️ **LATENT — verified to THROW** |
+| **`onTranslateSelectChange`** | ⚠️ **LATENT** |
+| **`clearContinuePin`** | ⚠️ **LATENT** |
+| **`onGenStatusClick`** | ⚠️ **LATENT** |
+| **`analyzeChaptersRun`** | ⚠️ **LATENT** (missed by the source scan) |
+
+### ⚠️ Why the five are LATENT and not live — and how thin the margin is
+
+The two wizard selects are **outside `#gen-area`**, so they become **VISIBLE** the moment the
+generation screen is shown, and firing one really does throw — confirmed, not reasoned:
+
+```
+Uncaught ReferenceError: onContinueSelectChange is not defined
+```
+
+**But the generation screen cannot be reached in the published build.** Measured on the running page:
+**zero visible controls** route to it (`showGeneration` / `goLanding` / `show('generation-screen')`),
+there is **no hash routing**, and the one button that would (`#lib-generate-new-btn`) is hidden.
+`build-static.js` also rewrites `showGeneration(){ return goLanding(); }`. The throw above was
+produced by clicking that hidden button programmatically.
+
+⚠️⚠️ **So all five are exactly ONE `display:none` away from being live.** Un-hide
+`#lib-generate-new-btn`, or add any other route to that screen, and two selects start throwing on
+first use. `#ls-story-analyze-btn` and `#gen-status` are the same shape on the lesson-set screen.
+**This is a fragile equilibrium held by CSS, not by design.**
+
+### The fix, NOT applied — one line each, and it needs a ruling
+
+`build-static.js` already stubs live-only functions in exactly this shape
+(`function triggerUITranslation(){}`). Five no-op stubs would retire the class, and a no-op is
+semantically correct for every one of them in a build with no backend: there is no generation to
+cancel, no continue-pin to clear, no chapters to analyse.
+
+⚠️ **The better guard is the method above, not the stubs**: walk the published DOM's `on*` attributes
+and require every called identifier to resolve. That catches the whole class on the built artefact —
+including the one a source scan missed — and it would have caught `v90_w`'s `_syncPillTitle` too, via
+`#bpill`'s `onmouseenter`. **Not built; offered.**
+
+---
+
 ## 🆕 THE SHORT LIST — everything genuinely open, reconciled at the v91 cut
 
 *Each line below was cross-checked against **both** `roadmap_v89.md`'s and `roadmap_v90.md`'s shipped
