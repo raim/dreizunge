@@ -795,6 +795,29 @@ const staticOverrides = [
   'async function submitRating(){}',
   '// In static mode, UI strings are baked in — no translation needed',
   'function triggerUITranslation(){}',
+  // ⚠️ v91_f — NO-OP STUBS FOR MARKUP THAT SURVIVES INTO docs/ WHILE ITS HANDLER DOES NOT.
+  //
+  // Each of these five is wired from a control in the published markup and was NOT defined in the
+  // published bundle, so firing it threw `ReferenceError` — verified in a browser for
+  // `onContinueSelectChange`. None was a LIVE bug: every one sits behind a hidden control, and the
+  // generation screen they belong to has no visible route in this build. ⚠️ But that is an
+  // equilibrium held by CSS: the two wizard selects live OUTSIDE `#gen-area`, so they become visible
+  // the instant that screen is shown, and one removed `display:none` makes all five live.
+  //
+  // A no-op is the CORRECT behaviour here, not a silencer — this build has no backend, so there is
+  // no generation to cancel or inspect, no continue-pin to clear, and no chapter analysis to start.
+  // The alternative (stop emitting the markup) would mean diverging the two files' HTML, which is a
+  // much larger change for controls that are already invisible.
+  //
+  // ⚠️ Guarded by `unit-static-markup-handlers.test.js`, which walks EVERY `on*` attribute in the
+  // built file and `typeof`s it in the built bundle. Add a control here and forget the stub and that
+  // test says so — which is the point, because the audit that found these five was hand-driven and
+  // the source scan it started from was wrong in both directions.
+  'function onContinueSelectChange(){}',
+  'function onTranslateSelectChange(){}',
+  'function clearContinuePin(){}',
+  'function onGenStatusClick(){}',
+  'function analyzeChaptersRun(){}',
   '// Static: globe resets filter; any other value sets filter + lang. fromForm=false (footer) updates render context only.',
   'function selectSrcLang(code, fromForm){',
   '  if(fromForm===undefined) fromForm=true;',

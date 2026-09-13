@@ -174411,12 +174411,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v91_e', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v91_f', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"5c735833c1db","lessons.json":"7296ba82bef9","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8c7381fba29f","analysis-corrections.json":"e64c06e5700a","build-static.js":"f780cfbb9fa1"};
+  APP.buildSources = {"index.html":"5c735833c1db","lessons.json":"7296ba82bef9","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"8c7381fba29f","analysis-corrections.json":"e64c06e5700a","build-static.js":"ae3fe394cb16"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
@@ -192888,6 +192888,11 @@ async function doGenerate(){}
 async function submitRating(){}
 // In static mode, UI strings are baked in — no translation needed
 function triggerUITranslation(){}
+function onContinueSelectChange(){}
+function onTranslateSelectChange(){}
+function clearContinuePin(){}
+function onGenStatusClick(){}
+function analyzeChaptersRun(){}
 // Static: globe resets filter; any other value sets filter + lang. fromForm=false (footer) updates render context only.
 function selectSrcLang(code, fromForm){
   if(fromForm===undefined) fromForm=true;

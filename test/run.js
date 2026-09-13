@@ -102,6 +102,7 @@ run('unit: static version derived from server APP_VERSION (v49)', 'node', [path.
 run('unit: current roadmap names the current line (v78_b)', 'node', [path.join(__dirname, 'unit-roadmap-version.test.js')]);
 run('unit: docs/ built from current sources (v73_b)', 'node', [path.join(__dirname, 'unit-static-freshness.test.js')]);
 run('unit: applyUIStrings runs to completion in the PUBLISHED build (v91_e)', 'node', [path.join(__dirname, 'unit-static-applyuistrings.test.js')]);
+run('unit: every inline markup handler in the PUBLISHED build resolves (v91_f)', 'node', [path.join(__dirname, 'unit-static-markup-handlers.test.js')]);
 run('unit: static build bakes CP1/CP2 analysis (text explorer offline, v86_z)', 'node', [path.join(__dirname, 'unit-static-analysis-bake.test.js')]);
 run('unit: runner reports its own check count (v70)', 'node', [path.join(__dirname, 'unit-run-summary.test.js')]);
 run('unit: translate-ui discovers every offered language (v53)', 'node', [path.join(__dirname, 'unit-translate-ui-langs.test.js')]);

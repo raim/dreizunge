@@ -3386,6 +3386,60 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v91_f — five no-op stubs, and a guard over EVERY inline handler in the published build
+
+**ZERO `ui.json` keys.** Both halves of what the post-`v91_e` audit recommended. **3 mutations, all
+red.** Baseline 385/317 → **386/318**.
+
+### The five stubs
+
+`onContinueSelectChange`, `onTranslateSelectChange`, `clearContinuePin`, `onGenStatusClick`,
+`analyzeChaptersRun` — each wired from a control in the published markup and **not defined in the
+published bundle**. `build-static.js` already stubs live-only functions in exactly this shape
+(`function triggerUITranslation(){}`).
+
+⚠️ **A no-op is the CORRECT behaviour, not a silencer**: this build has no backend, so there is no
+generation to cancel or inspect, no continue-pin to clear, no chapter analysis to start. The
+alternative — stop emitting the markup — would diverge the two files' HTML for controls that are
+already invisible.
+
+⚠️ **None was a LIVE bug** (the audit established that), and that is precisely the argument for
+fixing them: the two wizard selects live OUTSIDE `#gen-area`, so they become visible the instant the
+generation screen is shown. **The margin was one `display:none`.**
+
+### ⭐ The guard is the more valuable half
+
+**`unit-static-markup-handlers.test.js`** walks **every** `on*` attribute in the BUILT file and
+`typeof`s each called identifier **inside the built bundle**. 144 handlers checked.
+
+⚠️ **It reproduced the hand audit exactly — five names, no more, no fewer** — which the audit's own
+source-level scan could not: that scan reported `_updateReinforcePriorVisibility` (which appears only
+inside an HTML comment) and MISSED `analyzeChaptersRun` entirely. **Attributes are unambiguous, and
+`typeof` in the loaded bundle is the definition of "does this build have it."**
+
+⚠️ **M3: it independently catches `v90_w`'s `_syncPillTitle`**, via `#bpill`'s own `onmouseenter` —
+the bug `v91_e` fixed now has TWO unrelated guards on it, one through the throw
+(`unit-static-applyuistrings`) and one through the markup.
+
+### ⚠️ Two false-positive sources it had to strip, both found on its first run
+
+1. **HTML comments** — they travel into `docs/` and discuss function names in prose. This is the
+   exact false positive the audit's scan produced.
+2. **The inline `<script>`** — it contains template literals that LOOK like handler attributes
+   (`onclick="qcRun({topicId:'${d.id}'…})"` inside a renderer), plus local closures (`f(`).
+   Unstripped, the guard reported four names that are not defects.
+
+⚠️ **A guard with false positives is worse than no guard** — it teaches people to ignore the file.
+Both strips are documented in its header with what they were observed to produce.
+
+### ⚠️ Scope, stated rather than implied
+
+This covers handlers in the built file's **markup**. Handlers written into strings by renderers
+(`walkForTitle`'s ⚓/🔍 buttons) are out of scope: they are gated on `APP.info.canGenerate`, false in
+the published build, and the audit verified them unreachable. Covering them means driving every
+renderer — a different and much larger test, and it should be written as one if it is ever wanted
+rather than bolted onto this file.
+
 ## ✅ v91_e — the published build threw inside `applyUIStrings`, and had since `v90_w`
 
 **ZERO `ui.json` keys.** Two user-reported static-build defects, one root cause each. **2 mutations,
