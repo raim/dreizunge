@@ -1,0 +1,305 @@
+{
+ "note": "The two topics in this corpus whose translation actually FAILED, plus five shapes that look\nsimilar and are NOT failures. Captured at the v91 line from byte-copy backups taken before both\nwere deleted at the user’s request, so the live store now matches origin:\"failed\" ZERO times and\nthis file is the only remaining evidence of the shape.\n\nTHE POINT OF THIS FIXTURE IS THE NEGATIVES. An empty storyTranslation is NOT the marker: 268 of\n362 topics had one, because the field only reached 100% adoption in 2026-08 (0-3% before July,\n51% in July, 100% in August). Reading that emptiness as a defect rate is exactly the mistake this\nfixture exists to prevent - it was made once already, in the v91 roadmap, and corrected there.\nThe marker is translationMeta.origin === \"failed\".\n\nBoth failures share a second signature worth keeping: model \"(none)\", ms null, promptTokens 0 -\ni.e. NO MODEL CALL WAS EVER MADE. See generationStatsState: the en-de case has NO\ngenerationStats key at all (\"absent\"), the de-it case has one carrying no lessonFormat. Absent\nand null are different stored states and JSON.stringify erases the difference, so it is recorded\nas its own field. The stored data cannot distinguish a user cancellation from a failure before\nthe first call.",
+ "markerField": "translationMeta.origin",
+ "markerValue": "failed",
+ "failures": [
+  {
+   "id": "tp_17887907589860000108",
+   "topic": "Richiamando la figura di Alcide De Gasperi, aveva inoltre…",
+   "lang": "it",
+   "srcLang": "de",
+   "generatedAt": "2026-09-07T14:19:18.986Z",
+   "story": "Richiamando la figura di Alcide De Gasperi, aveva inoltre osservato che l’autonomia non può essere considerata soltanto «un fatto contabile» o «uno scudo contro presunte invasioni di campo», ma deve rappresentare «un investimento in positivo». Per realizzarla, ha aggiunto, sono necessari «un supplemento di responsabilità» e una partecipazione democratica alla vita sociale. Mattarella ha inoltre definito l’esperienza altoatesina «un unicum» nel panorama europeo. Nel giugno 2017, a Merano, in occasione dell’anniversario della chiusura della controversia altoatesina e del secondo Statuto, Mattarella aveva ricordato il percorso che ha portato alla costruzione dell’autonomia. Un percorso fondato su «apertura, ascolto, reciproco rispetto, comprensione e dialogo». Secondo il presidente, la tutela delle popolazioni e delle identità si è inserita nel più ampio progetto di pace e integrazione europea. Lo Statuto, aveva evidenziato, costituisce una «cornice chiara e dinamica», mentre l’Alto Adige ha rappresentato «un’autentica avanguardia europea». Nel luglio 2019, invece, durante la visita di Stato in Austria, Mattarella ha affrontato il tema dell’autonomia insieme a Van der Bellen. Ha definito l’Alto Adige una terra che «lega Austria e Italia» e ha ricordato che il modello di autonomia è «apprezzato in tutto il mondo e visto come modello cui ispirarsi».",
+   "translationMeta": {
+    "type": "translation",
+    "model": "(none)",
+    "attempts": null,
+    "valid": 0,
+    "rejected": 0,
+    "rejectReasons": null,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "ms": null,
+    "at": "2026-09-07T14:19:18.985Z",
+    "origin": "failed",
+    "source": "recorded at generation"
+   },
+   "generationStatsState": "present",
+   "generationStats": {},
+   "continuedFromId": null,
+   "lessons": [
+    {
+     "id": "ls_1788862950172_0_standard",
+     "title": "Autonomia e De Gasperi",
+     "vocab": 8,
+     "sentences": 5
+    }
+   ]
+  },
+  {
+   "id": "tp_17886126817580000291",
+   "topic": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE",
+   "lang": "de",
+   "srcLang": "en",
+   "generatedAt": "2026-09-05T12:51:21.759Z",
+   "story": "SO WURDE ZUR ABSCHRECKUNG AN DER GRENZE VON DER REGIERUNG EIN GROSSES SCHILD AUFGESTELLT\nRIESEN SIND HIER NICHT WILLKOMMEN",
+   "translationMeta": {
+    "type": "translation",
+    "model": "(none)",
+    "attempts": null,
+    "valid": 0,
+    "rejected": 0,
+    "rejectReasons": null,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "ms": null,
+    "at": "2026-09-05T12:51:21.757Z",
+    "origin": "failed",
+    "source": "recorded at generation"
+   },
+   "generationStatsState": "absent",
+   "continuedFromId": "tp_17886106251690000139",
+   "lessons": []
+  }
+ ],
+ "notFailures": {
+  "generated": {
+   "id": "tp_17889394908430000140",
+   "topic": "Leere Aula",
+   "lang": "it",
+   "srcLang": "de",
+   "generatedAt": "2026-09-09T07:38:10.843Z",
+   "story": "I banchi si svuotarono rapidamente. Gli studenti raccolsero i propri effetti e uscirono dall’aula in fila indiana. Il professore rimase seduto alla sua scrivania, osservando il vuoto. Raccogliò le copie con metodo, ordinandole per numero di matricola. La luce del pomeriggio entrava dalle finestre alte, illuminando la polvere nell’aria. Chiuse l’ultima porta a chiave e spense la luce. Il corridoio era deserto, silenzioso come prima dell’inizio della lezione.",
+   "storyTranslation": "Die Bänke leerten sich rasch. Die Studierenden sammelten ihre Sachen und verließen den Hörsaal in einer Reihe. Der Professor blieb an seinem Schreibtisch sitzen und betrachtete die Leere. Er sammelte die Klausuren methodisch ein und ordnete sie nach der Matrikelnummer. Das Nachmittagslicht fiel durch die hohen Fenster und erhellte den Staub in der Luft. Er schloss die letzte Tür ab und schaltete das Licht aus. Der Flur war leer, still wie vor Beginn der Vorlesung.",
+   "translationMeta": {
+    "type": "translation",
+    "model": "qwen3.6:35b-a3b",
+    "attempts": null,
+    "valid": 1,
+    "rejected": 0,
+    "rejectReasons": null,
+    "promptTokens": 178,
+    "completionTokens": 113,
+    "ms": 29210,
+    "at": "2026-09-09T07:38:10.843Z",
+    "origin": "generated",
+    "source": "recorded at generation"
+   },
+   "generationStatsState": "present",
+   "generationStats": {
+    "lessonFormat": "json",
+    "models": {
+     "story": "qwen3.6:35b-a3b",
+     "translation": "qwen3.6:35b-a3b",
+     "lessons": "qwen3.6:35b-a3b"
+    }
+   },
+   "continuedFromId": "tp_17889392258520000042",
+   "lessons": [
+    {
+     "id": 1,
+     "title": "Lezione che finisce",
+     "vocab": 8,
+     "sentences": 5
+    },
+    {
+     "id": "ls_1788942605942_1_standard",
+     "title": "Leere Aula",
+     "vocab": 8,
+     "sentences": 5
+    },
+    {
+     "id": "ls_1788943000093_1_inflections",
+     "title": "Italienische Verben im Präteritum",
+     "vocab": 0,
+     "sentences": 0
+    }
+   ]
+  },
+  "skippedSameModel": {
+   "id": "tp_17847295426010000393",
+   "topic": "Meteorological Explanation",
+   "lang": "it",
+   "srcLang": "en",
+   "generatedAt": "2026-07-22T14:07:06.523Z",
+   "story": "Perché i chicchi cadono con tanta violenza? Antonello Pasini, fisico del clima al Cnr,\nindica tre ingredienti: «Il Mediterraneo, a causa dei cambiamenti climatici, raggiunge i\n30-32 gradi; l’aria supera i 40 al Centro-Sud e i 35 al Nord; in quota arrivano infiltrazioni\nfredde. L’aria calda e umida sale, incontra quella più fredda e secca e genera cumulonembi.\nDentro le nubi le correnti trascinano su e giù nuclei di ghiaccio: raccolgono altra acqua,\ncrescono e precipitano quando il loro peso non è più sostenuto». A oggi non è possibile\nprevedere il punto esatto dove cadranno i chicchi: «Con i modelli possiamo indicare solo\nil giorno prima solo le aree più esposte, con i radar possiamo seguire le nubi nel dettaglio,\ndi ora in ora», spiega Pasini.\nLe previsioni\nIeri, poi, il fronte ha raggiunto le Marche: decine gli interventi dei vigili del fuoco per\nsottopassi allagati, coperture divelte e alberi caduti. A Fano sono stati sospesi gli eventi.\nIn serata il maltempo è sceso fino alla Puglia. Nel Foggiano una grondaia divelta ha\ntranciato la linea elettrica e interrotto la ferrovia tra Peschici e San Severo. A Bari chiusi i\nparchi e tre aerei sono stati dirottati verso altri scali a causa del vento. Il peggio dovrebbe\nessere alle spalle: da mercoledì l’anticiclone subtropicale si ritira, farà meno caldo.\n\nPossibili temporali su Appennini e coste adriatiche.",
+   "translationMeta": {
+    "type": "translation",
+    "model": "(none)",
+    "attempts": null,
+    "valid": 0,
+    "rejected": 0,
+    "rejectReasons": null,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "ms": null,
+    "at": "2026-07-22T14:07:06.523Z",
+    "origin": "skipped-same-model",
+    "source": "recorded at generation"
+   },
+   "generationStatsState": "present",
+   "generationStats": {
+    "lessonFormat": "json",
+    "models": {
+     "story": null,
+     "translation": null,
+     "lessons": "qwen2.5:7b"
+    }
+   },
+   "continuedFromId": "tp_17847292264520000293",
+   "lessons": [
+    {
+     "id": 1,
+     "title": "Why do the grains fall with such violence?",
+     "vocab": 8,
+     "sentences": 5
+    },
+    {
+     "id": "ls_1437736520",
+     "title": "Why grains fall with such violence",
+     "vocab": 8,
+     "sentences": 5
+    },
+    {
+     "id": "ls_1784737259854_2_gate",
+     "title": "Basic Weather Terms",
+     "vocab": 8,
+     "sentences": 5
+    },
+    {
+     "id": "ls_1784737603192_2_word_forms",
+     "title": "Italian Weather Verbs",
+     "vocab": 0,
+     "sentences": 0
+    },
+    {
+     "id": "ls_1784737914393_2_synonyms",
+     "title": "Meteorological Explanation",
+     "vocab": 0,
+     "sentences": 0
+    }
+   ]
+  },
+  "userProvided": {
+   "id": "tp_17886338472190000441",
+   "topic": "Government Boast",
+   "lang": "de",
+   "srcLang": "en",
+   "generatedAt": "2026-09-05T18:44:07.219Z",
+   "story": "Freilich hat sich die Regierung damit gebrüstet, dass das Land dank ihr riesenfrei ist",
+   "storyTranslation": "Of course, the government has boasted that the country is free of giants, thanks to it.",
+   "translationMeta": {
+    "type": "translation",
+    "model": "(user-provided)",
+    "attempts": null,
+    "valid": 1,
+    "rejected": 0,
+    "rejectReasons": null,
+    "promptTokens": 81,
+    "completionTokens": 19,
+    "ms": 13126,
+    "at": "2026-09-07T11:17:27.022Z",
+    "origin": "user-provided",
+    "source": "edited by hand"
+   },
+   "generationStatsState": "present",
+   "generationStats": {
+    "lessonFormat": "json",
+    "models": {
+     "story": null,
+     "translation": "qwen3.6:35b-a3b",
+     "lessons": "qwen3.6:35b-a3b"
+    }
+   },
+   "continuedFromId": "tp_17886332486940000399",
+   "lessons": [
+    {
+     "id": 1,
+     "title": "Government Boasting About Freedom",
+     "vocab": 8,
+     "sentences": 2
+    }
+   ]
+  },
+  "unknown": {
+   "id": "tp_1661591510",
+   "topic": "Funktioniert es mit gemischten Modellen?",
+   "lang": "lb",
+   "srcLang": "de",
+   "generatedAt": "2026-05-25T08:43:23.096Z",
+   "story": "Mir hoff, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben. Mir probiert mir Sätze, wat gemischt wënn wëll, Luxemburgerisch und Deutsch, schrieb. \"Mir wëlde, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben, bi mir hëlle Freiheit, wéi mir wëlde, Deutsch zu schrieben.\" Mir blickt auf dës Ergebnis, und mir wëlde, dës Werkzeug mir helft, bi mir hëlle Freiheit, wéi mir wëlde, gemischt zu schreiben, Luxemburgerisch und Deutsch. Mir wëlde, dës Translategemma mir helft, bi mir hëlle Freiheit, wéi mir wëlde, gemischt zu schreiben, Luxemburgerisch und Deutsch.",
+   "storyTranslation": "Ich hoffe, dieses Übersetzungstool funktioniert, damit wir frei schreiben können, wie wir möchten, auf Luxemburgisch. Wir werden versuchen, Sätze zu formulieren, die sowohl Luxemburgisch als auch Deutsch kombinieren. \"Ich hoffe, dieses Übersetzungstool funktioniert, damit wir frei schreiben können, auf Luxemburgisch, damit wir frei schreiben können, auf Deutsch.\" Wir werden die Ergebnisse prüfen und hoffen, dass dieses Werkzeug uns dabei hilft, frei auf Luxemburgisch und Deutsch zu schreiben. Ich hoffe, dieses Übersetzungstool hilft uns, frei auf Luxemburgisch und Deutsch zu schreiben.",
+   "translationMeta": {
+    "type": "translation",
+    "model": "(unknown)",
+    "attempts": null,
+    "valid": null,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "ms": null,
+    "at": "2026-05-25T08:43:23.096Z",
+    "backfilled": true,
+    "source": "no record (story present, no generationStats.models)",
+    "origin": "unknown"
+   },
+   "generationStatsState": "present",
+   "generationStats": {
+    "lessonFormat": "json"
+   },
+   "continuedFromId": "tp_1471338772",
+   "lessons": [
+    {
+     "id": "ls_930046620",
+     "title": "Übersetzungstool",
+     "vocab": 5,
+     "sentences": 5
+    },
+    {
+     "id": "ls_930046619",
+     "title": "funktioniert es mit gemischten modellen?",
+     "vocab": 4,
+     "sentences": 5
+    }
+   ]
+  },
+  "preFeatureBackfilled": {
+   "id": "tp_17821414974550000103",
+   "topic": "Barista lächelt",
+   "lang": "it",
+   "srcLang": "de",
+   "generatedAt": "2026-06-22T15:05:55.590Z",
+   "story": "Ehi, hai appena ordinato un drink,\" ti dice il barista. \"E allora?\" rispondi tu, \"non ho neanche il bicchiere!\" E il barista, con un sorriso malizioso, ti porge un bicchiere d'acqua. \"Ecco, bevi pure,\" dice. \"Ma,\" obietti, \"non ho denaro!\" \"E allora?\" ribatte lui, \"non hai neanche il bicchiere!\" E tu, con un sospiro, prendi il bicchiere e bevi l'acqua. Ma ecco, il barista ti guarda di nuovo strano. \"Ehi, hai appena ordinato un drink,\" ti dice. \"E allora?\" rispondi tu, \"non ho neanche il bicchiere!\" E il barista, con un sorriso malizioso, ti porge un bicchiere d'acqua. \"Ecco, bevi pure,\" dice. \"Ma,\" obietti, \"non ho denaro!\" \"E allora?\" ribatte lui, \"non hai neanche il bicchiere!\" E tu, con un sospiro, prendi il bicchiere e bevi l'acqua. Ma ecco, il barista ti guarda di nuovo strano. \"Ehi, hai appena ordinato un drink,\" ti dice. \"E allora?\" rispondi tu, \"non ho neanche il bicchiere!\" E il barista, con un sorriso malizioso, ti porge un bicchiere d'acqua. \"Ecco, bevi pure,\" dice. \"Ma,\" obietti, \"non ho denaro!\" \"E allora?\" ribatte lui, \"non hai neanche il bicchiere!\" E tu, con un sospiro, prendi il bicchiere e bevi l'acqua. Ma ecco, il barista ti guarda di nuovo strano. \"Ehi, hai appena ordinato un drink,\" ti dice. \"E allora?\" rispondi tu, \"non ho neanche il bicchiere!\" E il barista, con un sorriso malizioso, ti porge un bicchiere d'acqua. \"Ecco, bevi pure,\" dice. \"Ma,\" obietti, \"non ho denaro!\" \"E allora?\" ribatte lui, \"non hai neanche il bicchiere!\" E tu, con un sospiro, prendi il bicchiere e bevi l'acqua. Ma ecco, il barista ti guarda di nuovo strano. \"Ehi, hai appena ordinato un drink,\" ti dice. \"E allora?\" rispondi tu, \"non ho neanche il bicchiere!\" E il barista, con un sorriso malizioso, ti porge un bicchiere d'acqua. \"Ecco, bevi pure,\" dice. \"Ma,\" obietti, \"non ho denaro!\" \"E allora?\" ribatte lui, \"non hai neanche il bicchiere!\" E tu, con un sospiro, prendi il bicchiere e bevi l'acqua. Ma ecco, il barista ti guarda di nuovo strano. \"Ehi, hai appena ordinato un drink,\" ti dice. \"E allora?\" rispondi tu, \"non ho neanche il bicchiere!\" E il barista, con un sorriso malizioso, ti porge un bicchiere d'acqua. \"Ecco, bevi pure,\" dice. \"Ma,\" obietti, \"non ho denaro!\" \"E allora?\" ribatte lui, \"non hai neanche il bicchiere!\" E tu, con un sospiro, prendi il bicchiere e bevi l'acqua. Ma ecco, il barista ti guarda di nuovo strano. \"Ehi, hai appena ordinato un drink,\" ti dice. \"E allora?\" rispondi tu, \"non ho neanche il bicchiere!\" E il barista, con un sorriso malizioso, ti porge un bicchiere d'acqua. \"Ecco, bevi pure,\" dice. \"Ma,\" obietti, \"non ho denaro!\" \"E allora?\" ribatte lui, \"non hai neanche il bicchiere!\" E tu, con un",
+   "translationMeta": {
+    "type": "translation",
+    "model": "qwen2.5:7b",
+    "attempts": null,
+    "valid": null,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "ms": null,
+    "at": "2026-06-22T15:05:55.590Z",
+    "backfilled": true,
+    "source": "generationStats.models.translation",
+    "origin": "generated"
+   },
+   "generationStatsState": "present",
+   "generationStats": {
+    "lessonFormat": "json",
+    "models": {
+     "story": "qwen2.5:7b",
+     "translation": "qwen2.5:7b",
+     "lessons": "qwen2.5:7b"
+    }
+   },
+   "continuedFromId": "tp_17821402065920000002",
+   "lessons": [
+    {
+     "id": 1,
+     "title": "Barista und Kunde",
+     "vocab": 8,
+     "sentences": 5
+    }
+   ]
+  }
+ }
+}

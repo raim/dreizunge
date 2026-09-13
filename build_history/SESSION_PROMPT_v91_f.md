@@ -311,8 +311,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 386 checks
-node test/run.js --quick                  → expect 318
+node test/run.js                          → expect 387 checks
+node test/run.js --quick                  → expect 319
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -344,7 +344,7 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **363 topics, 101 storylines, 33 languages, 748 `en` keys** — an inherently live
+Corpus at this cut: **361 topics, 101 storylines, 33 languages, 748 `en` keys** — an inherently live
 snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_f'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the

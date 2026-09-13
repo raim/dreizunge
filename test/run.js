@@ -350,6 +350,7 @@ run('unit: jobs popover — tutor synthetic entry + stacking-context fix (item U
 run('unit: the bottom bar\'s panels line up with their own buttons (v90_aa)', 'node', [path.join(__dirname, 'unit-bar-popover-align.test.js')]);
 run('unit: unfinished-project drafts — client-side half (item R)', 'node', [path.join(__dirname, 'unit-drafts.test.js')]);
 run('unit: unfinished-project drafts — comic upload flow, client-side half (item R follow-up)', 'node', [path.join(__dirname, 'unit-drafts-comic.test.js')]);
+run('unit: the translation-failure marker, and why emptiness is not it (v91 line)', 'node', [path.join(__dirname, 'unit-translation-failed-marker.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {
