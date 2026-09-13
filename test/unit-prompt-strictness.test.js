@@ -177,14 +177,53 @@ console.log('  dialect prompts + V2 coverage retry: OK');
 // the target noun without ("das Feld" ↔ "campo"). The base-form rule said "with the usual article
 // where applicable" but never demanded SYMMETRY, so the model was free to include it on one side
 // only — which makes MCQ answers inconsistent and teaches the article on the wrong side. All three
-// vocab prompts (JSON, from-text, table) now require both-or-neither.
+// ⚠️⚠️ UPDATED IN THE v91 LINE — THE CONTRACT INVERTED, AND IT WAS MEASURED, NOT ARGUED.
+// This block used to require both-or-NEITHER. **The NEITHER branch was the defect.** Measured on 8
+// de→it chapters, 64 vocab pairs per arm, production parameters:
+//     shipped (both-or-neither)   23/64 asymmetric — 36%   (79% of actual NOUN pairs)
+//     a rule DEMANDING both sides  0/64 asymmetric —  0%   articles on both sides, no failures
+// Offering the model a choice let it resolve that choice badly: at `target`-first it commits the
+// target side bare, the both-sides branch stops being reachable, and the German prior then supplies
+// an article on the source side — producing exactly the pairing the rule forbids. Four other prose
+// surgeries (explanation removed, examples reversed, examples deleted, schema example moved) each
+// measured NO improvement; only removing the choice worked. Full write-up in `roadmap_v91.md`.
 {
   for (const key of ['vocab', 'vocabFromText', 'vocabTable']) {
     const sys = prompts[key].system;
     assert.ok(/ARTICLE SYMMETRY/.test(sys), `${key}.system carries the article-symmetry rule`);
-    assert.ok(/BOTH sides/.test(sys) && /NEITHER side/.test(sys) && /never an article on one side only/.test(sys),
-      `${key}.system states both-or-neither explicitly`);
+    assert.ok(/article on BOTH sides/.test(sys), `${key}.system DEMANDS the article on both sides`);
+    // ⭐ The assertion that carries the finding: the choice must not come back.
+    assert.ok(!/or on NEITHER side/i.test(sys),
+      `⚠️ ${key}.system must NOT offer the "or on NEITHER side" branch — that branch was MEASURED as ` +
+      'the cause of the asymmetry this rule exists to prevent (36% vs 0%). Do not restore it as a ' +
+      '"clarification".');
+    assert.ok(/do not leave both bare/i.test(sys),
+      `${key}.system closes the bare-both escape explicitly`);
+    // ⚠️ USER RULING, v91 line: *"if the other language has no articles, it would be ok to show the
+    // German with article and eg. Japanese without."* The rule USED to say "omit them on both sides"
+    // for such a pair, which strips `der Ball` to `Ball` for a Serbian learner and destroys the
+    // gender for no benefit. ⭐ The project's OWN measuring instrument already agreed with the user:
+    // `probe_article_symmetry_v80j.js` counts only pairs where BOTH languages have articles.
+    // ⚠️ A regression check briefly read the model's 69% source-side article rate on en→ja / de→sr as
+    // a DEFECT and reverted the fix over it. That was the wrong criterion — it is the desired
+    // behaviour. Do not reintroduce "omit on both sides".
+    assert.ok(/has no articles at all/i.test(sys),
+      `${key}.system still handles the article-less case`);
+    assert.ok(/KEEPS its article/.test(sys),
+      `⚠️ ${key}.system must say the OTHER side keeps its article when one language has none — a ` +
+      'noun-gender language must not be stripped just because its partner has no articles');
+    assert.ok(!/omit them on both sides|omit them in both/i.test(sys),
+      `⚠️ ${key}.system must NOT tell an article-less pair to omit articles on BOTH sides`);
   }
+  // ⚠️ v85_r's lesson, now pinned: `vocab` and `vocabFromText` are two prompt-level callers of the
+  // same idea, and a fix to one sat un-generalised in the other for five releases.
+  const bullet = (t) => { const i = t.indexOf('- ARTICLE SYMMETRY'); return t.slice(i, t.indexOf('\n- ', i + 3)); };
+  assert.strictEqual(bullet(prompts.vocab.system), bullet(prompts.vocabFromText.system),
+    'vocab.system and vocabFromText.system must carry the IDENTICAL article rule — they drifted for ' +
+    'five releases once already (v85_r)');
+  // ⚠️ vocabTable is deliberately DIFFERENT: it emits markdown columns, not target/source keys.
+  assert.ok(/column 1/.test(prompts.vocabTable.system) && /column 2/.test(prompts.vocabTable.system),
+    'vocabTable.system names COLUMNS, since it has no target/source fields to name');
 }
-console.log('  article symmetry required in all three vocab prompts: OK');
+console.log('  all three vocab prompts DEMAND both sides, with no neither-branch: OK');
 console.log('unit-prompt-strictness: ALL PASSED');

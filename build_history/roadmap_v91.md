@@ -422,47 +422,377 @@ keep their content in their own fields. Of the 98 with no populated array at all
 string (`corruptedStory`, `question`, `perType`). **Two** lessons corpus-wide are genuinely
 contentless.
 
-### ⚠️ A THIRD HYPOTHESIS, BETTER SUPPORTED THAN SCHEMA ORDER — the rule's own text
+### ⭐⭐ RESULT — THE SHIPPED CONFIGURATION IS THE ONLY ONE OF THE FOUR THAT PRODUCES ASYMMETRY
 
-The `v85_r` rule contains, verbatim, two things a prompt should not contain:
+8 chapters × 4 arms, 64 vocab pairs per arm, 0 failures, manipulation verified on every call.
 
-1. *"French and **Italian** dictionaries cite the bare noun"* — it NAMES the target language of these
-   lessons and states, as fact, the convention we do not want followed.
-2. *`Do NOT write "der Hund" ↔ "chien"`* — the forbidden pairing printed as a concrete exemplar. A
-   negation wrapped around a concrete example is a known way to elicit the example.
-
-Both were added in good faith to EXPLAIN the rule. The hypothesis is that explaining it this way
-PRIMES it. Tested by a `rule-pos` arm (`probe_rule_variants.js`) that keeps the rule's demand and its
-positive example and deletes only the explanation and the negative exemplar — 4083 → 3517 chars.
-**If `pos` beats `on`, the fix is deleting prose from `prompts.json`: no code, no new keys, no
-schema change, and nothing for the parser to care about.** That is a far cheaper fix than reordering
-the schema, which is why it is worth measuring first even though it was not the original question.
-
-### ⏳ FIRST RESULT — one chapter, all four arms, and it is about SHAPE not asymmetry
-
-| `Leere Aula` | asym | Italian article | German article | sample |
+| arm | asymmetric | fully-asym lessons | Italian article | German article |
 |---|---|---|---|---|
-| `target`-first / rule ON (shipped) | 0/8 | 0 | 0 | `scrivania ↔ Schreibtisch` |
-| `target`-first / rule OFF | 0/8 | 0 | 0 | `scrivania ↔ Schreibtisch` |
-| `source`-first / rule ON | 0/8 | 7 | 7 | `il banco ↔ die Bank` |
-| `source`-first / rule OFF | 0/8 | 4 | 4 | `i banchi ↔ die Bänke` |
+| `target`-first / rule **ON** ← **SHIPPED** | **23 / 64 — 36%** | **3 of 8** | 9% | 45% |
+| `target`-first / rule OFF | **0 / 64** | 0 | 0% | 0% |
+| `source`-first / rule ON | **0 / 64** | 0 | 97% | 97% |
+| `source`-first / rule OFF | **0 / 64** | 0 | 89% | 89% |
 
-Removing the rule entirely changed NOTHING in either order; flipping the field order changed the
-output completely. Note `Schreibtisch`: under `target`-first the model strips the article off the
-GERMAN side too, against German's own dictionary convention — it is genuinely applying symmetry, and
-the order decides only which of the two legal shapes it settles into.
+⚠️⚠️ **THE ARTICLE SYMMETRY RULE CAUSES THE ASYMMETRY IT FORBIDS — but only at the shipped field
+order.** It is an INTERACTION, not a main effect: asymmetry requires BOTH `target`-first AND the rule.
+Either change alone removes it completely. **Every asymmetric pair in the entire experiment came from
+the one arm that ships.**
 
-⚠️ **DO NOT READ THIS AS THE RESULT.** All four arms were SYMMETRIC here, so this chapter says
-nothing about the defect itself. Schema order moving the SHAPE is not the same claim as schema order
-reducing ASYMMETRY, and only the second would justify reordering the schema. Seven chapters and the
-`rule-pos` arm remain.
+✅ **THE EFFECT SIZE REPRODUCES THE CORPUS**: 36% here against the 33.3% measured on real chapters
+generated after `v85_r`, and 0% in the rule-off arm against 2.5% under the old one-line rule. The
+observational finding and the controlled experiment agree, which is the strongest evidence in this
+file.
+
+**THE MECHANISM, now visible in the rates rather than inferred.** With the rule OFF the model writes
+both sides BARE — 0% and 0%, symmetric by default, no instruction needed. Add the rule at
+`target`-first and the German side jumps to 45% while Italian stays at 9%: the rule's own prose
+("German dictionaries cite a noun WITH its article … French and Italian dictionaries cite the bare
+noun") pushes the GERMAN side toward an article AFTER the Italian side has already been committed
+bare. **The rule supplies the very convention that breaks the pairing, at the one moment the model
+can still act on it.** At `source`-first the German side is written FIRST, the article lands there,
+and the Italian side then matches it — 97%/97%.
+
+✅ **THE ONE-DECISION-PER-LESSON DIAGNOSIS IS CONFIRMED FROM A THIRD DIRECTION.** The three affected
+lessons scored **7/8, 8/8, 8/8** — never one or two items — and the other five were 0/8. The unit of
+the defect is the CALL, not the item.
+
+⚠️ **WHAT THIS DOES NOT YET LICENSE.** Two fixes are now known to work and they are NOT equivalent:
+reordering the schema makes lessons carry articles on BOTH sides (97%), deleting the rule makes them
+carry articles on NEITHER (0%). Both satisfy the rule; they are different products, and which one is
+wanted is a PEDAGOGY decision, not a measurement — the user's own framing was *"in Italian nouns do
+have sex/gender, so it would be relevant information"*, which argues for the BOTH-sides shape.
+⚠️ And a schema reorder touches every lesson type's parser, while deleting prose touches nothing.
+**The `rule-pos` arm is the one that matters**: if keeping the rule's DEMAND while deleting its
+EXPLANATION and its negative exemplar also reaches 0%, the fix is a prose deletion in `prompts.json`
+with the BOTH-sides shape preserved — no code, no keys, no parser risk. ⏳ Running.
 
 ⚠️ **METHOD NOTE, for whoever re-measures this.** Filter on `lesson._genMeta.model` and
 `topic.generationStats.lessonFormat`, and bucket on `topic.generatedAt` — all 43 de→it lessons carry
 one. Do **NOT** fall back to `updatedAt`: it moves when the user hand-edits a chapter, which files
 old lessons into the recent bucket and was the first thing this analysis got wrong.
 
----
+### ⚖️ USER RULING — THE WANTED SHAPE IS ARTICLES ON **BOTH** SIDES, NOT NEITHER
+
+User, after seeing the 2×2: *"both sides sounds right, gender is useful"* — confirming the earlier
+framing *"in Italian nouns do have sex/gender, so it would be relevant information."*
+
+⚠️⚠️ **THIS CHANGES THE SUCCESS CRITERION, AND RETROSPECTIVELY DISQUALIFIES A MEASURED FIX.** The rule
+permits two shapes and three arms reach 0% asymmetry, but they do NOT reach it the same way:
+
+| arm | asymmetric | shape it produces | meets the ruling |
+|---|---|---|---|
+| `source`-first / rule ON | 0% | articles on **BOTH** — 97% / 97% | ✅ |
+| `source`-first / rule OFF | 0% | articles on **BOTH** — 89% / 89% | ✅ |
+| `target`-first / rule OFF | 0% | articles on **NEITHER** — 0% / 0% | ❌ strips the gender |
+
+**"Delete the rule" is therefore OFF THE TABLE** despite measuring 0%: it is symmetric and it loses
+the information the user wants. ⚠️ A future session must not resurrect it on the strength of its
+asymmetry number alone — **asymmetry is necessary and not sufficient; the article RATES are the
+second half of the test**, which is why the probe records them per side.
+
+⚠️ **AS OF THIS RULING THE ONLY QUALIFYING FIX IS THE SCHEMA REORDER**, which is the expensive one —
+it touches every lesson type's parser. Every prompt-only candidate must be judged against BOTH
+columns, and a candidate that reaches 0% by going bare is a FAILURE for this purpose however good its
+asymmetry number looks.
+
+### ❌ A THIRD HYPOTHESIS — the rule's own prose — MEASURED AND REFUTED
+
+The `v85_r` rule contains, verbatim, two things a prompt should not: *"French and **Italian**
+dictionaries cite the bare noun"* (naming the target language and stating the convention we do not
+want) and *`Do NOT write "der Hund" ↔ "chien"`* (the forbidden pairing as a concrete exemplar). The
+hypothesis was that explaining the rule this way PRIMES it. A `rule-pos` arm kept the rule's DEMAND
+and its positive examples and deleted both — 4083 → 3517 chars.
+
+| arm, `target`-first, 8 chapters, 64 pairs | asymmetric | Italian article | German article |
+|---|---|---|---|
+| rule ON (shipped) | 23/64 — 36% | 9% | 45% |
+| **rule POS** (explanation + negative exemplar deleted) | **23/64 — 36%** | 13% | 48% |
+
+❌ **IDENTICAL — same count, same two fully-asymmetric lessons. The hypothesis is dead**, and with it
+the hope of a prose-only fix. ⚠️ **Recorded rather than quietly dropped**: it was the best-supported
+idea in this file an hour before it was measured, and the next reader should not re-derive it.
+
+### ⚠️ A FOURTH HYPOTHESIS — the rule's WORKED EXAMPLES — MEASURED: BOTH PREDICTIONS FAILED
+
+What the rule keeps after `pos` is its demand plus two parentheticals, `("der Hund" ↔ "il cane")` and
+`("Hund" ↔ "cane")` — **both with German on the LEFT, i.e. German as TARGET, the opposite direction
+from a de→it lesson.** Two arms, `target`-first, built on `pos`, same 8 chapters:
+
+| arm | asymmetric | fully-asym | Italian article | German article |
+|---|---|---|---|---|
+| shipped (control, already measured) | 23/64 — 36% | 3 | 9% | 45% |
+| `flip` — same examples, LESSON's direction | **23/64 — 36%** | 2 | 13% | 48% |
+| `noex` — examples removed, demand intact | **8/64 — 13%** | 1 | 13% | 25% |
+
+❌ **PREDICTION 1 FAILED.** `flip` was predicted at ≈0% or inverted. It measured IDENTICALLY to
+shipped — same count, and the **same three chapters**. **The DIRECTION of the examples is irrelevant.**
+❌ **PREDICTION 2 FAILED, though less badly.** `noex` was predicted at ≈0%. It reached 13% — a real
+reduction, not an elimination.
+
+⚠️ **SO THE EXAMPLES CONTRIBUTE WITHOUT BEING THE CAUSE.** Removing them pulls German from 45% to
+25% and repairs two of the three broken chapters; the demand ALONE still produces 13%. Compare
+`rule-off` at 0%/0%: **it is the RULE AS A WHOLE that lifts the German side, not one quotable span of
+it.** Three separate prose surgeries have now been measured — explanation removed, examples
+reversed, examples removed — and none reaches 0%.
+
+⚠️⚠️ **AND `noex` WOULD FAIL THE USER'S RULING EVEN AT 0%**: Italian sits at 13%, so it is drifting
+toward the BARE shape, not the both-sides shape. Judged on both columns it is not a candidate fix.
+
+⭐ **A PROPERTY WORTH MORE THAN THE ARMS: THE FAILURE IS CHAPTER-SPECIFIC AND REPRODUCIBLE.** The
+same three chapters break under shipped, `pos` AND `flip` — *Verantwortung und Demokratie*,
+*Jubiläum der Autonomie*, *Richiamando la figura di Alcide De Gasperi* — and the other five never
+break in any arm. They are the ABSTRACT-NOUN chapters (`autonomia`, `responsabilità`,
+`partecipazione`, `investimento`). ⚠️ **This is the quantitative form of `v80_j` §F3c's warning that
+ONE LESSON CAN NEVER VALIDATE A FIX** — at temperature 0.15 a "fix" tested on one of the five clean
+chapters passes every time while changing nothing. **Any future test must use a chapter SET that
+includes the abstract-noun chapters, and report per-chapter.**
+
+### ❌ A FIFTH HYPOTHESIS — the SCHEMA's own worked example — MEASURED AND REFUTED, WITH A SIDE EFFECT
+
+`der Hund ↔ il cane` appears a SECOND time, outside the rule, in the schema block: *"Example vocab
+items (German lesson, Italian speaker)"* — German-as-target again, and present in every arm measured
+so far. Two arms, `target`-first, **rule left exactly as shipped** (asserted byte-identical), same 8
+chapters:
+
+| arm | asymmetric | Italian article | German article | ⚠️ empty outputs |
+|---|---|---|---|---|
+| shipped (control) | 23/64 — 36% | 9% | 45% | 0 |
+| `schemaflip` — example in the lesson's direction | 22/**56** — 39% | 14% | 54% | **1** |
+| `schemanoex` — example removed | 23/**48** — 48% | 0% | 48% | **2** |
+
+❌ **PREDICTION FAILED: both arms were predicted BELOW 36%; neither is.** The schema example is not a
+cause. That is now FOUR prose surgeries — explanation, examples reversed, examples removed, schema
+example moved — and **none reaches 0%**.
+
+⚠️⚠️ **AND THE SIDE EFFECT IS THE REAL FINDING: TOUCHING THE SCHEMA EXAMPLE BREAKS OUTPUT VALIDITY.**
+`schemanoex` produced **two lessons with NO vocab at all** and `schemaflip` one, against zero in every
+other arm of every probe in this session. **That worked example is load-bearing for FORMAT while doing
+nothing for articles.** Do not delete it as tidying.
+
+⚠️ **READ THE PERCENTAGES WITH CARE — THE DENOMINATORS MOVED.** The ABSOLUTE asymmetric counts are
+flat across all three arms (23, 22, 23); only the denominator shrinks as failures remove whole
+lessons, which is what inflates 36% → 39% → 48%. **The honest statement is "no improvement, plus a
+reliability cost", NOT "it got worse by 12 points".** ⚠️ A future probe should report failures
+alongside rates for exactly this reason — this one did, and it is the only reason the number is
+readable.
+
+### ⭐⭐⭐ THE FIX — A RULE THAT *DEMANDS* BOTH SIDES. 0% ASYMMETRIC, 95%/95% ARTICLES, NO SCHEMA CHANGE
+
+✅ **APPLIED TO `prompts.json` at the user's instruction** — `vocab.system`, `vocabFromText.system`
+AND `vocabTable.system`. ⚠️ **THREE prompts carried the rule, not the two this file previously named**;
+`vocabTable` was found only by grepping for the bullet. Its wording differs because it emits markdown
+COLUMNS, not `target`/`source` keys — the JSON wording would have been simply wrong there.
+
+⚠️ **THE SHIPPED TEXT IS BYTE-IDENTICAL TO THE MEASURED TEXT** — verified by rendering
+`vocabFromText.system` with `{L}=Italian`/`{S}=German` and comparing to the probe's own
+`demand_both.txt`: 407 chars, exact match. What ships is what was measured, not a retyping of it.
+⚠️ `fs.watch` reloaded it into the user's running server immediately; no restart was needed.
+⚠️ **The de→nl residual (12% of noun pairs) is NOT fixed and is not claimed to be** — see
+"DOES IT GENERALISE" below. This was applied knowing that.
+
+⚠️⚠️ **TWO GUARDS ASSERTED THE OPPOSITE AND HAD TO BE INVERTED — the interesting part of the change.**
+`unit-prompt-article-rule` (§2, §3) REQUIRED the overrides-dictionary-convention sentence and the
+German→French counter-example; `unit-prompt-strictness` REQUIRED the both-or-NEITHER phrasing. Both
+were `v80_j`/`v85_r` DESIGN HYPOTHESES — reasonable when written, never tested against a model — and
+the experiment measured the first as having no effect (`pos`: 23/64, identical to shipped) and the
+second as the CAUSE. ⚠️ **This is not a guard being loosened to admit a change; the replacements pin a
+STRICTER contract** — the NEITHER branch is now forbidden, the bare-both escape must be closed
+explicitly, the article-less clause must survive, the two JSON prompts must stay byte-identical to
+each other (`v85_r`'s drift), and the rule must name NO article of any language. All five mutations
+were caught; `prompts.json` was restored by byte copy (`v87_l`).
+⭐ **A `v80_j` WIN THAT CAME FREE**: the old rule shipped `der Hund`, `il cane`, `le chien` and
+`chien, n.m.` to EVERY language pair, including pairs sharing none of those languages. The measured
+fix needs no example at all (`both-noex` ≡ `both-ex`, 0/64 each), so the rule is now pure
+`{L}`/`{S}` — **no language knowledge in the prompt**, 407 chars against 861.
+⚠️ **The SCHEMA example was deliberately KEPT** (`{"target":"der Hund","source":"il cane"}`): removing
+it measured TWO lessons with no vocab at all. It is load-bearing for FORMAT. Do not tidy it away.
+
+The shipped rule offers the model a CHOICE — *"on BOTH sides … or on NEITHER side"* — and at
+`target`-first it resolves that choice badly. Remove the choice:
+
+| arm, `target`-first, 8 chapters, 64 pairs | asymmetric | Italian article | German article | empty |
+|---|---|---|---|---|
+| shipped (control) | 23/64 — 36% | 9% | 45% | 0 |
+| **`both-ex`** — demand + one example in the lesson's direction | **0/64 — 0%** | **95%** | **95%** | 0 |
+| **`both-noex`** — demand, NO example | **0/64 — 0%** | **95%** | **95%** | 0 |
+
+✅ **0% asymmetric, articles on BOTH sides, zero output failures, AT THE SHIPPED FIELD ORDER.** It
+satisfies the user's ruling and needs no schema reorder — **no parser risk, no code, no `ui.json`
+key**. It repairs all three abstract-noun chapters that broke in every other arm.
+
+⭐ **THE WORKED EXAMPLE IS UNNECESSARY** — `both-noex` matches `both-ex` exactly. **Prefer the
+example-free form**, and not merely for brevity: the SHIPPED rule hardcodes German, French and
+Italian (`der Hund`, `il cane`, `chien`, `chien, n.m.`), which every language pair receives regardless
+of its own languages. The example-free demand is pure `{L}`/`{S}` and carries **no language knowledge
+at all** — closer to `v80_j` than what it replaces. It is also **409 characters against 861**.
+
+**THE TEXT, ready for `prompts.json` `vocabFromText.system` (and `vocab`, which shares the rule).**
+It replaces the whole `- ARTICLE SYMMETRY …` bullet:
+
+```
+- ARTICLE SYMMETRY for nouns: give every noun its article on BOTH sides — the {L} article on the
+"target" side and the {S} article on the "source" side. Never write a noun with its article on one
+side and bare on the other, and do not leave both bare: a noun gets its article on both sides. If one
+of the two languages has no articles, omit them on both sides. Apply this to EVERY noun in the lesson.
+```
+
+⚠️ **WHY THIS WORKS WHEN FOUR PROSE SURGERIES DID NOT.** Removing the explanation (`pos`), reversing
+the examples (`flip`), deleting them (`noex`), and moving the schema example (`schemaflip`/`noex`) all
+left the CHOICE in place, and all failed. **The choice was the defect**: at `target`-first the model
+commits the Italian side bare, then the rule's both-sides branch is no longer reachable, so it
+satisfies the rule the only way still open to it — which is not the NEITHER branch either, because the
+German prior has already fired. Removing the branch removes the failure mode.
+
+⚠️ **BEFORE SHIPPING, the things this measurement does NOT cover:**
+1. **de→nl** — the arm below. de→nl is the WORSE pair in the corpus (31.4%) and every arm above is
+   de→it.
+2. **Article-less languages** — the demand's last clause ("if one of the two languages has no
+   articles, omit them on both sides") is UNTESTED. Japanese, Polish, Serbian pairs must not start
+   sprouting articles. `articleLangs` already records which languages are article-less.
+3. **The `vocab` prompt as well as `vocabFromText`** — both carry the rule; changing one leaves the
+   other broken.
+4. **The 95% is not 100%** — 3 of 64 pairs stayed bare on both sides. Symmetric, so not a defect by
+   this metric, but it means the rule is followed nearly-always rather than always.
+5. ⚠️ **Re-test on a chapter SET including the abstract-noun chapters** (`autonomia`,
+   `responsabilità`) — the five other chapters never break in any arm, so a test on those alone
+   validates nothing.
+
+### ⚠️⚠️⚠️ FIRST, A CORRECTION TO THE METRIC USED EVERYWHERE ABOVE — FOUND BY THE USER ASKING FOR EXAMPLES
+
+The user asked for concrete de→nl failures. Printing them showed that what the probe counted as
+"bare on both sides" was largely **verbs, adjectives and adverbs** — `reizen ↔ reisen`,
+`groen ↔ grün`, `blauw ↔ blau`, `rijden ↔ fahren`, `nu ↔ jetzt`. Those take no article in either
+language: **bare is CORRECT for them.**
+
+⚠️ **SO `itArt%` / `nlArt%` / `deArt%` MEASURE HOW NOUN-HEAVY A CHAPTER'S VOCABULARY IS, at least as
+much as they measure rule compliance.** The de→it chapters are abstract and noun-dense (`autonomia`,
+`responsabilità`, `partecipazione`); the de→nl ones carry more verbs. **That alone inflates Italian's
+95% and depresses Dutch's 58%, for reasons having nothing to do with the fix.** Every article-rate
+figure above should be read with this caveat.
+
+**RECOMPUTED on the denominator that means something — pairs where AT LEAST ONE side carries an
+article, i.e. actual nouns:**
+
+| arm | de→it noun pairs | asymmetric | de→nl noun pairs | asymmetric |
+|---|---|---|---|---|
+| **shipped** | 29 | **23 — 79%** | 21 | **18 — 86%** |
+| `source`-first | 62 | 0 — 0% | **11** | 1 — 9% |
+| `rule-off` | **0** | — | — | — |
+| **force-both** | 61 | **0 — 0%** | **32** | **4 — 12%** |
+
+⚠️⚠️ **THE DEFECT IS FAR WORSE THAN THE HEADLINE SAID: among actual NOUNS the shipped prompt breaks
+79% (de→it) and 86% (de→nl) of pairs.** The 36%/38% figures were diluted by non-nouns. The corpus
+backlog number (115 pairs) counts pairs, not noun pairs, and is diluted the same way.
+
+⭐ **AND THE NOUN-PAIR COUNT IS ITSELF THE DIAGNOSTIC — use it instead of the raw rates.** It says
+directly whether articles are being PRODUCED:
+- de→it `rule-off` yields **0** noun pairs — it strips every article. Confirms the bare branch
+  outright, and independently justifies the user's ruling against it.
+- de→nl `source`-first yields **11**, FEWER than shipped's 21 — **in Dutch the schema reorder reaches
+  symmetry by SUPPRESSING articles.** That finding survives the correction intact.
+- de→nl `force-both` yields **32** against shipped's 21 — the rule puts articles on nouns that were
+  previously bare, which is exactly what the ruling asks for. de→it: 61 against 29.
+
+⚠️ **THIS REVERSES THE VERDICT BELOW, WHICH IS LEFT IN PLACE AS WRITTEN.** "The fix does not
+generalise" was wrong: it generalises strongly in BOTH direction and magnitude — **86% → 12% in Dutch
+while nearly doubling article coverage.** The honest residual is that Dutch keeps 4 broken noun pairs
+where Italian keeps none. ⚠️ **The lesson is the one this file keeps re-learning: a rate is only as
+good as its denominator, and it took the user asking for EXAMPLES to expose it.** Print the items,
+not just the percentage.
+
+### ⚠️⚠️ DOES IT GENERALISE? de→nl SAYS NOT YET — AND IT BREAKS THE *OTHER* FIX TOO
+
+de→nl is the WORST pair in the corpus (33/105 — 31.4%, against de→it's 12.7%), and every arm above is
+de→it. 6 chapters × 3 arms, 48 pairs each. ⚠️ The prompt was RENDERED from `prompts.json` the way the
+server renders it, and the renderer was validated first: rendering `{L}=Italian` plus the server's
+appended `skillId` line reproduces the captured de→it prompt BYTE-IDENTICALLY.
+
+| arm | asymmetric | Dutch article | German article |
+|---|---|---|---|
+| `on` (shipped) | 18/48 — **38%** | 6% | 44% |
+| `source`-first (the schema reorder) | 1/48 — 2% | **21%** | **23%** |
+| `both-ex` (the candidate fix) | 4/48 — **8%** | 58% | 67% |
+
+✅ **THE DEFECT REPRODUCES** — 38%, against the corpus's own 31.4%. It is not Italian-specific, and
+the German-as-source signature holds.
+
+❌ **BUT NEITHER FIX BEHAVES AS IT DID IN ITALIAN:**
+- ⚠️⚠️ **THE SCHEMA REORDER GOES BARE IN DUTCH — 21%/23%, against Italian's 97%/97%.** It reaches
+  symmetry by dropping articles from BOTH sides. **So it FAILS the user's both-sides ruling in de→nl
+  while PASSING it in de→it.** The "known-good" fix is not known-good; it was known-good for ONE pair.
+  ⚠️ This invalidates the earlier statement that the schema reorder is "the only QUALIFYING fix" —
+  it qualifies only where it happens to produce articles, which is not a property anyone controls.
+- ⚠️ **THE FORCE-BOTH RULE DOES NOT REACH 0%** — 8% against Italian's 0%, and 58%/67% against
+  95%/95%. It is still the BEST arm on both columns, and a large improvement over 38% / 6%+44%, but
+  it is not the clean result de→it produced.
+
+⚠️ **HONEST LIMITS**: 6 chapters, 48 pairs, and 4 asymmetric pairs is a small enough count that its
+exact value is soft. The SHAPE is not soft — 58%/67% is nowhere near 95%/95%, and 21%/23% is
+unambiguously the bare branch.
+
+⚠️ **ONE ARM MOVED THE WRONG WAY, worth recording rather than smoothing**: under `both-ex`,
+*Die Enteignungszone* went from 0/8 asymmetric (shipped) to 3/8, all Dutch-bare/German-article. A
+rule that forces both sides can still be applied to one side only.
+
+**WHAT THIS MEANS FOR SHIPPING — nothing is decided, and the user has not been asked:**
+1. The fix is a REAL improvement in both pairs and COMPLETE in neither-but-one. Shipping it would
+   make de→it right and de→nl much better, which may well be the correct trade — **but that is a
+   decision, not a measurement.**
+2. **Do not ship the schema reorder on the strength of the de→it 2×2.** Two pairs, two different
+   behaviours, and the parser risk was always the larger cost.
+3. The next measurement worth making is WHY Dutch resists: `de`/`het` carry gender the way German's
+   articles do, yet the model omits them. Compare against a third German-source pair (de→fr measures
+   0.0% in the corpus, de→en 6.6%) before concluding anything about Dutch specifically.
+
+### ⚖️ THE ARTICLE-LESS CASE — A "REGRESSION" THAT WAS NOT ONE, AND THE USER RULING THAT SETTLED IT
+
+⚠️ **THIS SECTION IS MOSTLY ABOUT AN ERROR OF MINE. It is recorded in full because the error was in
+the CRITERION, which is the kind that survives any amount of careful measurement.**
+
+Applying the fix, I flagged an untested risk in my own write-up: the new rule LEADS with "give every
+noun its article on BOTH sides" and handled the article-less case only in a trailing clause ("if one
+of the two languages has no articles, omit them on both sides"). I measured it — old rule vs new, 4
+chapters, en→ja and de→sr, both targets article-less:
+
+| | source-side articles |
+|---|---|
+| old rule | 4/32 — 13% |
+| new rule | 22/32 — **69%** |
+
+I called that a regression, **reverted the fix**, and pushed a notification saying so. ❌ **THE
+REVERT WAS WRONG.**
+
+⚖️ **USER RULING**: *"but if the other language has no articles, it would be ok to show the german
+with article and eg. japanese without."* `der Ball ↔ лоптица` is not a defect — German carries
+gender, Serbian has no article to give, and there is no symmetry to violate. **The 13% → 69% is 69%
+MORE gender information preserved**, not a regression.
+
+⚠️⚠️ **THE PROJECT'S OWN MEASURING INSTRUMENT ALREADY ENCODED THE RIGHT CRITERION AND I DID NOT READ
+IT**: `probe_article_symmetry_v80j.js` counts **only language pairs where BOTH sides have articles**
+and excludes the rest — it says so in its header. I applied a stricter rule than the tool this very
+file tells people to re-derive the backlog with. ⚠️ **Before inventing a criterion, check whether the
+repo already has one.**
+
+✅ **And the output was in fact clean**: Japanese and Cyrillic targets correct, no invented articles,
+no Latin leakage, and verbs/adjectives bare on BOTH sides (`тврдоглав ↔ stur`, `борити се ↔ kämpfen`).
+de→sr went from 4/8 to 8/8 German nouns carrying their gender.
+
+**WHAT CHANGED AS A RESULT.** The fix was restored, and the trailing clause — which the model was
+half-ignoring anyway, which is why 69% and not 0% — was replaced per the ruling:
+
+> …If one of the two languages has no articles at all, that side simply has none — the other side
+> still **KEEPS** its article.
+
+⚠️ **NOT RE-MEASURED, and the user chose not to spend the GPU on it.** The clause fires ONLY for
+article-less pairs, so de→it and de→nl are unchanged BY CONSTRUCTION; but the new wording's effect on
+en→ja / de→sr is an INFERENCE from the 69% observed under the OLD wording. **Do not record it as
+verified.** Pinned by three assertions in `unit-prompt-strictness` (keeps-clause present, "omit on
+both sides" absent, article-less case still addressed), mutation-tested.
+
+⚠️ **THE PATTERN ACROSS THIS WHOLE EPISODE, worth more than the rule**: the de→it result was real and
+strong, and I extrapolated it to a second pair (de→nl — partial), then to a third class (article-less
+— wrong criterion), then reverted correct work on that mistaken basis. **Three pairs, three
+behaviours.** The measurement was sound every time; the generalisation from it was not.
 
 ## 2. 🆕 "HALF SENTENCES" IN VOCABULARY LESSONS (user report at the `v91_a` cut)
 
@@ -3604,6 +3934,51 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
+
+## ✅ v91_g — the ARTICLE SYMMETRY rule was CAUSING the asymmetry it forbids
+
+**ZERO `ui.json` keys. No code — three prompt bullets.** User: *"now let's do the schema-order
+experiment"*, then *"apply the fix to prompts.json"*.
+
+⭐ **THE RESULT**: the rule's own both-or-NEITHER CHOICE was the defect. 8 de→it chapters × 64 vocab
+pairs per arm, production parameters, manipulation verified on every call:
+
+| arm | asymmetric | of actual NOUN pairs | Italian art. | German art. |
+|---|---|---|---|---|
+| `target`-first / rule ON ← what shipped | 23/64 — 36% | **79%** | 9% | 45% |
+| `target`-first / rule OFF | 0/64 | — | 0% | 0% |
+| `source`-first / rule ON | 0/64 | 0% | 97% | 97% |
+| **a rule DEMANDING both sides** | **0/64** | **0%** | **95%** | **95%** |
+
+✅ Reproduces the corpus: 36% here against **33.3%** on real chapters generated after `v85_r`
+strengthened the rule, and 0% against **2.5%** under the older one-line rule, model and format held
+constant. ✅ de→nl: **86% → 12%** of noun pairs, article coverage 21→32 pairs.
+
+**FOUR PROSE SURGERIES MEASURED NO IMPROVEMENT FIRST** — explanation removed (23/64, identical),
+examples reversed (23/64, identical), examples deleted (8/64), schema example moved (no improvement,
+and it broke output validity: two lessons with NO vocab). Only removing the CHOICE worked. The
+mechanism: at `target`-first the model commits the target side bare, the both-sides branch stops
+being reachable, and the source-language prior then supplies an article — building exactly the
+forbidden pairing.
+
+⭐ **A `v80_j` WIN THAT CAME FREE**: the example measured as unnecessary, so the rule now names NO
+article of any language — pure `{L}`/`{S}`, 450 chars against 861. The old one shipped `der Hund`,
+`il cane`, `le chien`, `chien, n.m.` to every pair, including pairs sharing none of those languages.
+
+⚖️ **TWO USER RULINGS SHAPED IT**: articles on BOTH sides, not neither (*"gender is useful"*) — which
+disqualified the 0%-scoring `rule-off` arm; and when one language has no articles the other side
+**KEEPS** its own (*"ok to show the german with article and eg. japanese without"*).
+
+⚠️ **TWO GUARDS ASSERTED THE OPPOSITE AND WERE INVERTED**, not loosened: `unit-prompt-article-rule`
+§2/§3 and `unit-prompt-strictness`. They required the prose this experiment measured as inert. The
+replacements pin a STRICTER contract (no NEITHER branch, bare-both escape closed, the two JSON
+prompts byte-identical, no hardcoded language). 6 mutations, all caught.
+
+⚠️ **HONEST GAPS, all recorded above**: de→nl keeps a 12% residual; the article-less clause edit was
+NOT re-measured (it fires only for article-less pairs, so de→it/de→nl are unchanged by construction);
+and a mid-session "regression" in en→ja/de→sr was my own WRONG CRITERION — the repo's own
+`probe_article_symmetry_v80j.js` already counts only pairs where both languages have articles.
+⚠️ Three prompts carry the rule (`vocab`, `vocabFromText`, `vocabTable`), not the two first recorded.
 
 ## ✅ v91_f — five no-op stubs, and a guard over EVERY inline handler in the published build
 

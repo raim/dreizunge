@@ -1,11 +1,11 @@
-# Session prompt — written at the `v91_f` cut
+# Session prompt — written at the `v91_g` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v91_f`**. `roadmap_v91.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v91_g`**. `roadmap_v91.md` was cut at
 `v91` — as a RECONCILIATION, see below — and is the current roadmap. **`roadmap_v90.md` is kept as
 the record for the whole `v90` line** (`v90`…`v90_aa`, twenty-seven point releases): go there for how
 anything in it was built, or why a guard is shaped the way it is.
@@ -112,14 +112,33 @@ GENERATION"*. The four things to read before building it:
 🆕 **TWO MEASURED FINDINGS ARE WAITING, both recorded in `roadmap_v91.md` under "🔬 TWO MEASURED
 FINDINGS ABOUT VOCABULARY LESSONS". Neither is built; one needs a user decision.**
 
-1. **WHY the models produce article asymmetry at all** — and it is NOT the prompt, which already
-   carries the rule, both worked examples and the German/Italian case by name. **95% of lessons are
-   all-or-nothing**, and independence is ruled out by NINE ORDERS OF MAGNITUDE (expected 2.7e-9
-   fully-asymmetric lessons, observed 9). The model makes ONE decision per lesson. It is almost
-   always German-as-SOURCE (11.6% vs 1.3% as target), and 121 of 131 keep the article on the source
-   side — because **the schema writes `target` FIRST**, so the bare Italian form is committed before
-   the German side supplies its article. ⚠️ **A cheap, unrun experiment**: swap `source` before
-   `target` and measure. That attacks it at GENERATION; `v91_a` only catches it afterwards.
+1. **WHY the models produce article asymmetry — ⭐ NOW MEASURED, AND THE ANSWER REVERSED THE
+   DIAGNOSIS. IT *IS* THE PROMPT.** The experiment named here as "cheap and unrun" was run. Full
+   write-up in `roadmap_v91.md`; the result in one table (8 de→it chapters × 64 vocab pairs per arm,
+   production parameters, 0 failures, the manipulation verified on every call):
+
+   | arm | asymmetric | Italian article | German article |
+   |---|---|---|---|
+   | `target`-first / rule **ON** ← **WHAT SHIPS** | **23/64 — 36%** | 9% | 45% |
+   | `target`-first / rule OFF | **0/64** | 0% | 0% |
+   | `source`-first / rule ON | **0/64** | 97% | 97% |
+   | `source`-first / rule OFF | **0/64** | 89% | 89% |
+
+   ⚠️⚠️ **THE ARTICLE SYMMETRY RULE CAUSES THE ASYMMETRY IT FORBIDS — but only at the shipped field
+   order. It is an INTERACTION.** Either change alone removes it entirely; every asymmetric pair in
+   the whole experiment came from the one arm that ships. Without the rule the model writes both
+   sides BARE and is symmetric for free; the rule's prose ("German dictionaries cite a noun WITH its
+   article … Italian … the bare noun") lifts the GERMAN side to 45% AFTER the Italian side is already
+   committed bare.
+   ✅ **It reproduces the corpus**: 36% here vs **33.3%** measured on real chapters generated after
+   `v85_r` strengthened the rule, and 0% here vs **2.5%** under the older one-line rule — holding
+   model and format constant. ⚠️ **The old 11.6%/1.3%/0.1% table is a MIXTURE across prompt eras AND
+   models and is struck through in the roadmap. Do not quote it.**
+   ⚠️ The all-or-nothing diagnosis is CONFIRMED from a third direction: the three affected lessons
+   scored 7/8, 8/8, 8/8 — never one or two — and the other five were 0/8.
+   ❌ **A refuted hypothesis, recorded so it is not re-derived**: deleting the rule's EXPLANATION and
+   its negative exemplar (`rule-pos`) measured **identically** to shipped — 23/64, same two lessons.
+   There is no prose-only fix by that route.
 2. **🆕 "Half sentences" in vocabulary lessons** (user report). ⚠️ **Answer to the question asked:
    NO — there is no rule to take sentences from the story, and none to cut at punctuation.** They are
    freshly generated. But **18.5% turn out to be verbatim from the story anyway**, and the confirmed
@@ -128,10 +147,91 @@ FINDINGS ABOUT VOCABULARY LESSONS". Neither is built; one needs a user decision.
    sentence) — the roadmap has the full table and the reason. **A fix needs a user decision**; CP1
    already produces real sentence boundaries for free.
 
-⚠️ **WHAT IS STILL OWED IS THE BACKLOG, NOT THE CHECK**: **126 asymmetric pairs across 21 chapters**
-already in the corpus. No code fixes those — the pass has to be run and the proposals accepted.
-Re-derive with `node build_history/probe_article_symmetry_v80j.js`. And separately, only **51 of 660**
-vocab lessons have ever had ANY QC run at all.
+⚖️ **USER RULING ON THE SHAPE — read this BEFORE picking a fix**: *"both sides sounds right, gender
+is useful."* The rule permits articles on BOTH sides or on NEITHER, and **three arms reach 0%
+asymmetry but not the same way**. `target`-first/rule-OFF gets there by going BARE (0%/0%) and
+**therefore FAILS the ruling despite a perfect asymmetry score — "delete the rule" is OFF THE
+TABLE.** ⚠️⚠️ **Asymmetry is necessary and NOT sufficient; the per-side article RATES are the second
+half of the test.** As of this ruling the only QUALIFYING fix measured is the **schema reorder**
+(`source`-first, 97%/97%), which is the expensive one — it touches every lesson type's parser.
+
+✅ **`v91_g` SHIPPED THE FIX. The rule now DEMANDS both sides and offers no alternative.** All the
+arms ran; results in `roadmap_v91.md`. Summary: **de→it 79% of noun pairs → 0%**, **de→nl 86% → 12%**,
+articles on BOTH sides, no schema change, no code, zero `ui.json` keys. Applied to **THREE** prompts
+— `vocab.system`, `vocabFromText.system`, `vocabTable.system` (the third carries its own wording
+because it emits markdown COLUMNS, not `target`/`source` keys).
+
+⚠️ **FOUR PROSE SURGERIES MEASURED NOTHING FIRST** — explanation removed, examples reversed, examples
+deleted, schema example moved. **Do not re-propose any of them.** Only removing the CHOICE worked.
+⚠️ **The SCHEMA example is load-bearing for FORMAT** (`{"target":"der Hund","source":"il cane"}`):
+deleting it produced two lessons with NO vocab at all. It was deliberately KEPT. Do not tidy it away.
+⚠️ **Two guards were INVERTED, not loosened** (`unit-prompt-article-rule` §2/§3,
+`unit-prompt-strictness`) — they had REQUIRED the prose that measured as inert.
+
+⚖️ **THE SECOND USER RULING**: *"if the other language has no articles, it would be ok to show the
+german with article and eg. japanese without."* So a pair like `der Ball ↔ лоптица` is CORRECT — the
+rule now says the other side **KEEPS** its article rather than "omit on both sides".
+⚠️⚠️ **A MID-SESSION "REGRESSION" WAS MY OWN WRONG CRITERION**: I measured en→ja/de→sr source-side
+articles going 13% → 69%, called it a regression, and REVERTED correct work over it. The repo's own
+`probe_article_symmetry_v80j.js` already counts **only pairs where BOTH languages have articles** —
+the criterion was in the tree and I did not read it. **Before inventing a criterion, check whether
+the repo has one.**
+
+⚠️ **THE HONEST GAPS, none of them urgent**: de→nl keeps a **12%** residual (4 noun pairs); the
+article-less clause edit was **NOT re-measured** (it fires only for article-less pairs, so
+de→it/de→nl are unchanged by construction, but its effect on en→ja/de→sr is inferred, not measured).
+⚠️ **THE PATTERN WORTH CARRYING FORWARD**: the de→it measurement was sound and I extrapolated it to a
+second pair (partial), then a third class (wrong criterion). **Three pairs, three behaviours.** A
+prompt result on ONE language pair does not generalise — measure the pair you intend to ship to.
+
+⚠️ **AND A CHAPTER-SET CONSTRAINT FOR ANY FUTURE TEST**: the failure is chapter-specific and highly
+reproducible at temperature 0.15. The SAME three abstract-noun chapters (`autonomia`,
+`responsabilità`) broke in every failing arm; the other five never broke in any. **A "fix" tested on
+one of the clean chapters passes every time while changing nothing** — this is `v80_j` §F3c's "one
+lesson can never validate a fix", in quantitative form. Use a chapter SET and report per-chapter.
+
+⚠️ **WHAT IS STILL OWED IS THE BACKLOG, NOT THE CHECK**: **115 asymmetric pairs across 23 chapters**
+already in the corpus (re-derived THIS session; was 126/21 — about 8 of the difference is the stale
+chapter deleted below, the rest is the user's own hand-corrections). No code fixes those — the pass
+has to be run and the proposals accepted. Re-derive with
+`node build_history/probe_article_symmetry_v80j.js`. And separately, only **51 of 660** vocab lessons
+have ever had ANY QC run at all.
+⚠️ **de→nl is the WORST pair, not de→it**: 33/105 — **31.4%** — against de→it's 42/330 — 12.7%.
+**Every pair with German as SOURCE shows asymmetry (1.7%–31.4%); every pair without it measures
+0.0%.** So a fix chosen on de→it evidence alone may be Italian-specific. Worst chapters: Alcuin
+16/16, *Naturraum für Biodiversität* 14/16, *Der Waldpfad* 9/16, then several at 8/8.
+⚠️ The per-chapter distribution is the ENDS, not the middle — 209 chapters fully clean, 4 fully
+asymmetric, only 14 partial — which is the one-decision-per-call signature again.
+
+🆕 **A SEPARATE DEFECT FOUND WHILE AUDITING THE ABOVE, and its marker is now a FIXTURE.** Two
+chapters were saved despite a failed translation. ⚠️ **The obvious detector is WRONG**: "topics whose
+`storyTranslation` is empty" matches **268 of 362**, because that field only reached full adoption in
+2026-08 (0–3% before July, 51% July, 100% August) — almost every hit simply predates the feature, and
+that emptiness rate was written into the roadmap as a defect rate before it was checked.
+**The marker is `translationMeta.origin === 'failed'`, which matched exactly 2 topics, both real.**
+Both were DELETED at the user's request via `DELETE /api/lessons/delete` (never by editing the store —
+the running server holds it in memory and overwrites a file edit on its next write), so **`origin:
+'failed'` now matches ZERO topics and the live corpus can no longer demonstrate the shape.** It is
+preserved as `test/fixtures/translation-failed-topics.json` +
+`test/unit-translation-failed-marker.test.js` — both failures plus FIVE look-alikes. ⚠️ **The guard's
+§3 is the part that earns its keep**: it proves the naive emptiness detector produces FALSE POSITIVES
+on two of the five healthy shapes, so nobody can "simplify" a future check into one. All five
+mutations were caught. Shipped in commit `a070c13` (a plain commit, no `APP_VERSION` bump).
+
+⚠️ **TWO THINGS ABOUT THE MACHINE STATE, not in the roadmap:**
+- **The user's port-3000 server was found DOWN and restarted by that session** as a bare
+  `node server.js` under `nohup` (defaults are already port 3000 + `lessons.json`). It is detached
+  and survives, but it is not the process the user started, and its log is in a session scratchpad
+  that will not last. If it is down again, just restart it the same way.
+- ⚠️ **The probes pass `keep_alive: -1`, which PINNED `qwen3.6:35b-a3b` in VRAM with an expiry in the
+  year 2318**, overriding the app's own 60-minute idle release. **Clear it once the probe queue is
+  done** — a normal call with a finite `keep_alive`, or restart Ollama — or the model never unloads.
+
+⚠️ **A ROADMAP HYGIENE NOTE**: section-replacement edits in that session left a DUPLICATED, superseded
+copy of the third hypothesis in `roadmap_v91.md` — 129 stale lines still reading as promising. Removed,
+and the 2×2 RESULT moved above the ruling that follows from it. **After a large roadmap edit, run
+`grep "^### " build_history/roadmap_v91.md | sort | uniq -d`** — it is instant and it would have
+caught this immediately.
 
 ⚠️⚠️ **THE METHOD LESSON, worth more than the feature** — `v90` rules 1 and 2, and this session
 proved both twice over:
@@ -345,7 +445,7 @@ servers, the oldest 29 hours old, were once holding ports.
   CONCURRENTLY on this box (`v86_ae`).
 
 Corpus at this cut: **361 topics, 101 storylines, 33 languages, 748 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_f'`.
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_g'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

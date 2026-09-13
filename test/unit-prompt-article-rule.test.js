@@ -55,27 +55,46 @@ for (const key of KEYS) {
       'instruction there contradicts ARTICLE SYMMETRY, and being stated first it wins. Line was: ' + line);
   }
 
-  // ── 2. The symmetry rule says it OVERRIDES dictionary convention ──────────
-  // Removing the contradiction is not enough on its own: a model still knows German convention. The
-  // rule has to say which wins, or the contradiction simply moves from the prompt into the model.
+  // ── 2. ⭐ THE RULE DEMANDS BOTH SIDES AND OFFERS NO ALTERNATIVE ───────────
+  // ⚠️⚠️ THIS REPLACED ITS OPPOSITE IN THE v91 LINE, ON MEASUREMENT. It formerly required the rule to
+  // say it "OVERRIDES each language's own dictionary convention" and to carry a worked counter-
+  // example. Both were `v80_j`/`v85_r` DESIGN HYPOTHESES, reasonable when written and never tested
+  // against a model. They were then tested, 8 de→it chapters × 64 pairs per arm:
+  //     shipped rule, with the explanation and the counter-example   23/64 — 36%
+  //     `pos`: the explanation AND the negative exemplar DELETED     23/64 — 36%  ← no effect at all
+  //     `flip`: the examples reversed in direction                   23/64 — 36%  ← no effect
+  //     `noex`: the examples deleted                                  8/64 — 13%  ← partial
+  //     a rule DEMANDING both sides, no example                       0/64 —  0%  ← the fix
+  // The prose this guard used to REQUIRE was measured to do nothing; the CHOICE it permitted was the
+  // cause. ⚠️ Not a loosening — this pins a stricter contract than before, just a different one.
   {
     const art = sys.slice(sys.indexOf('- ARTICLE SYMMETRY'));
     const line = art.slice(0, art.indexOf('\n') >= 0 ? art.indexOf('\n') : art.length);
-    assert.ok(/OVERRIDES/.test(line) && /dictionary convention/i.test(line),
-      `${key}.system's ARTICLE SYMMETRY must state that it overrides each language's own dictionary convention`);
+    assert.ok(/give every noun its article on BOTH sides/.test(line),
+      `${key}.system's ARTICLE SYMMETRY must DEMAND the article on both sides`);
+    assert.ok(!/or on NEITHER side/i.test(line),
+      `⚠️ ${key}.system must not offer the NEITHER branch — measured as the cause (36% vs 0%)`);
+    assert.ok(/do not leave both bare/i.test(line),
+      `${key}.system closes the bare-both escape, which is how three other arms reached "symmetry"`);
   }
 
-  // ── 3. A WORKED COUNTER-EXAMPLE, not another prohibition ──────────────────
-  // Rule 31's actual prescription. The example must show the FORBIDDEN pairing explicitly, because
-  // the forbidden shape is the one a faithful model produces by default.
+  // ── 3. NO HARDCODED ARTICLE OF ANY LANGUAGE — the v80_j principle, now affordable ──────────
+  // ⚠️ The old rule hardcoded `der Hund`, `il cane`, `le chien`, `chien, n.m.` — German, Italian and
+  // French text delivered to EVERY language pair, including pairs sharing none of those languages.
+  // It was tolerated because the worked example was believed load-bearing. It is not: an arm with the
+  // demand and NO example measured identically to one with it (0/64 both). So the rule is now pure
+  // {L}/{S} and carries no language knowledge. 407 characters against the old 861.
   {
     const art = sys.slice(sys.indexOf('- ARTICLE SYMMETRY'));
     const line = art.slice(0, art.indexOf('\n') >= 0 ? art.indexOf('\n') : art.length);
-    assert.ok(/WORKED EXAMPLE/i.test(line), `${key}.system's rule carries a worked example`);
-    assert.ok(/der Hund/.test(line) && /le chien/.test(line),
-      `${key}.system's worked example shows the CORRECT German→French pairing`);
-    assert.ok(/Do NOT write/i.test(line) && /chien/.test(line),
-      `${key}.system shows the FORBIDDEN pairing explicitly — the shape a faithful model produces by default`);
+    for (const w of ['der Hund', 'il cane', 'le chien', 'chien', 'Hund', 'cane']) {
+      assert.ok(!line.includes(w),
+        `${key}.system's article rule must name no article or noun of any specific language — found ` +
+        `"${w}". The example measured as unnecessary (0/64 with and without).`);
+    }
+    assert.ok(/\{L\}/.test(line) && /\{S\}/.test(line),
+      `${key}.system's article rule refers to the languages by PLACEHOLDER, so it is correct for ` +
+      'every pair rather than for German/Italian/French only');
   }
 
   // ── 4. No new prohibition was bolted on ───────────────────────────────────
@@ -88,7 +107,7 @@ for (const key of KEYS) {
       'Adding a second prohibition beside a contradiction is what made this worse twice (rule 31).');
   }
 
-  console.log(`  ${key}.system: no contradiction, overrides-dictionary-convention stated, worked example present`);
+  console.log(`  ${key}.system: no BASE-FORM contradiction, DEMANDS both sides, no neither-branch, no hardcoded language`);
 }
 
 // ── What this does NOT establish (rule 34) ────────────────────────────────
