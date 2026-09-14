@@ -12572,7 +12572,7 @@
               }
             },
             {
-              "target": "professore",
+              "target": "il professore",
               "source": "der Professor",
               "skillId": null,
               "skillProposal": {
@@ -12583,10 +12583,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.694Z"
             },
             {
-              "target": "scrivania",
+              "target": "la scrivania",
               "source": "der Schreibtisch",
               "skillId": null,
               "skillProposal": {
@@ -12597,7 +12598,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.694Z"
             },
             {
               "target": "chiudere",
@@ -12614,7 +12616,7 @@
               }
             },
             {
-              "target": "corridoio",
+              "target": "il corridoio",
               "source": "der Flur",
               "skillId": null,
               "skillProposal": {
@@ -12625,7 +12627,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.694Z"
             },
             {
               "target": "deserto",
@@ -13048,7 +13051,7 @@
         }
       },
       "generatedAt": "2026-09-09T07:38:10.843Z",
-      "updatedAt": "2026-09-09T08:36:40.093Z",
+      "updatedAt": "2026-09-14T09:26:30.695Z",
       "createdBy": "admin"
     },
     {
@@ -13116,7 +13119,7 @@
               }
             },
             {
-              "target": "foglio",
+              "target": "il foglio",
               "source": "das Blatt",
               "skillId": null,
               "skillProposal": {
@@ -13127,10 +13130,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.650Z"
             },
             {
-              "target": "studente",
+              "target": "lo studente",
               "source": "der Schüler",
               "skillId": null,
               "skillProposal": {
@@ -13141,7 +13145,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.650Z"
             },
             {
               "target": "scrivere",
@@ -13158,7 +13163,7 @@
               }
             },
             {
-              "target": "stanza",
+              "target": "la stanza",
               "source": "der Raum",
               "skillId": null,
               "skillProposal": {
@@ -13169,7 +13174,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.650Z"
             },
             {
               "target": "silenzioso",
@@ -13186,7 +13192,7 @@
               }
             },
             {
-              "target": "tempo",
+              "target": "il tempo",
               "source": "die Zeit",
               "skillId": null,
               "skillProposal": {
@@ -13197,7 +13203,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.650Z"
             },
             {
               "target": "consegnare",
@@ -13637,7 +13644,7 @@
         }
       },
       "generatedAt": "2026-09-09T07:33:45.852Z",
-      "updatedAt": "2026-09-09T08:27:13.966Z",
+      "updatedAt": "2026-09-14T09:26:30.651Z",
       "createdBy": "admin"
     },
     {
@@ -14302,7 +14309,7 @@
               "editedAt": "2026-09-12T06:51:00.648Z"
             },
             {
-              "target": "tutela",
+              "target": "la tutela",
               "source": "der Schutz",
               "skillId": null,
               "skillProposal": {
@@ -14313,7 +14320,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.792Z"
             },
             {
               "target": "lo statuto",
@@ -14698,7 +14706,7 @@
         }
       },
       "generatedAt": "2026-09-08T06:55:21.624Z",
-      "updatedAt": "2026-09-12T06:51:25.957Z",
+      "updatedAt": "2026-09-14T09:26:30.792Z",
       "createdBy": "admin",
       "source": {
         "author": "Andrea Dalla Serra",
@@ -15332,7 +15340,7 @@
           "icon": "🌍",
           "vocab": [
             {
-              "target": "autonomia",
+              "target": "l'autonomia",
               "source": "die Autonomie",
               "skillId": null,
               "skillProposal": {
@@ -15343,10 +15351,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.456Z"
             },
             {
-              "target": "sviluppo",
+              "target": "lo sviluppo",
               "source": "die Entwicklung",
               "skillId": null,
               "skillProposal": {
@@ -15357,10 +15366,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.456Z"
             },
             {
-              "target": "prosperità",
+              "target": "la prosperità",
               "source": "der Wohlstand",
               "skillId": null,
               "skillProposal": {
@@ -15371,10 +15381,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.456Z"
             },
             {
-              "target": "territorio",
+              "target": "il territorio",
               "source": "das Gebiet",
               "skillId": null,
               "skillProposal": {
@@ -15385,10 +15396,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.456Z"
             },
             {
-              "target": "convivenza",
+              "target": "la convivenza",
               "source": "das Zusammenleben",
               "skillId": null,
               "skillProposal": {
@@ -15399,10 +15411,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.456Z"
             },
             {
-              "target": "percorso",
+              "target": "il percorso",
               "source": "der Weg",
               "skillId": null,
               "skillProposal": {
@@ -15413,10 +15426,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.456Z"
             },
             {
-              "target": "trattato",
+              "target": "il trattato",
               "source": "der Vertrag",
               "skillId": null,
               "skillProposal": {
@@ -15427,10 +15441,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.456Z"
             },
             {
-              "target": "cerimonia",
+              "target": "la cerimonia",
               "source": "die Zeremonie",
               "skillId": null,
               "skillProposal": {
@@ -15441,7 +15456,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.456Z"
             }
           ],
           "sentences": [
@@ -15522,7 +15538,7 @@
         }
       ],
       "generatedAt": "2026-09-07T17:43:39.625Z",
-      "updatedAt": "2026-09-08T10:19:02.020Z",
+      "updatedAt": "2026-09-14T09:26:30.457Z",
       "createdBy": "admin",
       "generationStats": {
         "model": "(post-gen)",
@@ -15588,7 +15604,7 @@
           "icon": "📜",
           "vocab": [
             {
-              "target": "autonomia",
+              "target": "l'autonomia",
               "source": "die Autonomie",
               "skillId": null,
               "skillProposal": {
@@ -15599,10 +15615,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.300Z"
             },
             {
-              "target": "investimento",
+              "target": "l'investimento",
               "source": "die Investition",
               "skillId": null,
               "skillProposal": {
@@ -15613,10 +15630,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "responsabilità",
+              "target": "la responsabilità",
               "source": "die Verantwortung",
               "skillId": null,
               "skillProposal": {
@@ -15627,10 +15645,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "partecipazione",
+              "target": "la partecipazione",
               "source": "die Teilhabe",
               "skillId": null,
               "skillProposal": {
@@ -15641,10 +15660,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "statuto",
+              "target": "lo statuto",
               "source": "das Statut",
               "skillId": null,
               "skillProposal": {
@@ -15655,10 +15675,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "cornice",
+              "target": "la cornice",
               "source": "der Rahmen",
               "skillId": null,
               "skillProposal": {
@@ -15669,10 +15690,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "avanguardia",
+              "target": "l'avanguardia",
               "source": "die Avantgarde",
               "skillId": null,
               "skillProposal": {
@@ -15683,10 +15705,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "dialogo",
+              "target": "il dialogo",
               "source": "der Dialog",
               "skillId": null,
               "skillProposal": {
@@ -15697,7 +15720,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             }
           ],
           "sentences": [
@@ -15804,7 +15828,7 @@
           "icon": "🏛️",
           "vocab": [
             {
-              "target": "responsabilità",
+              "target": "la responsabilità",
               "source": "die Verantwortung",
               "skillId": null,
               "skillProposal": {
@@ -15815,10 +15839,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "partecipazione",
+              "target": "la partecipazione",
               "source": "die Teilnahme",
               "skillId": null,
               "skillProposal": {
@@ -15829,10 +15854,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "dialogo",
+              "target": "il dialogo",
               "source": "der Dialog",
               "skillId": null,
               "skillProposal": {
@@ -15843,10 +15869,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "rispetto",
+              "target": "il rispetto",
               "source": "der Respekt",
               "skillId": null,
               "skillProposal": {
@@ -15857,10 +15884,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "comprensione",
+              "target": "la comprensione",
               "source": "das Verständnis",
               "skillId": null,
               "skillProposal": {
@@ -15871,10 +15899,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "ascolto",
+              "target": "l'ascolto",
               "source": "das Zuhören",
               "skillId": null,
               "skillProposal": {
@@ -15885,10 +15914,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "apertura",
+              "target": "l'apertura",
               "source": "die Offenheit",
               "skillId": null,
               "skillProposal": {
@@ -15899,10 +15929,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             },
             {
-              "target": "investimento",
+              "target": "l'investimento",
               "source": "die Investition",
               "skillId": null,
               "skillProposal": {
@@ -15913,7 +15944,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.309Z"
             }
           ],
           "sentences": [
@@ -16013,7 +16045,7 @@
         ]
       },
       "generatedAt": "2026-09-07T17:25:09.779Z",
-      "updatedAt": "2026-09-07T17:41:54.676Z",
+      "updatedAt": "2026-09-14T09:26:30.316Z",
       "createdBy": "admin"
     },
     {
@@ -17022,6 +17054,19 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the Wi-Fi",
+                  "field": "source",
+                  "at": "2026-09-14T08:24:42.790Z"
+                }
+              },
+              "qc": {
+                "sug": "the Wi-Fi",
+                "field": "source",
+                "at": "2026-09-14T08:24:42.790Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -17064,6 +17109,19 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the USB drive",
+                  "field": "source",
+                  "at": "2026-09-14T08:25:47.059Z"
+                }
+              },
+              "qc": {
+                "sug": "the USB drive",
+                "field": "source",
+                "at": "2026-09-14T08:25:47.059Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -17106,6 +17164,19 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the panic",
+                  "field": "source",
+                  "at": "2026-09-14T08:26:47.145Z"
+                }
+              },
+              "qc": {
+                "sug": "the panic",
+                "field": "source",
+                "at": "2026-09-14T08:26:47.145Z",
+                "by": "article-symmetry"
               }
             }
           ],
@@ -17208,7 +17279,7 @@
         ]
       },
       "generatedAt": "2026-09-06T08:59:26.823Z",
-      "updatedAt": "2026-09-06T10:46:43.007Z",
+      "updatedAt": "2026-09-14T08:26:47.145Z",
       "createdBy": "admin"
     },
     {
@@ -17694,6 +17765,19 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the giant",
+                  "field": "source",
+                  "at": "2026-09-14T08:42:49.616Z"
+                }
+              },
+              "qc": {
+                "sug": "the giant",
+                "field": "source",
+                "at": "2026-09-14T08:42:49.616Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -17764,6 +17848,19 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the surname",
+                  "field": "source",
+                  "at": "2026-09-14T08:44:15.178Z"
+                }
+              },
+              "qc": {
+                "sug": "the surname",
+                "field": "source",
+                "at": "2026-09-14T08:44:15.178Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -17910,7 +18007,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:34:08.694Z",
-      "updatedAt": "2026-09-07T08:55:17.652Z",
+      "updatedAt": "2026-09-14T08:44:48.616Z",
       "createdBy": "admin",
       "aiStory": "NATÜRLICH KAM DANN NIE EIN RIESE.\nGIBT JA KEINE",
       "storyQcBy": "translategemma:12b",
@@ -20486,7 +20583,7 @@
           "icon": "🌿",
           "vocab": [
             {
-              "target": "gemeente",
+              "target": "de gemeente",
               "source": "die Gemeinde",
               "skillId": null,
               "skillProposal": {
@@ -20497,7 +20594,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
               "target": "ruimte geven",
@@ -20514,7 +20612,7 @@
               }
             },
             {
-              "target": "biodiversiteit",
+              "target": "de biodiversiteit",
               "source": "die Biodiversität",
               "skillId": null,
               "skillProposal": {
@@ -20525,10 +20623,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "bloemen",
+              "target": "de bloemen",
               "source": "die Blumen",
               "skillId": null,
               "skillProposal": {
@@ -20539,10 +20638,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "kruiden",
+              "target": "de kruiden",
               "source": "die Kräuter",
               "skillId": null,
               "skillProposal": {
@@ -20553,7 +20653,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
               "target": "maaien",
@@ -20570,7 +20671,7 @@
               }
             },
             {
-              "target": "insecten",
+              "target": "de insecten",
               "source": "die Insekten",
               "skillId": null,
               "skillProposal": {
@@ -20581,10 +20682,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "hondenpoep",
+              "target": "de hondenpoep",
               "source": "der Hundekot",
               "skillId": null,
               "skillProposal": {
@@ -20595,7 +20697,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             }
           ],
           "sentences": [
@@ -20715,7 +20818,7 @@
           "icon": "🌿",
           "vocab": [
             {
-              "target": "gemeente",
+              "target": "de gemeente",
               "source": "die Gemeinde",
               "skillId": null,
               "skillProposal": {
@@ -20726,10 +20829,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "ruimte",
+              "target": "de ruimte",
               "source": "der Raum",
               "skillId": null,
               "skillProposal": {
@@ -20740,10 +20844,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "natuur",
+              "target": "de natuur",
               "source": "die Natur",
               "skillId": null,
               "skillProposal": {
@@ -20754,10 +20859,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "bloemen",
+              "target": "de bloemen",
               "source": "die Blumen",
               "skillId": null,
               "skillProposal": {
@@ -20768,10 +20874,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "kruiden",
+              "target": "de kruiden",
               "source": "die Kräuter",
               "skillId": null,
               "skillProposal": {
@@ -20782,10 +20889,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "insecten",
+              "target": "de insecten",
               "source": "die Insekten",
               "skillId": null,
               "skillProposal": {
@@ -20796,10 +20904,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "vogels",
+              "target": "de vogels",
               "source": "die Vögel",
               "skillId": null,
               "skillProposal": {
@@ -20810,10 +20919,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             },
             {
-              "target": "tuin",
+              "target": "de tuin",
               "source": "der Garten",
               "skillId": null,
               "skillProposal": {
@@ -20824,7 +20934,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.364Z"
             }
           ],
           "sentences": [
@@ -21214,7 +21325,7 @@
         }
       ],
       "generatedAt": "2026-09-02T08:11:04.232Z",
-      "updatedAt": "2026-09-03T09:22:51.110Z",
+      "updatedAt": "2026-09-14T09:26:30.365Z",
       "createdBy": "admin",
       "continuedFromId": "tp_17882900616230000013",
       "continuedFrom": "Strom fließt wieder"
@@ -21880,7 +21991,7 @@
           "icon": "🏚️",
           "vocab": [
             {
-              "target": "gebouw",
+              "target": "het gebouw",
               "source": "das Gebäude",
               "skillId": null,
               "skillProposal": {
@@ -21891,7 +22002,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.739Z"
             },
             {
               "target": "verlaten",
@@ -21950,7 +22062,7 @@
               }
             },
             {
-              "target": "weide",
+              "target": "de weide",
               "source": "die Wiese",
               "skillId": null,
               "skillProposal": {
@@ -21961,7 +22073,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.739Z"
             },
             {
               "target": "blauw",
@@ -21978,7 +22091,7 @@
               }
             },
             {
-              "target": "hemel",
+              "target": "de hemel",
               "source": "der Himmel",
               "skillId": null,
               "skillProposal": {
@@ -21989,7 +22102,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.739Z"
             }
           ],
           "sentences": [
@@ -22249,7 +22363,7 @@
         }
       ],
       "generatedAt": "2026-09-01T13:26:54.429Z",
-      "updatedAt": "2026-09-01T18:21:55.932Z",
+      "updatedAt": "2026-09-14T09:26:30.741Z",
       "createdBy": "admin"
     },
     {
@@ -22319,7 +22433,7 @@
               }
             },
             {
-              "target": "weg",
+              "target": "de weg",
               "source": "die Straße",
               "skillId": null,
               "skillProposal": {
@@ -22330,7 +22444,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.501Z"
             },
             {
               "target": "droog",
@@ -22361,7 +22476,7 @@
               }
             },
             {
-              "target": "hemel",
+              "target": "de hemel",
               "source": "der Himmel",
               "skillId": null,
               "skillProposal": {
@@ -22372,10 +22487,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.501Z"
             },
             {
-              "target": "wolk",
+              "target": "de wolk",
               "source": "die Wolke",
               "skillId": null,
               "skillProposal": {
@@ -22386,10 +22502,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.501Z"
             },
             {
-              "target": "voorgrond",
+              "target": "de voorgrond",
               "source": "der Vordergrund",
               "skillId": null,
               "skillProposal": {
@@ -22400,10 +22517,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.501Z"
             },
             {
-              "target": "asfalt",
+              "target": "het asfalt",
               "source": "der Asphalt",
               "skillId": null,
               "skillProposal": {
@@ -22414,7 +22532,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.501Z"
             }
           ],
           "sentences": [
@@ -22508,7 +22627,7 @@
         }
       ],
       "generatedAt": "2026-09-01T09:06:32.863Z",
-      "updatedAt": "2026-09-01T09:09:38.328Z",
+      "updatedAt": "2026-09-14T09:26:30.502Z",
       "createdBy": "admin"
     },
     {
@@ -22590,7 +22709,7 @@
               }
             },
             {
-              "target": "bord",
+              "target": "het bord",
               "source": "das Bord",
               "skillId": null,
               "skillProposal": {
@@ -22601,7 +22720,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.837Z"
             },
             {
               "target": "laten staan",
@@ -22745,7 +22865,7 @@
         }
       ],
       "generatedAt": "2026-08-31T15:38:42.063Z",
-      "updatedAt": "2026-08-31T15:46:47.809Z",
+      "updatedAt": "2026-09-14T09:26:30.837Z",
       "createdBy": "admin",
       "continuedFromId": "tp_17882692144280000018",
       "continuedFrom": "Graffiti im Verfall"
@@ -22803,7 +22923,7 @@
           "icon": "🌲",
           "vocab": [
             {
-              "target": "watertoren",
+              "target": "de watertoren",
               "source": "der Wasserturm",
               "skillId": null,
               "skillProposal": {
@@ -22814,7 +22934,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.411Z"
             },
             {
               "target": "buiten gebruik zijn",
@@ -22831,7 +22952,7 @@
               }
             },
             {
-              "target": "wandelpad",
+              "target": "het wandelpad",
               "source": "der Wanderweg",
               "skillId": null,
               "skillProposal": {
@@ -22842,10 +22963,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.411Z"
             },
             {
-              "target": "schilder",
+              "target": "de schilder",
               "source": "der Maler",
               "skillId": null,
               "skillProposal": {
@@ -22856,7 +22978,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.411Z"
             },
             {
               "target": "inspireren",
@@ -22873,7 +22996,7 @@
               }
             },
             {
-              "target": "bossen",
+              "target": "de bossen",
               "source": "die Wälder",
               "skillId": null,
               "skillProposal": {
@@ -22884,10 +23007,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.411Z"
             },
             {
-              "target": "bescherming",
+              "target": "de bescherming",
               "source": "der Schutz",
               "skillId": null,
               "skillProposal": {
@@ -22898,10 +23022,11 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.411Z"
             },
             {
-              "target": "zeewind",
+              "target": "de zeewind",
               "source": "der Seewind",
               "skillId": null,
               "skillProposal": {
@@ -22912,7 +23037,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.411Z"
             }
           ],
           "sentences": [
@@ -23254,7 +23380,7 @@
               }
             },
             {
-              "target": "wandelpad",
+              "target": "het wandelpad",
               "source": "der Wanderweg",
               "skillId": null,
               "skillProposal": {
@@ -23265,7 +23391,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.411Z"
             },
             {
               "target": "buiten gebruik zijn",
@@ -23282,7 +23409,7 @@
               }
             },
             {
-              "target": "schilder",
+              "target": "de schilder",
               "source": "der Maler",
               "skillId": null,
               "skillProposal": {
@@ -23293,7 +23420,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.411Z"
             },
             {
               "target": "inspireren",
@@ -23338,7 +23466,7 @@
               }
             },
             {
-              "target": "bescherming",
+              "target": "de bescherming",
               "source": "der Schutz",
               "skillId": null,
               "skillProposal": {
@@ -23349,7 +23477,8 @@
                 "targetLang": "nl",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.411Z"
             }
           ],
           "sentences": [
@@ -23526,7 +23655,7 @@
         }
       ],
       "generatedAt": "2026-08-31T10:19:43.057Z",
-      "updatedAt": "2026-08-31T14:44:17.084Z",
+      "updatedAt": "2026-09-14T09:26:30.412Z",
       "createdBy": "admin",
       "coverageTarget": 0.55
     },
@@ -26512,6 +26641,19 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the love",
+                  "field": "source",
+                  "at": "2026-09-14T08:31:24.509Z"
+                }
+              },
+              "qc": {
+                "sug": "the love",
+                "field": "source",
+                "at": "2026-09-14T08:31:24.509Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -26526,6 +26668,19 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the fear",
+                  "field": "source",
+                  "at": "2026-09-14T08:31:48.251Z"
+                }
+              },
+              "qc": {
+                "sug": "the fear",
+                "field": "source",
+                "at": "2026-09-14T08:31:48.251Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -26540,6 +26695,19 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the humor",
+                  "field": "source",
+                  "at": "2026-09-14T08:32:13.123Z"
+                }
+              },
+              "qc": {
+                "sug": "the humor",
+                "field": "source",
+                "at": "2026-09-14T08:32:13.123Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -27369,7 +27537,7 @@
         }
       ],
       "generatedAt": "2026-08-26T14:52:43.338Z",
-      "updatedAt": "2026-08-27T14:26:06.462Z",
+      "updatedAt": "2026-09-14T08:32:30.930Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-26T16:12:54.190Z"
@@ -27946,6 +28114,19 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the meteor",
+                  "field": "target",
+                  "at": "2026-09-14T08:33:09.190Z"
+                }
+              },
+              "qc": {
+                "sug": "the meteor",
+                "field": "target",
+                "at": "2026-09-14T08:33:09.190Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -27960,6 +28141,19 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the number",
+                  "field": "target",
+                  "at": "2026-09-14T08:33:36.255Z"
+                }
+              },
+              "qc": {
+                "sug": "the number",
+                "field": "target",
+                "at": "2026-09-14T08:33:36.255Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -28016,6 +28210,19 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the weekend",
+                  "field": "target",
+                  "at": "2026-09-14T08:34:49.941Z"
+                }
+              },
+              "qc": {
+                "sug": "the weekend",
+                "field": "target",
+                "at": "2026-09-14T08:34:49.941Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -28515,7 +28722,7 @@
         }
       ],
       "generatedAt": "2026-08-26T11:25:30.933Z",
-      "updatedAt": "2026-08-27T10:55:38.431Z",
+      "updatedAt": "2026-09-14T08:35:22.423Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-26T14:13:12.407Z"
@@ -29101,6 +29308,19 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the blanket",
+                  "field": "target",
+                  "at": "2026-09-14T08:36:23.549Z"
+                }
+              },
+              "qc": {
+                "sug": "the blanket",
+                "field": "target",
+                "at": "2026-09-14T08:36:23.549Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -29129,6 +29349,19 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the beach",
+                  "field": "target",
+                  "at": "2026-09-14T08:37:04.727Z"
+                }
+              },
+              "qc": {
+                "sug": "the beach",
+                "field": "target",
+                "at": "2026-09-14T08:37:04.727Z",
+                "by": "article-symmetry"
               }
             },
             {
@@ -29171,6 +29404,19 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
+              },
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the star",
+                  "field": "target",
+                  "at": "2026-09-14T08:38:00.005Z"
+                }
+              },
+              "qc": {
+                "sug": "the star",
+                "field": "target",
+                "at": "2026-09-14T08:38:00.005Z",
+                "by": "article-symmetry"
               }
             }
           ],
@@ -29582,7 +29828,7 @@
         }
       ],
       "generatedAt": "2026-08-26T11:18:34.104Z",
-      "updatedAt": "2026-08-27T10:47:08.902Z",
+      "updatedAt": "2026-09-14T08:38:00.006Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-26T13:22:48.442Z"
@@ -51954,12 +52200,14 @@
           "icon": "❓",
           "vocab": [
             {
-              "target": "domanda",
-              "source": "die Frage"
+              "target": "la domanda",
+              "source": "die Frage",
+              "editedAt": "2026-09-14T09:26:30.548Z"
             },
             {
-              "target": "risposta",
-              "source": "die Antwort"
+              "target": "la risposta",
+              "source": "die Antwort",
+              "editedAt": "2026-09-14T09:26:30.548Z"
             },
             {
               "target": "scomparire",
@@ -51970,8 +52218,9 @@
               "source": "verteilen"
             },
             {
-              "target": "cittadino",
-              "source": "der Bürger"
+              "target": "il cittadino",
+              "source": "der Bürger",
+              "editedAt": "2026-09-14T09:26:30.548Z"
             },
             {
               "target": "programmare",
@@ -51991,12 +52240,14 @@
               }
             },
             {
-              "target": "appello",
-              "source": "der Appell"
+              "target": "l'appello",
+              "source": "der Appell",
+              "editedAt": "2026-09-14T09:26:30.548Z"
             },
             {
-              "target": "identità",
-              "source": "die Identität"
+              "target": "l'identità",
+              "source": "die Identität",
+              "editedAt": "2026-09-14T09:26:30.548Z"
             }
           ],
           "sentences": [
@@ -52176,7 +52427,7 @@
         }
       },
       "generatedAt": "2026-07-29T11:02:20.190Z",
-      "updatedAt": "2026-08-06T23:27:24.704Z",
+      "updatedAt": "2026-09-14T09:26:30.549Z",
       "createdBy": "admin",
       "coverageTarget": 0.5,
       "storyQcCheckedBy": "translategemma:12b",
@@ -59076,11 +59327,37 @@
             },
             {
               "target": "la grandine",
-              "source": "hail"
+              "source": "hail",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the hail",
+                  "field": "source",
+                  "at": "2026-09-14T08:50:00.164Z"
+                }
+              },
+              "qc": {
+                "sug": "the hail",
+                "field": "source",
+                "at": "2026-09-14T08:50:00.164Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "il danno",
-              "source": "damage"
+              "source": "damage",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the damage",
+                  "field": "source",
+                  "at": "2026-09-14T08:50:26.147Z"
+                }
+              },
+              "qc": {
+                "sug": "the damage",
+                "field": "source",
+                "at": "2026-09-14T08:50:26.147Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "devastare",
@@ -59400,7 +59677,7 @@
         }
       },
       "generatedAt": "2026-07-22T14:02:39.245Z",
-      "updatedAt": "2026-08-01T09:17:32.770Z",
+      "updatedAt": "2026-09-14T08:51:47.237Z",
       "createdBy": "admin",
       "id": "tp_17847292264520000293"
     },
@@ -59812,31 +60089,122 @@
           "vocab": [
             {
               "target": "fog",
-              "source": "der Nebel"
+              "source": "der Nebel",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the fog",
+                  "field": "target",
+                  "at": "2026-09-14T07:51:10.331Z"
+                }
+              },
+              "qc": {
+                "sug": "the fog",
+                "field": "target",
+                "at": "2026-09-14T07:51:10.331Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "hum",
-              "source": "das Summen"
+              "source": "das Summen",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the hum",
+                  "field": "target",
+                  "at": "2026-09-14T07:51:35.564Z"
+                }
+              },
+              "qc": {
+                "sug": "the hum",
+                "field": "target",
+                "at": "2026-09-14T07:51:35.564Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "flashlight",
-              "source": "die Taschenlampe"
+              "source": "die Taschenlampe",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the flashlight",
+                  "field": "target",
+                  "at": "2026-09-14T07:51:57.763Z"
+                }
+              },
+              "qc": {
+                "sug": "the flashlight",
+                "field": "target",
+                "at": "2026-09-14T07:51:57.763Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "shadow",
-              "source": "der Schatten"
+              "source": "der Schatten",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the shadow",
+                  "field": "target",
+                  "at": "2026-09-14T07:52:20.858Z"
+                }
+              },
+              "qc": {
+                "sug": "the shadow",
+                "field": "target",
+                "at": "2026-09-14T07:52:20.858Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "heart",
-              "source": "das Herz"
+              "source": "das Herz",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the heart",
+                  "field": "target",
+                  "at": "2026-09-14T07:52:44.794Z"
+                }
+              },
+              "qc": {
+                "sug": "the heart",
+                "field": "target",
+                "at": "2026-09-14T07:52:44.794Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "finger",
-              "source": "der Finger"
+              "source": "der Finger",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the finger",
+                  "field": "target",
+                  "at": "2026-09-14T07:53:08.033Z"
+                }
+              },
+              "qc": {
+                "sug": "the finger",
+                "field": "target",
+                "at": "2026-09-14T07:53:08.033Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "wall",
-              "source": "die Wand"
+              "source": "die Wand",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the wall",
+                  "field": "target",
+                  "at": "2026-09-14T07:53:32.318Z"
+                }
+              },
+              "qc": {
+                "sug": "the wall",
+                "field": "target",
+                "at": "2026-09-14T07:53:32.318Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "dark",
@@ -59846,13 +60214,18 @@
                   "sug": "der Dunkel",
                   "field": "source",
                   "at": "2026-07-21T15:15:54.167Z"
+                },
+                "article-symmetry": {
+                  "sug": "the dark",
+                  "field": "target",
+                  "at": "2026-09-14T07:53:55.606Z"
                 }
               },
               "qc": {
-                "sug": "der Dunkel",
-                "field": "source",
-                "at": "2026-07-21T15:15:54.167Z",
-                "by": "translategemma:12b"
+                "sug": "the dark",
+                "field": "target",
+                "at": "2026-09-14T07:53:55.606Z",
+                "by": "article-symmetry"
               }
             }
           ],
@@ -60028,7 +60401,7 @@
         }
       },
       "generatedAt": "2026-07-21T13:27:40.298Z",
-      "updatedAt": "2026-07-21T15:17:33.100Z",
+      "updatedAt": "2026-09-14T07:53:55.607Z",
       "createdBy": "admin",
       "id": "tp_17846464760610000118"
     },
@@ -60089,34 +60462,104 @@
                   "sug": "ein Pfad",
                   "field": "source",
                   "at": "2026-07-21T15:13:13.641Z"
+                },
+                "article-symmetry": {
+                  "sug": "the trail",
+                  "field": "target",
+                  "at": "2026-09-14T07:54:31.664Z"
                 }
               },
               "qc": {
-                "sug": "ein Pfad",
-                "field": "source",
-                "at": "2026-07-21T15:13:13.641Z",
-                "by": "translategemma:12b"
+                "sug": "the trail",
+                "field": "target",
+                "at": "2026-09-14T07:54:31.664Z",
+                "by": "article-symmetry"
               }
             },
             {
               "target": "fog",
-              "source": "der Nebel"
+              "source": "der Nebel",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the fog",
+                  "field": "target",
+                  "at": "2026-09-14T07:54:55.489Z"
+                }
+              },
+              "qc": {
+                "sug": "the fog",
+                "field": "target",
+                "at": "2026-09-14T07:54:55.489Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "boot",
-              "source": "der Stiefel"
+              "source": "der Stiefel",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the boot",
+                  "field": "target",
+                  "at": "2026-09-14T07:55:19.942Z"
+                }
+              },
+              "qc": {
+                "sug": "the boot",
+                "field": "target",
+                "at": "2026-09-14T07:55:19.942Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "moss",
-              "source": "das Moos"
+              "source": "das Moos",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the moss",
+                  "field": "target",
+                  "at": "2026-09-14T07:55:43.668Z"
+                }
+              },
+              "qc": {
+                "sug": "the moss",
+                "field": "target",
+                "at": "2026-09-14T07:55:43.668Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "granite",
-              "source": "der Granit"
+              "source": "der Granit",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the granite",
+                  "field": "target",
+                  "at": "2026-09-14T07:56:07.192Z"
+                }
+              },
+              "qc": {
+                "sug": "the granite",
+                "field": "target",
+                "at": "2026-09-14T07:56:07.192Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "peak",
-              "source": "der Gipfel"
+              "source": "der Gipfel",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the peak",
+                  "field": "target",
+                  "at": "2026-09-14T07:56:31.127Z"
+                }
+              },
+              "qc": {
+                "sug": "the peak",
+                "field": "target",
+                "at": "2026-09-14T07:56:31.127Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "ground",
@@ -60126,18 +60569,36 @@
                   "sug": "das Erdreich",
                   "field": "source",
                   "at": "2026-07-21T15:13:40.478Z"
+                },
+                "article-symmetry": {
+                  "sug": "the ground",
+                  "field": "target",
+                  "at": "2026-09-14T07:56:54.088Z"
                 }
               },
               "qc": {
-                "sug": "das Erdreich",
-                "field": "source",
-                "at": "2026-07-21T15:13:40.478Z",
-                "by": "translategemma:12b"
+                "sug": "the ground",
+                "field": "target",
+                "at": "2026-09-14T07:56:54.088Z",
+                "by": "article-symmetry"
               }
             },
             {
               "target": "snow",
-              "source": "der Schnee"
+              "source": "der Schnee",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the snow",
+                  "field": "target",
+                  "at": "2026-09-14T07:57:21.195Z"
+                }
+              },
+              "qc": {
+                "sug": "the snow",
+                "field": "target",
+                "at": "2026-09-14T07:57:21.195Z",
+                "by": "article-symmetry"
+              }
             }
           ],
           "sentences": [
@@ -60309,7 +60770,7 @@
         }
       },
       "generatedAt": "2026-07-21T12:48:39.461Z",
-      "updatedAt": "2026-07-21T15:15:19.165Z",
+      "updatedAt": "2026-09-14T07:57:21.196Z",
       "createdBy": "admin",
       "id": "tp_17846402299100000058",
       "continuedFromId": null,
@@ -67146,7 +67607,20 @@
             {
               "target": "Goggele",
               "source": "Ei",
-              "_dialect": true
+              "_dialect": true,
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "das Goggele",
+                  "field": "target",
+                  "at": "2026-09-14T09:06:27.638Z"
+                }
+              },
+              "qc": {
+                "sug": "das Goggele",
+                "field": "target",
+                "at": "2026-09-14T09:06:27.638Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "Grantn",
@@ -67514,7 +67988,7 @@
         }
       ],
       "generatedAt": "2026-07-05T10:37:52.105Z",
-      "updatedAt": "2026-07-07T17:19:11.588Z",
+      "updatedAt": "2026-09-14T09:21:10.013Z",
       "story": "Hait war i in die Berga. Die Sun schian und der Himmel war blau. I bin mit am Fahrrad a Berg hoafagorn. Oben angekumpfn, hat i a wunderschöne Aussicht ghet. I hab a Picknick gmocht und die frische Luft ggnossn. Danach bin i wieder runteragorn. Es war a sehr scheener Dog. I fre mich scho auf den nächsten Ausflug in die Berga.\n\n---\nGERMAN:\nHeute war ich in den Bergen. Die Sonne schien und der Himmel war blau. Ich bin mit dem Fahrrad einen Berg hochgefahren. Oben angekommen, hatte ich eine wunderschöne Aussicht. Ich habe ein Picknick gemacht und die frische Luft genossen. Danach bin ich wieder runtergefahren. Es war ein sehr schöner Tag. Ich freue mich schon auf den nächsten Ausflug in die Berge.",
       "storyGloss": "Heute war ich in den Bergen. Die Sonne schien und der Himmel war blau. Ich bin mit dem Fahrrad einen Berg hochgefahren. Oben angekommen, hatte ich eine wunderschöne Aussicht. Ich habe ein Picknick gemacht und die frische Luft genossen. Danach bin ich wieder runtergefahren. Es war ein sehr schöner Tag. Ich freue mich schon auf den nächsten Ausflug in die Berge.",
       "storyTopic": "ein tag in den bergen",
@@ -115773,7 +116247,7 @@
           "icon": "🌇",
           "vocab": [
             {
-              "target": "crepuscolo",
+              "target": "il crepuscolo",
               "source": "die Dämmerung",
               "skillId": null,
               "skillProposal": {
@@ -115784,10 +116258,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.595Z"
             },
             {
-              "target": "schermo",
+              "target": "lo schermo",
               "source": "der Bildschirm",
               "skillId": null,
               "skillProposal": {
@@ -115798,7 +116273,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.595Z"
             },
             {
               "target": "tremare",
@@ -115815,7 +116291,7 @@
               }
             },
             {
-              "target": "invio",
+              "target": "l'invio",
               "source": "die Eingabe",
               "skillId": null,
               "skillProposal": {
@@ -115826,10 +116302,11 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.595Z"
             },
             {
-              "target": "paesaggio",
+              "target": "il paesaggio",
               "source": "die Landschaft",
               "skillId": null,
               "skillProposal": {
@@ -115840,7 +116317,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.595Z"
             },
             {
               "target": "solitario",
@@ -115871,7 +116349,7 @@
               }
             },
             {
-              "target": "viaggio",
+              "target": "il viaggio",
               "source": "die Reise",
               "skillId": null,
               "skillProposal": {
@@ -115882,7 +116360,8 @@
                 "targetLang": "it",
                 "sourceLang": "de",
                 "entry": null
-              }
+              },
+              "editedAt": "2026-09-14T09:26:30.595Z"
             }
           ],
           "sentences": [
@@ -115969,7 +116448,7 @@
         }
       ],
       "generatedAt": "2026-06-16T08:29:25.053Z",
-      "updatedAt": "2026-09-08T10:24:56.567Z",
+      "updatedAt": "2026-09-14T09:26:30.598Z",
       "continuedFromId": null,
       "continuedFrom": null,
       "id": "tp_17816139770630000089",
@@ -151881,7 +152360,20 @@
             },
             {
               "target": "engem guddem Këll",
-              "source": "ein schönes Restaurant"
+              "source": "ein schönes Restaurant",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "dem engem guddem Këll",
+                  "field": "target",
+                  "at": "2026-09-14T08:58:02.122Z"
+                }
+              },
+              "qc": {
+                "sug": "dem engem guddem Këll",
+                "field": "target",
+                "at": "2026-09-14T08:58:02.122Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "fir d'Stad ze erkennen",
@@ -151969,7 +152461,7 @@
         "modelsSource": "backfill:generationStats.model (single-model label)"
       },
       "generatedAt": "2026-05-31T09:36:34.175Z",
-      "updatedAt": "2026-05-31T09:36:34.175Z",
+      "updatedAt": "2026-09-14T08:58:42.859Z",
       "id": "tp_244550265",
       "continuedFromId": null,
       "storyMeta": {
@@ -163871,12 +164363,38 @@
             {
               "target": "d'Wisen",
               "source": "meadows",
-              "pron": "d'VEE-zun"
+              "pron": "d'VEE-zun",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the meadows",
+                  "field": "source",
+                  "at": "2026-09-14T08:41:19.410Z"
+                }
+              },
+              "qc": {
+                "sug": "the meadows",
+                "field": "source",
+                "at": "2026-09-14T08:41:19.410Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "d'Fielsen",
               "source": "fields",
-              "pron": "d'FEEL-zun"
+              "pron": "d'FEEL-zun",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the fields",
+                  "field": "source",
+                  "at": "2026-09-14T08:41:42.932Z"
+                }
+              },
+              "qc": {
+                "sug": "the fields",
+                "field": "source",
+                "at": "2026-09-14T08:41:42.932Z",
+                "by": "article-symmetry"
+              }
             },
             {
               "target": "d'Sauer",
@@ -163886,7 +164404,20 @@
             {
               "target": "d'Rief",
               "source": "vine",
-              "pron": "d'REEF"
+              "pron": "d'REEF",
+              "qcByModel": {
+                "article-symmetry": {
+                  "sug": "the vine",
+                  "field": "source",
+                  "at": "2026-09-14T08:42:21.474Z"
+                }
+              },
+              "qc": {
+                "sug": "the vine",
+                "field": "source",
+                "at": "2026-09-14T08:42:21.474Z",
+                "by": "article-symmetry"
+              }
             }
           ],
           "sentences": [
@@ -164010,7 +164541,7 @@
         "modelsSource": "backfill:generationStats.model (single-model label)"
       },
       "generatedAt": "2026-05-07T10:39:22.420Z",
-      "updatedAt": "2026-05-07T10:39:22.420Z",
+      "updatedAt": "2026-09-14T08:42:21.474Z",
       "id": "tp_1484940474",
       "srcLang": "en",
       "continuedFromId": null,
