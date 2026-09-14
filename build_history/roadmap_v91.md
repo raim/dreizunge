@@ -1033,6 +1033,68 @@ including the one a source scan missed — and it would have caught `v90_w`'s `_
 
 ---
 
+## 🆕 A QC REVIEW PAGE FOR THE TEACHER (user request, `v91_g` session) — NOT BUILT, NOTHING DECIDED
+
+User: *"we generally want a QC review page, where the teacher can view a summary of all flagged items
+(manual, by students, by QC runs), and can click on items to directly fix them, or ideally fix them
+ON this QC page w/o going into the individual lessonset pages."*
+
+⚠️ **WHY THIS IS WORTH BUILDING, from this session's own evidence**: the `v91_g` article backlog is
+**115 proposals across 23 chapters**. Accepting them today means opening 23 lesson editors and
+clicking Fix ~115 times, and there is no view anywhere that shows a curator what is outstanding
+across the corpus. The feature is not a convenience — it is the missing half of a propose-only check.
+
+### What ALREADY exists, and should be reused rather than rebuilt
+
+The data model is done; **this is an aggregation and a view, not new plumbing.** Four independent
+flag kinds already live on a vocab/sentence item:
+
+| field | written by | shape |
+|---|---|---|
+| `item.qc` | the newest QC verdict | `{sug, field, at, by}` |
+| `item.qcByModel` | every checker, keyed by identity (`article-symmetry`, a model name) | `{by: {sug, field, at}}` |
+| `item.userFlag` | the LEARNER, in-lesson (`_flagMode()`) | `{comment, correct, at, mode}` |
+| `item.userRating` / `item.userDelete` | the learner's ⭐ / delete-candidate marks | — |
+
+⚠️ `item.qc` and `item.qcByModel` are BOTH set by a pass (verified this session) — the editor reads
+`qcByModel` when non-empty and falls back to `qc` (`index.html` ~16343). A review page must do the
+same or it will silently miss findings.
+
+Already built and directly reusable:
+- **`_qcMutateItem(li, type, fi, apply)`** — the ENTIRE accept/dismiss mechanic, including the
+  `"a => b"` echo-splitting the model sometimes produces. `qcApplyFix` and `qcDismiss` are one-line
+  wrappers. ⚠️ **Fix on the review page should call this, not reimplement it** — the echo-splitting
+  is the kind of detail a second implementation gets wrong.
+- **`_flaggedExportPayload(storylineId)` / `downloadUserFlaggedLessons`** — ALREADY aggregates
+  flagged items across a storyline and serialises them. **This is two-thirds of the query the page
+  needs**, and it is the obvious starting point.
+- **`_lessonHasOpenQcFlag`**, the editor's `#editor-flag-filter`, and `buildPath()`'s flag badges —
+  per-lesson filtering exists; what is missing is the CORPUS-WIDE roll-up.
+- Saving goes through `_postLessonEdit(APP.lessonData)` — a whole-lesson POST. ⚠️ **There is no
+  per-item accept endpoint**, so a page that fixes many items across many lessons must batch by
+  LESSON or issue one POST per item; the naive loop is N round-trips over the whole lesson each time.
+
+### Questions the user has NOT been asked (do not assume answers)
+
+1. **Scope**: whole corpus, or per storyline? The corpus is 361 topics and `_flaggedExportPayload`
+   is storyline-scoped today.
+2. **Grouping**: by chapter, by flag kind, or by checker identity? The article pass files under
+   `article-symmetry`, a model files under its own name — these are different trust levels and may
+   deserve different default treatment.
+3. **Bulk accept**: is "accept all in this chapter" wanted? ⚠️ It sits in tension with the standing
+   **propose-only ruling**, whose justification is that a wrong verdict must cost ONE dismissal
+   rather than a corrupted entry. A bulk button is the one feature that could quietly undo that
+   property — if it is built, the user should rule on it explicitly.
+4. **Learner flags vs QC findings**: a learner flag has a free-text `comment` and no `sug`, so it
+   cannot be "fixed" by one click at all — it needs an edit box. These two kinds may not belong in
+   the same row shape.
+
+⚠️ **`ui.json` COST IS UNKNOWN AND MUST BE BUDGETED WITH THE USER BEFORE ANY STRING IS WRITTEN** —
+this is a whole new screen, so it is the largest key ask in several releases. **Try the `v88`-line
+trick first**: whole features shipped there with ZERO new keys by reusing existing strings, and
+`v90_z` was granted four and spent one. Many of the strings this page needs (`qc.editor.fix`,
+`qc.toast.fix_applied`, `qc.toast.dismissed`, the flag labels) **already exist**.
+
 ## 🆕 THE SHORT LIST — everything genuinely open, reconciled at the v91 cut
 
 *Each line below was cross-checked against **both** `roadmap_v89.md`'s and `roadmap_v90.md`'s shipped
