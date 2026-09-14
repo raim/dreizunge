@@ -794,6 +794,70 @@ strong, and I extrapolated it to a second pair (de→nl — partial), then to a 
 — wrong criterion), then reverted correct work on that mistaken basis. **Three pairs, three
 behaviours.** The measurement was sound every time; the generalisation from it was not.
 
+### ❌ A SIXTH HYPOTHESIS — frame the rule around GENDER, not SYMMETRY — MEASURED AND REJECTED
+
+⚠️ **THE IDEA WAS SOUND AND THE REWRITE WAS NOT.** After `v91_g` shipped, the 37 un-accepted backlog
+proposals all had ENGLISH on the bare side, and every one of them was bad: `die Liebe ↔ love` →
+`the love` makes the lesson WORSE; `fog ↔ der Nebel` → `the fog` adds a word that teaches nothing;
+`d'Wisen ↔ meadows` → `the meadows` is a plural English takes no article on. **English articles mark
+no gender, so the justification for the rule ("gender is useful") evaporates on an English side while
+the rule keeps firing.**
+
+Candidate: decide each side ON ITS OWN, by whether that language's articles mark gender. Names no
+language, so it stays inside `v80_j`, and it subsumes the article-less case too. 3 chapters per pair
+type × 2 arms. ⚠️ **The outcome measure had to change with the rule** — under this framing
+`der Nebel ↔ fog` is CORRECT, not asymmetric — so gender-side and non-gender-side rates are reported
+separately and the old metric only for comparison:
+
+| pair / arm | gender-side articles | English-side articles | old metric |
+|---|---|---|---|
+| de→it shipped | **79%** | n/a | 0/24 |
+| de→it **gender** | **2%** | n/a | 1/24 |
+| de→nl shipped | 67% | n/a | 0/24 |
+| de→nl **gender** | 27% | n/a | 3/24 |
+| de→en shipped | 58% | 38% | 5/24 |
+| de→en **gender** | 38% | **0%** | 9/24 |
+| en→de shipped | 75% | 75% | 0/24 |
+| en→de **gender** | 50% | **0%** | 12/24 |
+
+✅ **It got the English half exactly right** — 38%/75% → **0%** in both directions.
+❌ **And collapsed the gender half everywhere**: Italian/German **79% → 2%**, Dutch 67% → 27%, German
+in en→de 75% → 50%. **Italian at 2% is strictly worse than what ships** — the lessons lose gender
+almost entirely.
+
+⚠️ **THIS IS THE FAILURE MODE THE PROBE HEADER PREDICTED BEFORE THE RUN**: *"the model reading 'do not
+switch shape between items' as licence to go bare on BOTH sides, which would undo `v91_g`."* Writing
+the prediction down is what made the result readable in one pass instead of arguable.
+
+⚠️ **THE DIAGNOSIS IS THE WORDING, NOT THE IDEA.** The rewrite replaced the whole bullet and lost the
+FORCE of `v91_g`'s demand: *"give every noun its article on BOTH sides"* reads as an order; *"decide
+each side on its own"* reads as permission. **The untested variant is a MINIMAL DIFF** — keep the
+shipped text verbatim and APPEND one exemption sentence for articles that mark no gender. ~90 min.
+**Not run; nobody has committed to it.**
+
+**DECISION: KEEP THE SHIPPED `v91_g` RULE.** The 37 open proposals are better DISMISSED than accepted.
+
+### 🔎 WHAT THE SHIPPED RULE ACTUALLY DOES ON de↔en (user question, measured)
+
+de↔it is right and needs nothing. de↔en lands in one of two imperfect states **depending on
+direction**, and the second one is a defect this project has not named before:
+
+- **en→de**: perfectly consistent (0/24 mixed), German carries gender — but EVERY English gloss
+  carries `the` (`die Prüfung ↔ the exam`, `der Kaffee ↔ the coffee`, `die Stille ↔ the silence`).
+  Unidiomatic; harmless.
+- **de→en**: 5/24 mixed, and ⚠️ **THE INCONSISTENCY IS BETWEEN CHAPTERS, NOT WITHIN THEM**.
+  *Neuer Plan* decided "English bare" (`meteor ↔ der Meteor`, `weekend ↔ das Wochenende`);
+  *Sternenflimmern* and *Geisterhafte Gestalten* decided "English articled" (`the fog ↔ der Nebel`).
+  Each chapter is internally consistent — the one-decision-per-call property again — but the chapters
+  disagree with each other.
+
+⚠️⚠️ **ACROSS-LESSON DRIFT IS A DIFFERENT DEFECT FROM WITHIN-PAIR ASYMMETRY, AND `v91_a`'s CHECK
+CANNOT SEE IT** — it only ever compares the two sides of ONE pair. A learner meets `the fog` in one
+chapter and `meteor` in the next, and nothing flags it. **If this is ever worth fixing, the check
+needs a corpus-level notion of "the shape this language pair uses", which is a different instrument.**
+✅ Verbs and adjectives stay correctly bare in both directions throughout (`to come back ↔
+zurückkommen`, `ausfallen ↔ to fail / go down`).
+
 ## 2. 🆕 "HALF SENTENCES" IN VOCABULARY LESSONS (user report at the `v91_a` cut)
 
 User: *"we try to avoid too long sentences, but sometimes we get half sentences that are not

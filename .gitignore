@@ -3,3 +3,9 @@ learners.json
 # before a learner clicks Generate) — operational state like learners.json above, not curated
 # content like canonical-analysis.json/skills.json, and may hold text from a personal upload.
 drafts.json
+
+# v91_b: per-language article attestation, learned from real article passes and cached
+# (`articles.json`, ARTICLES_STORE_FILE). Operational state like learners.json/drafts.json above,
+# not curated content: it rebuilds itself from any run, and a stale committed copy would hand a
+# fresh clone verdicts nobody measured on that machine.
+articles.json

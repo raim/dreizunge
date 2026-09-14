@@ -17054,19 +17054,6 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the Wi-Fi",
-                  "field": "source",
-                  "at": "2026-09-14T08:24:42.790Z"
-                }
-              },
-              "qc": {
-                "sug": "the Wi-Fi",
-                "field": "source",
-                "at": "2026-09-14T08:24:42.790Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -17109,19 +17096,6 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the USB drive",
-                  "field": "source",
-                  "at": "2026-09-14T08:25:47.059Z"
-                }
-              },
-              "qc": {
-                "sug": "the USB drive",
-                "field": "source",
-                "at": "2026-09-14T08:25:47.059Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -17164,19 +17138,6 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the panic",
-                  "field": "source",
-                  "at": "2026-09-14T08:26:47.145Z"
-                }
-              },
-              "qc": {
-                "sug": "the panic",
-                "field": "source",
-                "at": "2026-09-14T08:26:47.145Z",
-                "by": "article-symmetry"
               }
             }
           ],
@@ -17279,7 +17240,7 @@
         ]
       },
       "generatedAt": "2026-09-06T08:59:26.823Z",
-      "updatedAt": "2026-09-14T08:26:47.145Z",
+      "updatedAt": "2026-09-14T21:17:58.692Z",
       "createdBy": "admin"
     },
     {
@@ -17765,19 +17726,6 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the giant",
-                  "field": "source",
-                  "at": "2026-09-14T08:42:49.616Z"
-                }
-              },
-              "qc": {
-                "sug": "the giant",
-                "field": "source",
-                "at": "2026-09-14T08:42:49.616Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -17848,19 +17796,6 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the surname",
-                  "field": "source",
-                  "at": "2026-09-14T08:44:15.178Z"
-                }
-              },
-              "qc": {
-                "sug": "the surname",
-                "field": "source",
-                "at": "2026-09-14T08:44:15.178Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -18007,7 +17942,7 @@
         }
       ],
       "generatedAt": "2026-09-05T18:34:08.694Z",
-      "updatedAt": "2026-09-14T08:44:48.616Z",
+      "updatedAt": "2026-09-14T21:17:58.778Z",
       "createdBy": "admin",
       "aiStory": "NATÜRLICH KAM DANN NIE EIN RIESE.\nGIBT JA KEINE",
       "storyQcBy": "translategemma:12b",
@@ -26641,19 +26576,6 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the love",
-                  "field": "source",
-                  "at": "2026-09-14T08:31:24.509Z"
-                }
-              },
-              "qc": {
-                "sug": "the love",
-                "field": "source",
-                "at": "2026-09-14T08:31:24.509Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -26668,19 +26590,6 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the fear",
-                  "field": "source",
-                  "at": "2026-09-14T08:31:48.251Z"
-                }
-              },
-              "qc": {
-                "sug": "the fear",
-                "field": "source",
-                "at": "2026-09-14T08:31:48.251Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -26695,19 +26604,6 @@
                 "targetLang": "de",
                 "sourceLang": "en",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the humor",
-                  "field": "source",
-                  "at": "2026-09-14T08:32:13.123Z"
-                }
-              },
-              "qc": {
-                "sug": "the humor",
-                "field": "source",
-                "at": "2026-09-14T08:32:13.123Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -27537,7 +27433,7 @@
         }
       ],
       "generatedAt": "2026-08-26T14:52:43.338Z",
-      "updatedAt": "2026-09-14T08:32:30.930Z",
+      "updatedAt": "2026-09-14T21:17:58.829Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-26T16:12:54.190Z"
@@ -28114,19 +28010,6 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the meteor",
-                  "field": "target",
-                  "at": "2026-09-14T08:33:09.190Z"
-                }
-              },
-              "qc": {
-                "sug": "the meteor",
-                "field": "target",
-                "at": "2026-09-14T08:33:09.190Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -28141,19 +28024,6 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the number",
-                  "field": "target",
-                  "at": "2026-09-14T08:33:36.255Z"
-                }
-              },
-              "qc": {
-                "sug": "the number",
-                "field": "target",
-                "at": "2026-09-14T08:33:36.255Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -28210,19 +28080,6 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the weekend",
-                  "field": "target",
-                  "at": "2026-09-14T08:34:49.941Z"
-                }
-              },
-              "qc": {
-                "sug": "the weekend",
-                "field": "target",
-                "at": "2026-09-14T08:34:49.941Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -28722,7 +28579,7 @@
         }
       ],
       "generatedAt": "2026-08-26T11:25:30.933Z",
-      "updatedAt": "2026-09-14T08:35:22.423Z",
+      "updatedAt": "2026-09-14T21:17:58.877Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-26T14:13:12.407Z"
@@ -29308,19 +29165,6 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the blanket",
-                  "field": "target",
-                  "at": "2026-09-14T08:36:23.549Z"
-                }
-              },
-              "qc": {
-                "sug": "the blanket",
-                "field": "target",
-                "at": "2026-09-14T08:36:23.549Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -29349,19 +29193,6 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the beach",
-                  "field": "target",
-                  "at": "2026-09-14T08:37:04.727Z"
-                }
-              },
-              "qc": {
-                "sug": "the beach",
-                "field": "target",
-                "at": "2026-09-14T08:37:04.727Z",
-                "by": "article-symmetry"
               }
             },
             {
@@ -29404,19 +29235,6 @@
                 "targetLang": "en",
                 "sourceLang": "de",
                 "entry": null
-              },
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the star",
-                  "field": "target",
-                  "at": "2026-09-14T08:38:00.005Z"
-                }
-              },
-              "qc": {
-                "sug": "the star",
-                "field": "target",
-                "at": "2026-09-14T08:38:00.005Z",
-                "by": "article-symmetry"
               }
             }
           ],
@@ -29828,7 +29646,7 @@
         }
       ],
       "generatedAt": "2026-08-26T11:18:34.104Z",
-      "updatedAt": "2026-09-14T08:38:00.006Z",
+      "updatedAt": "2026-09-14T21:17:58.923Z",
       "createdBy": "admin",
       "storyQcCheckedBy": "translategemma:12b",
       "storyQcCheckedAt": "2026-08-26T13:22:48.442Z"
@@ -59327,37 +59145,11 @@
             },
             {
               "target": "la grandine",
-              "source": "hail",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the hail",
-                  "field": "source",
-                  "at": "2026-09-14T08:50:00.164Z"
-                }
-              },
-              "qc": {
-                "sug": "the hail",
-                "field": "source",
-                "at": "2026-09-14T08:50:00.164Z",
-                "by": "article-symmetry"
-              }
+              "source": "hail"
             },
             {
               "target": "il danno",
-              "source": "damage",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the damage",
-                  "field": "source",
-                  "at": "2026-09-14T08:50:26.147Z"
-                }
-              },
-              "qc": {
-                "sug": "the damage",
-                "field": "source",
-                "at": "2026-09-14T08:50:26.147Z",
-                "by": "article-symmetry"
-              }
+              "source": "damage"
             },
             {
               "target": "devastare",
@@ -59677,7 +59469,7 @@
         }
       },
       "generatedAt": "2026-07-22T14:02:39.245Z",
-      "updatedAt": "2026-09-14T08:51:47.237Z",
+      "updatedAt": "2026-09-14T21:17:58.975Z",
       "createdBy": "admin",
       "id": "tp_17847292264520000293"
     },
@@ -60089,122 +59881,31 @@
           "vocab": [
             {
               "target": "fog",
-              "source": "der Nebel",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the fog",
-                  "field": "target",
-                  "at": "2026-09-14T07:51:10.331Z"
-                }
-              },
-              "qc": {
-                "sug": "the fog",
-                "field": "target",
-                "at": "2026-09-14T07:51:10.331Z",
-                "by": "article-symmetry"
-              }
+              "source": "der Nebel"
             },
             {
               "target": "hum",
-              "source": "das Summen",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the hum",
-                  "field": "target",
-                  "at": "2026-09-14T07:51:35.564Z"
-                }
-              },
-              "qc": {
-                "sug": "the hum",
-                "field": "target",
-                "at": "2026-09-14T07:51:35.564Z",
-                "by": "article-symmetry"
-              }
+              "source": "das Summen"
             },
             {
               "target": "flashlight",
-              "source": "die Taschenlampe",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the flashlight",
-                  "field": "target",
-                  "at": "2026-09-14T07:51:57.763Z"
-                }
-              },
-              "qc": {
-                "sug": "the flashlight",
-                "field": "target",
-                "at": "2026-09-14T07:51:57.763Z",
-                "by": "article-symmetry"
-              }
+              "source": "die Taschenlampe"
             },
             {
               "target": "shadow",
-              "source": "der Schatten",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the shadow",
-                  "field": "target",
-                  "at": "2026-09-14T07:52:20.858Z"
-                }
-              },
-              "qc": {
-                "sug": "the shadow",
-                "field": "target",
-                "at": "2026-09-14T07:52:20.858Z",
-                "by": "article-symmetry"
-              }
+              "source": "der Schatten"
             },
             {
               "target": "heart",
-              "source": "das Herz",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the heart",
-                  "field": "target",
-                  "at": "2026-09-14T07:52:44.794Z"
-                }
-              },
-              "qc": {
-                "sug": "the heart",
-                "field": "target",
-                "at": "2026-09-14T07:52:44.794Z",
-                "by": "article-symmetry"
-              }
+              "source": "das Herz"
             },
             {
               "target": "finger",
-              "source": "der Finger",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the finger",
-                  "field": "target",
-                  "at": "2026-09-14T07:53:08.033Z"
-                }
-              },
-              "qc": {
-                "sug": "the finger",
-                "field": "target",
-                "at": "2026-09-14T07:53:08.033Z",
-                "by": "article-symmetry"
-              }
+              "source": "der Finger"
             },
             {
               "target": "wall",
-              "source": "die Wand",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the wall",
-                  "field": "target",
-                  "at": "2026-09-14T07:53:32.318Z"
-                }
-              },
-              "qc": {
-                "sug": "the wall",
-                "field": "target",
-                "at": "2026-09-14T07:53:32.318Z",
-                "by": "article-symmetry"
-              }
+              "source": "die Wand"
             },
             {
               "target": "dark",
@@ -60214,18 +59915,13 @@
                   "sug": "der Dunkel",
                   "field": "source",
                   "at": "2026-07-21T15:15:54.167Z"
-                },
-                "article-symmetry": {
-                  "sug": "the dark",
-                  "field": "target",
-                  "at": "2026-09-14T07:53:55.606Z"
                 }
               },
               "qc": {
-                "sug": "the dark",
-                "field": "target",
-                "at": "2026-09-14T07:53:55.606Z",
-                "by": "article-symmetry"
+                "sug": "der Dunkel",
+                "field": "source",
+                "at": "2026-07-21T15:15:54.167Z",
+                "by": "translategemma:12b"
               }
             }
           ],
@@ -60401,7 +60097,7 @@
         }
       },
       "generatedAt": "2026-07-21T13:27:40.298Z",
-      "updatedAt": "2026-09-14T07:53:55.607Z",
+      "updatedAt": "2026-09-14T21:17:59.020Z",
       "createdBy": "admin",
       "id": "tp_17846464760610000118"
     },
@@ -60462,104 +60158,34 @@
                   "sug": "ein Pfad",
                   "field": "source",
                   "at": "2026-07-21T15:13:13.641Z"
-                },
-                "article-symmetry": {
-                  "sug": "the trail",
-                  "field": "target",
-                  "at": "2026-09-14T07:54:31.664Z"
                 }
               },
               "qc": {
-                "sug": "the trail",
-                "field": "target",
-                "at": "2026-09-14T07:54:31.664Z",
-                "by": "article-symmetry"
+                "sug": "ein Pfad",
+                "field": "source",
+                "at": "2026-07-21T15:13:13.641Z",
+                "by": "translategemma:12b"
               }
             },
             {
               "target": "fog",
-              "source": "der Nebel",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the fog",
-                  "field": "target",
-                  "at": "2026-09-14T07:54:55.489Z"
-                }
-              },
-              "qc": {
-                "sug": "the fog",
-                "field": "target",
-                "at": "2026-09-14T07:54:55.489Z",
-                "by": "article-symmetry"
-              }
+              "source": "der Nebel"
             },
             {
               "target": "boot",
-              "source": "der Stiefel",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the boot",
-                  "field": "target",
-                  "at": "2026-09-14T07:55:19.942Z"
-                }
-              },
-              "qc": {
-                "sug": "the boot",
-                "field": "target",
-                "at": "2026-09-14T07:55:19.942Z",
-                "by": "article-symmetry"
-              }
+              "source": "der Stiefel"
             },
             {
               "target": "moss",
-              "source": "das Moos",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the moss",
-                  "field": "target",
-                  "at": "2026-09-14T07:55:43.668Z"
-                }
-              },
-              "qc": {
-                "sug": "the moss",
-                "field": "target",
-                "at": "2026-09-14T07:55:43.668Z",
-                "by": "article-symmetry"
-              }
+              "source": "das Moos"
             },
             {
               "target": "granite",
-              "source": "der Granit",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the granite",
-                  "field": "target",
-                  "at": "2026-09-14T07:56:07.192Z"
-                }
-              },
-              "qc": {
-                "sug": "the granite",
-                "field": "target",
-                "at": "2026-09-14T07:56:07.192Z",
-                "by": "article-symmetry"
-              }
+              "source": "der Granit"
             },
             {
               "target": "peak",
-              "source": "der Gipfel",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the peak",
-                  "field": "target",
-                  "at": "2026-09-14T07:56:31.127Z"
-                }
-              },
-              "qc": {
-                "sug": "the peak",
-                "field": "target",
-                "at": "2026-09-14T07:56:31.127Z",
-                "by": "article-symmetry"
-              }
+              "source": "der Gipfel"
             },
             {
               "target": "ground",
@@ -60569,36 +60195,18 @@
                   "sug": "das Erdreich",
                   "field": "source",
                   "at": "2026-07-21T15:13:40.478Z"
-                },
-                "article-symmetry": {
-                  "sug": "the ground",
-                  "field": "target",
-                  "at": "2026-09-14T07:56:54.088Z"
                 }
               },
               "qc": {
-                "sug": "the ground",
-                "field": "target",
-                "at": "2026-09-14T07:56:54.088Z",
-                "by": "article-symmetry"
+                "sug": "das Erdreich",
+                "field": "source",
+                "at": "2026-07-21T15:13:40.478Z",
+                "by": "translategemma:12b"
               }
             },
             {
               "target": "snow",
-              "source": "der Schnee",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the snow",
-                  "field": "target",
-                  "at": "2026-09-14T07:57:21.195Z"
-                }
-              },
-              "qc": {
-                "sug": "the snow",
-                "field": "target",
-                "at": "2026-09-14T07:57:21.195Z",
-                "by": "article-symmetry"
-              }
+              "source": "der Schnee"
             }
           ],
           "sentences": [
@@ -60770,7 +60378,7 @@
         }
       },
       "generatedAt": "2026-07-21T12:48:39.461Z",
-      "updatedAt": "2026-09-14T07:57:21.196Z",
+      "updatedAt": "2026-09-14T21:17:59.065Z",
       "createdBy": "admin",
       "id": "tp_17846402299100000058",
       "continuedFromId": null,
@@ -67607,20 +67215,7 @@
             {
               "target": "Goggele",
               "source": "Ei",
-              "_dialect": true,
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "das Goggele",
-                  "field": "target",
-                  "at": "2026-09-14T09:06:27.638Z"
-                }
-              },
-              "qc": {
-                "sug": "das Goggele",
-                "field": "target",
-                "at": "2026-09-14T09:06:27.638Z",
-                "by": "article-symmetry"
-              }
+              "_dialect": true
             },
             {
               "target": "Grantn",
@@ -67988,7 +67583,7 @@
         }
       ],
       "generatedAt": "2026-07-05T10:37:52.105Z",
-      "updatedAt": "2026-09-14T09:21:10.013Z",
+      "updatedAt": "2026-09-14T21:17:59.108Z",
       "story": "Hait war i in die Berga. Die Sun schian und der Himmel war blau. I bin mit am Fahrrad a Berg hoafagorn. Oben angekumpfn, hat i a wunderschöne Aussicht ghet. I hab a Picknick gmocht und die frische Luft ggnossn. Danach bin i wieder runteragorn. Es war a sehr scheener Dog. I fre mich scho auf den nächsten Ausflug in die Berga.\n\n---\nGERMAN:\nHeute war ich in den Bergen. Die Sonne schien und der Himmel war blau. Ich bin mit dem Fahrrad einen Berg hochgefahren. Oben angekommen, hatte ich eine wunderschöne Aussicht. Ich habe ein Picknick gemacht und die frische Luft genossen. Danach bin ich wieder runtergefahren. Es war ein sehr schöner Tag. Ich freue mich schon auf den nächsten Ausflug in die Berge.",
       "storyGloss": "Heute war ich in den Bergen. Die Sonne schien und der Himmel war blau. Ich bin mit dem Fahrrad einen Berg hochgefahren. Oben angekommen, hatte ich eine wunderschöne Aussicht. Ich habe ein Picknick gemacht und die frische Luft genossen. Danach bin ich wieder runtergefahren. Es war ein sehr schöner Tag. Ich freue mich schon auf den nächsten Ausflug in die Berge.",
       "storyTopic": "ein tag in den bergen",
@@ -152360,20 +151955,7 @@
             },
             {
               "target": "engem guddem Këll",
-              "source": "ein schönes Restaurant",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "dem engem guddem Këll",
-                  "field": "target",
-                  "at": "2026-09-14T08:58:02.122Z"
-                }
-              },
-              "qc": {
-                "sug": "dem engem guddem Këll",
-                "field": "target",
-                "at": "2026-09-14T08:58:02.122Z",
-                "by": "article-symmetry"
-              }
+              "source": "ein schönes Restaurant"
             },
             {
               "target": "fir d'Stad ze erkennen",
@@ -152461,7 +152043,7 @@
         "modelsSource": "backfill:generationStats.model (single-model label)"
       },
       "generatedAt": "2026-05-31T09:36:34.175Z",
-      "updatedAt": "2026-09-14T08:58:42.859Z",
+      "updatedAt": "2026-09-14T21:17:59.152Z",
       "id": "tp_244550265",
       "continuedFromId": null,
       "storyMeta": {
@@ -164363,38 +163945,12 @@
             {
               "target": "d'Wisen",
               "source": "meadows",
-              "pron": "d'VEE-zun",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the meadows",
-                  "field": "source",
-                  "at": "2026-09-14T08:41:19.410Z"
-                }
-              },
-              "qc": {
-                "sug": "the meadows",
-                "field": "source",
-                "at": "2026-09-14T08:41:19.410Z",
-                "by": "article-symmetry"
-              }
+              "pron": "d'VEE-zun"
             },
             {
               "target": "d'Fielsen",
               "source": "fields",
-              "pron": "d'FEEL-zun",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the fields",
-                  "field": "source",
-                  "at": "2026-09-14T08:41:42.932Z"
-                }
-              },
-              "qc": {
-                "sug": "the fields",
-                "field": "source",
-                "at": "2026-09-14T08:41:42.932Z",
-                "by": "article-symmetry"
-              }
+              "pron": "d'FEEL-zun"
             },
             {
               "target": "d'Sauer",
@@ -164404,20 +163960,7 @@
             {
               "target": "d'Rief",
               "source": "vine",
-              "pron": "d'REEF",
-              "qcByModel": {
-                "article-symmetry": {
-                  "sug": "the vine",
-                  "field": "source",
-                  "at": "2026-09-14T08:42:21.474Z"
-                }
-              },
-              "qc": {
-                "sug": "the vine",
-                "field": "source",
-                "at": "2026-09-14T08:42:21.474Z",
-                "by": "article-symmetry"
-              }
+              "pron": "d'REEF"
             }
           ],
           "sentences": [
@@ -164541,7 +164084,7 @@
         "modelsSource": "backfill:generationStats.model (single-model label)"
       },
       "generatedAt": "2026-05-07T10:39:22.420Z",
-      "updatedAt": "2026-09-14T08:42:21.474Z",
+      "updatedAt": "2026-09-14T21:17:59.199Z",
       "id": "tp_1484940474",
       "srcLang": "en",
       "continuedFromId": null,
