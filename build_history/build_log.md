@@ -10215,6 +10215,34 @@ found on screen; and v90_z's central QC claim measured and withdrawn
 -> v91_c: the landing title and motto — sized closer, and coloured from the globe itself
 -> v91_d: "I speak" drives the UI language again, unless Fix is on
 
+* in static docs/index.html the ui selection in settings has an empty
+  dropdown menu, and the source language selection doesn't change the
+  ui language
+
+-> v91_e: the published build threw inside applyUIStrings, and had since v90_w
+-> v91_f: five no-op stubs, and a guard over EVERY inline handler in the published build
+-> Preserve the translation-failure marker as a fixture; delete two failed chapters
+-> v91_g: the ARTICLE SYMMETRY rule was causing the asymmetry it forbids
+
+... [claude is running the new article QC on all previous lessons]
+
+* for the roadmap: we generally want a QC review page, where the
+  teacher can view a summary of all flagged items (manual, by
+  students, by QC runs), and can click on items to directly fix them,
+  or ideally fix them ON this QC page w/o going into the individual
+  lessonset pages.
+  
+-> roadmap: record the teacher-facing QC review page (user request)
+-> Accept the de->it and de->nl article proposals: backlog 115 -> 41
+
+[NOTE: this fixed article symmetry problems ... now working on english]
+
+* how about newly generated lessons, de<->en, vs de<->it; would our
+  current prompt work for both cases regarding article usage?
+
+-> Dismiss the 37 remaining article proposals; gitignore articles.json
+
+...
 
 
 
