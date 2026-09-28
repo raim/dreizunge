@@ -13,13 +13,14 @@
       "lang": "it",
       "srcLang": "de",
       "createdAt": "2026-09-28T18:41:15.173Z",
-      "updatedAt": "2026-09-28T18:52:51.570Z",
+      "updatedAt": "2026-09-28T19:48:34.878Z",
       "tokenUsage": {
-        "totalPromptTokens": 979,
-        "totalCompletionTokens": 156,
+        "totalPromptTokens": 1866,
+        "totalCompletionTokens": 1220,
         "tokensByType": {
           "retitle": 654,
-          "summary": 481
+          "summary": 481,
+          "storyboard": 1951
         }
       },
       "summary": "Die außergewöhnliche Biografie von Giorgio Moroder zeigt, wie er trotz fehlender formaler Ausbildung und seiner Herkunft aus einer sprachlichen Minderheit zu einem erfolgreichen Innovator wurde. Ein Symposium nutzt diese einzigartige Karriere als Gelegenheit, um seine Rolle in der Dance-Musik und Plattenproduktion sowie das kulturelle Erbe tiefer zu vertiefen. Dabei werden Themen wie Soziolinguistik und intermediale Verbindungen im Kontext seiner beruflichen Entwicklung analysiert.",
@@ -35,7 +36,251 @@
         "ms": 73089,
         "at": "2026-09-28T18:52:51.458Z"
       },
-      "sourceFile": "moroder.md"
+      "sourceFile": "moroder.md",
+      "source": {
+        "author": "Arno Raffeiner"
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Giorgio Moroder wächst in den Dolomiten auf.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><polygon points=\"0,60 30,20 60,60\" fill=\"#9e9e9e\"/><polygon points=\"40,60 70,10 100,60\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"20\" r=\"10\" fill=\"#f2cc8f\"/><rect x=\"45\" y=\"70\" width=\"10\" height=\"20\" fill=\"#8d6e63\"/><circle cx=\"50\" cy=\"65\" r=\"8\" fill=\"#faf7f0\"/></svg></g><g data-chapter=\"1\"><title>Ohne Musikstudium wird er zum Pionier.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"#e07a5f\"/><rect x=\"40\" y=\"40\" width=\"20\" height=\"20\" fill=\"#faf7f0\"/><line x1=\"50\" y1=\"30\" x2=\"50\" y2=\"70\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"40\" y1=\"50\" x2=\"60\" y2=\"50\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g data-chapter=\"2\"><title>Dance-Musik und Filmproduktion verbinden Kulturen.</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#457b9d\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#457b9d\"/><circle cx=\"30\" cy=\"50\" r=\"20\" fill=\"#e5989b\"/><circle cx=\"70\" cy=\"50\" r=\"20\" fill=\"#e07a5f\"/><line x1=\"30\" y1=\"50\" x2=\"70\" y2=\"50\" stroke=\"#ffffff\" stroke-width=\"4\" stroke-linecap=\"round\"/><rect x=\"45\" y=\"45\" width=\"10\" height=\"10\" fill=\"#f2cc8f\"/></svg></g><g data-chapter=\"2\"><title>Sein Erbe verbindet Ladinisch mit globaler Kunst.</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><polygon points=\"20,80 50,20 80,80\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"40\" r=\"15\" fill=\"#8d6e63\"/><rect x=\"40\" y=\"55\" width=\"20\" height=\"25\" fill=\"#9e9e9e\"/><line x1=\"50\" y1=\"55\" x2=\"50\" y2=\"80\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 4,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 887,
+        "completionTokens": 1064,
+        "ms": 410777,
+        "at": "2026-09-28T19:48:34.878Z",
+        "storyStyle": "neutral"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Giorgio Moroder wächst in den Dolomiten auf.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "leaf"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  0,
+                  60
+                ],
+                [
+                  30,
+                  20
+                ],
+                [
+                  60,
+                  60
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  40,
+                  60
+                ],
+                [
+                  70,
+                  10
+                ],
+                [
+                  100,
+                  60
+                ]
+              ],
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 20,
+              "r": 10,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 70,
+              "w": 10,
+              "h": 20,
+              "fill": "earth"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 65,
+              "r": 8,
+              "fill": "paper"
+            }
+          ]
+        },
+        {
+          "caption": "Ohne Musikstudium wird er zum Pionier.",
+          "chapter": 1,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "night"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 30,
+              "fill": "accent"
+            },
+            {
+              "type": "rect",
+              "x": 40,
+              "y": 40,
+              "w": 20,
+              "h": 20,
+              "fill": "paper"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 30,
+              "x2": 50,
+              "y2": 70,
+              "stroke": "white",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 40,
+              "y1": 50,
+              "x2": 60,
+              "y2": 50,
+              "stroke": "white",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Dance-Musik und Filmproduktion verbinden Kulturen.",
+          "chapter": 2,
+          "bg": "water",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "water"
+            },
+            {
+              "type": "circle",
+              "cx": 30,
+              "cy": 50,
+              "r": 20,
+              "fill": "rose"
+            },
+            {
+              "type": "circle",
+              "cx": 70,
+              "cy": 50,
+              "r": 20,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y1": 50,
+              "x2": 70,
+              "y2": 50,
+              "stroke": "white",
+              "sw": 4
+            },
+            {
+              "type": "rect",
+              "x": 45,
+              "y": 45,
+              "w": 10,
+              "h": 10,
+              "fill": "sun"
+            }
+          ]
+        },
+        {
+          "caption": "Sein Erbe verbindet Ladinisch mit globaler Kunst.",
+          "chapter": 2,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 0,
+              "w": 100,
+              "h": 100,
+              "fill": "paper"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  20,
+                  80
+                ],
+                [
+                  50,
+                  20
+                ],
+                [
+                  80,
+                  80
+                ]
+              ],
+              "fill": "leaf"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 40,
+              "r": 15,
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 40,
+              "y": 55,
+              "w": 20,
+              "h": 25,
+              "fill": "stone"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 55,
+              "x2": 50,
+              "y2": 80,
+              "stroke": "ink",
+              "sw": 2
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
     },
     {
       "id": "sl_1346308157",
@@ -12866,6 +13111,647 @@
             "ms": 377358,
             "at": "2026-09-28T18:49:16.391Z"
           }
+        },
+        {
+          "id": "ls_1790626338288_1_standard",
+          "title": "Kultur und Musik",
+          "desc": "Grundwortschatz zu Kunst und Kultur",
+          "icon": "🎭",
+          "vocab": [
+            {
+              "target": "la musica",
+              "source": "die Musik",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la musica",
+                "canonicalId": "it:vocab:la musica",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il film",
+              "source": "der Film",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il film",
+                "canonicalId": "it:vocab:il film",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'artista",
+              "source": "der Künstler",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:l'artista",
+                "canonicalId": "it:vocab:l'artista",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la cultura",
+              "source": "die Kultur",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la cultura",
+                "canonicalId": "it:vocab:la cultura",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il paese",
+              "source": "das Land",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il paese",
+                "canonicalId": "it:vocab:il paese",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la lingua",
+              "source": "die Sprache",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la lingua",
+                "canonicalId": "it:vocab:la lingua",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'arte",
+              "source": "die Kunst",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:l'arte",
+                "canonicalId": "it:vocab:l'arte",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il mondo",
+              "source": "die Welt",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il mondo",
+                "canonicalId": "it:vocab:il mondo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La musica è bella.",
+              "source": "Die Musik ist schön.",
+              "skillId": "it:sentence:la musica è bella",
+              "words": [
+                "La",
+                "musica",
+                "è",
+                "bella."
+              ]
+            },
+            {
+              "target": "Vedo un film.",
+              "source": "Ich sehe einen Film.",
+              "skillId": "it:sentence:vedo un film",
+              "words": [
+                "Vedo",
+                "un",
+                "film."
+              ]
+            },
+            {
+              "target": "L'artista dipinge.",
+              "source": "Der Künstler malt.",
+              "skillId": "it:sentence:l'artista dipinge",
+              "words": [
+                "L'artista",
+                "dipinge."
+              ]
+            },
+            {
+              "target": "La cultura è importante.",
+              "source": "Die Kultur ist wichtig.",
+              "skillId": "it:sentence:la cultura è importante",
+              "words": [
+                "La",
+                "cultura",
+                "è",
+                "importante."
+              ]
+            },
+            {
+              "target": "Il paese è grande.",
+              "source": "Das Land ist groß.",
+              "skillId": "it:sentence:il paese è grande",
+              "words": [
+                "Il",
+                "paese",
+                "è",
+                "grande."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1081,
+            "completionTokens": 586,
+            "ms": 196747,
+            "at": "2026-09-28T20:12:18.288Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790626533953_1_review",
+          "title": "Moroder und die Kultur",
+          "desc": "Kulturelle Verflechtung in der Musik",
+          "icon": "🎵",
+          "vocab": [
+            {
+              "target": "il convegno",
+              "source": "der Kongress",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:convegno",
+                "canonicalId": "it:vocab:convegno",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la valle",
+              "source": "das Tal",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:valle",
+                "canonicalId": "it:vocab:valle",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il ruolo",
+              "source": "die Rolle",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:ruolo",
+                "canonicalId": "it:vocab:ruolo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la produzione",
+              "source": "die Produktion",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:produzione",
+                "canonicalId": "it:vocab:produzione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il patrimonio",
+              "source": "das Erbe",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:patrimonio",
+                "canonicalId": "it:vocab:patrimonio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la musica",
+              "source": "die Musik",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:musica",
+                "canonicalId": "it:vocab:musica",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'artista",
+              "source": "der Künstler",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:artista",
+                "canonicalId": "it:vocab:artista",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il tema",
+              "source": "das Thema",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:tema",
+                "canonicalId": "it:vocab:tema",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Il convegno esplora la musica.",
+              "source": "Der Kongress erforscht die Musik.",
+              "words": [
+                "Il",
+                "convegno",
+                "esplora",
+                "la",
+                "musica."
+              ]
+            },
+            {
+              "target": "La valle è il suo centro.",
+              "source": "Das Tal ist sein Zentrum.",
+              "words": [
+                "La",
+                "valle",
+                "è",
+                "il",
+                "suo",
+                "centro."
+              ]
+            },
+            {
+              "target": "L'artista ha un ruolo unico.",
+              "source": "Der Künstler hat eine einzigartige Rolle.",
+              "words": [
+                "L'artista",
+                "ha",
+                "un",
+                "ruolo",
+                "unico."
+              ]
+            },
+            {
+              "target": "Il patrimonio culturale è vasto.",
+              "source": "Das kulturelle Erbe ist weit.",
+              "words": [
+                "Il",
+                "patrimonio",
+                "culturale",
+                "è",
+                "vasto."
+              ]
+            },
+            {
+              "target": "La produzione musicale è famosa.",
+              "source": "Die Musikproduktion ist berühmt.",
+              "words": [
+                "La",
+                "produzione",
+                "musicale",
+                "è",
+                "famosa."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1244,
+            "completionTokens": 530,
+            "ms": 195570,
+            "at": "2026-09-28T20:15:33.953Z"
+          },
+          "_arcMode": "reinforce",
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790627006396_1_inflections",
+          "type": "inflections",
+          "title": "Italienische Flexion üben",
+          "desc": "Wörter auf ihre Grundform zurückführen",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "Questo convegno sarà l’occasione per approfondire il ruolo di Giorgio Moroder nella musica e nei media, nonché temi più ampi e a ciò interconnessi quali la musica dance, la produzione discografica, l’imprenditoria artistica, la musica da film, l’intermedialità e la remix culture.",
+              "surfaceForm": "temi",
+              "translation": "Dieses Symposium wird die Gelegenheit bieten, die Rolle von Giorgio Moroder in der Musik und den Medien sowie weitere damit verbundene Themen wie Dance-Musik, Plattenproduktion, künstlerisches Unternehmertum, Filmmusik, Intermedialität und Remix-Kultur zu vertiefen.",
+              "lemma": "il tema",
+              "lemmaChoices": [
+                "il tema",
+                "la tema",
+                "i temi",
+                "il temo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Plural",
+              "formChoices": [
+                "Plural",
+                "Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plural von 'il tema', gebildet durch Anhängen von -i."
+            },
+            {
+              "sentence": "Questo convegno sarà l’occasione per approfondire il ruolo di Giorgio Moroder nella musica e nei media, nonché temi più ampi e a ciò interconnessi quali la musica dance, la produzione discografica, l’imprenditoria artistica, la musica da film, l’intermedialità e la remix culture.",
+              "surfaceForm": "ampi",
+              "translation": "Dieses Symposium wird die Gelegenheit bieten, die Rolle von Giorgio Moroder in der Musik und den Medien sowie weitere damit verbundene Themen wie Dance-Musik, Plattenproduktion, künstlerisches Unternehmertum, Filmmusik, Intermedialität und Remix-Kultur zu vertiefen.",
+              "lemma": "ampio",
+              "lemmaChoices": [
+                "ampio",
+                "ampia",
+                "ampi",
+                "ampie"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Maskulinum Plural",
+              "formChoices": [
+                "Maskulinum Plural",
+                "Femininum Plural",
+                "Maskulinum Singular",
+                "Femininum Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Maskuliner Plural von 'ampio', angepasst an das Substantiv 'temi'."
+            },
+            {
+              "sentence": "La conferenza esplorerà inoltre il patrimonio culturale, la sociolinguistica e le rotte migratorie nella musica e nelle arti, attingendo alla storia di Moroder come artista nato e cresciuto nella valle prevalentemente ladina di Gardena/Gröden/Gherdëina in Alto Adige, formatosi professionalmente in Germania e infine stabilitosi negli Stati Uniti.",
+              "surfaceForm": "esplorerà",
+              "translation": "Die Konferenz wird außerdem das kulturelle Erbe, die Soziolinguistik und die Migrationsrouten in der Musik und den Künsten erkunden, indem sie auf die Geschichte von Moroder als Künstler zurückgreift, der in dem vorwiegend ladinischen Tal Gardena/Gröden/Gherdëina in Südtirol geboren und aufgewachsen ist, sich beruflich in Deutschland fortgebildet hat und schließlich in den Vereinigten Staaten ansässig wurde.",
+              "lemma": "esplorare",
+              "lemmaChoices": [
+                "esplorare",
+                "esplora",
+                "esplorerà",
+                "esplorato"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Futur, 3. Person Singular",
+              "formChoices": [
+                "Futur, 3. Person Singular",
+                "Präsens, 3. Person Singular",
+                "Futur, 1. Person Singular",
+                "Futur, 3. Person Plural"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Futur von 'esplorare', 3. Person Singular."
+            },
+            {
+              "sentence": "La conferenza esplorerà inoltre il patrimonio culturale, la sociolinguistica e le rotte migratorie nella musica e nelle arti, attingendo alla storia di Moroder come artista nato e cresciuto nella valle prevalentemente ladina di Gardena/Gröden/Gherdëina in Alto Adige, formatosi professionalmente in Germania e infine stabilitosi negli Stati Uniti.",
+              "surfaceForm": "rotte",
+              "translation": "Die Konferenz wird außerdem das kulturelle Erbe, die Soziolinguistik und die Migrationsrouten in der Musik und den Künsten erkunden, indem sie auf die Geschichte von Moroder als Künstler zurückgreift, der in dem vorwiegend ladinischen Tal Gardena/Gröden/Gherdëina in Südtirol geboren und aufgewachsen ist, sich beruflich in Deutschland fortgebildet hat und schließlich in den Vereinigten Staaten ansässig wurde.",
+              "lemma": "la rotta",
+              "lemmaChoices": [
+                "la rotta",
+                "il rotta",
+                "le rotte",
+                "i rotte"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Plural",
+              "formChoices": [
+                "Plural",
+                "Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plural von 'la rotta', gebildet durch Anhängen von -e."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 2459,
+            "completionTokens": 1442,
+            "ms": 472347,
+            "at": "2026-09-28T20:23:26.396Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790627149565_1_grammar",
+          "type": "grammar",
+          "title": "Grammatik: Nomen und Artikel",
+          "desc": "Lerne italienische Nomen, Geschlecht und Plural.",
+          "icon": "📚",
+          "grammar": [
+            {
+              "target": "convegno",
+              "source": "Konferenz",
+              "gender": "m",
+              "article": "il",
+              "plural": "convegni"
+            },
+            {
+              "target": "occasione",
+              "source": "Gelegenheit",
+              "gender": "f",
+              "article": "l'",
+              "plural": "occasioni"
+            },
+            {
+              "target": "musica",
+              "source": "Musik",
+              "gender": "f",
+              "article": "la",
+              "plural": "musiche"
+            },
+            {
+              "target": "mondo",
+              "source": "Welt",
+              "gender": "m",
+              "article": "il",
+              "plural": "mondi"
+            },
+            {
+              "target": "arte",
+              "source": "Kunst",
+              "gender": "f",
+              "article": "l'",
+              "plural": "arti"
+            },
+            {
+              "target": "successo",
+              "source": "Erfolg",
+              "gender": "m",
+              "article": "il",
+              "plural": "successi"
+            },
+            {
+              "target": "premio",
+              "source": "Preis",
+              "gender": "m",
+              "article": "il",
+              "plural": "premi"
+            },
+            {
+              "target": "biografia",
+              "source": "Biografie",
+              "gender": "f",
+              "article": "la",
+              "plural": "biografie"
+            },
+            {
+              "target": "questo",
+              "source": "dieser",
+              "gender": "m",
+              "article": "il",
+              "plural": "questi"
+            }
+          ],
+          "_genMeta": {
+            "type": "grammar",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 9,
+            "rejected": 1,
+            "rejectReasons": {
+              "target===plural (\"moroder\") — likely already a plural": 1
+            },
+            "promptTokens": 775,
+            "completionTokens": 549,
+            "ms": 143070,
+            "at": "2026-09-28T20:25:49.565Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790627299548_1_comprehension",
+          "type": "comprehension",
+          "title": "Giorgio Moroders Werdegang",
+          "desc": "Verstehe den Text über Giorgio Moroder und das geplante Symposium.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Was ist an Giorgio Moroders Ausbildung ungewöhnlich?",
+              "choices": [
+                "Er hat Musik erst in den USA studiert.",
+                "Er hatte keine formale musikalische Ausbildung.",
+                "Er lernte nur durch Hören von Platten.",
+                "Er besuchte eine berühmte Musikschule in München."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt explizit 'privato di formazione musicale formale' (ohne formale musikalische Ausbildung)."
+            },
+            {
+              "q": "Wo ist Giorgio Moroder aufgewachsen?",
+              "choices": [
+                "In einer ladinischen Tal in Südtirol.",
+                "In den Hauptzentren der Musikindustrie.",
+                "In Berlin, Deutschland.",
+                "In einem großen US-amerikanischen Bundesstaat."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text erwähnt, dass er in der 'valle prevalentemente ladina di Gardena/Gröden/Gherdëina in Alto Adige' geboren und aufgewachsen ist."
+            },
+            {
+              "q": "Welches Thema wird beim Symposium NICHT als Schwerpunkt genannt?",
+              "choices": [
+                "Die Rolle von Giorgio Moroder in den Medien.",
+                "Die Geschichte der Opernmusik im 19. Jahrhundert.",
+                "Migration und soziolinguistische Aspekte in der Musik.",
+                "Dancemusik und Remix-Kultur."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text listet Dance-Musik, Medien, Migration und Remix-Kultur auf, erwähnt aber keine Opernmusik des 19. Jahrhunderts."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 695,
+            "completionTokens": 445,
+            "ms": 149888,
+            "at": "2026-09-28T20:28:19.548Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -12878,8 +13764,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1424,
-        "totalCompletionTokens": 805,
+        "totalPromptTokens": 7678,
+        "totalCompletionTokens": 4357,
         "lessons": [
           {
             "lessonNum": 1,
@@ -12887,14 +13773,14 @@
             "promptTokens": 1214,
             "completionTokens": 644
           }
-        ]
+        ],
+        "tokensByType": {
+          "recreate": 9806
+        }
       },
       "generatedAt": "2026-09-28T18:42:58.897Z",
-      "updatedAt": "2026-09-28T18:52:52.485Z",
-      "createdBy": "admin",
-      "source": {
-        "author": "Arno Raffeiner"
-      }
+      "updatedAt": "2026-09-28T20:28:19.548Z",
+      "createdBy": "admin"
     },
     {
       "id": "tp_17906205604170000486",
@@ -13131,6 +14017,652 @@
             "ms": 314532,
             "at": "2026-09-28T18:41:15.057Z"
           }
+        },
+        {
+          "id": "ls_1790625145449_0_standard",
+          "title": "Giorgio Moroder Aufstieg",
+          "desc": "Die ungewöhnliche Karriere des Musikpioniers",
+          "icon": "🎹",
+          "vocab": [
+            {
+              "target": "il musicista",
+              "source": "der Musiker",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il musicista",
+                "canonicalId": "it:vocab:il musicista",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la regione",
+              "source": "die Region",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la regione",
+                "canonicalId": "it:vocab:la regione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'industria",
+              "source": "die Industrie",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:l'industria",
+                "canonicalId": "it:vocab:l'industria",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il successo",
+              "source": "der Erfolg",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il successo",
+                "canonicalId": "it:vocab:il successo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la formazione",
+              "source": "die Ausbildung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la formazione",
+                "canonicalId": "it:vocab:la formazione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'innovazione",
+              "source": "die Innovation",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:l'innovazione",
+                "canonicalId": "it:vocab:l'innovazione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il centro",
+              "source": "das Zentrum",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il centro",
+                "canonicalId": "it:vocab:il centro",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la minoranza",
+              "source": "die Minderheit",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la minoranza",
+                "canonicalId": "it:vocab:la minoranza",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Giorgio Moroder è un musicista.",
+              "source": "Giorgio Moroder ist ein Musiker.",
+              "words": [
+                "Giorgio",
+                "Moroder",
+                "è",
+                "un",
+                "musicista."
+              ]
+            },
+            {
+              "target": "Vive in una regione lontana.",
+              "source": "Er lebt in einer fernen Region.",
+              "words": [
+                "Vive",
+                "in",
+                "una",
+                "regione",
+                "lontana."
+              ]
+            },
+            {
+              "target": "L'industria musicale lo ha cambiato.",
+              "source": "Die Musikindustrie hat ihn verändert.",
+              "words": [
+                "L'industria",
+                "musicale",
+                "lo",
+                "ha",
+                "cambiato."
+              ]
+            },
+            {
+              "target": "Il suo successo è incredibile.",
+              "source": "Sein Erfolg ist unglaublich.",
+              "words": [
+                "Il",
+                "suo",
+                "successo",
+                "è",
+                "incredibile."
+              ]
+            },
+            {
+              "target": "Non aveva una formazione classica.",
+              "source": "Er hatte keine klassische Ausbildung.",
+              "words": [
+                "Non",
+                "aveva",
+                "una",
+                "formazione",
+                "classica."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1001,
+            "completionTokens": 541,
+            "ms": 454955,
+            "at": "2026-09-28T19:52:25.449Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790625264579_0_review",
+          "title": "Ungewöhnlicher Aufstieg",
+          "desc": "Giorgio Moroders Weg zum Erfolg",
+          "icon": "🎹",
+          "vocab": [
+            {
+              "target": "il successo",
+              "source": "der Erfolg",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:successo",
+                "canonicalId": "it:vocab:successo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la musica",
+              "source": "die Musik",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:musica",
+                "canonicalId": "it:vocab:musica",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'innovazione",
+              "source": "die Innovation",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:innovazione",
+                "canonicalId": "it:vocab:innovazione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il talento",
+              "source": "das Talent",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:talento",
+                "canonicalId": "it:vocab:talento",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la minoranza",
+              "source": "die Minderheit",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:minoranza",
+                "canonicalId": "it:vocab:minoranza",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il centro",
+              "source": "das Zentrum",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:centro",
+                "canonicalId": "it:vocab:centro",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la formazione",
+              "source": "die Ausbildung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:formazione",
+                "canonicalId": "it:vocab:formazione",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il pianeta",
+              "source": "der Planet",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:pianeta",
+                "canonicalId": "it:vocab:pianeta",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La musica è la sua vita.",
+              "source": "Musik ist sein Leben.",
+              "skillId": "it:sentence:musica_vita",
+              "words": [
+                "La",
+                "musica",
+                "è",
+                "la",
+                "sua",
+                "vita."
+              ]
+            },
+            {
+              "target": "Il talento supera ogni ostacolo.",
+              "source": "Das Talent überwindet jedes Hindernis.",
+              "skillId": "it:sentence:talento_ostacolo",
+              "words": [
+                "Il",
+                "talento",
+                "supera",
+                "ogni",
+                "ostacolo."
+              ]
+            },
+            {
+              "target": "L'innovazione cambia il mondo.",
+              "source": "Die Innovation verändert die Welt.",
+              "skillId": "it:sentence:innovazione_mondo",
+              "words": [
+                "L'innovazione",
+                "cambia",
+                "il",
+                "mondo."
+              ]
+            },
+            {
+              "target": "La minoranza ha voce.",
+              "source": "Die Minderheit hat eine Stimme.",
+              "skillId": "it:sentence:minoranza_voce",
+              "words": [
+                "La",
+                "minoranza",
+                "ha",
+                "voce."
+              ]
+            },
+            {
+              "target": "Il successo arriva dal cuore.",
+              "source": "Der Erfolg kommt vom Herzen.",
+              "skillId": "it:sentence:successo_cuore",
+              "words": [
+                "Il",
+                "successo",
+                "arriva",
+                "dal",
+                "cuore."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1001,
+            "completionTokens": 609,
+            "ms": 119015,
+            "at": "2026-09-28T19:54:24.579Z"
+          },
+          "_arcMode": "reinforce",
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790625861194_0_inflections",
+          "type": "inflections",
+          "title": "Infinitive und Plural im Italienischen",
+          "desc": "Lernen Sie die Grundformen von Verben und Nomen.",
+          "icon": "📚",
+          "items": [
+            {
+              "sentence": "La biografia personale e professionale di Giorgio Moroder è straordinaria e piuttosto singolare: appartenente a una minoranza linguistica, cresciuto in una regione culturalmente e geograficamente lontana dai principali centri dell’industria musicale, privo di formazione musicale formale, è comunque riuscito a diventare uno dei musicisti più innovativi e di successo del pianeta.",
+              "surfaceForm": "cresciuto",
+              "translation": "in einer kulturell und geografisch von den wichtigsten Zentren der Musikindustrie entfernten Region aufgewachsen,",
+              "lemma": "crescere",
+              "lemmaChoices": [
+                "crescere",
+                "cresce",
+                "cresciuto",
+                "crescendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Partizip Perfekt",
+              "formChoices": [
+                "Partizip Perfekt",
+                "Infinitiv",
+                "Präsens",
+                "Partizip Präsens"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'crescere', verwendet in der passiven Bedeutung 'aufgewachsen sein'."
+            },
+            {
+              "sentence": "La biografia personale e professionale di Giorgio Moroder è straordinaria e piuttosto singolare: appartenente a una minoranza linguistica, cresciuto in una regione culturalmente e geograficamente lontana dai principali centri dell’industria musicale, privo di formazione musicale formale, è comunque riuscito a diventare uno dei musicisti più innovativi e di successo del pianeta.",
+              "surfaceForm": "musicisti",
+              "translation": "einer der innovativsten und erfolgreichsten Musiker des Planeten.",
+              "lemma": "il musicista",
+              "lemmaChoices": [
+                "il musicista",
+                "i musicisti",
+                "la musicista",
+                "musica"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Plural Maskulinum",
+              "formChoices": [
+                "Plural Maskulinum",
+                "Singular Maskulinum",
+                "Plural Femininum",
+                "Singular Femininum"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plural von 'il musicista', gebildet durch Änderung des Artikels und des Suffixes zu -i."
+            },
+            {
+              "sentence": "La biografia personale e professionale di Giorgio Moroder è straordinaria e piuttosto singolare: appartenente a una minoranza linguistica, cresciuto in una regione culturalmente e geograficamente lontana dai principali centri dell’industria musicale, privo di formazione musicale formale, è comunque riuscito a diventare uno dei musicisti più innovativi e di successo del pianeta.",
+              "surfaceForm": "riuscito",
+              "translation": "ist es dennoch gelungen,",
+              "lemma": "riuscire",
+              "lemmaChoices": [
+                "riuscire",
+                "riesce",
+                "riuscito",
+                "riuscendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Partizip Perfekt",
+              "formChoices": [
+                "Partizip Perfekt",
+                "Infinitiv",
+                "Präsens",
+                "Partizip Präsens"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'riuscire', verwendet in der zusammengesetzten Zeit 'erfolgreich gewesen sein'."
+            },
+            {
+              "sentence": "La biografia personale e professionale di Giorgio Moroder è straordinaria e piuttosto singolare: appartenente a una minoranza linguistica, cresciuto in una regione culturalmente e geograficamente lontana dai principali centri dell’industria musicale, privo di formazione musicale formale, è comunque riuscito a diventare uno dei musicisti più innovativi e di successo del pianeta.",
+              "surfaceForm": "innovativi",
+              "translation": "der innovativsten und erfolgreichsten Musiker des Planeten.",
+              "lemma": "l'innovativo",
+              "lemmaChoices": [
+                "l'innovativo",
+                "gli innovativi",
+                "l'innovativa",
+                "innovazione"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Plural Maskulinum",
+              "formChoices": [
+                "Plural Maskulinum",
+                "Singular Maskulinum",
+                "Plural Femininum",
+                "Singular Femininum"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plural von 'l'innovativo', angepasst an das Substantiv 'musicisti'."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 2403,
+            "completionTokens": 1260,
+            "ms": 596514,
+            "at": "2026-09-28T20:04:21.194Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790626004975_0_grammar",
+          "type": "grammar",
+          "title": "Nomen: Genus und Plural",
+          "desc": "Italienische Nomen lernen mit Artikel.",
+          "icon": "📚",
+          "grammar": [
+            {
+              "target": "musicale",
+              "source": "Musikstück",
+              "gender": "m",
+              "article": "il",
+              "plural": "musicali"
+            },
+            {
+              "target": "biografia",
+              "source": "Biografie",
+              "gender": "f",
+              "article": "la",
+              "plural": "biografie"
+            },
+            {
+              "target": "personale",
+              "source": "Persönlichkeit",
+              "gender": "m",
+              "article": "il",
+              "plural": "personali"
+            },
+            {
+              "target": "professionale",
+              "source": "Berufserfahrung",
+              "gender": "f",
+              "article": "la",
+              "plural": "professionali"
+            },
+            {
+              "target": "successo",
+              "source": "Erfolg",
+              "gender": "m",
+              "article": "il",
+              "plural": "successi"
+            },
+            {
+              "target": "premio",
+              "source": "Preis",
+              "gender": "m",
+              "article": "il",
+              "plural": "premi"
+            },
+            {
+              "target": "mondo",
+              "source": "Welt",
+              "gender": "m",
+              "article": "il",
+              "plural": "mondi"
+            },
+            {
+              "target": "arte",
+              "source": "Kunst",
+              "gender": "f",
+              "article": "l'",
+              "plural": "arti"
+            }
+          ],
+          "_genMeta": {
+            "type": "grammar",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 2,
+            "rejectReasons": {
+              "target===source (\"film\")": 1,
+              "target===plural (\"film\") — likely already a plural": 1,
+              "target===plural (\"città\") — likely already a plural": 1
+            },
+            "promptTokens": 649,
+            "completionTokens": 542,
+            "ms": 143681,
+            "at": "2026-09-28T20:06:44.975Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790626141350_0_comprehension",
+          "type": "comprehension",
+          "title": "Giorgio Moroders ungewöhnlicher Aufstieg",
+          "desc": "Verstehe den Text über Giorgio Moroder und seine Karriere.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Was ist an Giorgio Moroders Werdegang laut dem Text besonders?",
+              "choices": [
+                "Er hat eine lange, formale musikalische Ausbildung erhalten.",
+                "Er stammt aus einer Gegend, die nicht im Zentrum der Musikindustrie liegt.",
+                "Er gehört zur sprachlichen Mehrheit in seiner Region.",
+                "Er war von Anfang an ein sehr erfolgreicher Musiker ohne Herausforderungen."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, er wuchs in einer Region auf, die kulturell und geografisch weit von den Hauptzentren der Musikindustrie entfernt ist."
+            },
+            {
+              "q": "Welche Ausbildung hat Giorgio Moroder laut dem Text erhalten?",
+              "choices": [
+                "Eine formale musikalische Ausbildung.",
+                "Keine formale musikalische Ausbildung.",
+                "Eine Ausbildung in Musikproduktion an einer Universität.",
+                "Eine Lehre bei einem berühmten Komponisten."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erwähnt explizit, dass er 'privò di formazione musicale formale' (ohne formale musikalische Ausbildung) war."
+            },
+            {
+              "q": "Welchen Status hat Giorgio Moroder heute erreicht?",
+              "choices": [
+                "Er ist einer der innovativsten und erfolgreichsten Musiker der Welt.",
+                "Er ist nur in seiner lokalen Region bekannt.",
+                "Er gilt als scheiternder Künstler ohne großen Erfolg.",
+                "Er ist ein berühmter Schriftsteller statt Musiker."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text besagt, dass er es trotzdem geschafft hat, 'uno dei musicisti più innovativi e di successo del pianeta' (einer der innovativsten und erfolgreichsten Musiker des Planeten) zu werden."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 534,
+            "completionTokens": 468,
+            "ms": 136277,
+            "at": "2026-09-28T20:09:01.350Z"
+          },
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -13143,8 +14675,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1193,
-        "totalCompletionTokens": 625,
+        "totalPromptTokens": 6781,
+        "totalCompletionTokens": 4045,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13152,14 +14684,14 @@
             "promptTokens": 1062,
             "completionTokens": 538
           }
-        ]
+        ],
+        "tokensByType": {
+          "recreate": 9008
+        }
       },
       "generatedAt": "2026-09-28T18:36:00.417Z",
-      "updatedAt": "2026-09-28T18:52:52.408Z",
-      "createdBy": "admin",
-      "source": {
-        "author": "Arno Raffeiner"
-      }
+      "updatedAt": "2026-09-28T20:09:01.350Z",
+      "createdBy": "admin"
     },
     {
       "id": "tp_17906193862250000247",
