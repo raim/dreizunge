@@ -10249,10 +10249,24 @@ found on screen; and v90_z's central QC claim measured and withdrawn
 
 ### Notes: 
 
-* I am generating new lessons via photos taken recently in
-  Bolzano. The following notes are from that session, and I try to
-  note bugs and improvements, as well as functionality that I hadn't
-  yet tested live.
+* BUG: Screenshots of a click series,
+  Screenshot_2026-09-28_20-23-40.jpg,
+  Screenshot_2026-09-28_20-26-20.jpg,
+  Screenshot_2026-09-28_20-26-43.jpg,
+  Screenshot_2026-09-28_20-27-13.jpg; Here I just clicked through with
+  the goal to generate lessons from the pasted text, but on the last
+  click on the lesson selection page, it just returned to the "my
+  story" page.
+   
+NOTE: this last bug is a real deficit. Apparently, I currently can't
+generate text from pasted stories. Fix this first!.
+
+---
+
+* I am generating new lessons tp_17906084629780000051 via photos taken
+  recently in Bolzano. The following notes are from that session, and
+  I try to note bugs and improvements, as well as functionality that I
+  hadn't yet tested live.
 * generation wizard: after selecting a photo, the user
   should not have to type scan, this should be done automatically.
 * I am testing automated Rechtschreibpruefung post-expraction. I sugggested
@@ -10279,6 +10293,22 @@ found on screen; and v90_z's central QC claim measured and withdrawn
   Didn't we automate this, such that there is a second model prompt to fix
   the article issue without user confirmation? Did I miss a button that 
   must be pressed for this?
+
+
+* Generation wizard: I pasted an Italian text of two paragraphs into
+  the text field, and could generate a lesson. It would be nice to
+  handle pasted text like PDF/image uploads, such that we can split it
+  into chapters directly after pasting it. Did we implement that we
+  automatically suggest whether a text written/pasted into the topic
+  field is really a topic for LLM-based generation or "my story",
+  based on length? It would be nice if this first page,
+  e.g. Screenshot_2026-09-28_20-23-40.jpg, would already allow a
+  selection whether the text is a topic or a full story (to be split
+  into chapters in the next step). When I uploaded the same text as a
+  markdown file (~/programs/dreizunge/texts/moroder.md) it nicely
+  split it into two chapters and offered the chapter editing site. It
+  should work the same way if the user just pastes the text.
+
 
 
 
