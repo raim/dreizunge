@@ -10242,7 +10242,31 @@ found on screen; and v90_z's central QC claim measured and withdrawn
 
 -> Dismiss the 37 remaining article proposals; gitignore articles.json
 
-...
+[STATE 2026-09-15]
+
+
+## TODO 2026-09-28
+
+### Notes: 
+
+* I am generating new lessons via photos taken recently in
+  Bolzano. The following notes are from that session, and I try to
+  note bugs and improvements, as well as functionality that I hadn't
+  yet tested live.
+* generation wizard: after selecting a photo, the user
+  should not have to type scan, this should be done automatically.
+* I am testing automated Rechtschreibpruefung post-expraction. I sugggested
+  to replace one comma by a semi-colon and I rejected this.
+* Screenshot_2026-09-28_17-12-59.jpg: generating multiple lesson types via
+  the learning-arc selection list, and also generating text analysis in one go.
+* This is likely part of an existing plan, but learning-arc for a
+  single chapter story-line makes not so much sense. The page in
+  Screenshot_2026-09-28_1 should probably not have the drop-down menu
+  but JUST the learnig-arc list, but re-coneptualized as the general
+  per-chapter lesson-type selection. There is another multi-chapter
+  generation wizard site with the same list for each chapter? We could
+  probably fuse these sites.
+  
 
 
 
