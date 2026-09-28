@@ -13154,6 +13154,221 @@
             "at": "2026-09-28T15:52:09.452Z"
           },
           "_arcMode": "reinforce"
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1790612581392",
+          "title": "Der treue Hund",
+          "desc": "Lektion über die Treue eines Hundes",
+          "icon": "🐕",
+          "vocab": [
+            {
+              "target": "il cane",
+              "source": "der Hund",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:cane",
+                "canonicalId": "it:vocab:cane",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la fortuna",
+              "source": "das Glück",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:fortuna",
+                "canonicalId": "it:vocab:fortuna",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il peccatore",
+              "source": "der Sünder",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:peccatore",
+                "canonicalId": "it:vocab:peccatore",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il santo",
+              "source": "der Heilige",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:santo",
+                "canonicalId": "it:vocab:santo",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la vita",
+              "source": "das Leben",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:vita",
+                "canonicalId": "it:vocab:vita",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il compagno",
+              "source": "der Gefährte",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:compagno",
+                "canonicalId": "it:vocab:compagno",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la miseria",
+              "source": "die Not",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:miseria",
+                "canonicalId": "it:vocab:miseria",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "fedele",
+              "source": "treu",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:fedele",
+                "canonicalId": "it:vocab:fedele",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "È un cane!",
+              "source": "Es ist ein Hund!",
+              "words": [
+                "È",
+                "un",
+                "cane!"
+              ]
+            },
+            {
+              "target": "Siete suo compagno e ciò gli basta.",
+              "source": "Ihr seid sein Gefährte, und das genügt ihm.",
+              "words": [
+                "Siete",
+                "suo",
+                "compagno",
+                "e",
+                "ciò",
+                "gli",
+                "basta."
+              ]
+            },
+            {
+              "target": "Egli vi sarà fedele nella fortuna come nella miseria.",
+              "source": "Er wird euch in guten wie in schlechten Zeiten treu ergeben bleiben.",
+              "words": [
+                "Egli",
+                "vi",
+                "sarà",
+                "fedele",
+                "nella",
+                "fortuna",
+                "come",
+                "nella",
+                "miseria."
+              ]
+            },
+            {
+              "target": "non si preoccupa affatto se abbiate fortuna o no.",
+              "source": "er sorgt sich überhaupt nicht, ob ihr Glück habt oder nicht.",
+              "words": [
+                "non",
+                "si",
+                "preoccupa",
+                "affatto",
+                "se",
+                "abbiate",
+                "fortuna",
+                "o",
+                "no."
+              ]
+            },
+            {
+              "target": "egli sarà accanto a voi per confortarvi.",
+              "source": "er wird an eurer Seite sein, um euch zu trösten.",
+              "words": [
+                "egli",
+                "sarà",
+                "accanto",
+                "a",
+                "voi",
+                "per",
+                "confortarvi."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1125,
+            "completionTokens": 569,
+            "ms": 205436,
+            "at": "2026-09-28T16:23:01.392Z"
+          }
+        },
+        {
+          "id": "ls_1790612582030_5bnq",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -13166,8 +13381,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 1296,
-        "totalCompletionTokens": 692,
+        "totalPromptTokens": 2421,
+        "totalCompletionTokens": 1261,
         "lessons": [
           {
             "lessonNum": 1,
@@ -13175,7 +13390,10 @@
             "promptTokens": 1131,
             "completionTokens": 568
           }
-        ]
+        ],
+        "tokensByType": {
+          "add_lesson": 1694
+        }
       },
       "comicPanels": [
         {
@@ -13191,7 +13409,7 @@
         }
       ],
       "generatedAt": "2026-09-28T15:14:22.980Z",
-      "updatedAt": "2026-09-28T15:52:09.558Z",
+      "updatedAt": "2026-09-28T16:23:02.033Z",
       "createdBy": "admin"
     },
     {

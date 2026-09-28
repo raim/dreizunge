@@ -10266,9 +10266,19 @@ found on screen; and v90_z's central QC claim measured and withdrawn
   per-chapter lesson-type selection. There is another multi-chapter
   generation wizard site with the same list for each chapter? We could
   probably fuse these sites.
-  
-
-
+* Screenshot_2026-09-28_18-12-43.jpg and
+  Screenshot_2026-09-28_18-12-49.jpg: BUG, when i clicked the story
+  title, the generation wizard first page opened. This may be due to
+  the above bulk job for this story not having completed.
+* Screenshot_2026-09-28_18-09-07.jpg and Screenshot_2026-09-28_18-10-09.jpg: 
+  BUG? how can i add a mixed type lesson here? Also it is confusing that
+  the button is called "Generate" but leads to a selection popup. It should
+  probably be redesigned with a "select lesson types" button different
+  from the "Generate" button.
+* Screenshot_2026-09-28_18-16-40.jpg: german with, italian without article.
+  Didn't we automate this, such that there is a second model prompt to fix
+  the article issue without user confirmation? Did I miss a button that 
+  must be pressed for this?
 
 
 
