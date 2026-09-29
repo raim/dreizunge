@@ -15630,8 +15630,1283 @@
       },
       "sourceTextHash": "22310bab5363",
       "analyzedAt": "2026-09-09T14:40:25.295Z"
+    },
+    "tp_17906084629780000051": {
+      "chapterId": "tp_17906084629780000051",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 6,
+      "tokenCount": 69,
+      "sentences": [
+        {
+          "sentenceId": "tp_17906084629780000051:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17906084629780000051:s0:t0",
+              "idx": 0,
+              "surface": "Non",
+              "lemma": "non",
+              "form": "Negationsadverb",
+              "sense": "nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t1",
+              "idx": 1,
+              "surface": "si",
+              "lemma": "si",
+              "form": "Reflexivpronomen, 3. Person Singular",
+              "sense": "sich (unpersönlich)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t2",
+              "idx": 2,
+              "surface": "cura",
+              "lemma": "curare",
+              "form": "Indikativ Präsens, 3. Person Singular",
+              "sense": "kümmert sich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t3",
+              "idx": 3,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "um (zu)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t4",
+              "idx": 4,
+              "surface": "chiedervi",
+              "lemma": "chiedere",
+              "form": "Infinitiv mit Akkusativobjekt-Enklitikum (2. Person Plural)",
+              "sense": "euch zu fragen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t5",
+              "idx": 5,
+              "surface": "se",
+              "lemma": "se",
+              "form": "Konjunktion",
+              "sense": "ob",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t6",
+              "idx": 6,
+              "surface": "abbiate",
+              "lemma": "avere",
+              "form": "Konjunktiv Präsens, 2. Person Plural",
+              "sense": "habt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t7",
+              "idx": 7,
+              "surface": "torto",
+              "lemma": "torto",
+              "form": "Substantiv, Maskulinum Singular",
+              "sense": "Unrecht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t8",
+              "idx": 8,
+              "surface": "o",
+              "lemma": "o",
+              "form": "Koordinierende Konjunktion",
+              "sense": "oder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t9",
+              "idx": 9,
+              "surface": "ragione,",
+              "lemma": "ragione",
+              "form": "Substantiv, Femininum Singular",
+              "sense": "Recht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t10",
+              "idx": 10,
+              "surface": "non",
+              "lemma": "non",
+              "form": "Negationsadverb",
+              "sense": "nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t11",
+              "idx": 11,
+              "surface": "si",
+              "lemma": "si",
+              "form": "Reflexivpronomen, 3. Person Singular",
+              "sense": "sich (unpersönlich)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t12",
+              "idx": 12,
+              "surface": "preoccupa",
+              "lemma": "preoccupare",
+              "form": "Indikativ Präsens, 3. Person Singular",
+              "sense": "kümmert sich (Sorge)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t13",
+              "idx": 13,
+              "surface": "affatto",
+              "lemma": "affatto",
+              "form": "Adverb",
+              "sense": "überhaupt nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t14",
+              "idx": 14,
+              "surface": "se",
+              "lemma": "se",
+              "form": "Konjunktion",
+              "sense": "ob",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t15",
+              "idx": 15,
+              "surface": "abbiate",
+              "lemma": "avere",
+              "form": "Konjunktiv Präsens, 2. Person Plural",
+              "sense": "habt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t16",
+              "idx": 16,
+              "surface": "fortuna",
+              "lemma": "fortuna",
+              "form": "Substantiv, Femininum Singular",
+              "sense": "Glück",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t17",
+              "idx": 17,
+              "surface": "o",
+              "lemma": "o",
+              "form": "Koordinierende Konjunktion",
+              "sense": "oder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t18",
+              "idx": 18,
+              "surface": "no,",
+              "lemma": "no",
+              "form": "Adverb",
+              "sense": "nein (nicht)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t19",
+              "idx": 19,
+              "surface": "se",
+              "lemma": "se",
+              "form": "Konjunktion",
+              "sense": "ob",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t20",
+              "idx": 20,
+              "surface": "siete",
+              "lemma": "essere",
+              "form": "Indikativ Präsens, 2. Person Plural",
+              "sense": "seid",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t21",
+              "idx": 21,
+              "surface": "ricco",
+              "lemma": "ricco",
+              "form": "Adjektiv, Maskulinum Singular",
+              "sense": "reich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t22",
+              "idx": 22,
+              "surface": "o",
+              "lemma": "o",
+              "form": "Koordinierende Konjunktion",
+              "sense": "oder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t23",
+              "idx": 23,
+              "surface": "povero,",
+              "lemma": "povero",
+              "form": "Adjektiv, Maskulinum Singular",
+              "sense": "arm",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t24",
+              "idx": 24,
+              "surface": "ignorante",
+              "lemma": "ignorante",
+              "form": "Adjektiv, Maskulinum Singular",
+              "sense": "unwissend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t25",
+              "idx": 25,
+              "surface": "od",
+              "lemma": "od",
+              "form": "Koordinierende Konjunktion (archaisch/poetisch für 'o')",
+              "sense": "oder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t26",
+              "idx": 26,
+              "surface": "istruito,",
+              "lemma": "istruito",
+              "form": "Adjektiv, Maskulinum Singular",
+              "sense": "gebildet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t27",
+              "idx": 27,
+              "surface": "peccatore",
+              "lemma": "peccatore",
+              "form": "Substantiv, Maskulinum Singular",
+              "sense": "Sünder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t28",
+              "idx": 28,
+              "surface": "o",
+              "lemma": "o",
+              "form": "Koordinierende Konjunktion",
+              "sense": "oder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s0:t29",
+              "idx": 29,
+              "surface": "santo.",
+              "lemma": "santo",
+              "form": "Substantiv/Adjektiv, Maskulinum Singular",
+              "sense": "Heiliger",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17906084629780000051:s0:t0",
+                "tp_17906084629780000051:s0:t1",
+                "tp_17906084629780000051:s0:t2"
+              ],
+              "lemma": "non curarsi di",
+              "gloss": "sich nicht kümmern um",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 10,
+              "end": 13,
+              "tokenIds": [
+                "tp_17906084629780000051:s0:t10",
+                "tp_17906084629780000051:s0:t11",
+                "tp_17906084629780000051:s0:t12",
+                "tp_17906084629780000051:s0:t13"
+              ],
+              "lemma": "non preoccuparsi affatto",
+              "gloss": "sich überhaupt nicht sorgen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 25,
+              "end": 26,
+              "tokenIds": [
+                "tp_17906084629780000051:s0:t25",
+                "tp_17906084629780000051:s0:t26"
+              ],
+              "lemma": "od istruito",
+              "gloss": "oder gebildet",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-28T16:05:47.092Z",
+            "sentenceId": "tp_17906084629780000051:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 3100
+          },
+          "text": "Non si cura di chiedervi se abbiate torto o ragione, non si preoccupa affatto se abbiate fortuna o no, se siete ricco o povero, ignorante od istruito, peccatore o santo.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17906084629780000051:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17906084629780000051:s1:t0",
+              "idx": 0,
+              "surface": "Siete",
+              "lemma": "essere",
+              "form": "Verb: Indikativ Präsens Aktiv 2. Person Plural",
+              "sense": "Ihr seid",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t1",
+              "idx": 1,
+              "surface": "suo",
+              "lemma": "suo",
+              "form": "Possessivpronomen: Maskulinum Singular Akkusativ/Nominativ (ref. compagno)",
+              "sense": "sein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t2",
+              "idx": 2,
+              "surface": "compagno",
+              "lemma": "compagno",
+              "form": "Substantiv: Maskulinum Singular Nominativ",
+              "sense": "Begleiter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t3",
+              "idx": 3,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t4",
+              "idx": 4,
+              "surface": "ciò",
+              "lemma": "ciò",
+              "form": "Demonstrativpronomen: Neutrum Singular Nominativ/Akkusativ",
+              "sense": "das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t5",
+              "idx": 5,
+              "surface": "gli",
+              "lemma": "gli",
+              "form": "Personalpronomen (Dativ): 3. Person Singular Maskulinum",
+              "sense": "ihm",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t6",
+              "idx": 6,
+              "surface": "basta,",
+              "lemma": "bastare",
+              "form": "Verb: Indikativ Präsens Aktiv 3. Person Singular",
+              "sense": "reicht (aus)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t7",
+              "idx": 7,
+              "surface": "egli",
+              "lemma": "egli",
+              "form": "Personalpronomen (Nominativ): 3. Person Singular Maskulinum",
+              "sense": "er",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t8",
+              "idx": 8,
+              "surface": "sarà",
+              "lemma": "essere",
+              "form": "Verb: Indikativ Futur I Aktiv 3. Person Singular",
+              "sense": "wird sein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t9",
+              "idx": 9,
+              "surface": "accanto",
+              "lemma": "accanto",
+              "form": "Adverb/Präposition",
+              "sense": "neben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t10",
+              "idx": 10,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "(zu/r)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t11",
+              "idx": 11,
+              "surface": "voi",
+              "lemma": "voi",
+              "form": "Personalpronomen (Akkusativ/Dativ): 2. Person Plural",
+              "sense": "euch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t12",
+              "idx": 12,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "um ... zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t13",
+              "idx": 13,
+              "surface": "confortarvi,",
+              "lemma": "confortare",
+              "form": "Verb: Infinitiv Aktiv mit Pronominalobjekt (accusativo + infinito)",
+              "sense": "euch zu trösten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t14",
+              "idx": 14,
+              "surface": "proteggervi",
+              "lemma": "proteggere",
+              "form": "Verb: Infinitiv Aktiv mit Pronominalobjekt (accusativo + infinito)",
+              "sense": "(euch) zu beschützen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t15",
+              "idx": 15,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t16",
+              "idx": 16,
+              "surface": "dare,",
+              "lemma": "dare",
+              "form": "Verb: Infinitiv Aktiv",
+              "sense": "(euch) zu geben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t17",
+              "idx": 17,
+              "surface": "se",
+              "lemma": "se",
+              "form": "Konjunktion (Konditional)",
+              "sense": "falls",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t18",
+              "idx": 18,
+              "surface": "occorre,",
+              "lemma": "occorrere",
+              "form": "Verb: Indikativ Präsens Aktiv 3. Person Singular",
+              "sense": "es nötig ist / erforderlich ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t19",
+              "idx": 19,
+              "surface": "la",
+              "lemma": "la",
+              "form": "Bestimmter Artikel: Femininum Singular Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t20",
+              "idx": 20,
+              "surface": "sua",
+              "lemma": "sua",
+              "form": "Possessivpronomen: Femininum Singular Akkusativ (ref. vita)",
+              "sense": "seine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t21",
+              "idx": 21,
+              "surface": "vita",
+              "lemma": "vita",
+              "form": "Substantiv: Femininum Singular Akkusativ",
+              "sense": "Leben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t22",
+              "idx": 22,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "für",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s1:t23",
+              "idx": 23,
+              "surface": "voi.",
+              "lemma": "voi",
+              "form": "Personalpronomen (Akkusativ/Dativ): 2. Person Plural",
+              "sense": "euch",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17906084629780000051:s1:t0",
+                "tp_17906084629780000051:s1:t1",
+                "tp_17906084629780000051:s1:t2"
+              ],
+              "lemma": "essere compagno di qualcuno",
+              "gloss": "jemandes Begleiter sein",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 13,
+              "end": 14,
+              "tokenIds": [
+                "tp_17906084629780000051:s1:t13",
+                "tp_17906084629780000051:s1:t14"
+              ],
+              "lemma": "confortare e proteggere",
+              "gloss": "trösten und beschützen",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-28T16:12:46.595Z",
+            "sentenceId": "tp_17906084629780000051:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2560
+          },
+          "text": "Siete suo compagno e ciò gli basta, egli sarà accanto a voi per confortarvi, proteggervi e dare, se occorre, la sua vita per voi.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17906084629780000051:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17906084629780000051:s2:t0",
+              "idx": 0,
+              "surface": "Egli",
+              "lemma": "egli",
+              "form": "Personalpronomen, 3. Person Singular, Nominativ",
+              "sense": "er (Subjekt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s2:t1",
+              "idx": 1,
+              "surface": "vi",
+              "lemma": "vi",
+              "form": "Dativobjekt, 2. Person Plural",
+              "sense": "ihm/ihr/euch (bezieht sich auf eine vorherige Person/Gruppe)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s2:t2",
+              "idx": 2,
+              "surface": "sarà",
+              "lemma": "essere",
+              "form": "Verb, Futur I, Indikativ, 3. Person Singular",
+              "sense": "wird sein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s2:t3",
+              "idx": 3,
+              "surface": "fedele",
+              "lemma": "fedele",
+              "form": "Adjektiv, Positiv, Nominativ/Singular (Prädikativ)",
+              "sense": "treu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s2:t4",
+              "idx": 4,
+              "surface": "nella",
+              "lemma": "in",
+              "form": "Präposition mit Dativ",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s2:t5",
+              "idx": 5,
+              "surface": "fortuna",
+              "lemma": "fortuna",
+              "form": "Substantiv, Femininum, Singular, Dativ",
+              "sense": "Glück (Umstand)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s2:t6",
+              "idx": 6,
+              "surface": "come",
+              "lemma": "come",
+              "form": "Konjunktion/Vergleichspartikel",
+              "sense": "wie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s2:t7",
+              "idx": 7,
+              "surface": "nella",
+              "lemma": "in",
+              "form": "Präposition mit Dativ",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s2:t8",
+              "idx": 8,
+              "surface": "miseria.",
+              "lemma": "miseria",
+              "form": "Substantiv, Femininum, Singular, Dativ",
+              "sense": "Elend (Umstand)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 2,
+              "end": 3,
+              "tokenIds": [
+                "tp_17906084629780000051:s2:t2",
+                "tp_17906084629780000051:s2:t3"
+              ],
+              "lemma": "essere fedele a/verso",
+              "gloss": "treu sein zu/jemandem",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "tokenIds": [
+                "tp_17906084629780000051:s2:t4",
+                "tp_17906084629780000051:s2:t5"
+              ],
+              "lemma": "nella fortuna",
+              "gloss": "im Glück",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 7,
+              "end": 8,
+              "tokenIds": [
+                "tp_17906084629780000051:s2:t7",
+                "tp_17906084629780000051:s2:t8"
+              ],
+              "lemma": "nella miseria",
+              "gloss": "im Elend",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-28T16:16:18.237Z",
+            "sentenceId": "tp_17906084629780000051:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Egli vi sarà fedele nella fortuna come nella miseria.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17906084629780000051:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17906084629780000051:s3:t0",
+              "idx": 0,
+              "surface": "È",
+              "lemma": "essere",
+              "form": "Verb; 3. Person Singular Indikativ Präsens",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s3:t1",
+              "idx": 1,
+              "surface": "un",
+              "lemma": "uno",
+              "form": "Artikel; unbestimmt Maskulinum Singular",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s3:t2",
+              "idx": 2,
+              "surface": "cane!",
+              "lemma": "cane",
+              "form": "Nomen; Maskulinum Singular",
+              "sense": "Hund",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-28T16:17:18.689Z",
+            "sentenceId": "tp_17906084629780000051:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "È un cane!",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17906084629780000051:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17906084629780000051:s4:t0",
+              "idx": 0,
+              "surface": "Jerome",
+              "lemma": "Jerome",
+              "form": "Eigenname (Nominativ)",
+              "sense": "Vorname des Autors",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906084629780000051:s4:t1",
+              "idx": 1,
+              "surface": "K.",
+              "lemma": "K.",
+              "form": "Abkürzung (Nachname)",
+              "sense": "Initial für den Nachnamen Kipling",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-28T16:18:05.227Z",
+            "sentenceId": "tp_17906084629780000051:s4",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Jerome\nK.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17906084629780000051:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17906084629780000051:s5:t0",
+              "idx": 0,
+              "surface": "Jerome",
+              "lemma": "Jerome",
+              "form": "Eigenname (Nominativ)",
+              "sense": "Name einer Person",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-28T16:18:41.072Z",
+            "sentenceId": "tp_17906084629780000051:s5",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Jerome",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-28T16:18:41.083Z",
+        "chapterId": "tp_17906084629780000051",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "e61096a07644",
+      "analyzedAt": "2026-09-28T16:18:41.083Z"
+    },
+    "tp_17906171559290000103": {
+      "chapterId": "tp_17906171559290000103",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 2,
+      "tokenCount": 24,
+      "sentences": [
+        {
+          "sentenceId": "tp_17906171559290000103:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17906171559290000103:s0:t0",
+              "idx": 0,
+              "surface": "Per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "durch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t1",
+              "idx": 1,
+              "surface": "me",
+              "lemma": "io",
+              "form": "Personalpronomen, Akkusativ/Objekt, Singular",
+              "sense": "mir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t2",
+              "idx": 2,
+              "surface": "si",
+              "lemma": "si",
+              "form": "Reflexivpronomen/Pronomen reflexivum, unpersönlich",
+              "sense": "man (unpersönlich)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t3",
+              "idx": 3,
+              "surface": "va",
+              "lemma": "andare",
+              "form": "Verb, Indikativ Präsens, 3. Person Singular",
+              "sense": "geht (man)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t4",
+              "idx": 4,
+              "surface": "ne",
+              "lemma": "in",
+              "form": "Präposition + Artikelkontraktion",
+              "sense": "in das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t5",
+              "idx": 5,
+              "surface": "l'eterno",
+              "lemma": "eterno",
+              "form": "Adjektiv, Nominativ/Akkusativ, Singular, Maskulinum",
+              "sense": "ewige",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t6",
+              "idx": 6,
+              "surface": "dolore,",
+              "lemma": "dolore",
+              "form": "Substantiv, Akkusativ, Singular, Maskulinum",
+              "sense": "Schmerz",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t7",
+              "idx": 7,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "durch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t8",
+              "idx": 8,
+              "surface": "me",
+              "lemma": "io",
+              "form": "Personalpronomen, Akkusativ/Objekt, Singular",
+              "sense": "mir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t9",
+              "idx": 9,
+              "surface": "stiva",
+              "lemma": "stare",
+              "form": "Verb, Indikativ Imperfekt, 3. Person Singular",
+              "sense": "stand (da)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t10",
+              "idx": 10,
+              "surface": "la",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Akkusativ, Singular, Maskulinum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t11",
+              "idx": 11,
+              "surface": "divina",
+              "lemma": "divino",
+              "form": "Adjektiv, Akkusativ, Singular, Femininum",
+              "sense": "göttliche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t12",
+              "idx": 12,
+              "surface": "podestate,",
+              "lemma": "podestà",
+              "form": "Substantiv, Akkusativ, Singular, Femininum",
+              "sense": "Macht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t13",
+              "idx": 13,
+              "surface": "la",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Nominativ/Akkusativ, Singular, Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t14",
+              "idx": 14,
+              "surface": "somma",
+              "lemma": "sommo",
+              "form": "Adjektiv, Nominativ/Akkusativ, Singular, Femininum",
+              "sense": "höchste",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t15",
+              "idx": 15,
+              "surface": "sapienza",
+              "lemma": "sapienza",
+              "form": "Substantiv, Nominativ/Akkusativ, Singular, Femininum",
+              "sense": "Weisheit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t16",
+              "idx": 16,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t17",
+              "idx": 17,
+              "surface": "l'eterno",
+              "lemma": "eterno",
+              "form": "Adjektiv, Nominativ/Akkusativ, Singular, Maskulinum",
+              "sense": "ewige",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s0:t18",
+              "idx": 18,
+              "surface": "duro.",
+              "lemma": "duro",
+              "form": "Substantiv (von duro), Akkusativ, Singular, Maskulinum",
+              "sense": "Härte",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 3,
+              "tokenIds": [
+                "tp_17906171559290000103:s0:t0",
+                "tp_17906171559290000103:s0:t1",
+                "tp_17906171559290000103:s0:t2",
+                "tp_17906171559290000103:s0:t3"
+              ],
+              "lemma": "per me si va",
+              "gloss": "durch mich geht man (ein)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 6,
+              "tokenIds": [
+                "tp_17906171559290000103:s0:t4",
+                "tp_17906171559290000103:s0:t5",
+                "tp_17906171559290000103:s0:t6"
+              ],
+              "lemma": "ne l'eterno dolore",
+              "gloss": "in den ewigen Schmerz",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-28T18:05:11.340Z",
+            "sentenceId": "tp_17906171559290000103:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2110
+          },
+          "text": "Per me si va ne l'eterno dolore,\nper me stiva la divina podestate,\nla somma sapienza e l'eterno duro.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17906171559290000103:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17906171559290000103:s1:t0",
+              "idx": 0,
+              "surface": "Lasciate",
+              "lemma": "lasciare",
+              "form": "Verb: Präsens Indikativ Aktiv 2. Person Plural (Imperativ)",
+              "sense": "Lasst zurück / Gebt auf",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s1:t1",
+              "idx": 1,
+              "surface": "ogni",
+              "lemma": "ogni",
+              "form": "Adjektiv: unbestimmt Akkusativ Singular Femininum",
+              "sense": "jede",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s1:t2",
+              "idx": 2,
+              "surface": "speranza,",
+              "lemma": "speranza",
+              "form": "Substantiv: Akkusativ Singular Femininum",
+              "sense": "Hoffnung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s1:t3",
+              "idx": 3,
+              "surface": "voi",
+              "lemma": "voi",
+              "form": "Personalpronomen: Nominativ/Vokativ Plural 2. Person",
+              "sense": "ihr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17906171559290000103:s1:t4",
+              "idx": 4,
+              "surface": "ch'intrate.",
+              "lemma": "entrare",
+              "form": "Verb: Relativpronomen + Präsens Indikativ Aktiv 2. Person Plural (kontrahierte Form)",
+              "sense": "die ihr eintretet / die ihr eintritt",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17906171559290000103:s1:t0",
+                "tp_17906171559290000103:s1:t1",
+                "tp_17906171559290000103:s1:t2"
+              ],
+              "lemma": "lasciare ogni speranza",
+              "gloss": "jede Hoffnung aufgeben / alle Hoffnung fahren lassen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17906171559290000103:s1:t3",
+                "tp_17906171559290000103:s1:t4"
+              ],
+              "lemma": "voi ch'intrate",
+              "gloss": "ihr, die ihr eintretet",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-09-28T18:06:57.659Z",
+            "sentenceId": "tp_17906171559290000103:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Lasciate ogni speranza, voi ch'intrate.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-09-28T18:06:57.680Z",
+        "chapterId": "tp_17906171559290000103",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "5031e341e08d",
+      "analyzedAt": "2026-09-28T18:06:57.680Z"
     }
   },
-  "generatedAt": "2026-09-11T12:03:07.973Z",
-  "chapterCount": 24
+  "generatedAt": "2026-09-28T18:06:57.684Z",
+  "chapterCount": 26
 }
