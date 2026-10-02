@@ -351,6 +351,7 @@ run('unit: the bottom bar\'s panels line up with their own buttons (v90_aa)', 'n
 run('unit: unfinished-project drafts — client-side half (item R)', 'node', [path.join(__dirname, 'unit-drafts.test.js')]);
 run('unit: unfinished-project drafts — comic upload flow, client-side half (item R follow-up)', 'node', [path.join(__dirname, 'unit-drafts-comic.test.js')]);
 run('unit: the translation-failure marker, and why emptiness is not it (v91 line)', 'node', [path.join(__dirname, 'unit-translation-failed-marker.test.js')]);
+run('unit: a pasted story generates with no typed topic (v91_h, user-reported)', 'node', [path.join(__dirname, 'unit-paste-story-generate.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {

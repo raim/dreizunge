@@ -4061,6 +4061,56 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v91_h — generating from a PASTED STORY was impossible, silently, for three weeks
+
+**ZERO `ui.json` keys.** User, with a four-screenshot click series: *"Here I just clicked through
+with the goal to generate lessons from the pasted text, but on the last click on the lesson selection
+page, it just returned to the 'my story' page."* — *"Apparently, I currently can't generate text from
+pasted stories. Fix this first!"*
+
+⚠️ **TWO INDEPENDENT GUARDS BOTH DEMANDED A TYPED TOPIC, and a pasted story has none.**
+
+1. **Client** — `doGenerate`'s topic guard read `#topic-input`. `v90_s`'s one-input router fills
+   `#user-story-input` when the learner picks "it's a story" and deliberately leaves `#topic-input`
+   alone (only `genChooseKind`'s `'llm'` branch sets it). The guard then called `_genWizardGoto(2)`
+   and focused a field that is `display:none` in story mode. **Measured before fixing:**
+   `topicInput:"" storyLen:299 bounced:[2] toasts:[] fetches:0` — **no toast, no request, no
+   reason.** A silent dead end: nothing to search for, nothing to report.
+2. **Server** — `/api/generate` independently answered `400 Topic too short or missing`, so fixing
+   only the client would have traded a silent bounce for a silent 400.
+
+**THE FIX.** The client guard now exempts story mode; the server synthesizes a topic from the
+story's opening when none is given. ⚠️ **Fixed at BOTH layers on purpose**: paste, drag-drop, file
+upload and the URL fetch all reach the same route, and only the server covers them at once — but the
+client guard would still have blocked the request before it was sent.
+⚠️ **The client exemption keys on STORY MODE, not on "the story is long enough"** — keyed on length,
+a short story would fall back into the topic guard and hit the same dead end. It now falls through to
+the dedicated story guard, which SAYS what is wrong.
+⚠️ **The synthesized topic matches what the corpus already holds** for pasted chapters — their
+`userTopic` is the pasted opening, truncated (`"La biografia personale e professiona"`). It is
+temporary: the title post-pass renames the chapter, which is why those same chapters now read
+*"Ungewöhnlicher Aufstieg"* and *"Kulturelle Verflechtung"*.
+
+⚠️⚠️ **WHY 387 GREEN CHECKS NEVER SAW IT — the finding worth more than the fix.** `e2e-userprompt`
+covers story-mode generation and passed throughout, **because it posts `topic: 'kitty tale'`
+ALONGSIDE `userStory`.** It tested the API CONTRACT, never the request the WIZARD BUILDS. **The flow
+had no test at any layer**, so a client-router change (`v90_s`, 2026-09-08) broke it for three weeks
+without one red check. ⚠️ **A test that hand-builds the request cannot catch a bug in how the request
+is built.** The new `unit-paste-story-generate` drives the REAL `genChooseKind` → `doGenerate` path;
+`e2e-userprompt` gained the no-topic case it was missing.
+
+**5 mutations, all caught** (3 client, 2 server), both files restored by byte copy (`v87_l`).
+⚠️ The client mutation "key on story LENGTH instead of story mode" is caught — that distinction is
+real and observable, not an equivalent mutant.
+⚠️ Non-vacuity on both sides: a too-short TOPIC still bounces, and a request with NEITHER topic nor
+story is still refused 400.
+
+🔎 **Noticed, NOT fixed** (out of scope, logged instead): `#user-story-input` and
+`#user-translation-input` each carry **TWO `id` attributes** in the markup
+(`id="user-story-input" id="user-story-input-ph"`). HTML honours the first, so the `-ph` ids do not
+exist and anything addressing them is dead. Harmless today — `applyUIStrings` sets the placeholder
+via the real id.
+
 ## ✅ v91_g — the ARTICLE SYMMETRY rule was CAUSING the asymmetry it forbids
 
 **ZERO `ui.json` keys. No code — three prompt bullets.** User: *"now let's do the schema-order

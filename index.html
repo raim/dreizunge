@@ -11282,7 +11282,19 @@ async function doGenerate(forceRegen){
   // it as meaningful (a stale 'error_hunt' would wrongly demand a story/continuation for a run that
   // isn't generating error_hunt or ANY lesson at all).
   const skipLessons = !!document.getElementById('gen-skip-lessons-cb')?.checked;
-  if(!myStory&&!(!skipLessons && APP.lessonFormat==='error_hunt')&&(!topic||topic.length<2)){
+  // ⚠️ v91_h (user-reported, with screenshots): a PASTED STORY needs no typed topic, and demanding
+  // one here made "generate lessons from pasted text" impossible — the single worst kind of failure,
+  // because it was SILENT. `v90_s`'s one-input router fills `#user-story-input` when the learner
+  // picks "it's a story" and deliberately leaves `#topic-input` alone (only the 'llm'/topic branch
+  // sets it). This guard then read the empty topic field, called `_genWizardGoto(2)` and focused a
+  // field that is `display:none` in story mode: no toast, no request, no reason — the wizard just
+  // jumped back to the text step. Measured before fixing: topic='' , story=299 chars, goto=[2],
+  // toasts=[], fetches=0.
+  // ⚠️ Deliberately keyed on STORY MODE, not on "the story is long enough". A too-short story must
+  // fall through to the dedicated story guard below, which says what is wrong; bouncing to step 2
+  // with a hidden field focused is exactly the dead end this fixes.
+  const _storyMode = !!document.getElementById('use-story-cb')?.checked;
+  if(!myStory&&!_storyMode&&!(!skipLessons && APP.lessonFormat==='error_hunt')&&(!topic||topic.length<2)){
     try{ _genWizardGoto(2); }catch(_){}
     document.getElementById('topic-input').focus(); return;
   }

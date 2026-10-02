@@ -288,7 +288,7 @@ const { shouldNormaliseLabels, buildLabelRequest, applyLabelReply, labelReplyTok
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v91_g';
+const APP_VERSION  = 'v91_h';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -9656,9 +9656,26 @@ http.createServer(async (req, res) => {
       const _myStoryTopic = _hasLearned
         ? `My review — ${langName(lang || 'it')} (${new Date().toISOString().slice(0,10)})`
         : null;
+      // ⚠️ v91_h: a PASTED STORY carries its own subject, so requiring a typed topic rejected the
+      // whole "generate lessons from this text" flow with `400 Topic too short or missing`. The
+      // client half of that bug is in `doGenerate` (see its own comment); this is the other half,
+      // and it is fixed HERE as well as there on purpose — paste, drag-drop, file upload and the
+      // URL fetch all arrive at this route, and only this layer covers them all at once.
+      // ⚠️ The shape deliberately MATCHES what the corpus already holds for pasted chapters: their
+      // `userTopic` is the opening of the pasted text, truncated (`"La biografia personale e
+      // professiona"`, `"Questo convegno sarà l'occasione per"`). It is also temporary — the title
+      // post-pass renames the chapter afterwards, which is why those same chapters now read
+      // "Ungewöhnlicher Aufstieg" and "Kulturelle Verflechtung".
+      // ⚠️ LAST in the chain, after `continuedFromName`: a pasted story that CONTINUES a chapter
+      // must keep inheriting the parent's name, exactly as before. This only fills a gap that
+      // previously returned 400.
+      const _pastedTopic = (typeof userStory === 'string' && userStory.trim().length >= 20)
+        ? userStory.trim().replace(/\s+/g, ' ').slice(0, 40).trim() + '…'
+        : null;
       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
         : continuedFromName ? continuedFromName
-        : _myStoryTopic ? _myStoryTopic : null;
+        : _myStoryTopic ? _myStoryTopic
+        : _pastedTopic ? _pastedTopic : null;
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
