@@ -1,11 +1,11 @@
-# Session prompt — written at the `v91_h` cut
+# Session prompt — written at the `v91_i` cut
 
 *(Rename this file for the version the session WRAPS UP WITH — `git mv` + edit, never keep the old
 one alongside. The base cut is the bare number and is implicitly `a`, so point releases run
 `v89_b`, `v89_c`, … A bump to a new BASE (`v90`) needs its own roadmap, per the protocol.)*
 
 I'm continuing development of Dreizunge (a single-file `index.html` client + `server.js`,
-zero-dependency Node language-learning app). Picking up from **`v91_h`**. `roadmap_v91.md` was cut at
+zero-dependency Node language-learning app). Picking up from **`v91_i`**. `roadmap_v91.md` was cut at
 `v91` — as a RECONCILIATION, see below — and is the current roadmap. **`roadmap_v90.md` is kept as
 the record for the whole `v90` line** (`v90`…`v90_aa`, twenty-seven point releases): go there for how
 anything in it was built, or why a guard is shaped the way it is.
@@ -155,7 +155,7 @@ TABLE.** ⚠️⚠️ **Asymmetry is necessary and NOT sufficient; the per-side 
 half of the test.** As of this ruling the only QUALIFYING fix measured is the **schema reorder**
 (`source`-first, 97%/97%), which is the expensive one — it touches every lesson type's parser.
 
-✅ **`v91_h` SHIPPED THE FIX. The rule now DEMANDS both sides and offers no alternative.** All the
+✅ **`v91_i` SHIPPED THE FIX. The rule now DEMANDS both sides and offers no alternative.** All the
 arms ran; results in `roadmap_v91.md`. Summary: **de→it 79% of noun pairs → 0%**, **de→nl 86% → 12%**,
 articles on BOTH sides, no schema change, no code, zero `ui.json` keys. Applied to **THREE** prompts
 — `vocab.system`, `vocabFromText.system`, `vocabTable.system` (the third carries its own wording
@@ -411,8 +411,8 @@ a red suite at `v88_g`. `unit-static-freshness` will NOT catch it (it compares t
 inputs, and `server.js` is not among them); `unit-version-derivation` is the one that does.
 
 ```
-node test/run.js                          → expect 388 checks
-node test/run.js --quick                  → expect 320
+node test/run.js                          → expect 389 checks
+node test/run.js --quick                  → expect 321
 node test/check-inline.js                 → expect 0 failures
 node test/check-inline.js docs/index.html → expect 0 failures
 ```
@@ -444,8 +444,8 @@ servers, the oldest 29 hours old, were once holding ports.
   `git show HEAD:lessons.json` isolated it in one command. Don't run the full and `--quick` suites
   CONCURRENTLY on this box (`v86_ae`).
 
-Corpus at this cut: **366 topics, 104 storylines, 33 languages, 748 `en` keys** — an inherently live
-snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_h'`.
+Corpus at this cut: **367 topics, 105 storylines, 33 languages, 748 `en` keys** — an inherently live
+snapshot; re-measure fresh at commit time. `APP_VERSION = 'v91_i'`.
 
 > **The baseline block and corpus numbers above are GUARDED** by `unit-roadmap-version` against the
 > actual suite and the data files. **If that test fails, the number in THIS file is usually the thing

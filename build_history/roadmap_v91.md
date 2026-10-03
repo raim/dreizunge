@@ -4061,6 +4061,56 @@ each lives in `roadmap_v88.md`'s own entry for that release.*
 *Entries go at the TOP of this section, newest first, and a merge conflict between two sessions'
 work lands exactly here: resolve it by keeping BOTH entries, ordered by version.*
 
+## ✅ v91_i — the generation START BUTTON disappeared, with no message and no way back
+
+**ZERO `ui.json` keys.** User, with two screenshots the day after `v91_h`: *"now we have no generate
+button at all anymore."* The lesson step rendered its checkbox and its two selects and then NOTHING.
+
+**THE MECHANISM, reproduced in the running app rather than reasoned about.** `_genInputMode()`
+answers **'pdf'**, not 'paste', for as long as `_uploadMode` is true while `use-story-cb` is checked.
+`_applyLessonCardUI()` then computes
+
+```
+startable = (mode==='llm' || mode==='paste') ? true : (n > 0 && !busy)
+```
+
+so in 'pdf' mode with an EMPTY chunk list (`n = 0`), or with a stale `_pdfBookId` (`busy`), the whole
+`#gen-btn-row` is hidden. `#gen-arc-row` and `#post-gen-row` are `display:none` IN THE MARKUP and are
+only ever shown by that same function, so they vanish with it. Measured live:
+
+| state | mode | button |
+|---|---|---|
+| chunks present | `pdf` | visible — but labelled *"Generate storyline (1 chapters, 0 words)"* |
+| chunk list empty | `pdf` | **hidden** ← the screenshot |
+| stale `_pdfBookId` | `pdf` | **hidden** ← also the screenshot |
+
+⚠️⚠️ **AND `_uploadMode` WAS STICKY.** `fetchStoryFromUrl` and `onUploadFileChosen` both set it;
+`clearUserStory()` cleared only the textareas and `genChooseKind('story')` never touched it. **One URL
+fetch put the wizard into book mode for the rest of the session**, and a plain pasted story afterwards
+was still treated as an upload — gated on a chunk list that no longer had anything in it.
+⚠️ **There was no way back from the UI**: the checkbox that selects the mode lives in
+`#user-story-checks`, which is `display:none` since `v90_v`. **This is precisely the "equilibrium held
+by CSS, not by design" that `unit-static-markup-handlers` was written about** — a hidden control
+holding a mode whose only symptom is a missing button.
+
+**THE FIX, zero keys**: an explicit *"✕ Clear"* and an explicit *"this text is my story"* both reset
+upload state, returning the wizard to 'paste'. Verified live: `mode='pdf'` button `none` → after
+either action `mode='paste'`, `_uploadMode=false`, button visible, pasted text preserved.
+**3 mutations, all caught**; `index.html` restored by byte copy (`v87_l`). ⚠️ The third mutation —
+"just make `startable` always true" — is caught by the new file's own NON-VACUITY section, so the
+over-broad fix cannot pass either.
+
+⚠️⚠️ **WHAT IS FIXED IS RECOVERY, NOT REACHABILITY — stated plainly because the distinction matters.**
+A URL fetch that yields no chunks, or a lingering `_pdfBookId`, can STILL hide the button until the
+learner clears or re-picks. **The exact trigger in the user's session could not be determined from the
+screenshots** — three different states produce that identical card, and their server log shows no
+request between the successful `v91_h` paste run at 10:31 and the screenshots at 10:35. Guessing one
+and claiming it fixed would have been dishonest.
+🆕 **PROPOSED, NOT TAKEN — needs a `ui.json` key budget**: make the state SELF-EXPLANATORY — a
+DISABLED button carrying the reason, instead of no button. That covers every path, including ones
+nobody has enumerated, and it is the same lesson as `v91_h`: **a refusal the learner cannot see is the
+defect**.
+
 ## ✅ v91_h — generating from a PASTED STORY was impossible, silently, for three weeks
 
 **ZERO `ui.json` keys.** User, with a four-screenshot click series: *"Here I just clicked through

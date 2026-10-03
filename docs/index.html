@@ -4311,6 +4311,15 @@ function clearUserStory(){
   if(ta){ ta.value=''; autoResizeTextarea(ta); ta.focus(); }
   const tr=document.getElementById('user-translation-input');
   if(tr){ tr.value=''; autoResizeTextarea(tr); }
+  // ⚠️ v91_i (user-reported: "now we have no generate button at all anymore"). Clearing the story
+  // text used to leave `_uploadMode` TRUE, and `_uploadMode` is what makes `_genInputMode()` answer
+  // 'pdf' instead of 'paste' while `use-story-cb` is checked. In 'pdf' mode the start button is
+  // gated on `n > 0 && !busy` — so with the chunk list now empty it was HIDDEN, with no message and
+  // no way back: the learner saw the lesson step with its two selects and nothing underneath.
+  // Reproduced in the running app: mode='pdf', n=0 → `#gen-btn-row` display:none, which is exactly
+  // the screenshot. An explicit "clear the text" is an explicit "forget where it came from".
+  if(typeof _uploadMode!=='undefined' && _uploadMode && typeof _clearUpload==='function') _clearUpload();
+  if(typeof _applyLessonCardUI==='function') _applyLessonCardUI();
 }
 // ── Dialect glossary import (M1) — build faithful vocab lessons from a glossary, no AI ──
 function onUseDialectCb(){
@@ -8837,6 +8846,13 @@ function genChooseKind(kind){
   _genRevealFor(kind==='story' ? 'paste' : 'llm');
   const cb=document.getElementById('use-story-cb');
   if(kind==='story'){
+    // ⚠️ v91_i: "this text is my story" is a DECISION, and it must override whatever upload state an
+    // earlier document or URL fetch left behind. `fetchStoryFromUrl` and `onUploadFileChosen` both
+    // set `_uploadMode = true`, nothing here used to clear it, and `_genInputMode()` answers 'pdf'
+    // (not 'paste') for as long as it is set — which hides the start button whenever the stale chunk
+    // list is empty or a stale `_pdfBookId` lingers. Measured in the running app: mode='pdf' n=0 →
+    // `#gen-btn-row` display:none, and with a leftover book id the same, both with NO message.
+    if(typeof _uploadMode!=='undefined' && _uploadMode && typeof _clearUpload==='function') _clearUpload();
     if(cb && !cb.checked){ cb.checked=true; onUseStoryCb(); }
     _setPasteVisible(true);
     const box=document.getElementById('user-story-input');
@@ -178400,12 +178416,12 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v91_h', coverageThreshold: 0.8 };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v91_i', coverageThreshold: 0.8 };
   // v85_t (user): no longer written into the #app-tagline tooltip — see index.html's own comment at
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"b4aa07099db8","lessons.json":"3aefe837cead","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"099f865ec3a4","analysis-corrections.json":"e64c06e5700a","build-static.js":"ae3fe394cb16"};
+  APP.buildSources = {"index.html":"4f0bfb9eaf2b","lessons.json":"3aefe837cead","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"099f865ec3a4","analysis-corrections.json":"e64c06e5700a","build-static.js":"ae3fe394cb16"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
