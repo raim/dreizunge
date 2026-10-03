@@ -10324,6 +10324,9 @@ generate text from pasted stories. Fix this first!.
 * Currently summary generation is not automatic anymore, and I didn't
   see a check-mark on the generation wizard page. Please add one, if
   there really isn't any.
+  
+* text provencance URLs added in the generation wizard don't seem to
+  survive, for the two stories sl_1994640016 and 
 
 ## ONE-FUNCTION APP
 
