@@ -2,6 +2,42 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_1994640016",
+      "title": "Il Roero Arneis DOCG",
+      "titleAuto": true,
+      "icon": "📖",
+      "chapters": [
+        "tp_17910187183560000080"
+      ],
+      "lang": "it",
+      "srcLang": "de",
+      "createdAt": "2026-10-03T09:15:27.214Z",
+      "updatedAt": "2026-10-03T12:58:28.699Z",
+      "tokenUsage": {
+        "totalPromptTokens": 274,
+        "totalCompletionTokens": 99,
+        "tokensByType": {
+          "summary": 373
+        }
+      },
+      "summary": "Der Roero Arneis DOCG ist ein Weißwein aus der Provinz Cuneo, dessen Anbaugebiet durch sandigen Boden und eine mythologische Trennung von den Langhe geprägt ist. Die Rebsorte Arneis gilt als schwierig zu verarbeiten und wird in der Legende mit einem ungestümen Charakter verbunden. Obwohl die Geschichte hier abbricht, deutet der Name auf die besondere Natur der Traube hin, die oft mit dem Strand verglichen wird.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 274,
+        "completionTokens": 99,
+        "ms": 22691,
+        "at": "2026-10-03T10:07:40.234Z"
+      },
+      "source": {
+        "url": "https://www.ivinidelpiemonte.com/vini-e-territorio/vini/arneis/"
+      }
+    },
+    {
       "id": "sl_884638596",
       "title": "Lebendiges Turin",
       "titleAuto": true,
@@ -13137,6 +13173,971 @@
   ],
   "topics": [
     {
+      "id": "tp_17910187183560000080",
+      "topic": "Il Roero Arneis DOCG",
+      "topicEmoji": "🍷",
+      "userTopic": "Il Roero Arneis DOCG nasce dalle uve nel…",
+      "userPrompt": "Il Roero Arneis DOCG nasce dalle uve nel…\n\n[story]\nIl Roero Arneis DOCG nasce dalle uve nell’omonimo vitigno, oggi presente nei comuni della Provincia di Cuneo alla sinistra del fiume Tanaro, che, secondo il mito, fu incaricato da Persefone, Dea della natura, di dividere la zona del Roero da quella delle Langhe. L’elemento chiave che contraddistingue quest’area è il terreno sabbioso, tant’è che è di uso comune dire che i vini qui: “sono fatti in spiaggia”.\n\nArneis in Piemontese sta a indicare un personaggio birichino, in quanto la leggenda lo vuole di difficile lavorazione. In passato questo vino fu protagonista dei primi esperimenti di vinificazione del vermut e, durante le crisi delle guerre mondiali, fu impiantato tra i filari di Nebbiolo per tener lontani gli uccelli e preservare in questo modo le uve nere dai sabaudi condizionamenti.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Il Roero Arneis DOCG nasce dalle uve nell’omonimo vitigno, oggi presente nei comuni della Provincia di Cuneo alla sinistra del fiume Tanaro, che, secondo il mito, fu incaricato da Persefone, Dea della natura, di dividere la zona del Roero da quella delle Langhe. L’elemento chiave che contraddistingue quest’area è il terreno sabbioso, tant’è che è di uso comune dire che i vini qui: “sono fatti in spiaggia”.\n\nArneis in Piemontese sta a indicare un personaggio birichino, in quanto la leggenda lo vuole di difficile lavorazione. In passato questo vino fu protagonista dei primi esperimenti di vinificazione del vermut e, durante le crisi delle guerre mondiali, fu impiantato tra i filari di Nebbiolo per tener lontani gli uccelli e preservare in questo modo le uve nere dai sabaudi condizionamenti.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-10-03T09:11:06.951Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 257,
+        "completionTokens": 216,
+        "ms": 51405,
+        "at": "2026-10-03T09:11:58.356Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Der Roero Arneis DOCG entsteht aus Trauben der gleichnamigen Rebsorte, die heute in den Gemeinden der Provinz Cuneo am linken Ufer des Flusses Tanaro angebaut wird. Nach der Sage wurde dieser Fluss von Persephone, der Göttin der Natur, beauftragt, das Roero-Gebiet von dem der Langhe zu trennen. Das entscheidende Merkmal, das diese Region auszeichnet, ist der sandige Boden, sodass es üblich ist zu sagen, dass die Weine hier „am Strand gemacht“ werden.\n\nIm Piemontesischen bedeutet Arneis eine freche Person, da die Legende besagt, dass er schwer zu verarbeiten ist. In der Vergangenheit war dieser Wein Pionier bei den ersten Experimenten zur Vermutherstellung und während der Krisen der Weltkriege zwischen den Reihen des Nebbiolo gepflanzt, um Vögel fernzuhalten und so die schwarzen Trauben vor den schädlichen Einflüssen Savoyens zu schützen.",
+      "userStory": "Il Roero Arneis DOCG nasce dalle uve nell’omonimo vitigno, oggi presente nei comuni della Provincia di Cuneo alla sinistra del fiume Tanaro, che, secondo il mito, fu incaricato da Persefone, Dea della natura, di dividere la zona del Roero da quella delle Langhe. L’elemento chiave che contraddistingue quest’area è il terreno sabbioso, tant’è che è di uso comune dire che i vini qui: “sono fatti in spiaggia”.\n\nArneis in Piemontese sta a indicare un personaggio birichino, in quanto la leggenda lo vuole di difficile lavorazione. In passato questo vino fu protagonista dei primi esperimenti di vinificazione del vermut e, durante le crisi delle guerre mondiali, fu impiantato tra i filari di Nebbiolo per tener lontani gli uccelli e preservare in questo modo le uve nere dai sabaudi condizionamenti.",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Roero Arneis Wein",
+          "desc": "Wein aus dem Piemont, Italien",
+          "icon": "🍷",
+          "vocab": [
+            {
+              "target": "il vino",
+              "source": "der Wein",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:vino",
+                "canonicalId": "it:vocab:vino",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'uva",
+              "source": "die Traube",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:uva",
+                "canonicalId": "it:vocab:uva",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il terreno",
+              "source": "der Boden",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:terreno",
+                "canonicalId": "it:vocab:terreno",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la leggenda",
+              "source": "die Legende",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:leggenda",
+                "canonicalId": "it:vocab:leggenda",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il fiume",
+              "source": "der Fluss",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:fiume",
+                "canonicalId": "it:vocab:fiume",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'uccello",
+              "source": "der Vogel",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:uccello",
+                "canonicalId": "it:vocab:uccello",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la zona",
+              "source": "die Zone",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:zona",
+                "canonicalId": "it:vocab:zona",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il personaggio",
+              "source": "die Person",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:personaggio",
+                "canonicalId": "it:vocab:personaggio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Il Roero Arneis nasce dalle uve.",
+              "source": "Der Roero Arneis entsteht aus Trauben.",
+              "words": [
+                "Il",
+                "Roero",
+                "Arneis",
+                "nasce",
+                "dalle",
+                "uve."
+              ]
+            },
+            {
+              "target": "È presente nella Provincia di Cuneo.",
+              "source": "Er ist in der Provinz Cuneo vorhanden.",
+              "words": [
+                "È",
+                "presente",
+                "nella",
+                "Provincia",
+                "di",
+                "Cuneo."
+              ]
+            },
+            {
+              "target": "L'elemento chiave è il terreno sabbioso.",
+              "source": "Das entscheidende Merkmal ist der sandige Boden.",
+              "words": [
+                "L'elemento",
+                "chiave",
+                "è",
+                "il",
+                "terreno",
+                "sabbioso."
+              ]
+            },
+            {
+              "target": "Arneis indica un personaggio birichino.",
+              "source": "Arneis bezeichnet eine freche Person.",
+              "words": [
+                "Arneis",
+                "indica",
+                "un",
+                "personaggio",
+                "birichino."
+              ]
+            },
+            {
+              "target": "Fu impiantato per tener lontani gli uccelli.",
+              "source": "Er wurde gepflanzt, um die Vögel fernzuhalten.",
+              "words": [
+                "Fu",
+                "impiantato",
+                "per",
+                "tener",
+                "lontani",
+                "gli",
+                "uccelli."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1319,
+            "completionTokens": 570,
+            "ms": 208631,
+            "at": "2026-10-03T09:15:27.109Z"
+          }
+        },
+        {
+          "id": "ls_1791022857935_0_standard",
+          "title": "Roero Arneis Grundlagen",
+          "desc": "Grundlagen des Roero Arneis Weins",
+          "icon": "🍷",
+          "vocab": [
+            {
+              "target": "il vino",
+              "source": "der Wein",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il vino",
+                "canonicalId": "it:vocab:il vino",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'uva",
+              "source": "die Traube",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:l'uva",
+                "canonicalId": "it:vocab:l'uva",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il terreno",
+              "source": "der Boden",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il terreno",
+                "canonicalId": "it:vocab:il terreno",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "sabbioso",
+              "source": "sandig",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:sabbioso",
+                "canonicalId": "it:vocab:sabbioso",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la spiaggia",
+              "source": "der Strand",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la spiaggia",
+                "canonicalId": "it:vocab:la spiaggia",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il fiume",
+              "source": "der Fluss",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il fiume",
+                "canonicalId": "it:vocab:il fiume",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la leggenda",
+              "source": "die Legende",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la leggenda",
+                "canonicalId": "it:vocab:la leggenda",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'uccello",
+              "source": "der Vogel",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:l'uccello",
+                "canonicalId": "it:vocab:l'uccello",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Il vino è fatto in spiaggia.",
+              "source": "Der Wein wird am Strand gemacht.",
+              "skillId": "it:sentence:il vino è fatto in spiaggia",
+              "words": [
+                "Il",
+                "vino",
+                "è",
+                "fatto",
+                "in",
+                "spiaggia."
+              ]
+            },
+            {
+              "target": "L'uva cresce sul terreno sabbioso.",
+              "source": "Die Traube wächst auf dem sandigen Boden.",
+              "skillId": "it:sentence:l'uva cresce sul terreno sabbioso",
+              "words": [
+                "L'uva",
+                "cresce",
+                "sul",
+                "terreno",
+                "sabbioso."
+              ]
+            },
+            {
+              "target": "La leggenda parla di un personaggio birichino.",
+              "source": "Die Legende handelt von einer frechen Figur.",
+              "skillId": "it:sentence:la leggenda parla di un personaggio birichino",
+              "words": [
+                "La",
+                "leggenda",
+                "parla",
+                "di",
+                "un",
+                "personaggio",
+                "birichino."
+              ]
+            },
+            {
+              "target": "Il fiume divide la zona dalle Langhe.",
+              "source": "Der Fluss teilt die Zone von den Langhe.",
+              "skillId": "it:sentence:il fiume divide la zona dalle langhe",
+              "words": [
+                "Il",
+                "fiume",
+                "divide",
+                "la",
+                "zona",
+                "dalle",
+                "Langhe."
+              ]
+            },
+            {
+              "target": "L'uccello tiene lontani i nemici.",
+              "source": "Der Vogel hält die Feinde fern.",
+              "skillId": "it:sentence:l'uccello tiene lontani i nemici",
+              "words": [
+                "L'uccello",
+                "tiene",
+                "lontani",
+                "i",
+                "nemici."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1129,
+            "completionTokens": 661,
+            "ms": 189235,
+            "at": "2026-10-03T10:20:57.935Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1791023311521_0_inflections",
+          "type": "inflections",
+          "title": "Italienische Flexion üben",
+          "desc": "Wörter auf ihre Grundform zurückführen",
+          "icon": "📚",
+          "items": [
+            {
+              "sentence": "Il Roero Arneis DOCG nasce dalle uve nell’omonimo vitigno, oggi presente nei comuni della Provincia di Cuneo alla sinistra del fiume Tanaro, che, secondo il mito, fu incaricato da Persefone, Dea della natura, di dividere la zona del Roero da quella delle Langhe.",
+              "surfaceForm": "uve",
+              "translation": "Der Roero Arneis DOCG entsteht aus den Trauben der gleichnamigen Rebsorte, die heute in den Gemeinden der Provinz Cuneo links des Flusses Tanaro präsent ist, der, nach dem Mythos, von Persephone, der Göttin der Natur, beauftragt wurde, die Zone des Roero von der der Langhe zu trennen.",
+              "lemma": "l'uva",
+              "lemmaChoices": [
+                "l'uva",
+                "le uve",
+                "il uva",
+                "la uva"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Plural",
+              "formChoices": [
+                "Plural",
+                "Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plural von 'l'uva' (die Traube), gebildet durch Anhängen von -e."
+            },
+            {
+              "sentence": "Il Roero Arneis DOCG nasce dalle uve nell’omonimo vitigno, oggi presente nei comuni della Provincia di Cuneo alla sinistra del fiume Tanaro, che, secondo il mito, fu incaricato da Persefone, Dea della natura, di dividere la zona del Roero da quella delle Langhe.",
+              "surfaceForm": "comuni",
+              "translation": "Der Roero Arneis DOCG entsteht aus den Trauben der gleichnamigen Rebsorte, die heute in den Gemeinden der Provinz Cuneo links des Flusses Tanaro präsent ist, der, nach dem Mythos, von Persephone, der Göttin der Natur, beauftragt wurde, die Zone des Roero von der der Langhe zu trennen.",
+              "lemma": "il comune",
+              "lemmaChoices": [
+                "il comune",
+                "i comuni",
+                "la comune",
+                "le comuni"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Plural",
+              "formChoices": [
+                "Plural",
+                "Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Plural von 'il comune' (die Gemeinde), gebildet durch Anhängen von -i."
+            },
+            {
+              "sentence": "Arneis in Piemontese sta a indicare un personaggio birichino, in quanto la leggenda lo vuole di difficile lavorazione.",
+              "surfaceForm": "vuole",
+              "translation": "Arneis bedeutet auf Piemontesisch eine freche Figur, da die Legende will, dass sie schwierig zu verarbeiten ist.",
+              "lemma": "volere",
+              "lemmaChoices": [
+                "volere",
+                "voglio",
+                "vuoi",
+                "vogliono"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Präsens, 3. Person Singular",
+              "formChoices": [
+                "Präsens, 3. Person Singular",
+                "Präsens, 1. Person Singular",
+                "Präsens, 2. Person Singular",
+                "Präsens, 3. Person Plural"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Konjugation von 'volere' (wollen) im Präsens, 3. Person Singular."
+            },
+            {
+              "sentence": "In passato questo vino fu protagonista dei primi esperimenti di vinificazione del vermut e, durante le crisi delle guerre mondiali, fu impiantato tra i filari di Nebbiolo per tener lontani gli uccelli e preservare in questo modo le uve nere dai sabaudi condizionamenti.",
+              "surfaceForm": "impiantato",
+              "translation": "In der Vergangenheit war dieser Wein Protagonist der ersten Experimente zur Weinherstellung von Wermut und wurde während der Krisen der Weltkriege zwischen den Reihen des Nebbiolo gepflanzt, um die Vögel fernzuhalten und auf diese Weise die schwarzen Trauben vor den sardischen Beeinflussungen zu bewahren.",
+              "lemma": "impiantare",
+              "lemmaChoices": [
+                "impiantare",
+                "impiantato",
+                "piantato"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Partizip Perfekt",
+              "formChoices": [
+                "Partizip Perfekt",
+                "Partizip Präsens",
+                "Infinitiv",
+                "Konjunktiv"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Partizip Perfekt von 'impiantare' (pflanzen/verlegen), gebildet mit -ato."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 2506,
+            "completionTokens": 1333,
+            "ms": 453479,
+            "at": "2026-10-03T10:28:31.521Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1791023568619_0_synonyms",
+          "type": "synonyms",
+          "title": "Roero Arneis: Wein und Legende",
+          "desc": "Wichtige Wörter zum Roero Arneis DOCG.",
+          "icon": "🍷",
+          "words": [
+            {
+              "base": "uva",
+              "gloss": "Traube",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "acino",
+                  "g": "Beere"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "terreno",
+              "gloss": "Boden",
+              "sentence": "L’elemento chiave che contraddistingue quest’area è il terreno sabbioso, tant’è che è di uso comune dire che i vini qui: “sono fatti in spiaggia”.",
+              "synonyms": [
+                {
+                  "w": "suolo",
+                  "g": "Boden"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "birichino",
+              "gloss": "schalkhaft / frech",
+              "sentence": "Arneis in Piemontese sta a indicare un personaggio birichino, in quanto la leggenda lo vuole di difficile lavorazione.",
+              "synonyms": [
+                {
+                  "w": "monello",
+                  "g": "Strolch"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "serio",
+                  "g": "ernst"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "difficile",
+              "gloss": "schwierig",
+              "sentence": "Arneis in Piemontese sta a indicare un personaggio birichino, in quanto la leggenda lo vuole di difficile lavorazione.",
+              "synonyms": [
+                {
+                  "w": "complesso",
+                  "g": "komplex"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "semplice",
+                  "g": "einfach"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "chiave",
+              "gloss": "Schlüssel",
+              "sentence": "L’elemento chiave che contraddistingue quest’area è il terreno sabbioso, tant’è che è di uso comune dire che i vini qui: “sono fatti in spiaggia”.",
+              "synonyms": [
+                {
+                  "w": "fondamentale",
+                  "g": "grundlegend"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "spiaggia",
+              "gloss": "Strand",
+              "sentence": "L’elemento chiave che contraddistingue quest’area è il terreno sabbioso, tant’è che è di uso comune dire che i vini qui: “sono fatti in spiaggia”.",
+              "synonyms": [
+                {
+                  "w": "litorale",
+                  "g": "Küste"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1311,
+            "completionTokens": 847,
+            "ms": 257007,
+            "at": "2026-10-03T10:32:48.619Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1791023785957_0_comprehension",
+          "type": "comprehension",
+          "title": "Roero Arneis DOCG verstehen",
+          "desc": "Teste dein Verständnis des Textes über den Wein Roero Arneis.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Warum wird im Text gesagt, dass die Weine hier „auf dem Strand gemacht“ sind?",
+              "choices": [
+                "Weil die Weinberge direkt am Ufer des Flusses Tanaro liegen.",
+                "Weil der Boden aus Sand besteht.",
+                "Weil die Trauben in der Sonne getrocknet werden.",
+                "Weil das Klima sehr warm und feucht ist."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text erwähnt explizit den „terreno sabbioso“ (sandigen Boden) als Schlüsselmerkmal."
+            },
+            {
+              "q": "Welche Rolle spielte der Arneis während der Weltkriege?",
+              "choices": [
+                "Er wurde verwendet, um Wermut herzustellen.",
+                "Er diente als Schutz für die Nebbiolo-Trauben vor Vögeln.",
+                "Er ersetzte den Nebbiolo, weil dieser nicht wuchs.",
+                "Er wurde exportiert, um Kriegsschäden zu finanzieren."
+              ],
+              "correctIndex": 1,
+              "why": "Der Text sagt, er wurde zwischen die Nebbiolo-Reben gepflanzt, um Vögel fernzuhalten."
+            },
+            {
+              "q": "Was bedeutet das Wort „Arneis“ in der piemontesischen Sprache?",
+              "choices": [
+                "Ein gefürchteter Dämon.",
+                "Eine Art von Sand.",
+                "Eine verspielte oder freche Person.",
+                "Ein alter Gott des Weins."
+              ],
+              "correctIndex": 2,
+              "why": "Der Text definiert Arneis als „personaggio birichino“ (verspielte/freche Figur)."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1326,
+            "completionTokens": 960,
+            "ms": 217254,
+            "at": "2026-10-03T10:36:25.957Z"
+          },
+          "_recreated": true
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1791024540727",
+          "title": "Roero Arneis Wein",
+          "desc": "Wein aus dem Piemont, Italien",
+          "icon": "🍷",
+          "vocab": [
+            {
+              "target": "uva",
+              "source": "die Traube",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "vitigno",
+              "source": "die Rebsorte",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "fiume",
+              "source": "der Fluss",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "terreno",
+              "source": "der Boden",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "vino",
+              "source": "der Wein",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "personaggio",
+              "source": "die Person",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "lavorazione",
+              "source": "die Verarbeitung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "uccello",
+              "source": "der Vogel",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Il Roero Arneis DOCG nasce dalle uve.",
+              "source": "Der Roero Arneis DOCG entsteht aus den Trauben.",
+              "words": [
+                "Il",
+                "Roero",
+                "Arneis",
+                "DOCG",
+                "nasce",
+                "dalle",
+                "uve."
+              ]
+            },
+            {
+              "target": "L’elemento chiave è il terreno sabbioso.",
+              "source": "Das entscheidende Merkmal ist der sandige Boden.",
+              "words": [
+                "L’elemento",
+                "chiave",
+                "è",
+                "il",
+                "terreno",
+                "sabbioso."
+              ]
+            },
+            {
+              "target": "Arneis indica un personaggio birichino.",
+              "source": "Arneis bezeichnet eine freche Person.",
+              "words": [
+                "Arneis",
+                "indica",
+                "un",
+                "personaggio",
+                "birichino."
+              ]
+            },
+            {
+              "target": "La leggenda lo vuole di difficile lavorazione.",
+              "source": "Die Legende besagt, dass er schwer zu verarbeiten ist.",
+              "words": [
+                "La",
+                "leggenda",
+                "lo",
+                "vuole",
+                "di",
+                "difficile",
+                "lavorazione."
+              ]
+            },
+            {
+              "target": "Fu impiantato per tener lontani gli uccelli.",
+              "source": "Er wurde gepflanzt, um die Vögel fernzuhalten.",
+              "words": [
+                "Fu",
+                "impiantato",
+                "per",
+                "tener",
+                "lontani",
+                "gli",
+                "uccelli."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1313,
+            "completionTokens": 466,
+            "ms": 178753,
+            "at": "2026-10-03T10:49:00.727Z"
+          }
+        },
+        {
+          "id": "ls_1791024542034_16hn",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 276577,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 9377,
+        "totalCompletionTokens": 5094,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 208627,
+            "promptTokens": 1319,
+            "completionTokens": 570
+          }
+        ],
+        "tokensByType": {
+          "recreate": 10073,
+          "add_lesson": 1779
+        }
+      },
+      "generatedAt": "2026-10-03T09:11:58.357Z",
+      "updatedAt": "2026-10-03T12:58:28.699Z",
+      "createdBy": "admin"
+    },
+    {
       "id": "tp_17909638787390000093",
       "topic": "Lebendiges Turin",
       "topicEmoji": "🏙️",
@@ -14037,8 +15038,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 11774,
-        "totalCompletionTokens": 6075,
+        "totalPromptTokens": 14232,
+        "totalCompletionTokens": 6881,
         "lessons": [
           {
             "lessonNum": 1,
@@ -14048,11 +15049,11 @@
           }
         ],
         "tokensByType": {
-          "recreate": 14839
+          "recreate": 18103
         }
       },
       "generatedAt": "2026-10-02T17:57:58.740Z",
-      "updatedAt": "2026-10-02T18:54:27.896Z",
+      "updatedAt": "2026-10-03T12:57:24.245Z",
       "createdBy": "admin"
     },
     {

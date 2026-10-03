@@ -10261,6 +10261,12 @@ found on screen; and v90_z's central QC claim measured and withdrawn
 NOTE: this last bug is a real deficit. Apparently, I currently can't
 generate text from pasted stories. Fix this first!.
 
+
+-> v91_h
+
+* the latest two screenshots in the same folder ~/Pictures/dreizunge
+  show that now we have no generate button at all anymore.
+
 ---
 
 * I am generating new lessons tp_17906084629780000051 via photos taken
@@ -10309,6 +10315,37 @@ generate text from pasted stories. Fix this first!.
   split it into two chapters and offered the chapter editing site. It
   should work the same way if the user just pastes the text.
 
+
+* Always add a mixed-lesson by default, user's have to actively de-select
+  this. Also, if not mentioned above, there currently seems to be no
+  way to add a mixed lesson to an existing chapter w/o generating an
+  additional lesson.
+
+* Currently summary generation is not automatic anymore, and I didn't
+  see a check-mark on the generation wizard page. Please add one, if
+  there really isn't any.
+
+## ONE-FUNCTION APP
+
+* A general direction, don't start to implement, we need to plan this
+  well. Do a first assessment and integrate into the ROADMAP: we want
+  to have an app that is very easy to use.  When you open it, you get
+  the generation wizard, where we skip the language selection and
+  directly go to the "drop a file, foto, link or text" field. The user
+  than does that and presses "generate lessons", and from there we
+  work in an automated way, including detection of the target
+  language. A language selection field should however be next to the
+  generate button, but optional to actually fill out (current defaults
+  can be set in a language selector via the global user settings;
+  where the set language of the OS is the auto-selected UI and source
+  language); we first ask a model about the language, only ASSUMING
+  that the set target language is the actual language.  The user can
+  optionally click a "generation settings" button to enter the various
+  options we have, including split of a text into chapters by length
+  cutoffs. In the future, when we have a learner's skill set and
+  progress stored, this will also go into lesson generation. A skilled
+  user can handled longer chapters, and lessons can focus on the
+  rare words and constructions.
 
 
 
