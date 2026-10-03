@@ -2,6 +2,302 @@
   "schemaVersion": 30,
   "storylines": [
     {
+      "id": "sl_884638596",
+      "title": "Lebendiges Turin",
+      "titleAuto": true,
+      "icon": "📖",
+      "chapters": [
+        "tp_17909638787390000093"
+      ],
+      "lang": "it",
+      "srcLang": "de",
+      "createdAt": "2026-10-02T18:01:55.960Z",
+      "updatedAt": "2026-10-02T18:58:21.656Z",
+      "tokenUsage": {
+        "totalPromptTokens": 1072,
+        "totalCompletionTokens": 1431,
+        "tokensByType": {
+          "summary": 394,
+          "storyboard": 2109
+        }
+      },
+      "summary": "Turin ist eine lebendige Stadt mit einer langen Tradition in der angewandten Forschung und wissenschaftlichen Innovationen. Bedeutende Errungenschaften umfassen die Entwicklung des Elektromotors durch Galileo Ferraris sowie den Aufbau von Telekommunikationslaboren, die später zu wichtigen Forschungszentren wurden. Die lokale Industrie hat sich frühzeitig auf Technologien wie Glasfaserkabel und Sprachsynthesizer spezialisiert und dabei internationale Standards mitgeprägt. Diese historische Basis aus Magnetfeldforschung und industrieller Zusammenarbeit bildet das Fundament für aktuelle Initiativen im technologischen Sektor.",
+      "summaryMeta": {
+        "type": "storyline_summary",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 272,
+        "completionTokens": 122,
+        "ms": 31955,
+        "at": "2026-10-02T18:53:53.440Z"
+      },
+      "source": {
+        "url": "https://it.wikipedia.org/wiki/Torino?wprov=sfla1"
+      },
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1104 194\" style=\"width:100%;max-width:1104px;height:auto;display:block\" role=\"img\"><g data-chapter=\"1\"><title>Turin: Eine lebendige Stadt der Wissenschaft.</title><rect x=\"102\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"103\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#9e9e9e\"/><polygon points=\"20,60 30,30 40,60\" fill=\"#8d6e63\"/><rect x=\"50\" y=\"40\" width=\"15\" height=\"20\" fill=\"#9e9e9e\"/><circle cx=\"80\" cy=\"20\" r=\"10\" fill=\"#f2cc8f\"/></svg></g><g data-chapter=\"1\"><title>Galileo Ferraris erfand den Drehfeldmotor.</title><rect x=\"284\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"285\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M 50 20 A 30 30 0 1 1 49.9 20 Z\" fill=\"#e07a5f\"/><line x1=\"50\" y1=\"50\" x2=\"70\" y2=\"30\" stroke=\"#2b2b2b\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"5\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"1\"><title>1961: Das CSEL-Telekommunikationslabor entsteht.</title><rect x=\"466\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"467\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"20\" y=\"30\" width=\"60\" height=\"50\" fill=\"#9e9e9e\"/><rect x=\"30\" y=\"40\" width=\"10\" height=\"10\" fill=\"#f2cc8f\"/><rect x=\"60\" y=\"40\" width=\"10\" height=\"10\" fill=\"#f2cc8f\"/><line x1=\"50\" y1=\"30\" x2=\"50\" y2=\"10\" stroke=\"#e07a5f\" stroke-width=\"4\" stroke-linecap=\"round\"/><circle cx=\"50\" cy=\"8\" r=\"5\" fill=\"#e07a5f\"/></svg></g><g data-chapter=\"1\"><title>CSELT wird zum Forschungszentrum des STET-Konzerns.</title><rect x=\"648\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"649\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"30\" y=\"40\" width=\"40\" height=\"40\" fill=\"#9e9e9e\"/><circle cx=\"50\" cy=\"20\" r=\"15\" fill=\"#e07a5f\"/><line x1=\"70\" y1=\"60\" x2=\"90\" y2=\"60\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"90\" cy=\"60\" r=\"5\" fill=\"#2b2b2b\"/><line x1=\"30\" y1=\"60\" x2=\"10\" y2=\"60\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"10\" cy=\"60\" r=\"5\" fill=\"#2b2b2b\"/></svg></g><g data-chapter=\"1\"><title>Industrielle Forschungskooperationen weltweit.</title><rect x=\"830\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"831\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"none\" stroke=\"#457b9d\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"#81b29a\"/><line x1=\"50\" y1=\"50\" x2=\"80\" y2=\"20\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"80\" cy=\"20\" r=\"5\" fill=\"#e07a5f\"/><line x1=\"50\" y1=\"50\" x2=\"20\" y2=\"80\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"20\" cy=\"80\" r=\"5\" fill=\"#e07a5f\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 5,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 800,
+        "completionTokens": 1309,
+        "ms": 296503,
+        "at": "2026-10-02T18:58:21.656Z",
+        "storyStyle": "neutral"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Turin: Eine lebendige Stadt der Wissenschaft.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 0,
+              "y": 60,
+              "w": 100,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "polygon",
+              "points": [
+                [
+                  20,
+                  60
+                ],
+                [
+                  30,
+                  30
+                ],
+                [
+                  40,
+                  60
+                ]
+              ],
+              "fill": "earth"
+            },
+            {
+              "type": "rect",
+              "x": 50,
+              "y": 40,
+              "w": 15,
+              "h": 20,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 20,
+              "r": 10,
+              "fill": "sun"
+            }
+          ]
+        },
+        {
+          "caption": "Galileo Ferraris erfand den Drehfeldmotor.",
+          "chapter": 1,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 30,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "path",
+              "d": "M 50 20 A 30 30 0 1 1 49.9 20 Z",
+              "fill": "accent",
+              "stroke": "none"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 50,
+              "x2": 70,
+              "y2": 30,
+              "stroke": "ink",
+              "sw": 3
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 5,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "1961: Das CSEL-Telekommunikationslabor entsteht.",
+          "chapter": 1,
+          "bg": "night",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 20,
+              "y": 30,
+              "w": 60,
+              "h": 50,
+              "fill": "stone"
+            },
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 40,
+              "w": 10,
+              "h": 10,
+              "fill": "sun"
+            },
+            {
+              "type": "rect",
+              "x": 60,
+              "y": 40,
+              "w": 10,
+              "h": 10,
+              "fill": "sun"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 30,
+              "x2": 50,
+              "y2": 10,
+              "stroke": "accent",
+              "sw": 4
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 8,
+              "r": 5,
+              "fill": "accent"
+            }
+          ]
+        },
+        {
+          "caption": "CSELT wird zum Forschungszentrum des STET-Konzerns.",
+          "chapter": 1,
+          "bg": "paper",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 30,
+              "y": 40,
+              "w": 40,
+              "h": 40,
+              "fill": "stone"
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 20,
+              "r": 15,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 70,
+              "y1": 60,
+              "x2": 90,
+              "y2": 60,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 90,
+              "cy": 60,
+              "r": 5,
+              "fill": "ink"
+            },
+            {
+              "type": "line",
+              "x1": 30,
+              "y1": 60,
+              "x2": 10,
+              "y2": 60,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 10,
+              "cy": 60,
+              "r": 5,
+              "fill": "ink"
+            }
+          ]
+        },
+        {
+          "caption": "Industrielle Forschungskooperationen weltweit.",
+          "chapter": 1,
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 40,
+              "fill": "none",
+              "stroke": "water",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 30,
+              "fill": "leaf"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 50,
+              "x2": 80,
+              "y2": 20,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 80,
+              "cy": 20,
+              "r": 5,
+              "fill": "accent"
+            },
+            {
+              "type": "line",
+              "x1": 50,
+              "y1": 50,
+              "x2": 20,
+              "y2": 80,
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 20,
+              "cy": 80,
+              "r": 5,
+              "fill": "accent"
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "classic"
+    },
+    {
       "id": "sl_1927695399",
       "title": "Moroders Klangwelt",
       "titleAuto": false,
@@ -12840,6 +13136,925 @@
     }
   ],
   "topics": [
+    {
+      "id": "tp_17909638787390000093",
+      "topic": "Lebendiges Turin",
+      "topicEmoji": "🏙️",
+      "userTopic": "Torino è da sempre una città molto vivac…",
+      "userPrompt": "Torino è da sempre una città molto vivac…\n\n[story]\nTorino è da sempre una città molto vivace dal punto di vista della ricerca scientifica e applicata in diverse discipline. Essa, nel tempo, ha conseguito diversi primati. Ad esempio, qui è nato il motore elettrico a corrente alternata a opera di Galileo Ferraris, che scoprì e dimostrò il campo magnetico rotante. Nel 1961 venne creato il laboratorio di telecomunicazioni CSEL, divenuto nel 1964 il centro di ricerca CSELT del gruppo STET: già alla fine del decennio era affermato con collaborazioni di ricerca industriale con partner non più solo nazionali. Il gruppo di tecnologie vocali di CSELT produsse, nel 1975, il primo sintetizzatore vocale al mondo capace di parlare italiano e, curiosamente, anche di cantare: MUSA: il gruppo continuò la sua attività e nel 2001 divenne lo spinoff Loquendo SpA. Nel 1977 Torino fu anche la prima città al mondo dotata di una rete di fibra ottica urbana (lunga 9 km)[91]), sperimentata proprio da CSELT; sempre in CSELT, inoltre, nacque l'iniziativa MPEG che portò alla creazione, tra gli altri, dello standard di codifica audio MP3 (il cui corretto funzionamento proprio qui venne dimostrato, per la prima volta in assoluto, nel marzo 1992), diffuso rapidamente in tutto il mondo.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Torino è da sempre una città molto vivace dal punto di vista della ricerca scientifica e applicata in diverse discipline. Essa, nel tempo, ha conseguito diversi primati. Ad esempio, qui è nato il motore elettrico a corrente alternata a opera di Galileo Ferraris, che scoprì e dimostrò il campo magnetico rotante. Nel 1961 venne creato il laboratorio di telecomunicazioni CSEL, divenuto nel 1964 il centro di ricerca CSELT del gruppo STET: già alla fine del decennio era affermato con collaborazioni di ricerca industriale con partner non più solo nazionali. Il gruppo di tecnologie vocali di CSELT produsse, nel 1975, il primo sintetizzatore vocale al mondo capace di parlare italiano e, curiosamente, anche di cantare: MUSA: il gruppo continuò la sua attività e nel 2001 divenne lo spinoff Loquendo SpA. Nel 1977 Torino fu anche la prima città al mondo dotata di una rete di fibra ottica urbana (lunga 9 km)[91]), sperimentata proprio da CSELT; sempre in CSELT, inoltre, nacque l'iniziativa MPEG che portò alla creazione, tra gli altri, dello standard di codifica audio MP3 (il cui corretto funzionamento proprio qui venne dimostrato, per la prima volta in assoluto, nel marzo 1992), diffuso rapidamente in tutto il mondo.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "storyMeta": {
+        "type": "story",
+        "model": "(user-provided)",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "ms": null,
+        "at": "2026-10-02T17:56:45.436Z",
+        "origin": "user-pasted",
+        "source": "recorded at generation"
+      },
+      "translationMeta": {
+        "type": "translation",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 1,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 363,
+        "completionTokens": 301,
+        "ms": 73302,
+        "at": "2026-10-02T17:57:58.738Z",
+        "origin": "generated",
+        "source": "recorded at generation"
+      },
+      "storyTranslation": "Turin ist seit jeher eine sehr aktive Stadt im Bereich der Grundlagenforschung und angewandten Forschung in verschiedenen Disziplinen. Im Laufe der Zeit erzielte sie zahlreiche Pionierleistungen. So wurde hier von Galileo Ferraris der Drehstrommotor erfunden, der das rotierende Magnetfeld entdeckte und nachwies. 1961 wurde das Telekommunikationslabor CSEL gegründet, das 1964 zum Forschungszentrum CSELT der STET-Gruppe wurde; bereits Ende des Jahrzehnts war es etabliert und pflegte industrielle Forschungskooperationen mit Partnern, die nicht mehr nur italienisch waren. Die Sprachtechnologie-Gruppe von CSELT entwickelte 1975 den weltweit ersten Sprachsynthesizer, der Italienisch sprechen konnte – und kurioserweise auch singen konnte: MUSA. Die Gruppe setzte ihre Arbeit fort und wurde 2001 zum Spin-off Loquendo SpA. 1977 war Turin zudem die erste Stadt der Welt mit einem städtischen Glasfasernetz (mit einer Länge von 9 km), das vom CSELT getestet wurde; ebenfalls in CSELT entstand die MPEG-Initiative, die unter anderem zur Entwicklung des Audio-Kodierungsstandards MP3 führte (dessen korrekte Funktionsweise hier im März 1992 zum ersten Mal überhaupt nachgewiesen wurde) und der sich rasch weltweit verbreitete.",
+      "userStory": "Torino è da sempre una città molto vivace dal punto di vista della ricerca scientifica e applicata in diverse discipline. Essa, nel tempo, ha conseguito diversi primati. Ad esempio, qui è nato il motore elettrico a corrente alternata a opera di Galileo Ferraris, che scoprì e dimostrò il campo magnetico rotante. Nel 1961 venne creato il laboratorio di telecomunicazioni CSEL, divenuto nel 1964 il centro di ricerca CSELT del gruppo STET: già alla fine del decennio era affermato con collaborazioni di ricerca industriale con partner non più solo nazionali. Il gruppo di tecnologie vocali di CSELT produsse, nel 1975, il primo sintetizzatore vocale al mondo capace di parlare italiano e, curiosamente, anche di cantare: MUSA: il gruppo continuò la sua attività e nel 2001 divenne lo spinoff Loquendo SpA. Nel 1977 Torino fu anche la prima città al mondo dotata di una rete di fibra ottica urbana (lunga 9 km)[91]), sperimentata proprio da CSELT; sempre in CSELT, inoltre, nacque l'iniziativa MPEG che portò alla creazione, tra gli altri, dello standard di codifica audio MP3 (il cui corretto funzionamento proprio qui venne dimostrato, per la prima volta in assoluto, nel marzo 1992), diffuso rapidamente in tutto il mondo.",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Turins wissenschaftliche Geschichte",
+          "desc": "Wichtige Erfindungen und Meilensteine in Turin",
+          "icon": "🔬",
+          "vocab": [
+            {
+              "target": "la città",
+              "source": "die Stadt",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:città",
+                "canonicalId": "it:vocab:città",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "vivace",
+              "source": "aktiv",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:vivace",
+                "canonicalId": "it:vocab:vivace",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la ricerca",
+              "source": "die Forschung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:ricerca",
+                "canonicalId": "it:vocab:ricerca",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il motore elettrico",
+              "source": "der Elektromotor",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:motore",
+                "canonicalId": "it:vocab:motore",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il laboratorio",
+              "source": "das Labor",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:laboratorio",
+                "canonicalId": "it:vocab:laboratorio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la fibra ottica",
+              "source": "die Glasfaser",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:fibra",
+                "canonicalId": "it:vocab:fibra",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il sintetizzatore vocale",
+              "source": "der Sprachsynthesizer",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:sintetizzatore",
+                "canonicalId": "it:vocab:sintetizzatore",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "lo standard",
+              "source": "der Standard",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:standard",
+                "canonicalId": "it:vocab:standard",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Torino è da sempre una città molto vivace.",
+              "source": "Turin ist seit jeher eine sehr aktive Stadt.",
+              "words": [
+                "Torino",
+                "è",
+                "da",
+                "sempre",
+                "una",
+                "città",
+                "molto",
+                "vivace."
+              ]
+            },
+            {
+              "target": "Qui è nato il motore elettrico a corrente alternata.",
+              "source": "Hier wurde der Drehstrommotor erfunden.",
+              "words": [
+                "Qui",
+                "è",
+                "nato",
+                "il",
+                "motore",
+                "elettrico",
+                "a",
+                "corrente",
+                "alternata."
+              ]
+            },
+            {
+              "target": "Nel 1961 venne creato il laboratorio di telecomunicazioni CSEL.",
+              "source": "1961 wurde das Telekommunikationslabor CSEL gegründet.",
+              "words": [
+                "Nel",
+                "1961",
+                "venne",
+                "creato",
+                "il",
+                "laboratorio",
+                "di",
+                "telecomunicazioni",
+                "CSEL."
+              ]
+            },
+            {
+              "target": "MUSA poteva parlare italiano e cantare.",
+              "source": "MUSA konnte Italienisch sprechen und singen.",
+              "words": [
+                "MUSA",
+                "poteva",
+                "parlare",
+                "italiano",
+                "e",
+                "cantare."
+              ]
+            },
+            {
+              "target": "Torino fu la prima città con una rete di fibra ottica.",
+              "source": "Turin war die erste Stadt mit einem Glasfasernetz.",
+              "words": [
+                "Torino",
+                "fu",
+                "la",
+                "prima",
+                "città",
+                "con",
+                "una",
+                "rete",
+                "di",
+                "fibra",
+                "ottica."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1507,
+            "completionTokens": 590,
+            "ms": 237004,
+            "at": "2026-10-02T18:01:55.848Z"
+          }
+        },
+        {
+          "id": "ls_1790964644737_0_standard",
+          "title": "Lebendiges Turin",
+          "desc": "Wichtige Erfindungen und Fakten aus Turin",
+          "icon": "🏙️",
+          "vocab": [
+            {
+              "target": "la città",
+              "source": "die Stadt",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il motore elettrico",
+              "source": "der Elektromotor",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il campo magnetico",
+              "source": "das Magnetfeld",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la fibra ottica",
+              "source": "die Glasfaser",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "lo standard",
+              "source": "der Standard",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il sintetizzatore vocale",
+              "source": "der Sprachsynthesizer",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la ricerca",
+              "source": "die Forschung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "l'iniziativa",
+              "source": "die Initiative",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "",
+                "canonicalId": null,
+                "skillId": null,
+                "status": "missing",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Torino è una città vivace.",
+              "source": "Turin ist eine lebendige Stadt.",
+              "words": [
+                "Torino",
+                "è",
+                "una",
+                "città",
+                "vivace."
+              ]
+            },
+            {
+              "target": "Il motore elettrico nacque qui.",
+              "source": "Der Elektromotor wurde hier geboren.",
+              "words": [
+                "Il",
+                "motore",
+                "elettrico",
+                "nacque",
+                "qui."
+              ]
+            },
+            {
+              "target": "La fibra ottica collega le case.",
+              "source": "Die Glasfaser verbindet die Häuser.",
+              "words": [
+                "La",
+                "fibra",
+                "ottica",
+                "collega",
+                "le",
+                "case."
+              ]
+            },
+            {
+              "target": "Lo standard MP3 è famoso.",
+              "source": "Der MP3-Standard ist berühmt.",
+              "words": [
+                "Lo",
+                "standard",
+                "MP3",
+                "è",
+                "famoso."
+              ]
+            },
+            {
+              "target": "La ricerca scientifica avanza.",
+              "source": "Die wissenschaftliche Forschung schreitet voran.",
+              "words": [
+                "La",
+                "ricerca",
+                "scientifica",
+                "avanza."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1229,
+            "completionTokens": 444,
+            "ms": 176667,
+            "at": "2026-10-02T18:10:44.737Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790964917627_0_word_forms",
+          "type": "word_forms",
+          "title": "Torino e l'innovazione",
+          "desc": "Esercizi sulle forme delle parole",
+          "icon": "🏙️",
+          "items": [
+            {
+              "sentence": "Torino è da sempre una città molto vivace dal punto di vista della ricerca scientifica e ___ in diverse discipline.",
+              "translation": "Turin ist seit jeher eine sehr lebendige Stadt im Hinblick auf die wissenschaftliche und angewandte Forschung in verschiedenen Disziplinen.",
+              "choices": [
+                "applicata",
+                "applicato",
+                "applicati"
+              ],
+              "correctIndex": 0,
+              "explanation": "Aggettivo riferito a 'ricerca' (femminile singolare)"
+            },
+            {
+              "sentence": "Ad esempio, qui è nato il motore elettrico a corrente alternata a opera di Galileo Ferraris, che scoprì e ___ il campo magnetico rotante.",
+              "translation": "Zum Beispiel wurde hier der Wechselstrom-Elektromotor von Galileo Ferraris erfunden, der das rotierende Magnetfeld entdeckte und nachwies.",
+              "choices": [
+                "dimostrò",
+                "dimostrare",
+                "dimostra"
+              ],
+              "correctIndex": 0,
+              "explanation": "Passato remoto parallelo a 'scoprì'"
+            },
+            {
+              "sentence": "Nel 1961 venne creato il laboratorio di telecomunicazioni CSEL, ___ nel 1964 il centro di ricerca CSELT del gruppo STET.",
+              "translation": "Im Jahr 1961 wurde das Telekommunikationslabor CSEL gegründet, das 1964 zum Forschungszentrum CSELT der STET-Gruppe wurde.",
+              "choices": [
+                "divenuto",
+                "diventato",
+                "diventa"
+              ],
+              "correctIndex": 0,
+              "explanation": "Participio passato di 'divenire' (formale)"
+            },
+            {
+              "sentence": "Il gruppo di tecnologie vocali di CSELT produsse, nel 1975, il primo sintetizzatore vocale al mondo capace di parlare italiano e, curiosamente, anche di ___:",
+              "translation": "Die Sprachtechnologie-Gruppe von CSELT produzierte 1975 den ersten weltweit fähigen Vokalsynthesizer, Italienisch zu sprechen und, kurioserweise, auch zu singen.",
+              "choices": [
+                "cantare",
+                "cantando",
+                "cantato"
+              ],
+              "correctIndex": 0,
+              "explanation": "Infinito parallelo a 'parlare'"
+            },
+            {
+              "sentence": "Nel 1977 Torino fu anche la prima città al mondo dotata di una rete di fibra ottica urbana (lunga 9 km), sperimentata proprio da CSELT; sempre in CSELT, inoltre, nacque l'iniziativa MPEG che portò alla ___, tra gli altri, dello standard di codifica audio MP3.",
+              "translation": "1977 war Turin auch die erste Stadt der Welt mit einem städtischen Glasfasernetz (9 km lang), das genau von CSELT getestet wurde; ebenfalls in CSELT entstand die MPEG-Initiative, die unter anderem zur Schaffung des Audio-Codierungsstandards MP3 führte.",
+              "choices": [
+                "creazione",
+                "creare",
+                "creato"
+              ],
+              "correctIndex": 0,
+              "explanation": "Sostantivo femminile dopo 'alla'"
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1671,
+            "completionTokens": 840,
+            "ms": 272806,
+            "at": "2026-10-02T18:15:17.627Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790965414826_0_inflections",
+          "type": "inflections",
+          "title": "Italienische Inflectionen",
+          "desc": "Lemmata und Formen erkennen",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "Torino è da sempre una città molto vivace dal punto di vista della ricerca scientifica e applicata in diverse discipline.",
+              "surfaceForm": "città",
+              "translation": "Turin ist seit jeher eine sehr lebendige Stadt im Hinblick auf die wissenschaftliche und angewandte Forschung in verschiedenen Disziplinen.",
+              "lemma": "la città",
+              "lemmaChoices": [
+                "la città",
+                "il città",
+                "le città",
+                "i città"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Singularis",
+              "formChoices": [
+                "Singularis",
+                "Pluralis"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Singular von 'la città', ein Substantiv der ersten Deklination."
+            },
+            {
+              "sentence": "Ad esempio, qui è nato il motore elettrico a corrente alternata a opera di Galileo Ferraris, che scoprì e dimostrò il campo magnetico rotante.",
+              "surfaceForm": "scoprì",
+              "translation": "Zum Beispiel wurde hier der Elektromotor mit Wechselstrom von Galileo Ferraris erfunden, der das rotierende Magnetfeld entdeckte und nachwies.",
+              "lemma": "scoprire",
+              "lemmaChoices": [
+                "scoprire",
+                "scopre",
+                "scoprì",
+                "scoprendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato Remoto, 3. Person Singular",
+              "formChoices": [
+                "Passato Remoto, 3. Person Singular",
+                "Passato Prossimo, 3. Person Singular",
+                "Imperfetto, 3. Person Singular",
+                "Passato Remoto, 1. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato Remoto (einfache Vergangenheit) von 'scoprire', 3. Person Singular."
+            },
+            {
+              "sentence": "Il gruppo di tecnologie vocali di CSELT produsse, nel 1975, il primo sintetizzatore vocale al mondo capace di parlare italiano e, curiosamente, anche di cantare: MUSA: il gruppo continuò la sua attività e nel 2001 divenne lo spinoff Loquendo SpA.",
+              "surfaceForm": "produsse",
+              "translation": "Die CSELT-Gruppe der Sprachtechnologien produzierte 1975 den ersten weltweit fähigen Vokalsynthesizer, Italienisch zu sprechen und, kurioserweise, auch zu singen: MUSA: die Gruppe setzte ihre Tätigkeit fort und wurde 2001 zum Spin-off Loquendo SpA.",
+              "lemma": "produrre",
+              "lemmaChoices": [
+                "produrre",
+                "produce",
+                "produsse",
+                "producendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato Remoto, 3. Person Singular",
+              "formChoices": [
+                "Passato Remoto, 3. Person Singular",
+                "Passato Prossimo, 3. Person Singular",
+                "Imperfetto, 3. Person Singular",
+                "Passato Remoto, 2. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato Remoto (einfache Vergangenheit) von 'produrre', 3. Person Singular."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 1,
+            "rejectReasons": {
+              "surfaceForm not found as a whole word in sentence": 1
+            },
+            "promptTokens": 2625,
+            "completionTokens": 1408,
+            "ms": 497103,
+            "at": "2026-10-02T18:23:34.826Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790965654251_0_synonyms",
+          "type": "synonyms",
+          "title": "Wissenschaft und Innovation in Turin",
+          "desc": "Die technologischen Errungenschaften der Stadt",
+          "icon": "🏙️",
+          "words": [
+            {
+              "base": "vivace",
+              "gloss": "lebhaft",
+              "sentence": "Torino è da sempre una città molto vivace dal punto di vista della ricerca scientifica e applicata in diverse discipline.",
+              "synonyms": [
+                {
+                  "w": "vibrante",
+                  "g": "vibrierend"
+                },
+                {
+                  "w": "dinamica",
+                  "g": "dynamisch"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "noiosa",
+                  "g": "langweilig"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "primati",
+              "gloss": "Rekorde / Erstauszeichnungen",
+              "sentence": "Essa, nel tempo, ha conseguito diversi primati.",
+              "synonyms": [
+                {
+                  "w": "record",
+                  "g": "Rekorde"
+                },
+                {
+                  "w": "primizie",
+                  "g": "Erstlinge"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "dimostrò",
+              "gloss": "bewies / demonstrierte",
+              "sentence": "Galileo Ferraris, che scoprì e dimostrò il campo magnetico rotante.",
+              "synonyms": [
+                {
+                  "w": "provò",
+                  "g": "versuchte / bewies"
+                },
+                {
+                  "w": "evidenziò",
+                  "g": "machte deutlich"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "affermato",
+              "gloss": "etabliert / anerkannt",
+              "sentence": "già alla fine del decennio era affermato con collaborazioni di ricerca industriale con partner non più solo nazionali.",
+              "synonyms": [
+                {
+                  "w": "consolidato",
+                  "g": "konsolidiert"
+                },
+                {
+                  "w": "riconosciuto",
+                  "g": "anerkannt"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "nato",
+              "gloss": "geboren / entstanden",
+              "sentence": "Ad esempio, qui è nato il motore elettrico a corrente alternata a opera di Galileo Ferraris, che scoprì e dimostrò il campo magnetico rotante.",
+              "synonyms": [
+                {
+                  "w": "sorto",
+                  "g": "entstanden"
+                },
+                {
+                  "w": "creato",
+                  "g": "erschaffen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1415,
+            "completionTokens": 732,
+            "ms": 239333,
+            "at": "2026-10-02T18:27:34.251Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790965806384_0_grammar",
+          "type": "grammar",
+          "title": "Nomen und Artikel",
+          "desc": "Geschlecht und Plural in Italienisch",
+          "icon": "📚",
+          "grammar": [
+            {
+              "target": "cselt",
+              "source": "Schicksal",
+              "gender": "n",
+              "article": "das",
+              "plural": "culti"
+            },
+            {
+              "target": "ricerca",
+              "source": "Forschung",
+              "gender": "f",
+              "article": "la",
+              "plural": "ricerche"
+            },
+            {
+              "target": "gruppo",
+              "source": "Gruppe",
+              "gender": "m",
+              "article": "il",
+              "plural": "gruppi"
+            },
+            {
+              "target": "mondo",
+              "source": "Welt",
+              "gender": "m",
+              "article": "il",
+              "plural": "mondi"
+            },
+            {
+              "target": "fiume",
+              "source": "Fluss",
+              "gender": "m",
+              "article": "il",
+              "plural": "fiumi"
+            },
+            {
+              "target": "strada",
+              "source": "Straße",
+              "gender": "f",
+              "article": "la",
+              "plural": "strade"
+            },
+            {
+              "target": "palazzo",
+              "source": "Palast",
+              "gender": "m",
+              "article": "il",
+              "plural": "palazzi"
+            },
+            {
+              "target": "piazza",
+              "source": "Platz",
+              "gender": "f",
+              "article": "la",
+              "plural": "piazze"
+            }
+          ],
+          "_genMeta": {
+            "type": "grammar",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 2,
+            "rejectReasons": {
+              "target===plural (\"torino\") — likely already a plural": 1,
+              "missing plural": 1
+            },
+            "promptTokens": 646,
+            "completionTokens": 536,
+            "ms": 152049,
+            "at": "2026-10-02T18:30:06.384Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790966059894_0_comprehension",
+          "type": "comprehension",
+          "title": "Wissenschaftliche Erfolge in Turin",
+          "desc": "Teste dein Verständnis des Textes über die technologischen Errungenschaften der Stadt Turin.",
+          "icon": "🧠",
+          "questions": [
+            {
+              "q": "Was ist eine besondere Fähigkeit des ersten italienischen Sprachsynthesizers MUSA?",
+              "choices": [
+                "Er konnte nicht nur sprechen, sondern auch singen.",
+                "Er war der erste Synthesizer, der weltweit MP3-Dateien abspielen konnte.",
+                "Er nutzte Glasfaserkabel, um seine Stimme zu übertragen.",
+                "Er wurde von Galileo Ferraris persönlich entwickelt."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text erwähnt, dass MUSA 1975 der erste Synthesizer war, der italienisch sprechen und 'curiosamente' auch singen konnte."
+            },
+            {
+              "q": "Welche Rolle spielte das CSELT bei der Entwicklung von MP3?",
+              "choices": [
+                "Es initiierte MPEG und demonstrierte die korrekte Funktion von MP3.",
+                "Es erfand den elektrischen Motor, der für MP3 benötigt wird.",
+                "Es verkaufte die Rechte an MP3 an ein japanisches Unternehmen.",
+                "Es baute die erste Glasfaserleitung speziell für MP3-Übertragungen."
+              ],
+              "correctIndex": 0,
+              "why": "Laut Text entstand in CSELT die MPEG-Initiative und wurde dort im März 1992 die korrekte Funktion von MP3 zum ersten Mal überhaupt demonstriert."
+            },
+            {
+              "q": "Wie entwickelte sich das Unternehmen Loquendo SpA?",
+              "choices": [
+                "Es ging aus dem Technologie-Team von CSELT hervor.",
+                "Es wurde von Galileo Ferraris gegründet, um Musik zu komponieren.",
+                "Es ist ein direkter Nachfolger des CSEL-Labors aus dem Jahr 1961.",
+                "Es entwickelte sich aus der Glasfaser-Abteilung in Turin."
+              ],
+              "correctIndex": 0,
+              "why": "Der Text besagt, dass die Gruppe von CSELT ihre Tätigkeit fortsetzte und im Jahr 2001 zum Spin-off Loquendo SpA wurde."
+            }
+          ],
+          "_genMeta": {
+            "type": "comprehension",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 2,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1532,
+            "completionTokens": 1113,
+            "ms": 253421,
+            "at": "2026-10-02T18:34:19.894Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1790966134823_0_writing",
+          "type": "writing",
+          "title": "Torino e l'innovazione tecnologica",
+          "desc": "La storia della ricerca scientifica a Torino",
+          "icon": "🔬",
+          "question": "Quali sono le principali innovazioni tecnologiche nate a Torino grazie al CSELT e quali conseguenze hanno avuto?",
+          "_genMeta": {
+            "type": "writing",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 1,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 575,
+            "completionTokens": 73,
+            "ms": 74837,
+            "at": "2026-10-02T18:35:34.823Z"
+          },
+          "_recreated": true
+        }
+      ],
+      "generationStats": {
+        "totalMs": 328874,
+        "backend": "ollama",
+        "model": "qwen3.6:35b-a3b",
+        "models": {
+          "story": null,
+          "translation": "qwen3.6:35b-a3b",
+          "lessons": "qwen3.6:35b-a3b"
+        },
+        "lessonFormat": "json",
+        "totalPromptTokens": 11774,
+        "totalCompletionTokens": 6075,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 236993,
+            "promptTokens": 1507,
+            "completionTokens": 590
+          }
+        ],
+        "tokensByType": {
+          "recreate": 14839
+        }
+      },
+      "generatedAt": "2026-10-02T17:57:58.740Z",
+      "updatedAt": "2026-10-02T18:54:27.896Z",
+      "createdBy": "admin"
+    },
     {
       "id": "tp_17906209788970000537",
       "topic": "Kulturelle Verflechtung",

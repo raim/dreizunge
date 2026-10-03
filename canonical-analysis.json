@@ -16905,8 +16905,1734 @@
       },
       "sourceTextHash": "5031e341e08d",
       "analyzedAt": "2026-09-28T18:06:57.680Z"
+    },
+    "tp_17909638787390000093": {
+      "chapterId": "tp_17909638787390000093",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 5,
+      "tokenCount": 129,
+      "sentences": [
+        {
+          "sentenceId": "tp_17909638787390000093:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17909638787390000093:s0:t0",
+              "idx": 0,
+              "surface": "Torino",
+              "lemma": "Torino",
+              "form": "Eigenname, Substantiv, Singular, Nominativ",
+              "sense": "die Stadt Turin",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t1",
+              "idx": 1,
+              "surface": "è",
+              "lemma": "essere",
+              "form": "Verb, Präsens, Indikativ, 3. Person Singular",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t2",
+              "idx": 2,
+              "surface": "da",
+              "lemma": "da",
+              "form": "Präposition",
+              "sense": "von ... an (Zeitangabe)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t3",
+              "idx": 3,
+              "surface": "sempre",
+              "lemma": "sempre",
+              "form": "Adverb",
+              "sense": "immer",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t4",
+              "idx": 4,
+              "surface": "una",
+              "lemma": "uno",
+              "form": "Indefinitartikel, Maskulinum, Singular, Nominativ/Akkusativ",
+              "sense": "eine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t5",
+              "idx": 5,
+              "surface": "città",
+              "lemma": "città",
+              "form": "Substantiv, Femininum, Singular, Nominativ",
+              "sense": "Stadt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t6",
+              "idx": 6,
+              "surface": "molto",
+              "lemma": "molto",
+              "form": "Adverb",
+              "sense": "sehr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t7",
+              "idx": 7,
+              "surface": "vivace",
+              "lemma": "vivace",
+              "form": "Adjektiv, Femininum, Singular, Nominativ",
+              "sense": "lebhaft",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t8",
+              "idx": 8,
+              "surface": "dal",
+              "lemma": "dal",
+              "form": "Kontrahierte Präposition (da + il)",
+              "sense": "vom ... aus / im Hinblick auf den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t9",
+              "idx": 9,
+              "surface": "punto",
+              "lemma": "punto",
+              "form": "Substantiv, Maskulinum, Singular, Nominativ/Akkusativ",
+              "sense": "Punkt (im Sinne von Aspekt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t10",
+              "idx": 10,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von / des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t11",
+              "idx": 11,
+              "surface": "vista",
+              "lemma": "vista",
+              "form": "Substantiv, Femininum, Singular, Nominativ/Akkusativ",
+              "sense": "Sicht / Perspektive",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t12",
+              "idx": 12,
+              "surface": "della",
+              "lemma": "della",
+              "form": "Kontrahierte Präposition (di + la)",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t13",
+              "idx": 13,
+              "surface": "ricerca",
+              "lemma": "ricerca",
+              "form": "Substantiv, Femininum, Singular, Genitiv",
+              "sense": "Forschung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t14",
+              "idx": 14,
+              "surface": "scientifica",
+              "lemma": "scientifica",
+              "form": "Adjektiv, Femininum, Singular, Genitiv",
+              "sense": "wissenschaftlich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t15",
+              "idx": 15,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t16",
+              "idx": 16,
+              "surface": "applicata",
+              "lemma": "applicata",
+              "form": "Adjektiv, Femininum, Singular, Genitiv",
+              "sense": "angewandt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t17",
+              "idx": 17,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t18",
+              "idx": 18,
+              "surface": "diverse",
+              "lemma": "diverse",
+              "form": "Adjektiv, Femininum, Plural, Dativ/Akkusativ",
+              "sense": "verschiedene",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s0:t19",
+              "idx": 19,
+              "surface": "discipline.",
+              "lemma": "disciplina",
+              "form": "Substantiv, Femininum, Plural, Dativ/Akkusativ",
+              "sense": "Disziplinen / Fachgebiete",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 2,
+              "end": 3,
+              "tokenIds": [
+                "tp_17909638787390000093:s0:t2",
+                "tp_17909638787390000093:s0:t3"
+              ],
+              "lemma": "da sempre",
+              "gloss": "seit jeher / schon immer",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 8,
+              "end": 11,
+              "tokenIds": [
+                "tp_17909638787390000093:s0:t8",
+                "tp_17909638787390000093:s0:t9",
+                "tp_17909638787390000093:s0:t10",
+                "tp_17909638787390000093:s0:t11"
+              ],
+              "lemma": "dal punto di vista",
+              "gloss": "vom Standpunkt aus / in Bezug auf",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-02T19:03:18.909Z",
+            "sentenceId": "tp_17909638787390000093:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2200
+          },
+          "text": "Torino è da sempre una città molto vivace dal punto di vista della ricerca scientifica e applicata in diverse discipline.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17909638787390000093:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17909638787390000093:s1:t0",
+              "idx": 0,
+              "surface": "Essa,",
+              "lemma": "esso",
+              "form": "Personalpronomen, 3. Person Singular Femininum Nominativ",
+              "sense": "sie (bezieht sich auf ein weibliches Substantiv)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s1:t1",
+              "idx": 1,
+              "surface": "nel",
+              "lemma": "in",
+              "form": "Präposition mit Artikel",
+              "sense": "in dem",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s1:t2",
+              "idx": 2,
+              "surface": "tempo,",
+              "lemma": "tempo",
+              "form": "Substantiv, Maskulinum Singular",
+              "sense": "Zeit (im Verlauf der Zeit)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s1:t3",
+              "idx": 3,
+              "surface": "ha",
+              "lemma": "avere",
+              "form": "Hilfsverb, 3. Person Singular Indikativ Präsens",
+              "sense": "hat (Bildung des Perfekts)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s1:t4",
+              "idx": 4,
+              "surface": "conseguito",
+              "lemma": "conseguire",
+              "form": "Partizip Perfekt Aktiv",
+              "sense": "erreicht / erzielt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s1:t5",
+              "idx": 5,
+              "surface": "diversi",
+              "lemma": "diverso",
+              "form": "Adjektiv, Maskulinum Plural",
+              "sense": "verschiedene",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s1:t6",
+              "idx": 6,
+              "surface": "primati.",
+              "lemma": "primato",
+              "form": "Substantiv, Maskulinum Plural",
+              "sense": "Rekorde / Spitzenleistungen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17909638787390000093:s1:t3",
+                "tp_17909638787390000093:s1:t4"
+              ],
+              "lemma": "avere conseguito",
+              "gloss": "erreicht haben / erzielt haben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 1,
+              "end": 2,
+              "tokenIds": [
+                "tp_17909638787390000093:s1:t1",
+                "tp_17909638787390000093:s1:t2"
+              ],
+              "lemma": "nel tempo",
+              "gloss": "im Laufe der Zeit",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-02T19:05:17.936Z",
+            "sentenceId": "tp_17909638787390000093:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Essa, nel tempo, ha conseguito diversi primati.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17909638787390000093:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17909638787390000093:s2:t0",
+              "idx": 0,
+              "surface": "Ad",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t1",
+              "idx": 1,
+              "surface": "esempio,",
+              "lemma": "esempio",
+              "form": "Nomen Substantivum Neutrum Singular Nominativ/Akkusativ",
+              "sense": "Beispiel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t2",
+              "idx": 2,
+              "surface": "qui",
+              "lemma": "qui",
+              "form": "Adverb",
+              "sense": "hier",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t3",
+              "idx": 3,
+              "surface": "è",
+              "lemma": "essere",
+              "form": "Verb Hilfsverb Indikativ Präsens 3. Person Singular",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t4",
+              "idx": 4,
+              "surface": "nato",
+              "lemma": "nascere",
+              "form": "Verb Partizip Perfekt Maskulinum Singular",
+              "sense": "geboren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t5",
+              "idx": 5,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Artikel Definitiv Maskulinum Singular Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t6",
+              "idx": 6,
+              "surface": "motore",
+              "lemma": "motore",
+              "form": "Nomen Substantivum Maskulinum Singular Nominativ",
+              "sense": "Motor",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t7",
+              "idx": 7,
+              "surface": "elettrico",
+              "lemma": "elettrico",
+              "form": "Adjektiv Maskulinum Singular Nominativ",
+              "sense": "elektrisch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t8",
+              "idx": 8,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t9",
+              "idx": 9,
+              "surface": "corrente",
+              "lemma": "corrente",
+              "form": "Nomen Substantivum Femininum Singular Nominativ/Akkusativ",
+              "sense": "Strom",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t10",
+              "idx": 10,
+              "surface": "alternata",
+              "lemma": "alternato",
+              "form": "Adjektiv Femininum Singular Nominativ/Akkusativ",
+              "sense": "wechselnd",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t11",
+              "idx": 11,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "durch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t12",
+              "idx": 12,
+              "surface": "opera",
+              "lemma": "opera",
+              "form": "Nomen Substantivum Femininum Singular Ablativ",
+              "sense": "Werk/Tat",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t13",
+              "idx": 13,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t14",
+              "idx": 14,
+              "surface": "Galileo",
+              "lemma": "Galileo",
+              "form": "Eigenname Maskulinum Singular",
+              "sense": "Galileo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t15",
+              "idx": 15,
+              "surface": "Ferraris,",
+              "lemma": "Ferraris",
+              "form": "Eigenname Maskulinum Singular",
+              "sense": "Ferraris",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t16",
+              "idx": 16,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen Akkusativ/Instrumental",
+              "sense": "der/die/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t17",
+              "idx": 17,
+              "surface": "scoprì",
+              "lemma": "scoprire",
+              "form": "Verb Indikativ Perfekt 3. Person Singular",
+              "sense": "entdeckte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t18",
+              "idx": 18,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t19",
+              "idx": 19,
+              "surface": "dimostrò",
+              "lemma": "dimostrare",
+              "form": "Verb Indikativ Perfekt 3. Person Singular",
+              "sense": "bewies",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t20",
+              "idx": 20,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Artikel Definitiv Maskulinum Singular Akkusativ",
+              "sense": "den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t21",
+              "idx": 21,
+              "surface": "campo",
+              "lemma": "campo",
+              "form": "Nomen Substantivum Maskulinum Singular Akkusativ",
+              "sense": "Feld",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t22",
+              "idx": 22,
+              "surface": "magnetico",
+              "lemma": "magnetico",
+              "form": "Adjektiv Maskulinum Singular Akkusativ",
+              "sense": "magnetisch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s2:t23",
+              "idx": 23,
+              "surface": "rotante.",
+              "lemma": "rotante",
+              "form": "Partizip Präsens Adjektiv Maskulinum Singular Akkusativ",
+              "sense": "rotierend",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17909638787390000093:s2:t0",
+                "tp_17909638787390000093:s2:t1"
+              ],
+              "lemma": "ad esempio",
+              "gloss": "zum Beispiel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 6,
+              "end": 7,
+              "tokenIds": [
+                "tp_17909638787390000093:s2:t6",
+                "tp_17909638787390000093:s2:t7"
+              ],
+              "lemma": "motore elettrico",
+              "gloss": "Elektromotor",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 8,
+              "end": 10,
+              "tokenIds": [
+                "tp_17909638787390000093:s2:t8",
+                "tp_17909638787390000093:s2:t9",
+                "tp_17909638787390000093:s2:t10"
+              ],
+              "lemma": "a corrente alternata",
+              "gloss": "Wechselstrom-",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 11,
+              "end": 13,
+              "tokenIds": [
+                "tp_17909638787390000093:s2:t11",
+                "tp_17909638787390000093:s2:t12",
+                "tp_17909638787390000093:s2:t13"
+              ],
+              "lemma": "a opera di",
+              "gloss": "durch das Werk von / erfunden von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 21,
+              "end": 23,
+              "tokenIds": [
+                "tp_17909638787390000093:s2:t21",
+                "tp_17909638787390000093:s2:t22",
+                "tp_17909638787390000093:s2:t23"
+              ],
+              "lemma": "campo magnetico rotante",
+              "gloss": "rotierendes Magnetfeld",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-02T19:12:23.986Z",
+            "sentenceId": "tp_17909638787390000093:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2560
+          },
+          "text": "Ad esempio, qui è nato il motore elettrico a corrente alternata a opera di Galileo Ferraris, che scoprì e dimostrò il campo magnetico rotante.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17909638787390000093:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17909638787390000093:s3:t0",
+              "idx": 0,
+              "surface": "Nel",
+              "lemma": "in",
+              "form": "Präposition + Artikel, maskulin, singular, Dativ",
+              "sense": "im (Zeitangabe)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t1",
+              "idx": 1,
+              "surface": "1961",
+              "lemma": "1961",
+              "form": "Zahlwort, Kardinalzahl",
+              "sense": "1961",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t2",
+              "idx": 2,
+              "surface": "venne",
+              "lemma": "venire",
+              "form": "Verb, Präsens, Indikativ, Passivkonstruktion, 3. Person Singular",
+              "sense": "wurde (Hilfsverb für das Passiv)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t3",
+              "idx": 3,
+              "surface": "creato",
+              "lemma": "creare",
+              "form": "Verb, Partizip Perfekt, maskulin, singular",
+              "sense": "erschaffen / gegründet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t4",
+              "idx": 4,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Artikel, maskulin, singular, Nominativ/Akkusativ",
+              "sense": "das (bestimmter Artikel)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t5",
+              "idx": 5,
+              "surface": "laboratorio",
+              "lemma": "laboratorio",
+              "form": "Substantiv, maskulin, singular",
+              "sense": "Laboratorium",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t6",
+              "idx": 6,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von / für (Genitivverhältnis)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t7",
+              "idx": 7,
+              "surface": "telecomunicazioni",
+              "lemma": "telecomunicazioni",
+              "form": "Substantiv, feminin, plural",
+              "sense": "Telekommunikation",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t8",
+              "idx": 8,
+              "surface": "CSEL,",
+              "lemma": "CSEL",
+              "form": "Eigenname (Akronym)",
+              "sense": "CSEL",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t9",
+              "idx": 9,
+              "surface": "divenuto",
+              "lemma": "divenire",
+              "form": "Verb, Partizip Perfekt, maskulin, singular",
+              "sense": "geworden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t10",
+              "idx": 10,
+              "surface": "nel",
+              "lemma": "nel",
+              "form": "Präposition + Artikel, maskulin, singular, Dativ",
+              "sense": "im (Zeitangabe)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t11",
+              "idx": 11,
+              "surface": "1964",
+              "lemma": "1964",
+              "form": "Zahlwort, Kardinalzahl",
+              "sense": "1964",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t12",
+              "idx": 12,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Artikel, maskulin, singular, Nominativ/Akkusativ",
+              "sense": "das (bestimmter Artikel)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t13",
+              "idx": 13,
+              "surface": "centro",
+              "lemma": "centro",
+              "form": "Substantiv, maskulin, singular",
+              "sense": "Zentrum",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t14",
+              "idx": 14,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von / für (Genitivverhältnis)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t15",
+              "idx": 15,
+              "surface": "ricerca",
+              "lemma": "ricerca",
+              "form": "Substantiv, feminin, singular",
+              "sense": "Forschung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t16",
+              "idx": 16,
+              "surface": "CSELT",
+              "lemma": "CSELT",
+              "form": "Eigenname (Akronym)",
+              "sense": "CSELT",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t17",
+              "idx": 17,
+              "surface": "del",
+              "lemma": "del",
+              "form": "Präposition + Artikel, maskulin, singular, Genitiv",
+              "sense": "der (von dem)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t18",
+              "idx": 18,
+              "surface": "gruppo",
+              "lemma": "gruppo",
+              "form": "Substantiv, maskulin, singular",
+              "sense": "Gruppe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t19",
+              "idx": 19,
+              "surface": "STET:",
+              "lemma": "STET",
+              "form": "Eigenname (Akronym)",
+              "sense": "STET",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t20",
+              "idx": 20,
+              "surface": "già",
+              "lemma": "già",
+              "form": "Adverb",
+              "sense": "bereits",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t21",
+              "idx": 21,
+              "surface": "alla",
+              "lemma": "alla",
+              "form": "Präposition + Artikel, feminin, singular, Dativ",
+              "sense": "an der / am (Zeitangabe)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t22",
+              "idx": 22,
+              "surface": "fine",
+              "lemma": "fine",
+              "form": "Substantiv, feminin, singular",
+              "sense": "Ende",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t23",
+              "idx": 23,
+              "surface": "del",
+              "lemma": "del",
+              "form": "Präposition + Artikel, maskulin, singular, Genitiv",
+              "sense": "des (von dem)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t24",
+              "idx": 24,
+              "surface": "decennio",
+              "lemma": "decennio",
+              "form": "Substantiv, maskulin, singular",
+              "sense": "Jahrzehnt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t25",
+              "idx": 25,
+              "surface": "era",
+              "lemma": "essere",
+              "form": "Verb, Imperfekt, Indikativ, 3. Person Singular",
+              "sense": "war (Hilfsverb für den Zustand)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t26",
+              "idx": 26,
+              "surface": "affermato",
+              "lemma": "affermato",
+              "form": "Verb, Partizip Perfekt, maskulin, singular",
+              "sense": "etabliert / anerkannt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t27",
+              "idx": 27,
+              "surface": "con",
+              "lemma": "con",
+              "form": "Präposition",
+              "sense": "mit (Instrumental/Kompanitiv)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t28",
+              "idx": 28,
+              "surface": "collaborazioni",
+              "lemma": "collaborazioni",
+              "form": "Substantiv, feminin, plural",
+              "sense": "Zusammenarbeiten / Kooperationen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t29",
+              "idx": 29,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von (Genitivverhältnis)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t30",
+              "idx": 30,
+              "surface": "ricerca",
+              "lemma": "ricerca",
+              "form": "Substantiv, feminin, singular",
+              "sense": "Forschung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t31",
+              "idx": 31,
+              "surface": "industriale",
+              "lemma": "industriale",
+              "form": "Adjektiv, maskulin/feminin, singular",
+              "sense": "industriell",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t32",
+              "idx": 32,
+              "surface": "con",
+              "lemma": "con",
+              "form": "Präposition",
+              "sense": "mit (Kompanitiv)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t33",
+              "idx": 33,
+              "surface": "partner",
+              "lemma": "partner",
+              "form": "Substantiv, maskulin/feminin, plural",
+              "sense": "Partner",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t34",
+              "idx": 34,
+              "surface": "non",
+              "lemma": "non",
+              "form": "Adverb",
+              "sense": "nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t35",
+              "idx": 35,
+              "surface": "più",
+              "lemma": "più",
+              "form": "Adverb",
+              "sense": "mehr (in Negation)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t36",
+              "idx": 36,
+              "surface": "solo",
+              "lemma": "solo",
+              "form": "Adjektiv/Adverb",
+              "sense": "nur",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s3:t37",
+              "idx": 37,
+              "surface": "nazionali.",
+              "lemma": "nazionali",
+              "form": "Adjektiv, maskulin/feminin, plural",
+              "sense": "national / inländisch",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t0",
+                "tp_17909638787390000093:s3:t1"
+              ],
+              "lemma": "nel 1961",
+              "gloss": "im Jahr 1961",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 2,
+              "end": 3,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t2",
+                "tp_17909638787390000093:s3:t3"
+              ],
+              "lemma": "venire creato",
+              "gloss": "erschaffen werden / gegründet werden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 8,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t4",
+                "tp_17909638787390000093:s3:t5",
+                "tp_17909638787390000093:s3:t6",
+                "tp_17909638787390000093:s3:t7",
+                "tp_17909638787390000093:s3:t8"
+              ],
+              "lemma": "il laboratorio di telecomunicazioni CSEL",
+              "gloss": "das Telekommunikationslaboratorium CSEL",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 9,
+              "end": 16,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t9",
+                "tp_17909638787390000093:s3:t10",
+                "tp_17909638787390000093:s3:t11",
+                "tp_17909638787390000093:s3:t12",
+                "tp_17909638787390000093:s3:t13",
+                "tp_17909638787390000093:s3:t14",
+                "tp_17909638787390000093:s3:t15",
+                "tp_17909638787390000093:s3:t16"
+              ],
+              "lemma": "divenuto il centro di ricerca CSELT",
+              "gloss": "geworden zum Forschungszentrum CSELT",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 10,
+              "end": 11,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t10",
+                "tp_17909638787390000093:s3:t11"
+              ],
+              "lemma": "nel 1964",
+              "gloss": "im Jahr 1964",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 18,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t12",
+                "tp_17909638787390000093:s3:t13",
+                "tp_17909638787390000093:s3:t14",
+                "tp_17909638787390000093:s3:t15",
+                "tp_17909638787390000093:s3:t16",
+                "tp_17909638787390000093:s3:t17",
+                "tp_17909638787390000093:s3:t18"
+              ],
+              "lemma": "il centro di ricerca CSELT del gruppo STET",
+              "gloss": "das Forschungszentrum CSELT der STET-Gruppe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 20,
+              "end": 24,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t20",
+                "tp_17909638787390000093:s3:t21",
+                "tp_17909638787390000093:s3:t22",
+                "tp_17909638787390000093:s3:t23",
+                "tp_17909638787390000093:s3:t24"
+              ],
+              "lemma": "già alla fine del decennio",
+              "gloss": "bereits am Ende des Jahrzehnts",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 25,
+              "end": 26,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t25",
+                "tp_17909638787390000093:s3:t26"
+              ],
+              "lemma": "era affermato",
+              "gloss": "etabliert war / anerkannt war",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 27,
+              "end": 31,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t27",
+                "tp_17909638787390000093:s3:t28",
+                "tp_17909638787390000093:s3:t29",
+                "tp_17909638787390000093:s3:t30",
+                "tp_17909638787390000093:s3:t31"
+              ],
+              "lemma": "con collaborazioni di ricerca industriale",
+              "gloss": "mit Kooperationen industrieller Forschung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 34,
+              "end": 37,
+              "tokenIds": [
+                "tp_17909638787390000093:s3:t34",
+                "tp_17909638787390000093:s3:t35",
+                "tp_17909638787390000093:s3:t36",
+                "tp_17909638787390000093:s3:t37"
+              ],
+              "lemma": "non più solo nazionali",
+              "gloss": "nicht mehr nur national",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-02T19:23:35.891Z",
+            "sentenceId": "tp_17909638787390000093:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 3820
+          },
+          "text": "Nel 1961 venne creato il laboratorio di telecomunicazioni CSEL, divenuto nel 1964 il centro di ricerca CSELT del gruppo STET: già alla fine del decennio era affermato con collaborazioni di ricerca industriale con partner non più solo nazionali.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17909638787390000093:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17909638787390000093:s4:t0",
+              "idx": 0,
+              "surface": "Il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t1",
+              "idx": 1,
+              "surface": "gruppo",
+              "lemma": "gruppo",
+              "form": "Nomen, Maskulinum, Singular, Nominativ",
+              "sense": "Gruppe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t2",
+              "idx": 2,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t3",
+              "idx": 3,
+              "surface": "tecnologie",
+              "lemma": "tecnologia",
+              "form": "Nomen, Femininum, Plural, Nominativ",
+              "sense": "Technologien",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t4",
+              "idx": 4,
+              "surface": "vocali",
+              "lemma": "vocale",
+              "form": "Adjektiv, Maskulinum/Femininum, Plural, Nominativ",
+              "sense": "Sprach-",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t5",
+              "idx": 5,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t6",
+              "idx": 6,
+              "surface": "CSELT",
+              "lemma": "CSELT",
+              "form": "Eigennamen (Substantiv)",
+              "sense": "CSELT",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t7",
+              "idx": 7,
+              "surface": "produsse,",
+              "lemma": "produrre",
+              "form": "Verb, Aktiv, Indikativ, Perfekt, 3. Person Singular",
+              "sense": "produzierte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t8",
+              "idx": 8,
+              "surface": "nel",
+              "lemma": "nel",
+              "form": "Kontrahierte Präposition (in + il)",
+              "sense": "im",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t9",
+              "idx": 9,
+              "surface": "1975,",
+              "lemma": "1975",
+              "form": "Numerale (Zahlwort)",
+              "sense": "1975",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t10",
+              "idx": 10,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Akkusativ",
+              "sense": "den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t11",
+              "idx": 11,
+              "surface": "primo",
+              "lemma": "primo",
+              "form": "Adjektiv (Ordinalzahl), Maskulinum, Singular, Akkusativ",
+              "sense": "erste",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t12",
+              "idx": 12,
+              "surface": "sintetizzatore",
+              "lemma": "sintetizzatore",
+              "form": "Nomen, Maskulinum, Singular, Akkusativ",
+              "sense": "Synthesizer",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t13",
+              "idx": 13,
+              "surface": "vocale",
+              "lemma": "vocale",
+              "form": "Adjektiv, Maskulinum, Singular, Akkusativ",
+              "sense": "Sprach-",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t14",
+              "idx": 14,
+              "surface": "al",
+              "lemma": "al",
+              "form": "Kontrahierte Präposition (a + il)",
+              "sense": "auf der Welt / weltweit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t15",
+              "idx": 15,
+              "surface": "mondo",
+              "lemma": "mondo",
+              "form": "Nomen, Maskulinum, Singular, Akkusativ",
+              "sense": "Welt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t16",
+              "idx": 16,
+              "surface": "capace",
+              "lemma": "capace",
+              "form": "Adjektiv, Maskulinum, Singular, Nominativ/Akkusativ",
+              "sense": "fähig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t17",
+              "idx": 17,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t18",
+              "idx": 18,
+              "surface": "parlare",
+              "lemma": "parlare",
+              "form": "Verb (Infinitiv)",
+              "sense": "sprechen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t19",
+              "idx": 19,
+              "surface": "italiano",
+              "lemma": "italiano",
+              "form": "Nomen/Adjektiv, Maskulinum, Singular",
+              "sense": "Italienisch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t20",
+              "idx": 20,
+              "surface": "e,",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t21",
+              "idx": 21,
+              "surface": "curiosamente,",
+              "lemma": "curiosamente",
+              "form": "Adverb",
+              "sense": "kurioserweise",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t22",
+              "idx": 22,
+              "surface": "anche",
+              "lemma": "anche",
+              "form": "Partikel",
+              "sense": "auch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t23",
+              "idx": 23,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t24",
+              "idx": 24,
+              "surface": "cantare:",
+              "lemma": "cantare",
+              "form": "Verb (Infinitiv)",
+              "sense": "singen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t25",
+              "idx": 25,
+              "surface": "MUSA:",
+              "lemma": "MUSA",
+              "form": "Eigennamen (Substantiv)",
+              "sense": "MUSA",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t26",
+              "idx": 26,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Nominativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t27",
+              "idx": 27,
+              "surface": "gruppo",
+              "lemma": "gruppo",
+              "form": "Nomen, Maskulinum, Singular, Nominativ",
+              "sense": "Gruppe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t28",
+              "idx": 28,
+              "surface": "continuò",
+              "lemma": "continuare",
+              "form": "Verb, Aktiv, Indikativ, Perfekt, 3. Person Singular",
+              "sense": "fuhr fort",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t29",
+              "idx": 29,
+              "surface": "la",
+              "lemma": "la",
+              "form": "Bestimmter Artikel, Femininum, Singular, Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t30",
+              "idx": 30,
+              "surface": "sua",
+              "lemma": "suo",
+              "form": "Possessivadjektiv, Maskulinum/Femininum, Singular, Akkusativ",
+              "sense": "seine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t31",
+              "idx": 31,
+              "surface": "attività",
+              "lemma": "attività",
+              "form": "Nomen, Femininum, Singular, Akkusativ",
+              "sense": "Tätigkeit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t32",
+              "idx": 32,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t33",
+              "idx": 33,
+              "surface": "nel",
+              "lemma": "nel",
+              "form": "Kontrahierte Präposition (in + il)",
+              "sense": "im",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t34",
+              "idx": 34,
+              "surface": "2001",
+              "lemma": "2001",
+              "form": "Numerale (Zahlwort)",
+              "sense": "2001",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t35",
+              "idx": 35,
+              "surface": "divenne",
+              "lemma": "divenire",
+              "form": "Verb, Aktiv, Indikativ, Perfekt, 3. Person Singular",
+              "sense": "wurde",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t36",
+              "idx": 36,
+              "surface": "lo",
+              "lemma": "lo",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Akkusativ",
+              "sense": "den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t37",
+              "idx": 37,
+              "surface": "spinoff",
+              "lemma": "spinoff",
+              "form": "Nomen, Maskulinum, Singular, Akkusativ",
+              "sense": "Spin-off",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t38",
+              "idx": 38,
+              "surface": "Loquendo",
+              "lemma": "Loquendo",
+              "form": "Eigennamen (Substantiv)",
+              "sense": "Loquendo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17909638787390000093:s4:t39",
+              "idx": 39,
+              "surface": "SpA.",
+              "lemma": "SpA",
+              "form": "Abkürzung (Rechtsform)",
+              "sense": "AG",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 6,
+              "tokenIds": [
+                "tp_17909638787390000093:s4:t0",
+                "tp_17909638787390000093:s4:t1",
+                "tp_17909638787390000093:s4:t2",
+                "tp_17909638787390000093:s4:t3",
+                "tp_17909638787390000093:s4:t4",
+                "tp_17909638787390000093:s4:t5",
+                "tp_17909638787390000093:s4:t6"
+              ],
+              "lemma": "Il gruppo di tecnologie vocali di CSELT",
+              "gloss": "Die Sprachtechnologie-Gruppe von CSELT",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 10,
+              "end": 15,
+              "tokenIds": [
+                "tp_17909638787390000093:s4:t10",
+                "tp_17909638787390000093:s4:t11",
+                "tp_17909638787390000093:s4:t12",
+                "tp_17909638787390000093:s4:t13",
+                "tp_17909638787390000093:s4:t14",
+                "tp_17909638787390000093:s4:t15"
+              ],
+              "lemma": "il primo sintetizzatore vocale al mondo",
+              "gloss": "der erste Sprachsynthesizer der Welt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 26,
+              "end": 31,
+              "tokenIds": [
+                "tp_17909638787390000093:s4:t26",
+                "tp_17909638787390000093:s4:t27",
+                "tp_17909638787390000093:s4:t28",
+                "tp_17909638787390000093:s4:t29",
+                "tp_17909638787390000093:s4:t30",
+                "tp_17909638787390000093:s4:t31"
+              ],
+              "lemma": "il gruppo continuò la sua attività",
+              "gloss": "die Gruppe fuhr ihre Tätigkeit fort",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 37,
+              "end": 39,
+              "tokenIds": [
+                "tp_17909638787390000093:s4:t37",
+                "tp_17909638787390000093:s4:t38",
+                "tp_17909638787390000093:s4:t39"
+              ],
+              "lemma": "Loquendo SpA",
+              "gloss": "Loquendo AG",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-02T19:34:01.366Z",
+            "sentenceId": "tp_17909638787390000093:s4",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 4000
+          },
+          "text": "Il gruppo di tecnologie vocali di CSELT produsse, nel 1975, il primo sintetizzatore vocale al mondo capace di parlare italiano e, curiosamente, anche di cantare: MUSA: il gruppo continuò la sua attività e nel 2001 divenne lo spinoff Loquendo SpA.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-02T19:34:01.369Z",
+        "chapterId": "tp_17909638787390000093",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "9d09ea94c6f2",
+      "analyzedAt": "2026-10-02T19:34:01.369Z",
+      "partial": true,
+      "totalSentences": 6
     }
   },
-  "generatedAt": "2026-09-28T18:06:57.684Z",
-  "chapterCount": 26
+  "generatedAt": "2026-10-02T19:34:01.374Z",
+  "chapterCount": 27
 }
