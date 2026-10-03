@@ -80,6 +80,15 @@ item's letter, against the shipped lists at every cut** — that is `v90` rule 8
 
 # WHERE TO START
 
+🔴 **FIRST: THE START BUTTON MUST NEVER HIDE WITHOUT A REASON.** User-approved at the `v91_i` cut
+(*"yes, show it disabled with the reason on it"*), deferred only for budget. Full design, the two
+distinguishable reasons, the `ui.json` question to ask, and the test section it invalidates are in
+`roadmap_v91.md` → *"🔴 HIGH PRIORITY — THE START BUTTON MUST NEVER HIDE WITHOUT A REASON"*.
+⚠️ `v91_i` fixed RECOVERY, not REACHABILITY — the silent state is still reachable.
+⚠️ **Two user-reported SILENT dead ends in two days** (`v91_h` bounce, `v91_i` vanishing button).
+Treat "the UI refused and said nothing" as a defect class, not two incidents.
+
+
 ✅ **THE VOCABULARY ARTICLE CHECK IS BUILT AND SHIPPED (`v91_a`).** It is propose-only, it flags 8 of
 8 on the chapter the shipped QC passed clean with 0 of 4 false findings, and the ⚓ button sits beside
 🔍 on each vocabulary lesson. Full write-up in `roadmap_v91.md`'s `v91_a` entry.

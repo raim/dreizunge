@@ -1097,6 +1097,48 @@ including the one a source scan missed — and it would have caught `v90_w`'s `_
 
 ---
 
+## 🔴 HIGH PRIORITY — THE START BUTTON MUST NEVER HIDE WITHOUT A REASON (user-approved, NOT built)
+
+⚖️ **USER DECISION, given at the `v91_i` cut**: *"yes, show it disabled with the reason on it"* —
+deferred to the roadmap only because the user was short on budget and asked for it to be recorded if
+not cheap. **The design below is settled; what remains is the work, not the decision.**
+
+**WHY IT IS HIGH PRIORITY.** `v91_i` fixed RECOVERY (clear / re-pick returns to 'paste') but NOT
+REACHABILITY. A URL fetch that yields no chunks, or a lingering `_pdfBookId`, still hides
+`#gen-btn-row` silently. ⚠️ **This is the SECOND user-reported silent dead end in two days** —
+`v91_h` was a silent bounce, `v91_i` a silent disappearance — and both were unreportable in the same
+way: nothing on screen, nothing in a log, nothing to search for. **A refusal the learner cannot see
+is the defect.**
+
+**THE CHANGE**, in `_applyLessonCardUI()` (`index.html`):
+
+```js
+const startable = (mode==='llm' || mode==='paste') ? true : (n>0 && !busy);
+show('gen-btn-row', mode!=='dialect' && startable);        // ← today
+```
+becomes: keep the row SHOWN for every mode except `dialect` (whose whole `#gen-form-section` is
+hidden anyway and which has its own Build button), and when `!startable` render the button
+`disabled` with the reason as its label.
+
+**THE TWO REASONS ARE ALREADY DISTINGUISHABLE** in that function — no new state is needed:
+| condition | reason to show |
+|---|---|
+| `n === 0` | nothing to generate from yet |
+| `busy` (`_pdfSelMode` / `_pdfBookId` / a chunk mid-generation) | a run is already in progress |
+
+⚠️ **`ui.json` COST: the user approved this knowing it needs a key. Propose the EXACT keys and the
+smallest number — ONE if the two cases can share a wording, TWO if not — and ask before writing, per
+the standing rule.** Check first whether `toast.already_generating` can carry the busy case.
+
+⚠️⚠️ **IT INVALIDATES `unit-gen-start-button.test.js` §1**, which is why this was not a one-liner.
+That section asserts `btn === 'none'` in the broken state **as its non-vacuity check** — under the new
+behaviour the row is VISIBLE and the button DISABLED, so §1 must be rewritten to assert
+`disabled === true` plus a non-empty reason label. **Rewrite it, do not delete it**: without a
+non-vacuity section the file would pass on a build where the button is unconditionally enabled, which
+is exactly the over-broad fix its third mutation currently catches.
+⚠️ `_genStartBtnLabel(mode, skip, n)` already owns the label text — the reason belongs there, beside
+the existing labels, not inline at the call site.
+
 ## 🆕 A QC REVIEW PAGE FOR THE TEACHER (user request, `v91_g` session) — NOT BUILT, NOTHING DECIDED
 
 User: *"we generally want a QC review page, where the teacher can view a summary of all flagged items
