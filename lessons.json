@@ -16501,6 +16501,338 @@
             "at": "2026-10-02T18:35:34.823Z"
           },
           "_recreated": true
+        },
+        {
+          "id": "ls_1791137350788_0_standard",
+          "title": "Lebendiges Turin",
+          "desc": "Wichtige Erfindungen und Technologien aus Turin",
+          "icon": "🏙️",
+          "vocab": [
+            {
+              "target": "il motore elettrico",
+              "source": "der Elektromotor",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il motore elettrico",
+                "canonicalId": "it:vocab:il motore elettrico",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la corrente alternata",
+              "source": "der Wechselstrom",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la corrente alternata",
+                "canonicalId": "it:vocab:la corrente alternata",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il campo magnetico",
+              "source": "das Magnetfeld",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il campo magnetico",
+                "canonicalId": "it:vocab:il campo magnetico",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la fibra ottica",
+              "source": "die Glasfaser",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la fibra ottica",
+                "canonicalId": "it:vocab:la fibra ottica",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "lo standard MP3",
+              "source": "der MP3-Standard",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:lo standard MP3",
+                "canonicalId": "it:vocab:lo standard mp3",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il sintetizzatore vocale",
+              "source": "der Sprachsynthesizer",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il sintetizzatore vocale",
+                "canonicalId": "it:vocab:il sintetizzatore vocale",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "la ricerca",
+              "source": "die Forschung",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:la ricerca",
+                "canonicalId": "it:vocab:la ricerca",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            },
+            {
+              "target": "il laboratorio",
+              "source": "das Labor",
+              "skillId": null,
+              "skillProposal": {
+                "proposedId": "it:vocab:il laboratorio",
+                "canonicalId": "it:vocab:il laboratorio",
+                "skillId": null,
+                "status": "unregistered",
+                "targetLang": "it",
+                "sourceLang": "de",
+                "entry": null
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Galileo Ferraris scoprì il campo magnetico rotante.",
+              "source": "Galileo Ferraris entdeckte das rotierende Magnetfeld.",
+              "skillId": "it:vocab:il campo magnetico",
+              "words": [
+                "Galileo",
+                "Ferraris",
+                "scoprì",
+                "il",
+                "campo",
+                "magnetico",
+                "rotante."
+              ]
+            },
+            {
+              "target": "Torino ha una rete di fibra ottica urbana.",
+              "source": "Turin hat ein städtisches Glasfasernetz.",
+              "skillId": "it:vocab:la fibra ottica",
+              "words": [
+                "Torino",
+                "ha",
+                "una",
+                "rete",
+                "di",
+                "fibra",
+                "ottica",
+                "urbana."
+              ]
+            },
+            {
+              "target": "Il laboratorio CSELT produsse il primo sintetizzatore vocale.",
+              "source": "Das Labor CSELT produzierte den ersten Sprachsynthesizer.",
+              "skillId": "it:vocab:il laboratorio",
+              "words": [
+                "Il",
+                "laboratorio",
+                "CSELT",
+                "produsse",
+                "il",
+                "primo",
+                "sintetizzatore",
+                "vocale."
+              ]
+            },
+            {
+              "target": "La ricerca scientifica è molto vivace a Torino.",
+              "source": "Die wissenschaftliche Forschung ist in Turin sehr lebendig.",
+              "skillId": "it:vocab:la ricerca",
+              "words": [
+                "La",
+                "ricerca",
+                "scientifica",
+                "è",
+                "molto",
+                "vivace",
+                "a",
+                "Torino."
+              ]
+            },
+            {
+              "target": "Lo standard MP3 funziona grazie alla corrente alternata.",
+              "source": "Der MP3-Standard funktioniert dank des Wechselstroms.",
+              "skillId": "it:vocab:lo standard MP3",
+              "words": [
+                "Lo",
+                "standard",
+                "MP3",
+                "funziona",
+                "grazie",
+                "alla",
+                "corrente",
+                "alternata."
+              ]
+            }
+          ],
+          "skillIds": [],
+          "_skillTags": {
+            "type": "vocab",
+            "proposed": 8,
+            "resolved": 0,
+            "pending": 8
+          },
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 1229,
+            "completionTokens": 692,
+            "ms": 836854,
+            "at": "2026-10-04T18:09:10.788Z"
+          },
+          "_recreated": true
+        },
+        {
+          "difficulty": 1,
+          "id": "ls_1791137830326",
+          "type": "inflections",
+          "title": "Italienische Inflectionen",
+          "desc": "Lemmata und Formen erkennen",
+          "icon": "🇮🇹",
+          "items": [
+            {
+              "sentence": "Torino è da sempre una città molto vivace dal punto di vista della ricerca scientifica e applicata in diverse discipline.",
+              "surfaceForm": "città",
+              "translation": "Turin ist seit jeher eine sehr lebendige Stadt im Hinblick auf die wissenschaftliche und angewandte Forschung in verschiedenen Disziplinen.",
+              "lemma": "la città",
+              "lemmaChoices": [
+                "la città",
+                "il città",
+                "le città",
+                "i città"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Singularis",
+              "formChoices": [
+                "Singularis",
+                "Pluralis"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Singular von 'la città', das Substantiv bleibt im Singular und Plural gleich (invariante Form)."
+            },
+            {
+              "sentence": "Ad esempio, qui è nato il motore elettrico a corrente alternata a opera di Galileo Ferraris, che scoprì e dimostrò il campo magnetico rotante.",
+              "surfaceForm": "scoprì",
+              "translation": "Zum Beispiel wurde hier der Elektromotor mit Wechselstrom von Galileo Ferraris erfunden, der das rotierende Magnetfeld entdeckte und nachwies.",
+              "lemma": "scoprire",
+              "lemmaChoices": [
+                "scoprire",
+                "scopre",
+                "scoprì",
+                "scoprendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato Remoto, 3. Person Singular",
+              "formChoices": [
+                "Passato Remoto, 3. Person Singular",
+                "Passato Prossimo, 3. Person Singular",
+                "Imperfetto, 3. Person Singular",
+                "Passato Remoto, 1. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato Remoto (einfache Vergangenheit) von 'scoprire', 3. Person Singular."
+            },
+            {
+              "sentence": "Il gruppo di tecnologie vocali di CSELT produsse, nel 1975, il primo sintetizzatore vocale al mondo capace di parlare italiano e, curiosamente, anche di cantare: MUSA: il gruppo continuò la sua attività e nel 2001 divenne lo spinoff Loquendo SpA.",
+              "surfaceForm": "produsse",
+              "translation": "Die CSELT-Gruppe der Sprachtechnologien produzierte 1975 den weltweit ersten sprachfähigen Vokalsynthesizer, der Italienisch sprechen und kurioserweise auch singen konnte: MUSA: Die Gruppe setzte ihre Tätigkeit fort und wurde 2001 zum Spin-off Loquendo SpA.",
+              "lemma": "produrre",
+              "lemmaChoices": [
+                "produrre",
+                "produce",
+                "produsse",
+                "producendo"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato Remoto, 3. Person Singular",
+              "formChoices": [
+                "Passato Remoto, 3. Person Singular",
+                "Passato Prossimo, 3. Person Singular",
+                "Imperfetto, 3. Person Singular",
+                "Passato Remoto, 2. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato Remoto (einfache Vergangenheit) von 'produrre', 3. Person Singular."
+            },
+            {
+              "sentence": "Nel 1977 Torino fu anche la prima città al mondo dotata di una rete di fibra ottica urbana (lunga 9 km)[91]), sperimentata proprio da CSELT; sempre in CSELT, inoltre, nacque l'iniziativa MPEG che portò alla creazione, tra gli altri, dello standard di codifica audio MP3 (il cui corretto funzionamento proprio qui venne dimostrato, per la prima volta in assoluto, nel marzo 1992), diffuso rapidamente in tutto il mondo.",
+              "surfaceForm": "portò",
+              "translation": "Im Jahr 1977 war Turin auch die erste Stadt der Welt mit einem städtischen Glasfasernetz (9 km lang), das genau von CSELT getestet wurde; ebenfalls in CSELT entstand die MPEG-Initiative, die unter anderem zur Erstellung des Audio-Codierungsstandards MP3 führte (dessen korrekter Funktion hier zum ersten Mal im März 1992 nachgewiesen wurde), der sich schnell auf der ganzen Welt verbreitete.",
+              "lemma": "portare",
+              "lemmaChoices": [
+                "portare",
+                "porta",
+                "portò",
+                "portando"
+              ],
+              "lemmaCorrectIndex": 0,
+              "formLabel": "Passato Remoto, 3. Person Singular",
+              "formChoices": [
+                "Passato Remoto, 3. Person Singular",
+                "Passato Prossimo, 3. Person Singular",
+                "Imperfetto, 3. Person Singular",
+                "Passato Remoto, 1. Person Singular"
+              ],
+              "formCorrectIndex": 0,
+              "explanation": "Passato Remoto (einfache Vergangenheit) von 'portare', 3. Person Singular."
+            }
+          ],
+          "_genMeta": {
+            "type": "inflections",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 2681,
+            "completionTokens": 1459,
+            "ms": 615234,
+            "at": "2026-10-04T18:17:10.326Z"
+          }
+        },
+        {
+          "id": "ls_1791137831177_18s7",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -16513,8 +16845,8 @@
           "lessons": "qwen3.6:35b-a3b"
         },
         "lessonFormat": "json",
-        "totalPromptTokens": 14232,
-        "totalCompletionTokens": 6881,
+        "totalPromptTokens": 18142,
+        "totalCompletionTokens": 9032,
         "lessons": [
           {
             "lessonNum": 1,
@@ -16524,11 +16856,12 @@
           }
         ],
         "tokensByType": {
-          "recreate": 18103
+          "recreate": 20024,
+          "add_lesson": 4140
         }
       },
       "generatedAt": "2026-10-02T17:57:58.740Z",
-      "updatedAt": "2026-10-03T12:57:24.245Z",
+      "updatedAt": "2026-10-04T18:17:11.180Z",
       "createdBy": "admin"
     },
     {
