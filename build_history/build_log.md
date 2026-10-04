@@ -10267,6 +10267,10 @@ generate text from pasted stories. Fix this first!.
 * the latest two screenshots in the same folder ~/Pictures/dreizunge
   show that now we have no generate button at all anymore.
 
+
+
+
+
 ---
 
 * I am generating new lessons tp_17906084629780000051 via photos taken

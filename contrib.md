@@ -41,6 +41,8 @@
 | c | student writing test and feedback | .5|
 | thomas | speech recognition, noble type lessons | .5|
 | chris | agent-assisted coding advice | 1| 
+| arno | italian consulting and texts | 1|
+| michim | app advice | .5|
 
 # data/code tokens
 

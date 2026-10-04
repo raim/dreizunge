@@ -18631,8 +18631,1560 @@
       "analyzedAt": "2026-10-02T19:34:01.369Z",
       "partial": true,
       "totalSentences": 6
+    },
+    "tp_17911199799050000079": {
+      "chapterId": "tp_17911199799050000079",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 6,
+      "tokenCount": 117,
+      "sentences": [
+        {
+          "sentenceId": "tp_17911199799050000079:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17911199799050000079:s0:t0",
+              "idx": 0,
+              "surface": "Untitled",
+              "lemma": "Untitled",
+              "form": "Adjektiv (unflektiert)",
+              "sense": "unbetitelt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t1",
+              "idx": 1,
+              "surface": "2024",
+              "lemma": "2024",
+              "form": "Numerale (Kardinalzahl)",
+              "sense": "zweitausendvierundzwanzig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t2",
+              "idx": 2,
+              "surface": "(laosela",
+              "lemma": "(laosela",
+              "form": "Substantiv (Nominativ Singular) mit öffnender Klammer",
+              "sense": "(Laos (Land)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t3",
+              "idx": 3,
+              "surface": "ehadg)",
+              "lemma": "ehadg)",
+              "form": "Substantiv (Nominativ Singular) mit schließender Klammer",
+              "sense": "Problem)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t4",
+              "idx": 4,
+              "surface": "(明天才是問題)",
+              "lemma": "(明天才是問題)",
+              "form": "Satz (Chinesisch) mit Klammern",
+              "sense": "(erst morgen ist das Problem)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t5",
+              "idx": 5,
+              "surface": "(mañana",
+              "lemma": "(mañana",
+              "form": "Adverb (Zeitangabe) mit öffnender Klammer",
+              "sense": "(morgen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t6",
+              "idx": 6,
+              "surface": "es",
+              "lemma": "es",
+              "form": "Verb (Indikativ Präsens, 3. Person Singular)",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t7",
+              "idx": 7,
+              "surface": "la",
+              "lemma": "la",
+              "form": "Artikel (definit, feminin, Singular, Nominativ/Akkusativ)",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t8",
+              "idx": 8,
+              "surface": "cuestión)",
+              "lemma": "cuestión)",
+              "form": "Substantiv (feminin, Singular) mit schließender Klammer",
+              "sense": "Frage)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t9",
+              "idx": 9,
+              "surface": "(mâine",
+              "lemma": "(mâine",
+              "form": "Adverb (Zeitangabe) mit öffnender Klammer",
+              "sense": "(morgen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t10",
+              "idx": 10,
+              "surface": "este",
+              "lemma": "este",
+              "form": "Verb (Indikativ Präsens, 3. Person Singular)",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t11",
+              "idx": 11,
+              "surface": "întrebarea)",
+              "lemma": "întrebarea)",
+              "form": "Substantiv (feminin, Singular, bestimmt) mit schließender Klammer",
+              "sense": "die Frage)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t12",
+              "idx": 12,
+              "surface": "invita",
+              "lemma": "invita",
+              "form": "Verb (Indikativ Präsens, 3. Person Singular)",
+              "sense": "lädt ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t13",
+              "idx": 13,
+              "surface": "le",
+              "lemma": "le",
+              "form": "Artikel (definit, plural) oder Pronomen (akkusativ/dativ)",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t14",
+              "idx": 14,
+              "surface": "persone",
+              "lemma": "persone",
+              "form": "Substantiv (feminin, Plural)",
+              "sense": "Personen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t15",
+              "idx": 15,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t16",
+              "idx": 16,
+              "surface": "giocare",
+              "lemma": "giocare",
+              "form": "Verb (Infinitiv)",
+              "sense": "spielen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t17",
+              "idx": 17,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "mit/bezüglich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t18",
+              "idx": 18,
+              "surface": "ping",
+              "lemma": "ping",
+              "form": "Substantiv (Teil eines Lehnworts)",
+              "sense": "Ping",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s0:t19",
+              "idx": 19,
+              "surface": "pong.",
+              "lemma": "pong.",
+              "form": "Substantiv (Teil eines Lehnworts) mit Punkt",
+              "sense": "Pong.",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17911199799050000079:s0:t0",
+                "tp_17911199799050000079:s0:t1"
+              ],
+              "lemma": "Untitled 2024",
+              "gloss": "Unbetitelt 2024 (Titel)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "tokenIds": [
+                "tp_17911199799050000079:s0:t5",
+                "tp_17911199799050000079:s0:t6",
+                "tp_17911199799050000079:s0:t7",
+                "tp_17911199799050000079:s0:t8"
+              ],
+              "lemma": "mañana es la cuestión",
+              "gloss": "morgen ist die Frage",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "tokenIds": [
+                "tp_17911199799050000079:s0:t9",
+                "tp_17911199799050000079:s0:t10",
+                "tp_17911199799050000079:s0:t11"
+              ],
+              "lemma": "mâine este întrebarea",
+              "gloss": "morgen ist die Frage",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 16,
+              "tokenIds": [
+                "tp_17911199799050000079:s0:t12",
+                "tp_17911199799050000079:s0:t13",
+                "tp_17911199799050000079:s0:t14",
+                "tp_17911199799050000079:s0:t15",
+                "tp_17911199799050000079:s0:t16"
+              ],
+              "lemma": "invita le persone a giocare",
+              "gloss": "lädt die Personen ein zu spielen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 18,
+              "end": 19,
+              "tokenIds": [
+                "tp_17911199799050000079:s0:t18",
+                "tp_17911199799050000079:s0:t19"
+              ],
+              "lemma": "ping pong",
+              "gloss": "Pingpong",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-04T14:02:58.805Z",
+            "sentenceId": "tp_17911199799050000079:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2200
+          },
+          "text": "Untitled 2024 (laosela ehadg) (明天才是問題) (mañana es la cuestión)\n(mâine este întrebarea) invita le persone a giocare a ping pong.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17911199799050000079:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17911199799050000079:s1:t0",
+              "idx": 0,
+              "surface": "I",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Plural, Maskulin, Nominativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t1",
+              "idx": 1,
+              "surface": "quattro",
+              "lemma": "quattro",
+              "form": "Numerale, unbestimmt, Plural",
+              "sense": "vier",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t2",
+              "idx": 2,
+              "surface": "tavoli",
+              "lemma": "tavolo",
+              "form": "Substantiv, Plural, Maskulin, Nominativ",
+              "sense": "Tische",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t3",
+              "idx": 3,
+              "surface": "riportano",
+              "lemma": "riportare",
+              "form": "Verb, Indikativ, Präsens, Aktiv, 3. Person Plural",
+              "sense": "bringen ... wieder / zitieren / wiedergeben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t4",
+              "idx": 4,
+              "surface": "la",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Singular, Feminin, Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t5",
+              "idx": 5,
+              "surface": "frase",
+              "lemma": "frase",
+              "form": "Substantiv, Singular, Feminin, Akkusativ",
+              "sense": "Satz / Phrase",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t6",
+              "idx": 6,
+              "surface": "\"domani",
+              "lemma": "domani",
+              "form": "Adverb",
+              "sense": "morgen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t7",
+              "idx": 7,
+              "surface": "è",
+              "lemma": "essere",
+              "form": "Verb, Indikativ, Präsens, Aktiv, 3. Person Singular",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t8",
+              "idx": 8,
+              "surface": "la",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Singular, Feminin, Nominativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t9",
+              "idx": 9,
+              "surface": "questione\"",
+              "lemma": "questione",
+              "form": "Substantiv, Singular, Feminin, Nominativ",
+              "sense": "Frage / Thema",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t10",
+              "idx": 10,
+              "surface": "nelle",
+              "lemma": "in",
+              "form": "Präposition + bestimmter Artikel (in + le)",
+              "sense": "in den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t11",
+              "idx": 11,
+              "surface": "lingue",
+              "lemma": "lingua",
+              "form": "Substantiv, Plural, Feminin, Dativ/Ort",
+              "sense": "Sprachen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t12",
+              "idx": 12,
+              "surface": "delle",
+              "lemma": "di",
+              "form": "Präposition + bestimmter Artikel (di + le)",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t13",
+              "idx": 13,
+              "surface": "maggiori",
+              "lemma": "maggiore",
+              "form": "Adjektiv, Komparativ/Positiv, Plural, Feminin",
+              "sense": "größten / größten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t14",
+              "idx": 14,
+              "surface": "comunità",
+              "lemma": "comunità",
+              "form": "Substantiv, Plural, Feminin",
+              "sense": "Gemeinschaften",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t15",
+              "idx": 15,
+              "surface": "diasporiche",
+              "lemma": "diasporico",
+              "form": "Adjektiv, Plural, Feminin",
+              "sense": "diasporischen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t16",
+              "idx": 16,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "in / nach",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t17",
+              "idx": 17,
+              "surface": "Torino:",
+              "lemma": "Torino",
+              "form": "Eigenname (Ort)",
+              "sense": "Turin",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t18",
+              "idx": 18,
+              "surface": "rumena,",
+              "lemma": "rumeno",
+              "form": "Adjektiv, Singular, Feminin",
+              "sense": "rumänisch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t19",
+              "idx": 19,
+              "surface": "marocchina,",
+              "lemma": "marocchino",
+              "form": "Adjektiv, Singular, Feminin",
+              "sense": "marokkanisch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t20",
+              "idx": 20,
+              "surface": "cinese",
+              "lemma": "cinese",
+              "form": "Adjektiv, Singular, Feminin",
+              "sense": "chinesisch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t21",
+              "idx": 21,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s1:t22",
+              "idx": 22,
+              "surface": "peruviana.",
+              "lemma": "peruviano",
+              "form": "Adjektiv, Singular, Feminin",
+              "sense": "peruanisch",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17911199799050000079:s1:t0",
+                "tp_17911199799050000079:s1:t1",
+                "tp_17911199799050000079:s1:t2"
+              ],
+              "lemma": "i quattro tavoli",
+              "gloss": "die vier Tische",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 10,
+              "end": 14,
+              "tokenIds": [
+                "tp_17911199799050000079:s1:t10",
+                "tp_17911199799050000079:s1:t11",
+                "tp_17911199799050000079:s1:t12",
+                "tp_17911199799050000079:s1:t13",
+                "tp_17911199799050000079:s1:t14"
+              ],
+              "lemma": "nelle lingue delle maggiori comunità",
+              "gloss": "in den Sprachen der größten Gemeinschaften",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-04T14:07:50.005Z",
+            "sentenceId": "tp_17911199799050000079:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2470
+          },
+          "text": "I quattro tavoli riportano la frase \"domani è la questione\" nelle lingue delle maggiori comunità diasporiche a Torino: rumena, marocchina, cinese e peruviana.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17911199799050000079:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17911199799050000079:s2:t0",
+              "idx": 0,
+              "surface": "Il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t1",
+              "idx": 1,
+              "surface": "gioco",
+              "lemma": "gioco",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Spiel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t2",
+              "idx": 2,
+              "surface": "diventa",
+              "lemma": "diventare",
+              "form": "Verb, Indikativ, Präsens, 3. Person, Singular",
+              "sense": "wird",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t3",
+              "idx": 3,
+              "surface": "un'occasione",
+              "lemma": "occasione",
+              "form": "Substantiv, Femininum, Singular",
+              "sense": "Gelegenheit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t4",
+              "idx": 4,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "um ... zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t5",
+              "idx": 5,
+              "surface": "sperimentare",
+              "lemma": "sperimentare",
+              "form": "Verb, Infinitiv",
+              "sense": "erleben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t6",
+              "idx": 6,
+              "surface": "nuove",
+              "lemma": "nuovo",
+              "form": "Adjektiv, Plural, Femininum",
+              "sense": "neue",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t7",
+              "idx": 7,
+              "surface": "forme",
+              "lemma": "forma",
+              "form": "Substantiv, Femininum, Plural",
+              "sense": "Formen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t8",
+              "idx": 8,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t9",
+              "idx": 9,
+              "surface": "socialità,",
+              "lemma": "socialità",
+              "form": "Substantiv, Femininum, Singular",
+              "sense": "Sozialität",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t10",
+              "idx": 10,
+              "surface": "sfidando",
+              "lemma": "sfidare",
+              "form": "Partizip Präsens",
+              "sense": "indem es herausfordert",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t11",
+              "idx": 11,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Akkusativ",
+              "sense": "den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t12",
+              "idx": 12,
+              "surface": "concetto",
+              "lemma": "concetto",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Begriff",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t13",
+              "idx": 13,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t14",
+              "idx": 14,
+              "surface": "appartenenza",
+              "lemma": "appartenenza",
+              "form": "Substantiv, Femininum, Singular",
+              "sense": "Zugehörigkeit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s2:t15",
+              "idx": 15,
+              "surface": "nazionale.",
+              "lemma": "nazionale",
+              "form": "Adjektiv, Femininum, Singular",
+              "sense": "nationaler",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 4,
+              "end": 5,
+              "tokenIds": [
+                "tp_17911199799050000079:s2:t4",
+                "tp_17911199799050000079:s2:t5"
+              ],
+              "lemma": "per + infinitivo",
+              "gloss": "um ... zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 13,
+              "end": 15,
+              "tokenIds": [
+                "tp_17911199799050000079:s2:t13",
+                "tp_17911199799050000079:s2:t14",
+                "tp_17911199799050000079:s2:t15"
+              ],
+              "lemma": "appartenenza nazionale",
+              "gloss": "nationale Zugehörigkeit",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-04T14:11:13.343Z",
+            "sentenceId": "tp_17911199799050000079:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1840
+          },
+          "text": "Il gioco diventa un'occasione per sperimentare nuove forme di socialità, sfidando il concetto di appartenenza nazionale.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17911199799050000079:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17911199799050000079:s3:t0",
+              "idx": 0,
+              "surface": "L'installazione",
+              "lemma": "installazione",
+              "form": "Nomen (Substantiv), feminin, Singular, Nominativ/Akkusativ",
+              "sense": "die Installation",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s3:t1",
+              "idx": 1,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von / des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s3:t2",
+              "idx": 2,
+              "surface": "Tiravanija",
+              "lemma": "Tiravanija",
+              "form": "Eigenname (Nomen), maskulin, Singular",
+              "sense": "Tiravanija (Name)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s3:t3",
+              "idx": 3,
+              "surface": "riattiva",
+              "lemma": "riattivare",
+              "form": "Verb, aktiv, Indikativ Präsens, 3. Person Singular",
+              "sense": "aktiviert wieder / reaktiviert",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s3:t4",
+              "idx": 4,
+              "surface": "J.K.",
+              "lemma": "J.K.",
+              "form": "Eigenname (Abkürzung), maskulin, Singular",
+              "sense": "J.K. (Name)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17911199799050000079:s3:t0",
+                "tp_17911199799050000079:s3:t1",
+                "tp_17911199799050000079:s3:t2"
+              ],
+              "lemma": "installazione di Tiravanija",
+              "gloss": "Installation von Tiravanija",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-04T14:12:23.915Z",
+            "sentenceId": "tp_17911199799050000079:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "L'installazione di Tiravanija riattiva J.K.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17911199799050000079:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17911199799050000079:s4:t0",
+              "idx": 0,
+              "surface": "Ping-Pong",
+              "lemma": "Ping-Pong",
+              "form": "Eigenname (Substantiv)",
+              "sense": "Ping-Pong",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t1",
+              "idx": 1,
+              "surface": "Club,",
+              "lemma": "Club",
+              "form": "Eigenname (Substantiv)",
+              "sense": "Club",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t2",
+              "idx": 2,
+              "surface": "un",
+              "lemma": "uno",
+              "form": "unbestimmter Artikel, maskulin, Singular, Nominativ",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t3",
+              "idx": 3,
+              "surface": "progetto",
+              "lemma": "progetto",
+              "form": "Substantiv, maskulin, Singular, Nominativ",
+              "sense": "Projekt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t4",
+              "idx": 4,
+              "surface": "dell'artista",
+              "lemma": "artista",
+              "form": "Präposition + unbestimmter Artikel + Substantiv, maskulin/feminin, Singular, Genitiv",
+              "sense": "des Künstlers / der Künstlerin",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t5",
+              "idx": 5,
+              "surface": "slovacco",
+              "lemma": "slovacco",
+              "form": "Adjektiv, maskulin, Singular, Nominativ/Genitiv",
+              "sense": "slowakisch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t6",
+              "idx": 6,
+              "surface": "Július",
+              "lemma": "Július",
+              "form": "Eigenname (Vorname)",
+              "sense": "Július",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t7",
+              "idx": 7,
+              "surface": "Koller",
+              "lemma": "Koller",
+              "form": "Eigenname (Nachname)",
+              "sense": "Koller",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t8",
+              "idx": 8,
+              "surface": "(1939-2007)",
+              "lemma": "(1939-2007)",
+              "form": "Zahlwort/Zeitraumangabe",
+              "sense": "(1939–2007)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t9",
+              "idx": 9,
+              "surface": "presentato",
+              "lemma": "presentare",
+              "form": "Partizip Perfekt, maskulin, Singular, Nominativ",
+              "sense": "vorgestellt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t10",
+              "idx": 10,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "in / bei",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t11",
+              "idx": 11,
+              "surface": "Bratislava",
+              "lemma": "Bratislava",
+              "form": "Eigenname (Ort)",
+              "sense": "Bratislava",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t12",
+              "idx": 12,
+              "surface": "nel",
+              "lemma": "in",
+              "form": "Präposition + bestimmter Artikel, feminin, Singular, Dativ",
+              "sense": "im / im Jahr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t13",
+              "idx": 13,
+              "surface": "1970",
+              "lemma": "1970",
+              "form": "Zahlwort (Jahreszahl)",
+              "sense": "1970",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t14",
+              "idx": 14,
+              "surface": "quale",
+              "lemma": "quale",
+              "form": "Relativpronomen / Bestimmungswort",
+              "sense": "als",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t15",
+              "idx": 15,
+              "surface": "dichiarazione",
+              "lemma": "dichiarazione",
+              "form": "Substantiv, feminin, Singular, Nominativ/Akkusativ",
+              "sense": "Erklärung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t16",
+              "idx": 16,
+              "surface": "contro",
+              "lemma": "contro",
+              "form": "Präposition",
+              "sense": "gegen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t17",
+              "idx": 17,
+              "surface": "la",
+              "lemma": "il",
+              "form": "bestimmter Artikel, feminin, Singular, Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t18",
+              "idx": 18,
+              "surface": "svolta",
+              "lemma": "svolta",
+              "form": "Substantiv, feminin, Singular, Akkusativ",
+              "sense": "Wende / Kurswechsel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t19",
+              "idx": 19,
+              "surface": "conservatrice",
+              "lemma": "conservatrice",
+              "form": "Adjektiv, feminin, Singular, Akkusativ",
+              "sense": "konservative",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t20",
+              "idx": 20,
+              "surface": "del",
+              "lemma": "di",
+              "form": "Präposition + bestimmter Artikel, maskulin, Singular, Genitiv",
+              "sense": "der / des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t21",
+              "idx": 21,
+              "surface": "governo",
+              "lemma": "governo",
+              "form": "Substantiv, maskulin, Singular, Genitiv",
+              "sense": "Regierung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t22",
+              "idx": 22,
+              "surface": "slovacco",
+              "lemma": "slovacco",
+              "form": "Adjektiv, maskulin, Singular, Genitiv",
+              "sense": "slowakisch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t23",
+              "idx": 23,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "nach",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t24",
+              "idx": 24,
+              "surface": "seguito",
+              "lemma": "seguito",
+              "form": "Substantiv, maskulin, Singular, Dativ (in seguito a)",
+              "sense": "Folge",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t25",
+              "idx": 25,
+              "surface": "alla",
+              "lemma": "a",
+              "form": "Präposition + bestimmter Artikel, feminin, Singular, Dativ",
+              "sense": "der / der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t26",
+              "idx": 26,
+              "surface": "repressione",
+              "lemma": "repressione",
+              "form": "Substantiv, feminin, Singular, Dativ",
+              "sense": "Unterdrückung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t27",
+              "idx": 27,
+              "surface": "della",
+              "lemma": "la",
+              "form": "bestimmter Artikel, feminin, Singular, Genitiv",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t28",
+              "idx": 28,
+              "surface": "Primavera",
+              "lemma": "Primavera",
+              "form": "Eigenname (historisches Ereignis)",
+              "sense": "Prager Frühling",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t29",
+              "idx": 29,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von / des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t30",
+              "idx": 30,
+              "surface": "Praga",
+              "lemma": "Praga",
+              "form": "Eigenname (Ort)",
+              "sense": "Prag",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t31",
+              "idx": 31,
+              "surface": "nel",
+              "lemma": "in",
+              "form": "Präposition + bestimmter Artikel, maskulin, Singular, Dativ",
+              "sense": "im / im Jahr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s4:t32",
+              "idx": 32,
+              "surface": "1968.",
+              "lemma": "1968",
+              "form": "Zahlwort (Jahreszahl)",
+              "sense": "1968",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17911199799050000079:s4:t0",
+                "tp_17911199799050000079:s4:t1"
+              ],
+              "lemma": "Ping-Pong Club",
+              "gloss": "Ping-Pong-Club",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "tokenIds": [
+                "tp_17911199799050000079:s4:t4",
+                "tp_17911199799050000079:s4:t5"
+              ],
+              "lemma": "artista slovacco",
+              "gloss": "slowakischer Künstler",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 13,
+              "tokenIds": [
+                "tp_17911199799050000079:s4:t12",
+                "tp_17911199799050000079:s4:t13"
+              ],
+              "lemma": "nel 1970",
+              "gloss": "im Jahr 1970",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 14,
+              "end": 15,
+              "tokenIds": [
+                "tp_17911199799050000079:s4:t14",
+                "tp_17911199799050000079:s4:t15"
+              ],
+              "lemma": "quale dichiarazione",
+              "gloss": "als Erklärung",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 23,
+              "end": 26,
+              "tokenIds": [
+                "tp_17911199799050000079:s4:t23",
+                "tp_17911199799050000079:s4:t24",
+                "tp_17911199799050000079:s4:t25",
+                "tp_17911199799050000079:s4:t26"
+              ],
+              "lemma": "in seguito alla repressione",
+              "gloss": "nach der Unterdrückung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 28,
+              "end": 30,
+              "tokenIds": [
+                "tp_17911199799050000079:s4:t28",
+                "tp_17911199799050000079:s4:t29",
+                "tp_17911199799050000079:s4:t30"
+              ],
+              "lemma": "Primavera di Praga",
+              "gloss": "Prager Frühling",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 31,
+              "end": 32,
+              "tokenIds": [
+                "tp_17911199799050000079:s4:t31",
+                "tp_17911199799050000079:s4:t32"
+              ],
+              "lemma": "nel 1968",
+              "gloss": "im Jahr 1968",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-04T14:20:30.372Z",
+            "sentenceId": "tp_17911199799050000079:s4",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 3370
+          },
+          "text": "Ping-Pong Club,\nun progetto dell'artista slovacco Július Koller (1939-2007) presentato a Bratislava nel 1970 quale dichiarazione contro la svolta conservatrice del governo slovacco in seguito alla repressione della Primavera di Praga nel 1968.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17911199799050000079:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17911199799050000079:s5:t0",
+              "idx": 0,
+              "surface": "Invitando",
+              "lemma": "invitare",
+              "form": "Partizip Präsens Aktiv",
+              "sense": "indem man einlädt / durch das Einladen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t1",
+              "idx": 1,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu / um ... zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t2",
+              "idx": 2,
+              "surface": "seguire",
+              "lemma": "seguire",
+              "form": "Infinitiv Aktiv",
+              "sense": "zu befolgen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t3",
+              "idx": 3,
+              "surface": "o",
+              "lemma": "o",
+              "form": "Konjunktion",
+              "sense": "ob",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t4",
+              "idx": 4,
+              "surface": "meno",
+              "lemma": "meno",
+              "form": "Adverb",
+              "sense": "weniger / nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t5",
+              "idx": 5,
+              "surface": "le",
+              "lemma": "le",
+              "form": "Bestimmter Artikel Plural Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t6",
+              "idx": 6,
+              "surface": "regole",
+              "lemma": "regole",
+              "form": "Nomen Plural Femininum",
+              "sense": "Regeln",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t7",
+              "idx": 7,
+              "surface": "del",
+              "lemma": "del",
+              "form": "Präpositionalartikel (di + il)",
+              "sense": "des / der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t8",
+              "idx": 8,
+              "surface": "fair",
+              "lemma": "fair play",
+              "form": "Nomen (Lehnwort) Singular Neutrum/Maskulinum",
+              "sense": "Fairplay",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t9",
+              "idx": 9,
+              "surface": "play,",
+              "lemma": "fair play",
+              "form": "Nomen (Lehnwort) Singular Neutrum/Maskulinum",
+              "sense": "Fairplay",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t10",
+              "idx": 10,
+              "surface": "si",
+              "lemma": "si",
+              "form": "Reflexivpronomen / Passivkonstruktion Partikel",
+              "sense": "sich (reflexiv) / man (passivisch)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t11",
+              "idx": 11,
+              "surface": "apriva",
+              "lemma": "aprire",
+              "form": "Indikativ Imperfekt Aktiv 3. Person Singular",
+              "sense": "öffnete sich / wurde geöffnet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t12",
+              "idx": 12,
+              "surface": "uno",
+              "lemma": "uno",
+              "form": "Unbestimmter Artikel Maskulinum Singular",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t13",
+              "idx": 13,
+              "surface": "spazio",
+              "lemma": "spazio",
+              "form": "Nomen Maskulinum Singular",
+              "sense": "Raum / Platz",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t14",
+              "idx": 14,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronoun",
+              "sense": "der / das / die (relativ)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t15",
+              "idx": 15,
+              "surface": "incoraggiava",
+              "lemma": "incoraggiare",
+              "form": "Indikativ Imperfekt Aktiv 3. Person Singular",
+              "sense": "ermutigte / förderte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t16",
+              "idx": 16,
+              "surface": "la",
+              "lemma": "la",
+              "form": "Bestimmter Artikel Femininum Singular",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t17",
+              "idx": 17,
+              "surface": "partecipazione",
+              "lemma": "partecipazione",
+              "form": "Nomen Femininum Singular",
+              "sense": "Teilnahme",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t18",
+              "idx": 18,
+              "surface": "delle",
+              "lemma": "delle",
+              "form": "Präpositionalartikel (di + le)",
+              "sense": "der / von den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17911199799050000079:s5:t19",
+              "idx": 19,
+              "surface": "persone.",
+              "lemma": "persone",
+              "form": "Nomen Plural Femininum",
+              "sense": "Personen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 4,
+              "tokenIds": [
+                "tp_17911199799050000079:s5:t0",
+                "tp_17911199799050000079:s5:t1",
+                "tp_17911199799050000079:s5:t2",
+                "tp_17911199799050000079:s5:t3",
+                "tp_17911199799050000079:s5:t4"
+              ],
+              "lemma": "invitare a seguire o meno",
+              "gloss": "einladen, ... zu befolgen oder auch nicht",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 8,
+              "end": 9,
+              "tokenIds": [
+                "tp_17911199799050000079:s5:t8",
+                "tp_17911199799050000079:s5:t9"
+              ],
+              "lemma": "fair play",
+              "gloss": "Fairplay",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-04T14:25:01.865Z",
+            "sentenceId": "tp_17911199799050000079:s5",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2200
+          },
+          "text": "Invitando a seguire o meno le regole del fair play,\nsi apriva uno spazio che incoraggiava la partecipazione delle persone.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-04T14:25:01.878Z",
+        "chapterId": "tp_17911199799050000079",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "c90dbe097cad",
+      "analyzedAt": "2026-10-04T14:25:01.878Z"
     }
   },
-  "generatedAt": "2026-10-02T19:34:01.374Z",
-  "chapterCount": 27
+  "generatedAt": "2026-10-04T14:25:01.882Z",
+  "chapterCount": 28
 }
