@@ -14644,8 +14644,9 @@
         }
       ],
       "generatedAt": "2026-10-04T13:19:39.906Z",
-      "updatedAt": "2026-10-04T17:50:37.282Z",
-      "createdBy": "admin"
+      "updatedAt": "2026-10-05T08:16:02.501Z",
+      "createdBy": "admin",
+      "coverageTarget": 0.5
     },
     {
       "id": "tp_17910187183560000080",

@@ -20183,8 +20183,1659 @@
       },
       "sourceTextHash": "c90dbe097cad",
       "analyzedAt": "2026-10-04T14:25:01.878Z"
+    },
+    "tp_17910187183560000080": {
+      "chapterId": "tp_17910187183560000080",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 4,
+      "tokenCount": 128,
+      "sentences": [
+        {
+          "sentenceId": "tp_17910187183560000080:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17910187183560000080:s0:t0",
+              "idx": 0,
+              "surface": "Il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t1",
+              "idx": 1,
+              "surface": "Roero",
+              "lemma": "Roero",
+              "form": "Eigenname, Substantiv",
+              "sense": "Roero (Weinanbaugebiet)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t2",
+              "idx": 2,
+              "surface": "Arneis",
+              "lemma": "Arneis",
+              "form": "Eigenname, Substantiv",
+              "sense": "Arneis (Rebsorte)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t3",
+              "idx": 3,
+              "surface": "DOCG",
+              "lemma": "DOCG",
+              "form": "Abkürzung, Substantiv",
+              "sense": "DOCG (geschützte Ursprungsbezeichnung)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t4",
+              "idx": 4,
+              "surface": "nasce",
+              "lemma": "nascere",
+              "form": "Verb, Indikativ, Präsens, 3. Person, Singular",
+              "sense": "entsteht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t5",
+              "idx": 5,
+              "surface": "dalle",
+              "lemma": "da",
+              "form": "Präposition (kontrahiert: da + le), Dativ/Ablativ",
+              "sense": "von den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t6",
+              "idx": 6,
+              "surface": "uve",
+              "lemma": "uva",
+              "form": "Substantiv, Femininum, Plural, Nominativ/Akkusativ",
+              "sense": "Trauben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t7",
+              "idx": 7,
+              "surface": "nell’omonimo",
+              "lemma": "omonimo",
+              "form": "Adjektiv, Maskulinum, Singular, Nominativ",
+              "sense": "gleichnamigen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t8",
+              "idx": 8,
+              "surface": "vitigno,",
+              "lemma": "vitigno",
+              "form": "Substantiv, Maskulinum, Singular, Nominativ",
+              "sense": "Rebsorte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t9",
+              "idx": 9,
+              "surface": "oggi",
+              "lemma": "oggi",
+              "form": "Adverb",
+              "sense": "heute",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t10",
+              "idx": 10,
+              "surface": "presente",
+              "lemma": "presente",
+              "form": "Adjektiv, Femininum, Singular, Nominativ",
+              "sense": "vorhanden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t11",
+              "idx": 11,
+              "surface": "nei",
+              "lemma": "in",
+              "form": "Präposition (kontrahiert: in + i), Lokativ",
+              "sense": "in den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t12",
+              "idx": 12,
+              "surface": "comuni",
+              "lemma": "comune",
+              "form": "Substantiv, Maskulinum, Plural, Nominativ/Akkusativ",
+              "sense": "Gemeinden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t13",
+              "idx": 13,
+              "surface": "della",
+              "lemma": "di",
+              "form": "Präposition (kontrahiert: di + la), Genitiv",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t14",
+              "idx": 14,
+              "surface": "Provincia",
+              "lemma": "Provincia",
+              "form": "Substantiv, Femininum, Singular, Nominativ/Akkusativ",
+              "sense": "Provinz",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t15",
+              "idx": 15,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition, Genitiv",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t16",
+              "idx": 16,
+              "surface": "Cuneo",
+              "lemma": "Cuneo",
+              "form": "Eigenname, Substantiv",
+              "sense": "Cuneo (Stadt/Provinz)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t17",
+              "idx": 17,
+              "surface": "alla",
+              "lemma": "a",
+              "form": "Präposition (kontrahiert: a + la), Dativ/Lokativ",
+              "sense": "an der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t18",
+              "idx": 18,
+              "surface": "sinistra",
+              "lemma": "sinistra",
+              "form": "Substantiv, Femininum, Singular, Nominativ/Akkusativ",
+              "sense": "linken Seite",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t19",
+              "idx": 19,
+              "surface": "del",
+              "lemma": "di",
+              "form": "Präposition (kontrahiert: di + il), Genitiv",
+              "sense": "des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t20",
+              "idx": 20,
+              "surface": "fiume",
+              "lemma": "fiume",
+              "form": "Substantiv, Maskulinum, Singular, Nominativ/Akkusativ",
+              "sense": "Fluss",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t21",
+              "idx": 21,
+              "surface": "Tanaro,",
+              "lemma": "Tanaro",
+              "form": "Eigenname, Substantiv",
+              "sense": "Tanaro (Fluss)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t22",
+              "idx": 22,
+              "surface": "che,",
+              "lemma": "che",
+              "form": "Relativpronomen, Maskulinum, Singular, Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t23",
+              "idx": 23,
+              "surface": "secondo",
+              "lemma": "secondo",
+              "form": "Präposition",
+              "sense": "nach",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t24",
+              "idx": 24,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Nominativ/Akkusativ",
+              "sense": "dem",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t25",
+              "idx": 25,
+              "surface": "mito,",
+              "lemma": "mito",
+              "form": "Substantiv, Maskulinum, Singular, Dativ/Lokativ",
+              "sense": "Mythos",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t26",
+              "idx": 26,
+              "surface": "fu",
+              "lemma": "essere",
+              "form": "Hilfsverb, Indikativ, Imperfekt, 3. Person, Singular, Passiv",
+              "sense": "wurde",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t27",
+              "idx": 27,
+              "surface": "incaricato",
+              "lemma": "incaricare",
+              "form": "Partizip Perfekt, Maskulinum, Singular, Nominativ (Passiv)",
+              "sense": "beauftragt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t28",
+              "idx": 28,
+              "surface": "da",
+              "lemma": "da",
+              "form": "Präposition, Ablativ (Agentiv im Passiv)",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t29",
+              "idx": 29,
+              "surface": "Persefone,",
+              "lemma": "Persefone",
+              "form": "Eigenname, Substantiv",
+              "sense": "Persephone",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t30",
+              "idx": 30,
+              "surface": "Dea",
+              "lemma": "Dea",
+              "form": "Substantiv, Femininum, Singular, Apposition",
+              "sense": "Göttin",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t31",
+              "idx": 31,
+              "surface": "della",
+              "lemma": "di",
+              "form": "Präposition (kontrahiert: di + la), Genitiv",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t32",
+              "idx": 32,
+              "surface": "natura,",
+              "lemma": "natura",
+              "form": "Substantiv, Femininum, Singular, Nominativ/Akkusativ",
+              "sense": "Natur",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t33",
+              "idx": 33,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition, Infinitivmarker",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t34",
+              "idx": 34,
+              "surface": "dividere",
+              "lemma": "dividere",
+              "form": "Verb, Infinitiv",
+              "sense": "teilen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t35",
+              "idx": 35,
+              "surface": "la",
+              "lemma": "la",
+              "form": "Bestimmter Artikel, Femininum, Singular, Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t36",
+              "idx": 36,
+              "surface": "zona",
+              "lemma": "zona",
+              "form": "Substantiv, Femininum, Singular, Akkusativ",
+              "sense": "Zone",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t37",
+              "idx": 37,
+              "surface": "del",
+              "lemma": "di",
+              "form": "Präposition (kontrahiert: di + il), Genitiv",
+              "sense": "des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t38",
+              "idx": 38,
+              "surface": "Roero",
+              "lemma": "Roero",
+              "form": "Eigenname, Substantiv",
+              "sense": "Roero (Weinanbaugebiet)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t39",
+              "idx": 39,
+              "surface": "da",
+              "lemma": "da",
+              "form": "Präposition, Ablativ (Trennung)",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t40",
+              "idx": 40,
+              "surface": "quella",
+              "lemma": "quello",
+              "form": "Demonstrativpronomen, Femininum, Singular, Nominativ/Akkusativ",
+              "sense": "jene",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t41",
+              "idx": 41,
+              "surface": "delle",
+              "lemma": "di",
+              "form": "Präposition (kontrahiert: di + le), Genitiv",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s0:t42",
+              "idx": 42,
+              "surface": "Langhe.",
+              "lemma": "Langhe",
+              "form": "Eigenname, Substantiv",
+              "sense": "Langhe (Weinanbaugebiet)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 3,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t0",
+                "tp_17910187183560000080:s0:t1",
+                "tp_17910187183560000080:s0:t2",
+                "tp_17910187183560000080:s0:t3"
+              ],
+              "lemma": "Roero Arneis DOCG",
+              "gloss": "Roero Arneis DOCG (Weinbezeichnung)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 5,
+              "end": 6,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t5",
+                "tp_17910187183560000080:s0:t6"
+              ],
+              "lemma": "dalle uve",
+              "gloss": "von den Trauben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 7,
+              "end": 8,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t7",
+                "tp_17910187183560000080:s0:t8"
+              ],
+              "lemma": "nell’omonimo vitigno",
+              "gloss": "in der gleichnamigen Rebsorte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 11,
+              "end": 12,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t11",
+                "tp_17910187183560000080:s0:t12"
+              ],
+              "lemma": "nei comuni",
+              "gloss": "in den Gemeinden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 13,
+              "end": 14,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t13",
+                "tp_17910187183560000080:s0:t14"
+              ],
+              "lemma": "della Provincia",
+              "gloss": "der Provinz",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 15,
+              "end": 16,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t15",
+                "tp_17910187183560000080:s0:t16"
+              ],
+              "lemma": "di Cuneo",
+              "gloss": "von Cuneo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 17,
+              "end": 18,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t17",
+                "tp_17910187183560000080:s0:t18"
+              ],
+              "lemma": "alla sinistra",
+              "gloss": "auf der linken Seite",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 19,
+              "end": 20,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t19",
+                "tp_17910187183560000080:s0:t20"
+              ],
+              "lemma": "del fiume",
+              "gloss": "des Flusses",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 23,
+              "end": 25,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t23",
+                "tp_17910187183560000080:s0:t24",
+                "tp_17910187183560000080:s0:t25"
+              ],
+              "lemma": "secondo il mito",
+              "gloss": "nach dem Mythos",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 26,
+              "end": 27,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t26",
+                "tp_17910187183560000080:s0:t27"
+              ],
+              "lemma": "fu incaricato",
+              "gloss": "wurde beauftragt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 30,
+              "end": 32,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t30",
+                "tp_17910187183560000080:s0:t31",
+                "tp_17910187183560000080:s0:t32"
+              ],
+              "lemma": "Dea della natura",
+              "gloss": "Göttin der Natur",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 33,
+              "end": 34,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t33",
+                "tp_17910187183560000080:s0:t34"
+              ],
+              "lemma": "di dividere",
+              "gloss": "zu teilen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 35,
+              "end": 36,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t35",
+                "tp_17910187183560000080:s0:t36"
+              ],
+              "lemma": "la zona",
+              "gloss": "die Zone",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 37,
+              "end": 38,
+              "tokenIds": [
+                "tp_17910187183560000080:s0:t37",
+                "tp_17910187183560000080:s0:t38"
+              ],
+              "lemma": "del Roero",
+              "gloss": "des Roero",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-05T11:25:16.704Z",
+            "sentenceId": "tp_17910187183560000080:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 4270
+          },
+          "text": "Il Roero Arneis DOCG nasce dalle uve nell’omonimo vitigno, oggi presente nei comuni della Provincia di Cuneo alla sinistra del fiume Tanaro, che, secondo il mito, fu incaricato da Persefone, Dea della natura, di dividere la zona del Roero da quella delle Langhe.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17910187183560000080:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17910187183560000080:s1:t0",
+              "idx": 0,
+              "surface": "L’elemento",
+              "lemma": "l'elemento",
+              "form": "Artikel + Substantiv, Maskulinum, Singular, Nominativ",
+              "sense": "der Bestandteil",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t1",
+              "idx": 1,
+              "surface": "chiave",
+              "lemma": "chiave",
+              "form": "Adjektiv, Femininum, Singular, Nominativ",
+              "sense": "entscheidend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t2",
+              "idx": 2,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen, Maskulinum, Singular, Nominativ",
+              "sense": "das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t3",
+              "idx": 3,
+              "surface": "contraddistingue",
+              "lemma": "contraddistinguere",
+              "form": "Verb, Indikativ, Präsens, 3. Person Singular",
+              "sense": "auszeichnet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t4",
+              "idx": 4,
+              "surface": "quest’area",
+              "lemma": "quest’area",
+              "form": "Demonstrativpronomen + Substantiv, Femininum, Singular, Akkusativ",
+              "sense": "dieses Gebiet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t5",
+              "idx": 5,
+              "surface": "è",
+              "lemma": "essere",
+              "form": "Verb, Indikativ, Präsens, 3. Person Singular",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t6",
+              "idx": 6,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Artikel, Maskulinum, Singular, Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t7",
+              "idx": 7,
+              "surface": "terreno",
+              "lemma": "terreno",
+              "form": "Substantiv, Maskulinum, Singular, Nominativ",
+              "sense": "Boden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t8",
+              "idx": 8,
+              "surface": "sabbioso,",
+              "lemma": "sabbioso",
+              "form": "Adjektiv, Maskulinum, Singular, Nominativ",
+              "sense": "sandig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t9",
+              "idx": 9,
+              "surface": "tant’è",
+              "lemma": "tant'è",
+              "form": "Konjunktionale Phrase (tant'è che)",
+              "sense": "so sehr, dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t10",
+              "idx": 10,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Konjunktion",
+              "sense": "dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t11",
+              "idx": 11,
+              "surface": "è",
+              "lemma": "essere",
+              "form": "Verb, Indikativ, Präsens, 3. Person Singular",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t12",
+              "idx": 12,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t13",
+              "idx": 13,
+              "surface": "uso",
+              "lemma": "uso",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Gebrauch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t14",
+              "idx": 14,
+              "surface": "comune",
+              "lemma": "comune",
+              "form": "Adjektiv, Maskulinum, Singular",
+              "sense": "üblich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t15",
+              "idx": 15,
+              "surface": "dire",
+              "lemma": "dire",
+              "form": "Verb, Infinitiv",
+              "sense": "sagen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t16",
+              "idx": 16,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Konjunktion",
+              "sense": "dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t17",
+              "idx": 17,
+              "surface": "i",
+              "lemma": "i",
+              "form": "Artikel, Maskulinum, Plural, Nominativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t18",
+              "idx": 18,
+              "surface": "vini",
+              "lemma": "vini",
+              "form": "Substantiv, Maskulinum, Plural, Nominativ",
+              "sense": "Weine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t19",
+              "idx": 19,
+              "surface": "qui:",
+              "lemma": "qui",
+              "form": "Adverb",
+              "sense": "hier",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t20",
+              "idx": 20,
+              "surface": "“sono",
+              "lemma": "essere",
+              "form": "Verb, Indikativ, Präsens, 3. Person Plural",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t21",
+              "idx": 21,
+              "surface": "fatti",
+              "lemma": "fare",
+              "form": "Partizip Perfekt, Maskulinum, Plural",
+              "sense": "gemacht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t22",
+              "idx": 22,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "auf",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s1:t23",
+              "idx": 23,
+              "surface": "spiaggia”.",
+              "lemma": "spiaggia",
+              "form": "Substantiv, Femininum, Singular",
+              "sense": "Strand",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17910187183560000080:s1:t0",
+                "tp_17910187183560000080:s1:t1"
+              ],
+              "lemma": "elemento chiave",
+              "gloss": "Schlüsselelement",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 9,
+              "end": 10,
+              "tokenIds": [
+                "tp_17910187183560000080:s1:t9",
+                "tp_17910187183560000080:s1:t10"
+              ],
+              "lemma": "tant'è che",
+              "gloss": "so sehr, dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 14,
+              "tokenIds": [
+                "tp_17910187183560000080:s1:t12",
+                "tp_17910187183560000080:s1:t13",
+                "tp_17910187183560000080:s1:t14"
+              ],
+              "lemma": "di uso comune",
+              "gloss": "üblich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 20,
+              "end": 23,
+              "tokenIds": [
+                "tp_17910187183560000080:s1:t20",
+                "tp_17910187183560000080:s1:t21",
+                "tp_17910187183560000080:s1:t22",
+                "tp_17910187183560000080:s1:t23"
+              ],
+              "lemma": "essere fatti in spiaggia",
+              "gloss": "am Strand gemacht werden",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-05T11:31:04.577Z",
+            "sentenceId": "tp_17910187183560000080:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2560
+          },
+          "text": "L’elemento chiave che contraddistingue quest’area è il terreno sabbioso, tant’è che è di uso comune dire che i vini qui: “sono fatti in spiaggia”.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17910187183560000080:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17910187183560000080:s2:t0",
+              "idx": 0,
+              "surface": "Arneis",
+              "lemma": "Arneis",
+              "form": "Eigenname (Substantiv)",
+              "sense": "Arneis (Weinrebsorte/Name)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t1",
+              "idx": 1,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t2",
+              "idx": 2,
+              "surface": "Piemontese",
+              "lemma": "Piemontese",
+              "form": "Eigenname (Substantiv)",
+              "sense": "Piemontesisch (Sprache/Region)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t3",
+              "idx": 3,
+              "surface": "sta",
+              "lemma": "stare",
+              "form": "Verb, Indikativ Präsens, 3. Person Singular",
+              "sense": "steht für / bedeutet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t4",
+              "idx": 4,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu (Infinitivmarker)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t5",
+              "idx": 5,
+              "surface": "indicare",
+              "lemma": "indicare",
+              "form": "Verb, Infinitiv",
+              "sense": "bezeichnen / anzeigen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t6",
+              "idx": 6,
+              "surface": "un",
+              "lemma": "un",
+              "form": "Indefinitartikel, Maskulinum Singular",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t7",
+              "idx": 7,
+              "surface": "personaggio",
+              "lemma": "personaggio",
+              "form": "Substantiv, Maskulinum Singular",
+              "sense": "Figur / Charakter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t8",
+              "idx": 8,
+              "surface": "birichino,",
+              "lemma": "birichino",
+              "form": "Adjektiv, Maskulinum Singular",
+              "sense": "streichhaft / frech",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t9",
+              "idx": 9,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in (Teil der Konjunktion)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t10",
+              "idx": 10,
+              "surface": "quanto",
+              "lemma": "quanto",
+              "form": "Konjunktion (in 'in quanto')",
+              "sense": "da / weil",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t11",
+              "idx": 11,
+              "surface": "la",
+              "lemma": "la",
+              "form": "Definitartikel, Femininum Singular",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t12",
+              "idx": 12,
+              "surface": "leggenda",
+              "lemma": "leggenda",
+              "form": "Substantiv, Femininum Singular",
+              "sense": "Legende",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t13",
+              "idx": 13,
+              "surface": "lo",
+              "lemma": "lo",
+              "form": "Personalpronomen, Akkusativ, Maskulinum Singular (Objekt)",
+              "sense": "ihn (das Wort/der Begriff)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t14",
+              "idx": 14,
+              "surface": "vuole",
+              "lemma": "volere",
+              "form": "Verb, Indikativ Präsens, 3. Person Singular",
+              "sense": "will / sieht es vor",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t15",
+              "idx": 15,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von / mit (Attributmarker)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t16",
+              "idx": 16,
+              "surface": "difficile",
+              "lemma": "difficile",
+              "form": "Adjektiv, Femininum Singular",
+              "sense": "schwierig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s2:t17",
+              "idx": 17,
+              "surface": "lavorazione.",
+              "lemma": "lavorazione",
+              "form": "Substantiv, Femininum Singular",
+              "sense": "Verarbeitung / Bearbeitung",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 5,
+              "tokenIds": [
+                "tp_17910187183560000080:s2:t3",
+                "tp_17910187183560000080:s2:t4",
+                "tp_17910187183560000080:s2:t5"
+              ],
+              "lemma": "stare a indicare",
+              "gloss": "bezeichnen / bedeuten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 9,
+              "end": 10,
+              "tokenIds": [
+                "tp_17910187183560000080:s2:t9",
+                "tp_17910187183560000080:s2:t10"
+              ],
+              "lemma": "in quanto",
+              "gloss": "da / weil",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-05T11:35:21.511Z",
+            "sentenceId": "tp_17910187183560000080:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2020
+          },
+          "text": "Arneis in Piemontese sta a indicare un personaggio birichino, in quanto la leggenda lo vuole di difficile lavorazione.",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17910187183560000080:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17910187183560000080:s3:t0",
+              "idx": 0,
+              "surface": "In",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t1",
+              "idx": 1,
+              "surface": "passato",
+              "lemma": "passato",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Vergangenheit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t2",
+              "idx": 2,
+              "surface": "questo",
+              "lemma": "questo",
+              "form": "Demonstrativpronomen, Maskulinum, Singular",
+              "sense": "dieser",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t3",
+              "idx": 3,
+              "surface": "vino",
+              "lemma": "vino",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Wein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t4",
+              "idx": 4,
+              "surface": "fu",
+              "lemma": "essere",
+              "form": "Verb, Indikativ, Präteritum, 3. Person, Singular",
+              "sense": "war",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t5",
+              "idx": 5,
+              "surface": "protagonista",
+              "lemma": "protagonista",
+              "form": "Substantiv, Maskulinum/Femininum, Singular",
+              "sense": "Hauptdarsteller",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t6",
+              "idx": 6,
+              "surface": "dei",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t7",
+              "idx": 7,
+              "surface": "primi",
+              "lemma": "primo",
+              "form": "Adjektiv, Maskulinum, Plural",
+              "sense": "ersten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t8",
+              "idx": 8,
+              "surface": "esperimenti",
+              "lemma": "esperimento",
+              "form": "Substantiv, Maskulinum, Plural",
+              "sense": "Experimente",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t9",
+              "idx": 9,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t10",
+              "idx": 10,
+              "surface": "vinificazione",
+              "lemma": "vinificazione",
+              "form": "Substantiv, Femininum, Singular",
+              "sense": "Vinifikation",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t11",
+              "idx": 11,
+              "surface": "del",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t12",
+              "idx": 12,
+              "surface": "vermut",
+              "lemma": "vermut",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Wermutwein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t13",
+              "idx": 13,
+              "surface": "e,",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t14",
+              "idx": 14,
+              "surface": "durante",
+              "lemma": "durante",
+              "form": "Präposition",
+              "sense": "während",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t15",
+              "idx": 15,
+              "surface": "le",
+              "lemma": "il",
+              "form": "Artikel, Femininum, Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t16",
+              "idx": 16,
+              "surface": "crisi",
+              "lemma": "crisi",
+              "form": "Substantiv, Femininum, Plural",
+              "sense": "Krisen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t17",
+              "idx": 17,
+              "surface": "delle",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t18",
+              "idx": 18,
+              "surface": "guerre",
+              "lemma": "guerra",
+              "form": "Substantiv, Femininum, Plural",
+              "sense": "Kriege",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t19",
+              "idx": 19,
+              "surface": "mondiali,",
+              "lemma": "mondiale",
+              "form": "Adjektiv, Femininum, Plural",
+              "sense": "Welt-",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t20",
+              "idx": 20,
+              "surface": "fu",
+              "lemma": "essere",
+              "form": "Verb, Indikativ, Präteritum, 3. Person, Singular",
+              "sense": "wurde",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t21",
+              "idx": 21,
+              "surface": "impiantato",
+              "lemma": "impiantare",
+              "form": "Partizip Perfekt Passiv, Maskulinum, Singular",
+              "sense": "angepflanzt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t22",
+              "idx": 22,
+              "surface": "tra",
+              "lemma": "tra",
+              "form": "Präposition",
+              "sense": "zwischen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t23",
+              "idx": 23,
+              "surface": "i",
+              "lemma": "il",
+              "form": "Artikel, Maskulinum, Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t24",
+              "idx": 24,
+              "surface": "filari",
+              "lemma": "filare",
+              "form": "Substantiv, Maskulinum, Plural",
+              "sense": "Rebenreihen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t25",
+              "idx": 25,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t26",
+              "idx": 26,
+              "surface": "Nebbiolo",
+              "lemma": "Nebbiolo",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Nebbiolo-Trauben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t27",
+              "idx": 27,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "um",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t28",
+              "idx": 28,
+              "surface": "tener",
+              "lemma": "tenere",
+              "form": "Infinitiv",
+              "sense": "fernzuhalten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t29",
+              "idx": 29,
+              "surface": "lontani",
+              "lemma": "lontano",
+              "form": "Adjektiv, Maskulinum, Plural",
+              "sense": "fern",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t30",
+              "idx": 30,
+              "surface": "gli",
+              "lemma": "il",
+              "form": "Artikel, Maskulinum, Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t31",
+              "idx": 31,
+              "surface": "uccelli",
+              "lemma": "uccello",
+              "form": "Substantiv, Maskulinum, Plural",
+              "sense": "Vögel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t32",
+              "idx": 32,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t33",
+              "idx": 33,
+              "surface": "preservare",
+              "lemma": "preservare",
+              "form": "Infinitiv",
+              "sense": "zu bewahren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t34",
+              "idx": 34,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t35",
+              "idx": 35,
+              "surface": "questo",
+              "lemma": "questo",
+              "form": "Demonstrativpronomen, Maskulinum, Singular",
+              "sense": "diesem",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t36",
+              "idx": 36,
+              "surface": "modo",
+              "lemma": "modo",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Weise",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t37",
+              "idx": 37,
+              "surface": "le",
+              "lemma": "il",
+              "form": "Artikel, Femininum, Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t38",
+              "idx": 38,
+              "surface": "uve",
+              "lemma": "uva",
+              "form": "Substantiv, Femininum, Plural",
+              "sense": "Trauben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t39",
+              "idx": 39,
+              "surface": "nere",
+              "lemma": "nero",
+              "form": "Adjektiv, Femininum, Plural",
+              "sense": "schwarze",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t40",
+              "idx": 40,
+              "surface": "dai",
+              "lemma": "da",
+              "form": "Präposition",
+              "sense": "vor",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t41",
+              "idx": 41,
+              "surface": "sabaudi",
+              "lemma": "sabauda",
+              "form": "Adjektiv, Maskulinum/Femininum, Plural",
+              "sense": "savoischen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17910187183560000080:s3:t42",
+              "idx": 42,
+              "surface": "condizionamenti.",
+              "lemma": "condizionamento",
+              "form": "Substantiv, Maskulinum, Plural",
+              "sense": "Einflüssen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17910187183560000080:s3:t0",
+                "tp_17910187183560000080:s3:t1"
+              ],
+              "lemma": "in passato",
+              "gloss": "in der Vergangenheit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 34,
+              "end": 36,
+              "tokenIds": [
+                "tp_17910187183560000080:s3:t34",
+                "tp_17910187183560000080:s3:t35",
+                "tp_17910187183560000080:s3:t36"
+              ],
+              "lemma": "in questo modo",
+              "gloss": "auf diese Weise",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-05T11:44:38.469Z",
+            "sentenceId": "tp_17910187183560000080:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 4270
+          },
+          "text": "In passato questo vino fu protagonista dei primi esperimenti di vinificazione del vermut e, durante le crisi delle guerre mondiali, fu impiantato tra i filari di Nebbiolo per tener lontani gli uccelli e preservare in questo modo le uve nere dai sabaudi condizionamenti.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-05T11:44:38.482Z",
+        "chapterId": "tp_17910187183560000080",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "3d2c6b39d391",
+      "analyzedAt": "2026-10-05T11:44:38.482Z"
     }
   },
-  "generatedAt": "2026-10-04T14:25:01.882Z",
-  "chapterCount": 28
+  "generatedAt": "2026-10-05T11:44:38.487Z",
+  "chapterCount": 29
 }
