@@ -10267,8 +10267,25 @@ generate text from pasted stories. Fix this first!.
 * the latest two screenshots in the same folder ~/Pictures/dreizunge
   show that now we have no generate button at all anymore.
 
+-> v91_i
 
+* Summary generation: allow to choose between styles, (a) summary of
+  the story, or (b) formal text analysis.  Can we do a websearch? If
+  yes, we could have a button on the storyline page that does a
+  websearch to identify the source, and to summarize background
+  information, or include background info in the story summary.
 
+* Allow to zoom on images in the progress cards, and in the extracted
+  text confirmation window by clicking on them. If possible and
+  reasonable, replace the mouse pointer with a magnifying glass while
+  over the image.
+* Add images and storyboard to the intro progress card that shows
+  the story summary.
+
+* When a text extraction from is finished, clicking on the "open" 
+  link in the "background jobs" popover should lead to the text
+  confirmation window, but currently it seems to lead to
+  the image extraction/panel selection page.
 
 
 ---

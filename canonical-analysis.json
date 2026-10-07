@@ -21834,8 +21834,4495 @@
       },
       "sourceTextHash": "3d2c6b39d391",
       "analyzedAt": "2026-10-05T11:44:38.482Z"
+    },
+    "tp_17912909846950000110": {
+      "chapterId": "tp_17912909846950000110",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 17,
+      "tokenCount": 203,
+      "sentences": [
+        {
+          "sentenceId": "tp_17912909846950000110:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s0:t0",
+              "idx": 0,
+              "surface": "Dimma",
+              "lemma": "dare",
+              "form": "Imperativ Präsens 2. Person Singular (informell)",
+              "sense": "gib",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s0:t1",
+              "idx": 1,
+              "surface": "sapienza",
+              "lemma": "sapienza",
+              "form": "Nominativ/Akkusativ Singular Femininum",
+              "sense": "Weisheit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s0:t2",
+              "idx": 2,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s0:t3",
+              "idx": 3,
+              "surface": "l'prima",
+              "lemma": "il primo",
+              "form": "Akkusativ Singular Maskulinum (bestimmter Artikel + Adjektiv)",
+              "sense": "die ersten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s0:t4",
+              "idx": 4,
+              "surface": "arie.",
+              "lemma": "aria",
+              "form": "Nominativ/Akkusativ Plural Femininum",
+              "sense": "Arien",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17912909846950000110:s0:t0",
+                "tp_17912909846950000110:s0:t1"
+              ],
+              "lemma": "dare sapienza",
+              "gloss": "Weisheit geben / weise machen",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:08:40.194Z",
+            "sentenceId": "tp_17912909846950000110:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Dimma sapienza e l'prima arie.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s1:t0",
+              "idx": 0,
+              "surface": "Sinalizia",
+              "lemma": "Sinalizia",
+              "form": "Eigenname (Substantiv)",
+              "sense": "Sinalizia (Name einer Person oder Entität)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s1:t1",
+              "idx": 1,
+              "surface": "mi",
+              "lemma": "mi",
+              "form": "Personalpronomen (1. Person Singular, Dativ/Akkusativ)",
+              "sense": "mir / mich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s1:t2",
+              "idx": 2,
+              "surface": "coeterno",
+              "lemma": "coeterno",
+              "form": "Adjektiv (Maskulinum, Singular, Nominativ/Akkusativ)",
+              "sense": "gleichaltrig / Altersgenosse",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s1:t3",
+              "idx": 3,
+              "surface": "duro.",
+              "lemma": "duro",
+              "form": "Adjektiv (Maskulinum, Singular, Nominativ/Akkusativ)",
+              "sense": "hart / streng",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:09:52.002Z",
+            "sentenceId": "tp_17912909846950000110:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Sinalizia mi coeterno duro.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s2:t0",
+              "idx": 0,
+              "surface": "Lasciate",
+              "lemma": "lasciare",
+              "form": "Verb: Indikativ Präsens Aktiv 2. Person Plural",
+              "sense": "Lasst (zurück/fort)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s2:t1",
+              "idx": 1,
+              "surface": "ogne",
+              "lemma": "ogne",
+              "form": "Adjektiv: Akkusativ Singular Femininum (archaisch/poetisch für ogni)",
+              "sense": "jede",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s2:t2",
+              "idx": 2,
+              "surface": "speranza,",
+              "lemma": "speranza",
+              "form": "Substantiv: Akkusativ Singular Femininum",
+              "sense": "Hoffnung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s2:t3",
+              "idx": 3,
+              "surface": "voi",
+              "lemma": "voi",
+              "form": "Personalpronomen: Nominativ/Akkusativ Plural 2. Person",
+              "sense": "ihr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s2:t4",
+              "idx": 4,
+              "surface": "ch'intrate\".",
+              "lemma": "entrare",
+              "form": "Verb: Indikativ Präsens Aktiv 2. Person Plural (mit Relativpronomen 'chi' verschmolzen)",
+              "sense": "die eintretet",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17912909846950000110:s2:t0",
+                "tp_17912909846950000110:s2:t1",
+                "tp_17912909846950000110:s2:t2"
+              ],
+              "lemma": "lasciare ogne speranza",
+              "gloss": "jede Hoffnung fahren lassen / aufgeben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17912909846950000110:s2:t3",
+                "tp_17912909846950000110:s2:t4"
+              ],
+              "lemma": "voi ch'intrate",
+              "gloss": "ihr, die ihr eintretet",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:11:37.114Z",
+            "sentenceId": "tp_17912909846950000110:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Lasciate ogne speranza, voi ch'intrate\".",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s3:t0",
+              "idx": 0,
+              "surface": "Queste",
+              "lemma": "questo",
+              "form": "Demonstrativpronomen, Femininum Plural Nominativ",
+              "sense": "diese",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s3:t1",
+              "idx": 1,
+              "surface": "paro",
+              "lemma": "parola",
+              "form": "Nomen, Femininum Plural Nominativ",
+              "sense": "Worte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s3:t2",
+              "idx": 2,
+              "surface": "\"Maestro,",
+              "lemma": "Maestro",
+              "form": "Eigenname/Vokativ, Maskulinum Singular",
+              "sense": "Meister",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s3:t3",
+              "idx": 3,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum Singular Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s3:t4",
+              "idx": 4,
+              "surface": "senso",
+              "lemma": "senso",
+              "form": "Nomen, Maskulinum Singular Nominativ",
+              "sense": "Sinn",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s3:t5",
+              "idx": 5,
+              "surface": "lor",
+              "lemma": "loro",
+              "form": "Possessivpronomen (verkürzt), Plural",
+              "sense": "ihre",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s3:t6",
+              "idx": 6,
+              "surface": "m'e",
+              "lemma": "essere",
+              "form": "Verb, 3. Person Singular Präsens Indikativ (mit angehängtem Pronomen 'mi')",
+              "sense": "ist mir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s3:t7",
+              "idx": 7,
+              "surface": "duro\".",
+              "lemma": "duro",
+              "form": "Adjektiv, Maskulinum Singular Nominativ",
+              "sense": "schwer/undurchdringlich",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 5,
+              "tokenIds": [
+                "tp_17912909846950000110:s3:t3",
+                "tp_17912909846950000110:s3:t4",
+                "tp_17912909846950000110:s3:t5"
+              ],
+              "lemma": "il senso loro",
+              "gloss": "ihr Sinn",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 6,
+              "end": 7,
+              "tokenIds": [
+                "tp_17912909846950000110:s3:t6",
+                "tp_17912909846950000110:s3:t7"
+              ],
+              "lemma": "essere duro",
+              "gloss": "schwer/undurchdringlich sein",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:13:49.205Z",
+            "sentenceId": "tp_17912909846950000110:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Queste paro\n\"Maestro, il senso lor m'e duro\".",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s4:t0",
+              "idx": 0,
+              "surface": "Ed",
+              "lemma": "ed",
+              "form": "Konjunktion, koordinierend",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t1",
+              "idx": 1,
+              "surface": "ell'i",
+              "lemma": "egli",
+              "form": "Personalpronomen, 3. Person Singular, Subjektform mit angehängtem Akkusativobjekt",
+              "sense": "er (es)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t2",
+              "idx": 2,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t3",
+              "idx": 3,
+              "surface": "me",
+              "lemma": "me",
+              "form": "Personalpronomen, 1. Person Singular, Objektform",
+              "sense": "mir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t4",
+              "idx": 4,
+              "surface": "ten",
+              "lemma": "tenere",
+              "form": "Verb, Imperativ, 2. Person Singular",
+              "sense": "halte (zurück)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t5",
+              "idx": 5,
+              "surface": "lasciare",
+              "lemma": "lasciare",
+              "form": "Verb, Infinitiv",
+              "sense": "loszulassen / fallen zu lassen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t6",
+              "idx": 6,
+              "surface": "ogne",
+              "lemma": "ogni",
+              "form": "Adjektiv, unbestimmt, Singular",
+              "sense": "jeglichen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t7",
+              "idx": 7,
+              "surface": "sospetto;",
+              "lemma": "sospetto",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Verdacht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t8",
+              "idx": 8,
+              "surface": "ogni",
+              "lemma": "ogni",
+              "form": "Adjektiv, unbestimmt, Singular",
+              "sense": "jede",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t9",
+              "idx": 9,
+              "surface": "vilta",
+              "lemma": "viltà",
+              "form": "Substantiv, Femininum, Singular",
+              "sense": "Feigheit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t10",
+              "idx": 10,
+              "surface": "convien",
+              "lemma": "convenire",
+              "form": "Verb, Indikativ Präsens, 3. Person Singular",
+              "sense": "muss / gebührt sich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t11",
+              "idx": 11,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Konjunktion, subordinierend",
+              "sense": "dass",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t12",
+              "idx": 12,
+              "surface": "qui",
+              "lemma": "qui",
+              "form": "Adverb, Lokaladverb",
+              "sense": "hier",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t13",
+              "idx": 13,
+              "surface": "sia",
+              "lemma": "essere",
+              "form": "Verb, Konjunktiv Präsens, 3. Person Singular",
+              "sense": "sei (geworden)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s4:t14",
+              "idx": 14,
+              "surface": "morta.",
+              "lemma": "morto",
+              "form": "Partizip Perfekt, Adjektivisierung, Femininum, Singular",
+              "sense": "gestorben / tot",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 5,
+              "tokenIds": [
+                "tp_17912909846950000110:s4:t1",
+                "tp_17912909846950000110:s4:t2",
+                "tp_17912909846950000110:s4:t3",
+                "tp_17912909846950000110:s4:t4",
+                "tp_17912909846950000110:s4:t5"
+              ],
+              "lemma": "egli a me ten lasciare",
+              "gloss": "er befiehlt mir, ... zu lassen / er sagt mir, ich soll ... loslassen",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "tokenIds": [
+                "tp_17912909846950000110:s4:t4",
+                "tp_17912909846950000110:s4:t5"
+              ],
+              "lemma": "tenere lasciare",
+              "gloss": "loslassen / fallen lassen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:17:18.042Z",
+            "sentenceId": "tp_17912909846950000110:s4",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1750
+          },
+          "text": "Ed ell'i a me ten lasciare ogne sospetto; ogni vilta convien che qui sia morta.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s5:t0",
+              "idx": 0,
+              "surface": "Noi",
+              "lemma": "noi",
+              "form": "Personalpronomen; 1. Person Plural Nominativ",
+              "sense": "wir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t1",
+              "idx": 1,
+              "surface": "stai",
+              "lemma": "stare",
+              "form": "Verb; 2. Person Singular Imperativ Präsens",
+              "sense": "bleib (du)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t2",
+              "idx": 2,
+              "surface": "ui",
+              "lemma": "qui",
+              "form": "Adverb",
+              "sense": "hier",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t3",
+              "idx": 3,
+              "surface": "vedrai",
+              "lemma": "vedere",
+              "form": "Verb; 2. Person Singular Indikativ Futur I Aktiv",
+              "sense": "wirst du sehen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t4",
+              "idx": 4,
+              "surface": "le",
+              "lemma": "il",
+              "form": "Bestimmter Artikel; Plural Femininum Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t5",
+              "idx": 5,
+              "surface": "genti",
+              "lemma": "gente",
+              "form": "Substantiv; Plural Femininum Nominativ/Akkusativ",
+              "sense": "Völker / Menschenmengen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t6",
+              "idx": 6,
+              "surface": "dolorose",
+              "lemma": "doloroso",
+              "form": "Adjektiv; Plural Femininum Nominativ/Akkusativ",
+              "sense": "traurige / leidende",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t7",
+              "idx": 7,
+              "surface": "ch'hanno",
+              "lemma": "che",
+              "form": "Relativpronomen; Plural Femininum Nominativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t8",
+              "idx": 8,
+              "surface": "perduto",
+              "lemma": "avere",
+              "form": "Hilfsverb; 3. Person Plural Indikativ Perfekt Aktiv",
+              "sense": "haben ... verloren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t9",
+              "idx": 9,
+              "surface": "il",
+              "lemma": "perdere",
+              "form": "Verb; Partizip Perfekt Maskulinum Singular",
+              "sense": "verloren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t10",
+              "idx": 10,
+              "surface": "ben",
+              "lemma": "bene",
+              "form": "Substantiv; Maskulinum Singular Akkusativ",
+              "sense": "das Gute",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t11",
+              "idx": 11,
+              "surface": "de",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von / des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s5:t12",
+              "idx": 12,
+              "surface": "l'intelletto\".",
+              "lemma": "intelletto",
+              "form": "Substantiv; Maskulinum Singular Genitiv",
+              "sense": "des Verstandes",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 7,
+              "end": 9,
+              "tokenIds": [
+                "tp_17912909846950000110:s5:t7",
+                "tp_17912909846950000110:s5:t8",
+                "tp_17912909846950000110:s5:t9"
+              ],
+              "lemma": "perdere il bene",
+              "gloss": "das Gute verlieren",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 10,
+              "end": 12,
+              "tokenIds": [
+                "tp_17912909846950000110:s5:t10",
+                "tp_17912909846950000110:s5:t11",
+                "tp_17912909846950000110:s5:t12"
+              ],
+              "lemma": "il bene dell'intelletto",
+              "gloss": "das Gut des Verstandes",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:20:14.897Z",
+            "sentenceId": "tp_17912909846950000110:s5",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1570
+          },
+          "text": "Noi stai ui vedrai le genti dolorose ch'hanno perduto il ben de l'intelletto\".",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s6",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s6:t0",
+              "idx": 0,
+              "surface": "E",
+              "lemma": "e",
+              "form": "Konjunktion, koordinierend",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t1",
+              "idx": 1,
+              "surface": "poiché",
+              "lemma": "poiché",
+              "form": "Konjunktion, kausal",
+              "sense": "weil",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t2",
+              "idx": 2,
+              "surface": "o",
+              "lemma": "o",
+              "form": "Demonstrativpronomen, maskulinum, singular, nominativ",
+              "sense": "der (betont)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t3",
+              "idx": 3,
+              "surface": "volto,",
+              "lemma": "volto",
+              "form": "Nomen, maskulinum, singular, nominativ",
+              "sense": "Antlitz",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t4",
+              "idx": 4,
+              "surface": "ond'o",
+              "lemma": "ond'e",
+              "form": "Relativpronomen + Konjunktion (kontrahiert: onde + che)",
+              "sense": "durch das / worüber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t5",
+              "idx": 5,
+              "surface": "mi",
+              "lemma": "mi",
+              "form": "Personalpronomen, reflexiv, dativ/akkusativ, erste person singular",
+              "sense": "mir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t6",
+              "idx": 6,
+              "surface": "confortal,",
+              "lemma": "confortare",
+              "form": "Verb, aktiv, indikativ, präsens, zweite person singular (archaisch: -al)",
+              "sense": "tröstest",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t7",
+              "idx": 7,
+              "surface": "intu",
+              "lemma": "intu",
+              "form": "Präposition (archaisch/dialektal für 'in tu' oder 'in te')",
+              "sense": "in dir / in dich",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t8",
+              "idx": 8,
+              "surface": "misse",
+              "lemma": "mettere",
+              "form": "Verb, aktiv, indikativ, imperfekt, dritte person singular (archaisch: misse)",
+              "sense": "tat / setzte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t9",
+              "idx": 9,
+              "surface": "ne",
+              "lemma": "ne",
+              "form": "Partikel, partitiv oder kausal",
+              "sense": "daher / daraus",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s6:t10",
+              "idx": 10,
+              "surface": "lagrimai.",
+              "lemma": "lagrimare",
+              "form": "Verb, aktiv, indikativ, imperfekt, erste person singular",
+              "sense": "weinte",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 4,
+              "end": 6,
+              "tokenIds": [
+                "tp_17912909846950000110:s6:t4",
+                "tp_17912909846950000110:s6:t5",
+                "tp_17912909846950000110:s6:t6"
+              ],
+              "lemma": "ond'e che conforta",
+              "gloss": "durch das, wodurch du tröstest",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:22:45.282Z",
+            "sentenceId": "tp_17912909846950000110:s6",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "E poiché o volto, ond'o mi confortal, intu misse ne lagrimai.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s7",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s7:t0",
+              "idx": 0,
+              "surface": "Diverse",
+              "lemma": "diverso",
+              "form": "Adjektiv; Plural, Femininum",
+              "sense": "verschiedene",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t1",
+              "idx": 1,
+              "surface": "lingue,",
+              "lemma": "lingua",
+              "form": "Substantiv; Plural, Femininum",
+              "sense": "Sprachen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t2",
+              "idx": 2,
+              "surface": "orribili",
+              "lemma": "orribile",
+              "form": "Adjektiv; Plural, Femininum",
+              "sense": "schreckliche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t3",
+              "idx": 3,
+              "surface": "voci",
+              "lemma": "voce",
+              "form": "Substantiv; Plural, Femininum",
+              "sense": "Stimmen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t4",
+              "idx": 4,
+              "surface": "alte",
+              "lemma": "alto",
+              "form": "Adjektiv; Plural, Femininum",
+              "sense": "hohe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t5",
+              "idx": 5,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t6",
+              "idx": 6,
+              "surface": "floche,",
+              "lemma": "flocco",
+              "form": "Adjektiv; Plural, Femininum",
+              "sense": "flache (tiefe)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t7",
+              "idx": 7,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t8",
+              "idx": 8,
+              "surface": "suon",
+              "lemma": "suono",
+              "form": "Substantiv; Singular, Maskulinum",
+              "sense": "Klang",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t9",
+              "idx": 9,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t10",
+              "idx": 10,
+              "surface": "tempo",
+              "lemma": "tempo",
+              "form": "Substantiv; Singular, Maskulinum",
+              "sense": "Zeit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t11",
+              "idx": 11,
+              "surface": "tinta,",
+              "lemma": "tinto",
+              "form": "Partizip Perfekt Passiv; Singular, Maskulinum",
+              "sense": "gefärbt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t12",
+              "idx": 12,
+              "surface": "come",
+              "lemma": "come",
+              "form": "Adverb",
+              "sense": "wie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t13",
+              "idx": 13,
+              "surface": "la",
+              "lemma": "la",
+              "form": "Artikel; Singular, Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t14",
+              "idx": 14,
+              "surface": "rena",
+              "lemma": "rena",
+              "form": "Substantiv; Singular, Femininum",
+              "sense": "Sand",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t15",
+              "idx": 15,
+              "surface": "quando",
+              "lemma": "quando",
+              "form": "Konjunktion",
+              "sense": "wenn",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s7:t16",
+              "idx": 16,
+              "surface": "ch'odo?",
+              "lemma": "udire",
+              "form": "Verb; Indikativ, Präsens, 1. Person Singular",
+              "sense": "höre",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 8,
+              "end": 11,
+              "tokenIds": [
+                "tp_17912909846950000110:s7:t8",
+                "tp_17912909846950000110:s7:t9",
+                "tp_17912909846950000110:s7:t10",
+                "tp_17912909846950000110:s7:t11"
+              ],
+              "lemma": "suono di tempo tinta",
+              "gloss": "Klang der gefärbten Zeit",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:26:10.842Z",
+            "sentenceId": "tp_17912909846950000110:s7",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1930
+          },
+          "text": "Diverse lingue, orribili voci alte e floche, e suon di tempo tinta, come la rena quando ch'odo?",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s8",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s8:t0",
+              "idx": 0,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t1",
+              "idx": 1,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t2",
+              "idx": 2,
+              "surface": "gent'e",
+              "lemma": "gente",
+              "form": "Substantiv Singular Femininum",
+              "sense": "Menschenmenge",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t3",
+              "idx": 3,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t4",
+              "idx": 4,
+              "surface": "par",
+              "lemma": "parere",
+              "form": "Verb Indikativ Präsens 3. Person Singular",
+              "sense": "erscheint",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t5",
+              "idx": 5,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t6",
+              "idx": 6,
+              "surface": "coloro",
+              "lemma": "colui",
+              "form": "Demonstrativpronomen Plural Maskulinum",
+              "sense": "jener",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t7",
+              "idx": 7,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t8",
+              "idx": 8,
+              "surface": "visser",
+              "lemma": "vivere",
+              "form": "Verb Indikativ Perfekt 3. Person Plural",
+              "sense": "lebten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t9",
+              "idx": 9,
+              "surface": "senza",
+              "lemma": "senza",
+              "form": "Präposition",
+              "sense": "ohne",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t10",
+              "idx": 10,
+              "surface": "infanzia",
+              "lemma": "infanzia",
+              "form": "Substantiv Singular Femininum",
+              "sense": "Kindheit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t11",
+              "idx": 11,
+              "surface": "nè",
+              "lemma": "né",
+              "form": "Konjunktion",
+              "sense": "noch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t12",
+              "idx": 12,
+              "surface": "fur",
+              "lemma": "essere",
+              "form": "Verb Indikativ Perfekt 3. Person Plural",
+              "sense": "waren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t13",
+              "idx": 13,
+              "surface": "fedeli",
+              "lemma": "fedele",
+              "form": "Adjektiv Plural Maskulinum",
+              "sense": "treu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t14",
+              "idx": 14,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "gegenüber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t15",
+              "idx": 15,
+              "surface": "Dio,",
+              "lemma": "Dio",
+              "form": "Substantiv Singular Maskulinum",
+              "sense": "Gott",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t16",
+              "idx": 16,
+              "surface": "ma",
+              "lemma": "ma",
+              "form": "Konjunktion",
+              "sense": "aber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t17",
+              "idx": 17,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "wegen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t18",
+              "idx": 18,
+              "surface": "ch'alcuna",
+              "lemma": "alcuno",
+              "form": "Determinativpronomen Singular Femininum",
+              "sense": "irgendeine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t19",
+              "idx": 19,
+              "surface": "gloria",
+              "lemma": "gloria",
+              "form": "Substantiv Singular Femininum",
+              "sense": "Ruhm",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t20",
+              "idx": 20,
+              "surface": "i",
+              "lemma": "egli",
+              "form": "Personalpronomen Akkusativ Plural Maskulinum",
+              "sense": "sie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t21",
+              "idx": 21,
+              "surface": "rei",
+              "lemma": "reo",
+              "form": "Substantiv Plural Maskulinum",
+              "sense": "Schuldige",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s8:t22",
+              "idx": 22,
+              "surface": "avrebber.",
+              "lemma": "avere",
+              "form": "Verb Konjunktiv Imperfekt 3. Person Plural",
+              "sense": "hätten",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 17,
+              "end": 18,
+              "tokenIds": [
+                "tp_17912909846950000110:s8:t17",
+                "tp_17912909846950000110:s8:t18"
+              ],
+              "lemma": "perché",
+              "gloss": "weil",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 20,
+              "end": 21,
+              "tokenIds": [
+                "tp_17912909846950000110:s8:t20",
+                "tp_17912909846950000110:s8:t21"
+              ],
+              "lemma": "i rei",
+              "gloss": "die Schuldigen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:30:46.129Z",
+            "sentenceId": "tp_17912909846950000110:s8",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2470
+          },
+          "text": "e che gent'e che par di coloro che visser senza infanzia nè fur fedeli a Dio, ma per ch'alcuna gloria i rei avrebber.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s9",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s9:t0",
+              "idx": 0,
+              "surface": "\"Dicerolti",
+              "lemma": "dicerolo",
+              "form": "Partizip Perfekt Aktiv Maskulin Singular",
+              "sense": "gesagt worden",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s9:t1",
+              "idx": 1,
+              "surface": "molto",
+              "lemma": "molto",
+              "form": "Adverb",
+              "sense": "sehr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s9:t2",
+              "idx": 2,
+              "surface": "breve,",
+              "lemma": "breve",
+              "form": "Adjektiv Neutrum Singular",
+              "sense": "kurz",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s9:t3",
+              "idx": 3,
+              "surface": "los",
+              "lemma": "lo",
+              "form": "Demonstrativpronomen Maskulin Singular Akkusativ",
+              "sense": "dieser (es)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s9:t4",
+              "idx": 4,
+              "surface": "son",
+              "lemma": "essere",
+              "form": "Indikativ Präsens Aktiv 3. Person Plural",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s9:t5",
+              "idx": 5,
+              "surface": "d'ogne",
+              "lemma": "ogni",
+              "form": "Adjektiv/Präposition Kontraktion",
+              "sense": "von jeder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s9:t6",
+              "idx": 6,
+              "surface": "altra",
+              "lemma": "altro",
+              "form": "Adjektiv Feminin Singular",
+              "sense": "anderer",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s9:t7",
+              "idx": 7,
+              "surface": "sorte.",
+              "lemma": "sorte",
+              "form": "Substantiv Feminin Singular",
+              "sense": "Art",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 5,
+              "end": 7,
+              "tokenIds": [
+                "tp_17912909846950000110:s9:t5",
+                "tp_17912909846950000110:s9:t6",
+                "tp_17912909846950000110:s9:t7"
+              ],
+              "lemma": "d'ogne altra sorte",
+              "gloss": "von jeder anderen Art",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:32:45.759Z",
+            "sentenceId": "tp_17912909846950000110:s9",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "\"Dicerolti molto breve, los son d'ogne altra sorte.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s10",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s10:t0",
+              "idx": 0,
+              "surface": "Familiam",
+              "lemma": "familia",
+              "form": "Substantiv, Femininum, Singular, Akkusativ",
+              "sense": "Familie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t1",
+              "idx": 1,
+              "surface": "lor,",
+              "lemma": "loro",
+              "form": "Possessivpronomen, Plural",
+              "sense": "ihre",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t2",
+              "idx": 2,
+              "surface": "ma",
+              "lemma": "ma",
+              "form": "Konjunktion",
+              "sense": "aber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t3",
+              "idx": 3,
+              "surface": "guarda",
+              "lemma": "guardare",
+              "form": "Verb, Aktiv, Indikativ, Präsens, 2. Person Singular (imperativisch/interjektiv)",
+              "sense": "sieh mal",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t4",
+              "idx": 4,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t5",
+              "idx": 5,
+              "surface": "p",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "für",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t6",
+              "idx": 6,
+              "surface": "ogn",
+              "lemma": "ogni",
+              "form": "Adjektiv/Indefinitpronomen, Singular",
+              "sense": "jede",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t7",
+              "idx": 7,
+              "surface": "posa",
+              "lemma": "posa",
+              "form": "Substantiv, Femininum, Singular",
+              "sense": "Pause",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t8",
+              "idx": 8,
+              "surface": "mi",
+              "lemma": "mi",
+              "form": "Personalpronomen, Dativ/Akkusativ, 1. Person Singular",
+              "sense": "mir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t9",
+              "idx": 9,
+              "surface": "parea",
+              "lemma": "pareere",
+              "form": "Verb, Aktiv, Indikativ, Imperfekt, 3. Person Singular",
+              "sense": "schien",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t10",
+              "idx": 10,
+              "surface": "indegna,",
+              "lemma": "indegno",
+              "form": "Adjektiv, Femininum, Singular, Nominativ",
+              "sense": "unwürdig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t11",
+              "idx": 11,
+              "surface": "onta",
+              "lemma": "onta",
+              "form": "Substantiv, Femininum, Singular, Nominativ",
+              "sense": "Schande",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t12",
+              "idx": 12,
+              "surface": "n'avesse",
+              "lemma": "ne",
+              "form": "Partikel/Pronomen",
+              "sense": "davon (objektbezogen)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s10:t13",
+              "idx": 13,
+              "surface": "disfatta.",
+              "lemma": "avere",
+              "form": "Verb, Aktiv, Konjunktiv, Imperfekt, 3. Person Singular",
+              "sense": "hätte",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 2,
+              "end": 4,
+              "tokenIds": [
+                "tp_17912909846950000110:s10:t2",
+                "tp_17912909846950000110:s10:t3",
+                "tp_17912909846950000110:s10:t4"
+              ],
+              "lemma": "ma guarda e",
+              "gloss": "sieh mal und",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 5,
+              "end": 7,
+              "tokenIds": [
+                "tp_17912909846950000110:s10:t5",
+                "tp_17912909846950000110:s10:t6",
+                "tp_17912909846950000110:s10:t7"
+              ],
+              "lemma": "per ogni posa",
+              "gloss": "für jede Pause",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 13,
+              "tokenIds": [
+                "tp_17912909846950000110:s10:t12",
+                "tp_17912909846950000110:s10:t13"
+              ],
+              "lemma": "n'avesse disfatta",
+              "gloss": "sie zerstört hätte",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:36:39.978Z",
+            "sentenceId": "tp_17912909846950000110:s10",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1660
+          },
+          "text": "Familiam lor, ma guarda e p ogn posa mi parea indegna, onta n'avesse disfatta.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s11",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s11:t0",
+              "idx": 0,
+              "surface": "Posade",
+              "lemma": "posare",
+              "form": "Verb; Imperativ Präteritum (Passato Remoto) 2. Person Singular",
+              "sense": "legte ab / legte hin",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s11:t1",
+              "idx": 1,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel; Maskulinum Singular Nominativ/Akkusativ",
+              "sense": "den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s11:t2",
+              "idx": 2,
+              "surface": "gran",
+              "lemma": "grande",
+              "form": "Adjektiv; Maskulinum Singular (apokopierte Form)",
+              "sense": "großer",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s11:t3",
+              "idx": 3,
+              "surface": "rifusto.",
+              "lemma": "rifusto",
+              "form": "Substantiv; Maskulinum Singular Nominativ/Akkusativ",
+              "sense": "Stamm / Baumstumpf",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:37:45.451Z",
+            "sentenceId": "tp_17912909846950000110:s11",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Posade il gran rifusto.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s12",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s12:t0",
+              "idx": 0,
+              "surface": "Inconta",
+              "lemma": "incontrare",
+              "form": "Verb; Indikativ Präsens Aktiv 3. Person Singular",
+              "sense": "trifft (jemanden)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s12:t1",
+              "idx": 1,
+              "surface": "sui.",
+              "lemma": "suoi",
+              "form": "Adjektiv; Genitiv Plural Maskulinum oder Neutrum",
+              "sense": "seiner/seine (Genitiv)",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:38:24.819Z",
+            "sentenceId": "tp_17912909846950000110:s12",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Inconta sui.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s13",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s13:t0",
+              "idx": 0,
+              "surface": "Questi",
+              "lemma": "questo",
+              "form": "Demonstrativpronomen Plural Maskulinum Nominativ",
+              "sense": "diese",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t1",
+              "idx": 1,
+              "surface": "sciauriati,",
+              "lemma": "sciauriato",
+              "form": "Substantiv Plural Maskulinum Nominativ",
+              "sense": "Schauerlinge (archaisch/dichterisch für schreckliche oder unheimliche Wesen)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t2",
+              "idx": 2,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen Plural Maskulinum Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t3",
+              "idx": 3,
+              "surface": "Elle",
+              "lemma": "Elle",
+              "form": "Eigenname (Substantiv) Singular Femininum Nominativ",
+              "sense": "sie (gemeint ist eine spezifische Figur, z.B. Helena oder eine Allegorie)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t4",
+              "idx": 4,
+              "surface": "rigavan",
+              "lemma": "rigare",
+              "form": "Verb Indikativ Imperfekt Plural 3. Person Aktiv",
+              "sense": "rannen/flössen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t5",
+              "idx": 5,
+              "surface": "lor",
+              "lemma": "loro",
+              "form": "Possessivpronomen Plural Maskulinum Dativ",
+              "sense": "ihnen (den Schauerlingen)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t6",
+              "idx": 6,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von/mit (Materialangabe)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t7",
+              "idx": 7,
+              "surface": "sangue,",
+              "lemma": "sangue",
+              "form": "Substantiv Singular Maskulinum Akkusativ",
+              "sense": "Blut",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t8",
+              "idx": 8,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu (bei Infinitivkonstruktion)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t9",
+              "idx": 9,
+              "surface": "riguardar",
+              "lemma": "riguardare",
+              "form": "Verb Infinitiv Präsens Aktiv",
+              "sense": "hinsehen/betrachten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t10",
+              "idx": 10,
+              "surface": "oltre",
+              "lemma": "oltre",
+              "form": "Adverb",
+              "sense": "weiter/hinaus",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t11",
+              "idx": 11,
+              "surface": "mi",
+              "lemma": "mi",
+              "form": "Personalpronomen Singular 1. Person Dativ/Akkusativ",
+              "sense": "mir (Dativ des Interesses oder Akkusativ bei 'd'edì')",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t12",
+              "idx": 12,
+              "surface": "d'edì",
+              "lemma": "dire",
+              "form": "Verb Indikativ Perfekt Singular 1. Person Aktiv (kontrahierte Form)",
+              "sense": "sagte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t13",
+              "idx": 13,
+              "surface": "ta",
+              "lemma": "tu",
+              "form": "Personalpronomen Singular 2. Person Nominativ (kontrahierte Form)",
+              "sense": "du",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t14",
+              "idx": 14,
+              "surface": "quali",
+              "lemma": "quali",
+              "form": "Relativpronomen Plural Maskulinum Akkusativ",
+              "sense": "welche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t15",
+              "idx": 15,
+              "surface": "sono,",
+              "lemma": "essere",
+              "form": "Verb Indikativ Präsens Plural 3. Person Aktiv",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t16",
+              "idx": 16,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t17",
+              "idx": 17,
+              "surface": "qual",
+              "lemma": "quale",
+              "form": "Relativpronomen Singular Maskulinum Akkusativ",
+              "sense": "welches",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s13:t18",
+              "idx": 18,
+              "surface": "cosume.",
+              "lemma": "costume",
+              "form": "Substantiv Singular Maskulinum Akkusativ",
+              "sense": "Sitte/Gewohnheit (in der Bedeutung von 'Art und Weise')",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 8,
+              "end": 10,
+              "tokenIds": [
+                "tp_17912909846950000110:s13:t8",
+                "tp_17912909846950000110:s13:t9",
+                "tp_17912909846950000110:s13:t10"
+              ],
+              "lemma": "a riguardar oltre",
+              "gloss": "hinübersehen / weiterblicken",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 13,
+              "tokenIds": [
+                "tp_17912909846950000110:s13:t12",
+                "tp_17912909846950000110:s13:t13"
+              ],
+              "lemma": "d'edì",
+              "gloss": "sagte dir (kontrahierte Form von 'dire a te')",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:42:48.118Z",
+            "sentenceId": "tp_17912909846950000110:s13",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2110
+          },
+          "text": "Questi sciauriati, che Elle rigavan lor di sangue, a riguardar oltre mi d'edì ta quali sono, e qual cosume.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s14",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s14:t0",
+              "idx": 0,
+              "surface": "Le",
+              "lemma": "le",
+              "form": "Bestimmter Artikel, Plural, Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t1",
+              "idx": 1,
+              "surface": "cose",
+              "lemma": "cosa",
+              "form": "Nomen, Plural, Femininum",
+              "sense": "Dinge",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t2",
+              "idx": 2,
+              "surface": "ti",
+              "lemma": "ti",
+              "form": "Personalpronomen, Akkusativ/Dativ, Singular, 2. Person",
+              "sense": "dir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t3",
+              "idx": 3,
+              "surface": "fier",
+              "lemma": "fier",
+              "form": "Verb, Präsens, Indikativ, 3. Person Singular (archaisch/dialektal für 'fa' oder 'fanno')",
+              "sense": "machen/tun",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t4",
+              "idx": 4,
+              "surface": "conçe",
+              "lemma": "conçe",
+              "form": "Verb, Präsens, Indikativ, 3. Person Singular (archaisch/dialektal für 'conce' von 'conciare')",
+              "sense": "richtet an/bereitet zu",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t5",
+              "idx": 5,
+              "surface": "q",
+              "lemma": "q",
+              "form": "Konjunktion (archaisch/dialektal für 'che')",
+              "sense": "dass/der/die/das",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t6",
+              "idx": 6,
+              "surface": "ognosi",
+              "lemma": "ognosi",
+              "form": "Nomen (archaisch/dialektal für 'ognuno' oder 'ogni cosa')",
+              "sense": "jeder/ein jeder",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t7",
+              "idx": 7,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t8",
+              "idx": 8,
+              "surface": "bassi,",
+              "lemma": "bassi",
+              "form": "Adjektiv, Plural, Maskulinum/Femininum",
+              "sense": "niedrige/unterwürfige",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t9",
+              "idx": 9,
+              "surface": "temendo",
+              "lemma": "temendo",
+              "form": "Verb, Gerundium",
+              "sense": "fürchtend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t10",
+              "idx": 10,
+              "surface": "er",
+              "lemma": "er",
+              "form": "Bestimmter Artikel (dialektal für 'il')",
+              "sense": "der",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t11",
+              "idx": 11,
+              "surface": "nave",
+              "lemma": "nave",
+              "form": "Nomen, Singular, Femininum",
+              "sense": "Schiff",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t12",
+              "idx": 12,
+              "surface": "un",
+              "lemma": "un",
+              "form": "Unbestimmter Artikel, Singular, Maskulinum",
+              "sense": "einen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t13",
+              "idx": 13,
+              "surface": "vecchio,",
+              "lemma": "vecchio",
+              "form": "Nomen/Adjektiv, Singular, Maskulinum",
+              "sense": "Alter/Mann",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t14",
+              "idx": 14,
+              "surface": "bianco",
+              "lemma": "bianco",
+              "form": "Adjektiv, Singular, Maskulinum",
+              "sense": "weiß",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t15",
+              "idx": 15,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "wegen/vor",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t16",
+              "idx": 16,
+              "surface": "l'occhi,",
+              "lemma": "l'occhi",
+              "form": "Nomen (mit elidiertem Artikel), Plural, Maskulinum",
+              "sense": "Augen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t17",
+              "idx": 17,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t18",
+              "idx": 18,
+              "surface": "'l",
+              "lemma": "'l",
+              "form": "Bestimmter Artikel (mit elidiertem 'il')",
+              "sense": "den/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t19",
+              "idx": 19,
+              "surface": "veggio",
+              "lemma": "veggio",
+              "form": "Nomen/Verb (archaisch für 'vedo' oder Nomen 'veggio' von 'vedere')",
+              "sense": "Sicht/Gesicht",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t20",
+              "idx": 20,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "um...zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t21",
+              "idx": 21,
+              "surface": "menare",
+              "lemma": "menare",
+              "form": "Verb, Infinitiv",
+              "sense": "führen/lenken",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t22",
+              "idx": 22,
+              "surface": "i",
+              "lemma": "i",
+              "form": "Bestimmter Artikel, Plural, Maskulinum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t23",
+              "idx": 23,
+              "surface": "tti",
+              "lemma": "tti",
+              "form": "Nomen (Dialektal/Archaisch für 'tutti' oder 'atti')",
+              "sense": "alle/Taten",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t24",
+              "idx": 24,
+              "surface": "da",
+              "lemma": "da",
+              "form": "Präposition",
+              "sense": "von/als",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t25",
+              "idx": 25,
+              "surface": "cortesi",
+              "lemma": "cortesi",
+              "form": "Adjektiv, Plural, Maskulinum/Femininum",
+              "sense": "höfliche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s14:t26",
+              "idx": 26,
+              "surface": "chesori\".",
+              "lemma": "chesori",
+              "form": "Nomen (Dialektal/Archaisch für 'tesori')",
+              "sense": "Schatze",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 9,
+              "end": 11,
+              "tokenIds": [
+                "tp_17912909846950000110:s14:t9",
+                "tp_17912909846950000110:s14:t10",
+                "tp_17912909846950000110:s14:t11"
+              ],
+              "lemma": "temendo er nave",
+              "gloss": "das Schiff fürchtend",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 20,
+              "end": 21,
+              "tokenIds": [
+                "tp_17912909846950000110:s14:t20",
+                "tp_17912909846950000110:s14:t21"
+              ],
+              "lemma": "per menare",
+              "gloss": "um zu führen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:49:46.230Z",
+            "sentenceId": "tp_17912909846950000110:s14",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2830
+          },
+          "text": "Le cose ti fier conçe q ognosi e bassi, temendo er nave un vecchio, bianco per l'occhi, e 'l veggio per menare i tti da cortesi chesori\".",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s15",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s15:t0",
+              "idx": 0,
+              "surface": "Intaglia,",
+              "lemma": "intaglio",
+              "form": "Substantiv Plural Femininum (oder Maskulinum) Nominativ/Akkusativ",
+              "sense": "Schnitzereien / Verzierungen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s15:t1",
+              "idx": 1,
+              "surface": "non",
+              "lemma": "non",
+              "form": "Negationspartikel",
+              "sense": "nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s15:t2",
+              "idx": 2,
+              "surface": "qui,",
+              "lemma": "qui",
+              "form": "Lokaladverb",
+              "sense": "hier",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s15:t3",
+              "idx": 3,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "für / nach (Richtung)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s15:t4",
+              "idx": 4,
+              "surface": "si",
+              "lemma": "si",
+              "form": "Demonstrativpronomen / Adverb",
+              "sense": "dort / da",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s15:t5",
+              "idx": 5,
+              "surface": "costà",
+              "lemma": "costà",
+              "form": "Lokaladverb",
+              "sense": "dahin / dort drüben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s15:t6",
+              "idx": 6,
+              "surface": "dove",
+              "lemma": "dove",
+              "form": "Relativadverb",
+              "sense": "wo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s15:t7",
+              "idx": 7,
+              "surface": "si",
+              "lemma": "si",
+              "form": "Reflexivpronomen / unpersönliches Partikel",
+              "sense": "man (unpersönlich)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s15:t8",
+              "idx": 8,
+              "surface": "può",
+              "lemma": "potere",
+              "form": "Verb Modal 3. Person Singular Präsens Indikativ",
+              "sense": "kann (man)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s15:t9",
+              "idx": 9,
+              "surface": "andare.",
+              "lemma": "andare",
+              "form": "Verb Hauptform Infinitiv",
+              "sense": "gehen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 7,
+              "end": 9,
+              "tokenIds": [
+                "tp_17912909846950000110:s15:t7",
+                "tp_17912909846950000110:s15:t8",
+                "tp_17912909846950000110:s15:t9"
+              ],
+              "lemma": "si può andare",
+              "gloss": "man kann hingehen / man kann dorthin gehen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:52:52.120Z",
+            "sentenceId": "tp_17912909846950000110:s15",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Intaglia, non qui, per si costà dove si può andare.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17912909846950000110:s16",
+          "tokens": [
+            {
+              "tokenId": "tp_17912909846950000110:s16:t0",
+              "idx": 0,
+              "surface": "A",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu, an (Richtung)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t1",
+              "idx": 1,
+              "surface": "de",
+              "lemma": "de",
+              "form": "Präposition",
+              "sense": "von, aus (Herkunft/Quelle)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t2",
+              "idx": 2,
+              "surface": "la",
+              "lemma": "la",
+              "form": "bestimmter Artikel, Femininum, Singular, Nominativ/Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t3",
+              "idx": 3,
+              "surface": "livida",
+              "lemma": "livido",
+              "form": "Adjektiv, Femininum, Singular, Nominativ/Akkusativ",
+              "sense": "livid, bleich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t4",
+              "idx": 4,
+              "surface": "palude,",
+              "lemma": "palude",
+              "form": "Substantiv, Femininum, Singular, Nominativ/Akkusativ",
+              "sense": "Sumpf",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t5",
+              "idx": 5,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen, Maskulinum/Neutrum, Plural, Nominativ",
+              "sense": "die (welche)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t6",
+              "idx": 6,
+              "surface": "color",
+              "lemma": "colore",
+              "form": "Substantiv, Maskulinum, Plural, Nominativ/Akkusativ",
+              "sense": "Farben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t7",
+              "idx": 7,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t8",
+              "idx": 8,
+              "surface": "dibattero",
+              "lemma": "dibattere",
+              "form": "Verb, Indikativ, Präteritum (Passato Remoto), 3. Person Plural",
+              "sense": "schlagen, hin- und herbewegen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t9",
+              "idx": 9,
+              "surface": "i",
+              "lemma": "i",
+              "form": "bestimmter Artikel, Maskulinum, Plural, Nominativ/Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t10",
+              "idx": 10,
+              "surface": "denari,",
+              "lemma": "denaro",
+              "form": "Substantiv, Maskulinum, Plural, Nominativ/Akkusativ",
+              "sense": "Geldstücke",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t11",
+              "idx": 11,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t12",
+              "idx": 12,
+              "surface": "l'locò",
+              "lemma": "loco",
+              "form": "Substantiv, Maskulinum, Singular, Nominativ/Akkusativ",
+              "sense": "Ort",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t13",
+              "idx": 13,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t14",
+              "idx": 14,
+              "surface": "l'tempo",
+              "lemma": "tempo",
+              "form": "Substantiv, Maskulinum, Singular, Nominativ/Akkusativ",
+              "sense": "Zeit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t15",
+              "idx": 15,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t16",
+              "idx": 16,
+              "surface": "l'seme",
+              "lemma": "seme",
+              "form": "Substantiv, Maskulinum, Singular, Nominativ/Akkusativ",
+              "sense": "Saatgut",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17912909846950000110:s16:t17",
+              "idx": 17,
+              "surface": "piangendo",
+              "lemma": "piangendo",
+              "form": "Verb (Gerundium), Präsens",
+              "sense": "weinend",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 4,
+              "tokenIds": [
+                "tp_17912909846950000110:s16:t0",
+                "tp_17912909846950000110:s16:t1",
+                "tp_17912909846950000110:s16:t2",
+                "tp_17912909846950000110:s16:t3",
+                "tp_17912909846950000110:s16:t4"
+              ],
+              "lemma": "a de la livida palude",
+              "gloss": "aus dem blassen Sumpf",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 16,
+              "tokenIds": [
+                "tp_17912909846950000110:s16:t12",
+                "tp_17912909846950000110:s16:t13",
+                "tp_17912909846950000110:s16:t14",
+                "tp_17912909846950000110:s16:t15",
+                "tp_17912909846950000110:s16:t16"
+              ],
+              "lemma": "loco e tempo e seme",
+              "gloss": "Ort und Zeit und Saatgut",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-06T13:57:07.691Z",
+            "sentenceId": "tp_17912909846950000110:s16",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2020
+          },
+          "text": "A de la livida palude, che color e dibattero i denari, e l'locò e l'tempo e l'seme piangendo",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-06T13:57:07.709Z",
+        "chapterId": "tp_17912909846950000110",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "9e604ef8873c",
+      "analyzedAt": "2026-10-06T13:57:07.709Z"
+    },
+    "tp_17913623775030000023": {
+      "chapterId": "tp_17913623775030000023",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 5,
+      "tokenCount": 158,
+      "sentences": [
+        {
+          "sentenceId": "tp_17913623775030000023:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17913623775030000023:s0:t0",
+              "idx": 0,
+              "surface": "I",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Plural, Maskulin",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t1",
+              "idx": 1,
+              "surface": "mio",
+              "lemma": "mio",
+              "form": "Possessivpronomen, Plural, Maskulin",
+              "sense": "mein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t2",
+              "idx": 2,
+              "surface": "alto",
+              "lemma": "alto",
+              "form": "Adjektiv, Plural, Maskulin",
+              "sense": "hoher",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t3",
+              "idx": 3,
+              "surface": "fattore:",
+              "lemma": "fattore",
+              "form": "Substantiv, Plural, Maskulin",
+              "sense": "Faktoren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t4",
+              "idx": 4,
+              "surface": "Ancor",
+              "lemma": "ancora",
+              "form": "Adverb",
+              "sense": "noch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t5",
+              "idx": 5,
+              "surface": "eterne,",
+              "lemma": "eterno",
+              "form": "Adjektiv, Plural, Feminin",
+              "sense": "ewige",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t6",
+              "idx": 6,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t7",
+              "idx": 7,
+              "surface": "lo",
+              "lemma": "lo",
+              "form": "Bestimmter Artikel, Singular, Maskulin",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t8",
+              "idx": 8,
+              "surface": "eterno",
+              "lemma": "eterno",
+              "form": "Substantiv, Singular, Maskulin",
+              "sense": "Ewige",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t9",
+              "idx": 9,
+              "surface": "è",
+              "lemma": "essere",
+              "form": "Verb, Präsens, Indikativ, 3. Person Singular",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t10",
+              "idx": 10,
+              "surface": "una",
+              "lemma": "uno",
+              "form": "Unbestimmter Artikel, Singular, Maskulin",
+              "sense": "eine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t11",
+              "idx": 11,
+              "surface": "porta;",
+              "lemma": "porta",
+              "form": "Substantiv, Singular, Feminin",
+              "sense": "Tür",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t12",
+              "idx": 12,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "wegen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t13",
+              "idx": 13,
+              "surface": "sospetto;",
+              "lemma": "sospetto",
+              "form": "Substantiv, Singular, Maskulin",
+              "sense": "Verdacht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t14",
+              "idx": 14,
+              "surface": "ogni",
+              "lemma": "ogni",
+              "form": "Adjektiv/Pronomen, Singular",
+              "sense": "jede",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t15",
+              "idx": 15,
+              "surface": "volta",
+              "lemma": "volta",
+              "form": "Substantiv, Singular, Feminin",
+              "sense": "Mal",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t16",
+              "idx": 16,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Konjunktion",
+              "sense": "dass/wann",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t17",
+              "idx": 17,
+              "surface": "perduto",
+              "lemma": "perdere",
+              "form": "Partizip Perfekt, Singular, Maskulin",
+              "sense": "verloren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t18",
+              "idx": 18,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Singular, Maskulin",
+              "sense": "das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t19",
+              "idx": 19,
+              "surface": "ben",
+              "lemma": "bene",
+              "form": "Substantiv, Singular, Neutrum/Maskulin",
+              "sense": "Gute",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t20",
+              "idx": 20,
+              "surface": "dentro",
+              "lemma": "dentro",
+              "form": "Präposition/Adverb",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t21",
+              "idx": 21,
+              "surface": "le",
+              "lemma": "le",
+              "form": "Bestimmter Artikel, Plural, Feminin",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t22",
+              "idx": 22,
+              "surface": "segrete",
+              "lemma": "segreto",
+              "form": "Adjektiv, Plural, Feminin",
+              "sense": "geheime",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s0:t23",
+              "idx": 23,
+              "surface": "cose.",
+              "lemma": "cosa",
+              "form": "Substantiv, Plural, Feminin",
+              "sense": "Dinge",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 14,
+              "end": 15,
+              "tokenIds": [
+                "tp_17913623775030000023:s0:t14",
+                "tp_17913623775030000023:s0:t15"
+              ],
+              "lemma": "ogni volta che",
+              "gloss": "jedes Mal wenn",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-07T09:04:36.206Z",
+            "sentenceId": "tp_17913623775030000023:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2560
+          },
+          "text": "I mio alto fattore: Ancor eterne, e lo eterno è una porta; per sospetto; ogni volta che perduto il ben dentro le segrete cose.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17913623775030000023:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17913623775030000023:s1:t0",
+              "idx": 0,
+              "surface": "Diverse",
+              "lemma": "diverso",
+              "form": "Adjektiv, Plural, Feminin",
+              "sense": "verschiedene",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t1",
+              "idx": 1,
+              "surface": "lingue,",
+              "lemma": "lingua",
+              "form": "Substantiv, Plural, Feminin",
+              "sense": "Sprachen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t2",
+              "idx": 2,
+              "surface": "ornato",
+              "lemma": "ornato",
+              "form": "Partizip Perfekt Aktiv, Maskulin, Singular",
+              "sense": "geschmückt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t3",
+              "idx": 3,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulin, Singular",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t4",
+              "idx": 4,
+              "surface": "qual",
+              "lemma": "quali",
+              "form": "Relativpronomen, Maskulin, Singular",
+              "sense": "welches",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t5",
+              "idx": 5,
+              "surface": "s'aggira",
+              "lemma": "aggirarsi",
+              "form": "Verb, Präsens, Indikativ, 3. Person Singular, Reflexiv",
+              "sense": "schwärmt herum",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t6",
+              "idx": 6,
+              "surface": "tra",
+              "lemma": "tra",
+              "form": "Präposition",
+              "sense": "zwischen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t7",
+              "idx": 7,
+              "surface": "cinta,",
+              "lemma": "cinta",
+              "form": "Substantiv, Singular, Feminin",
+              "sense": "Umzäunung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t8",
+              "idx": 8,
+              "surface": "dissì:",
+              "lemma": "dire",
+              "form": "Verb, Präteritum, Indikativ, 1. Person Singular",
+              "sense": "sagte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t9",
+              "idx": 9,
+              "surface": "\"Maestro,",
+              "lemma": "maestro",
+              "form": "Substantiv, Vokativ, Maskulin, Singular",
+              "sense": "Meister",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t10",
+              "idx": 10,
+              "surface": "teggiono",
+              "lemma": "teggere",
+              "form": "Verb, Präsens, Indikativ, 3. Person Plural",
+              "sense": "ehren",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t11",
+              "idx": 11,
+              "surface": "l'anima",
+              "lemma": "anima",
+              "form": "Substantiv, Singular, Feminin",
+              "sense": "Seele",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t12",
+              "idx": 12,
+              "surface": "triste",
+              "lemma": "triste",
+              "form": "Adjektiv, Singular, Feminin",
+              "sense": "traurig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t13",
+              "idx": 13,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t14",
+              "idx": 14,
+              "surface": "chi",
+              "lemma": "chi",
+              "form": "Relativpronomen, Maskulin, Singular",
+              "sense": "wer",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t15",
+              "idx": 15,
+              "surface": "non",
+              "lemma": "non",
+              "form": "Negationspartikel",
+              "sense": "nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t16",
+              "idx": 16,
+              "surface": "trobò",
+              "lemma": "trobare",
+              "form": "Verb, Präteritum, Indikativ, 3. Person Singular",
+              "sense": "fand",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t17",
+              "idx": 17,
+              "surface": "né",
+              "lemma": "né",
+              "form": "Koordinierende Konjunktion",
+              "sense": "noch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t18",
+              "idx": 18,
+              "surface": "turba,",
+              "lemma": "turba",
+              "form": "Substantiv, Singular, Feminin",
+              "sense": "Menge",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t19",
+              "idx": 19,
+              "surface": "ma",
+              "lemma": "ma",
+              "form": "Koordinierende Konjunktion",
+              "sense": "aber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t20",
+              "idx": 20,
+              "surface": "crede",
+              "lemma": "credere",
+              "form": "Verb, Präsens, Indikativ, 3. Person Singular",
+              "sense": "glaubt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t21",
+              "idx": 21,
+              "surface": "una",
+              "lemma": "uno",
+              "form": "Unbestimmter Artikel, Maskulin, Singular",
+              "sense": "eine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t22",
+              "idx": 22,
+              "surface": "gloria",
+              "lemma": "gloria",
+              "form": "Substantiv, Singular, Feminin",
+              "sense": "Ruhm",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t23",
+              "idx": 23,
+              "surface": "i",
+              "lemma": "pererolo",
+              "form": "Substantiv, Plural, Maskulin",
+              "sense": "Kirschen",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t24",
+              "idx": 24,
+              "surface": "pereroli",
+              "lemma": "olto",
+              "form": "Adjektiv, Plural, Maskulin",
+              "sense": "sehr kleine",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t25",
+              "idx": 25,
+              "surface": "olto",
+              "lemma": "breve",
+              "form": "Adjektiv, Plural, Maskulin",
+              "sense": "kurze",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s1:t26",
+              "idx": 26,
+              "surface": "breve.",
+              "lemma": null,
+              "form": null,
+              "sense": null,
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 23,
+              "end": 26,
+              "tokenIds": [
+                "tp_17913623775030000023:s1:t23",
+                "tp_17913623775030000023:s1:t24",
+                "tp_17913623775030000023:s1:t25",
+                "tp_17913623775030000023:s1:t26"
+              ],
+              "lemma": "pereroli olto breve",
+              "gloss": "sehr kleine Kirschen",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 1,
+          "unresolved": 1,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-07T09:10:50.203Z",
+            "sentenceId": "tp_17913623775030000023:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2830
+          },
+          "text": "Diverse lingue, ornato il qual s'aggira tra cinta, dissì: \"Maestro, teggiono l'anima triste di chi non trobò né turba, ma crede una gloria i pereroli olto breve.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17913623775030000023:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17913623775030000023:s2:t0",
+              "idx": 0,
+              "surface": "Qua",
+              "lemma": "qua",
+              "form": "Adverb der Lage",
+              "sense": "hier, an dieser Stelle",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t1",
+              "idx": 1,
+              "surface": "che,",
+              "lemma": "che",
+              "form": "Relativpronomen Nominativ Singular",
+              "sense": "der/die/das (bezieht sich auf 'qua' oder ist ein filler)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t2",
+              "idx": 2,
+              "surface": "guardando",
+              "lemma": "guardare",
+              "form": "Partizip Präsens",
+              "sense": "indem er blickte / während des Blickens",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t3",
+              "idx": 3,
+              "surface": "al",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu, auf (Richtung/Ziel)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t4",
+              "idx": 4,
+              "surface": "paradiso,",
+              "lemma": "paradiso",
+              "form": "Substantiv Maskulinum Singular Akkusativ",
+              "sense": "das Paradies",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t5",
+              "idx": 5,
+              "surface": "vidilegao",
+              "lemma": "vidilegao",
+              "form": "Verb (archaisch/dialektal) Indikativ Präteritum 3. Person Singular",
+              "sense": "sah ihn/sie/es",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t6",
+              "idx": 6,
+              "surface": "d'ogni",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von, aus (Genitiv)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t7",
+              "idx": 7,
+              "surface": "e",
+              "lemma": "ogni",
+              "form": "Adjektiv/Indefinitpronomen Singular",
+              "sense": "jede/r/s",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t8",
+              "idx": 8,
+              "surface": "ch't'ha",
+              "lemma": "che",
+              "form": "Relativpronomen Nominativ Singular",
+              "sense": "der/die/das (bezieht sich auf 'ogni')",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t9",
+              "idx": 9,
+              "surface": "la",
+              "lemma": "la",
+              "form": "Bestimmter Artikel Femininum Singular Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t10",
+              "idx": 10,
+              "surface": "forza",
+              "lemma": "forza",
+              "form": "Substantiv Femininum Singular Akkusativ",
+              "sense": "die Kraft",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t11",
+              "idx": 11,
+              "surface": "nononobi",
+              "lemma": "nononobi",
+              "form": "Verb (archaisch/dialektal) Indikativ Präteritum 3. Person Singular",
+              "sense": "nicht überwand / nicht besiegt",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t12",
+              "idx": 12,
+              "surface": "l'ombra",
+              "lemma": "ombra",
+              "form": "Substantiv Femininum Singular Akkusativ",
+              "sense": "den Schatten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t13",
+              "idx": 13,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von (Genitiv)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t14",
+              "idx": 14,
+              "surface": "colui",
+              "lemma": "colui",
+              "form": "Demonstrativpronomen Maskulinum Singular",
+              "sense": "jener Mann / derjenige",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t15",
+              "idx": 15,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen Nominativ Singular",
+              "sense": "der/die/das (bezieht sich auf 'colui')",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t16",
+              "idx": 16,
+              "surface": "recò",
+              "lemma": "recare",
+              "form": "Verb Indikativ Präteritum 3. Person Singular",
+              "sense": "brachte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t17",
+              "idx": 17,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu (Dativ)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t18",
+              "idx": 18,
+              "surface": "Dio",
+              "lemma": "Dio",
+              "form": "Eigenname Maskulinum Singular Dativ",
+              "sense": "Gott",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t19",
+              "idx": 19,
+              "surface": "spiacenti",
+              "lemma": "spiacente",
+              "form": "Adjektiv Plural",
+              "sense": "unangenehm / missliebig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t20",
+              "idx": 20,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t21",
+              "idx": 21,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Präposition",
+              "sense": "zu (Dativ)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t22",
+              "idx": 22,
+              "surface": "bemi",
+              "lemma": "bemi",
+              "form": "Substantiv Plural Dativ",
+              "sense": "den Guten / den Seligen",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t23",
+              "idx": 23,
+              "surface": "sui",
+              "lemma": "su",
+              "form": "Präposition",
+              "sense": "über, auf (lokal)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t24",
+              "idx": 24,
+              "surface": "pechier",
+              "lemma": "peccatore",
+              "form": "Substantiv Plural Dativ/Akkusativ",
+              "sense": "den Sündern",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t25",
+              "idx": 25,
+              "surface": "che",
+              "lemma": "che",
+              "form": "Relativpronomen Plural",
+              "sense": "die (bezieht sich auf 'pechier')",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t26",
+              "idx": 26,
+              "surface": "eran",
+              "lemma": "essere",
+              "form": "Verb Indikativ Imperfekt 3. Person Plural",
+              "sense": "waren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s2:t27",
+              "idx": 27,
+              "surface": "ivi.",
+              "lemma": "ivi",
+              "form": "Adverb der Lage",
+              "sense": "dort, an jenem Ort",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 2,
+              "end": 4,
+              "tokenIds": [
+                "tp_17913623775030000023:s2:t2",
+                "tp_17913623775030000023:s2:t3",
+                "tp_17913623775030000023:s2:t4"
+              ],
+              "lemma": "guardare al paradiso",
+              "gloss": "zum Himmel schauen / auf das Paradies blicken",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 16,
+              "end": 18,
+              "tokenIds": [
+                "tp_17913623775030000023:s2:t16",
+                "tp_17913623775030000023:s2:t17",
+                "tp_17913623775030000023:s2:t18"
+              ],
+              "lemma": "recò a Dio",
+              "gloss": "brachte Gott ... (zu)",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-07T09:17:57.055Z",
+            "sentenceId": "tp_17913623775030000023:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 2920
+          },
+          "text": "Qua che, guardando al paradiso, vidilegao d'ogni e ch't'ha la forza nononobi l'ombra di colui che recò a Dio spiacenti e a bemi sui pechier che eran ivi.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17913623775030000023:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17913623775030000023:s3:t0",
+              "idx": 0,
+              "surface": "Elle",
+              "lemma": "ella",
+              "form": "Personalpronomen, 3. Person Singular Femininum Nominativ",
+              "sense": "sie (die Frau)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t1",
+              "idx": 1,
+              "surface": "riguardar",
+              "lemma": "riguardare",
+              "form": "Verb, Infinitiv Präsens Aktiv",
+              "sense": "nachsehen / hinsehen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t2",
+              "idx": 2,
+              "surface": "oltre",
+              "lemma": "oltre",
+              "form": "Adverb",
+              "sense": "darüber hinaus / weiter",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t3",
+              "idx": 3,
+              "surface": "ragion",
+              "lemma": "ragione",
+              "form": "Substantiv, Femininum Singular Nominativ/Akkusativ",
+              "sense": "Vernunft / Grund",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t4",
+              "idx": 4,
+              "surface": "quali",
+              "lemma": "quale",
+              "form": "Relativpronomen, Plural Maskulinum/Femininum Nominativ",
+              "sense": "welche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t5",
+              "idx": 5,
+              "surface": "sono,",
+              "lemma": "essere",
+              "form": "Verb, Indikativ Präsens Aktiv 3. Person Plural",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t6",
+              "idx": 6,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t7",
+              "idx": 7,
+              "surface": "qual",
+              "lemma": "quale",
+              "form": "Relativpronomen, Singular Maskulinum/Femininum Nominativ",
+              "sense": "welcher / welche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t8",
+              "idx": 8,
+              "surface": "co",
+              "lemma": "cosa",
+              "form": "Substantiv, Femininum Singular Nominativ/Akkusativ",
+              "sense": "Sache / Ding",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t9",
+              "idx": 9,
+              "surface": "er",
+              "lemma": "il",
+              "form": "Artikel, Maskulinum Singular Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t10",
+              "idx": 10,
+              "surface": "conte",
+              "lemma": "conte",
+              "form": "Substantiv, Maskulinum Singular Nominativ",
+              "sense": "Graf / Graf (Titel)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t11",
+              "idx": 11,
+              "surface": "quando",
+              "lemma": "quando",
+              "form": "Konjunktion / Adverb",
+              "sense": "wann / als",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t12",
+              "idx": 12,
+              "surface": "noi",
+              "lemma": "noi",
+              "form": "Personalpronomen, 1. Person Plural Nominativ",
+              "sense": "wir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t13",
+              "idx": 13,
+              "surface": "i",
+              "lemma": "lo",
+              "form": "Personalpronomen, 3. Person Singular Maskulinum Akkusativ",
+              "sense": "ihn / es (es)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t14",
+              "idx": 14,
+              "surface": "do",
+              "lemma": "dare",
+              "form": "Verb, Indikativ Präsens Aktiv 1. Person Plural",
+              "sense": "geben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t15",
+              "idx": 15,
+              "surface": "no'l",
+              "lemma": "non lo",
+              "form": "Negation + Personalpronomen, 3. Person Singular Maskulinum Akkusativ",
+              "sense": "nicht es / ihn nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t16",
+              "idx": 16,
+              "surface": "mio",
+              "lemma": "mio",
+              "form": "Possessivadjektiv, Maskulinum Singular Nominativ",
+              "sense": "mein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t17",
+              "idx": 17,
+              "surface": "dir",
+              "lemma": "dire",
+              "form": "Substantiv, Maskulinum Singular Nominativ/Akkusativ",
+              "sense": "Sagen / Rede",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t18",
+              "idx": 18,
+              "surface": "li",
+              "lemma": "li",
+              "form": "Personalpronomen, 3. Person Plural Maskulinum Dativ/Akkusativ",
+              "sense": "ihnen / sie (Akk.)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t19",
+              "idx": 19,
+              "surface": "fosse",
+              "lemma": "essere",
+              "form": "Verb, Konjunktiv Imperfekt Aktiv 3. Person Singular",
+              "sense": "wäre",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t20",
+              "idx": 20,
+              "surface": "grave,",
+              "lemma": "grave",
+              "form": "Adjektiv, Maskulinum/Femininum Singular Nominativ",
+              "sense": "schwer / lästig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t21",
+              "idx": 21,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t22",
+              "idx": 22,
+              "surface": "ntico",
+              "lemma": "antico",
+              "form": "Adjektiv, Maskulinum Singular Nominativ/Akkusativ",
+              "sense": "alt / uralt",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t23",
+              "idx": 23,
+              "surface": "pelo,",
+              "lemma": "pelo",
+              "form": "Substantiv, Maskulinum Singular Nominativ/Akkusativ",
+              "sense": "Fell / Haar",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t24",
+              "idx": 24,
+              "surface": "gridando:",
+              "lemma": "gridare",
+              "form": "Partizip Präsens Aktiv",
+              "sense": "schreiend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t25",
+              "idx": 25,
+              "surface": "\"Gliavvo",
+              "lemma": "avere",
+              "form": "Verb, Imperativ Präsens Aktiv 2. Person Plural (archaisch/dialektal)",
+              "sense": "habt!",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t26",
+              "idx": 26,
+              "surface": "te",
+              "lemma": "te",
+              "form": "Personalpronomen, 2. Person Singular Akkusativ/Dativ",
+              "sense": "dich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t27",
+              "idx": 27,
+              "surface": "eterne,",
+              "lemma": "eterno",
+              "form": "Adjektiv, Plural Maskulinum Nominativ/Akkusativ",
+              "sense": "ewige",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t28",
+              "idx": 28,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t29",
+              "idx": 29,
+              "surface": "caldo",
+              "lemma": "caldo",
+              "form": "Substantiv, Maskulinum Singular Nominativ/Akkusativ",
+              "sense": "Wärme / Hitze",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t30",
+              "idx": 30,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t31",
+              "idx": 31,
+              "surface": "ge",
+              "lemma": "gelato",
+              "form": "Substantiv, Maskulinum Singular Nominativ/Akkusativ (Korruptel)",
+              "sense": "Eis / Kälte",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t32",
+              "idx": 32,
+              "surface": "ina,",
+              "lemma": "ina",
+              "form": "Substantiv, Femininum Singular Nominativ/Akkusativ (Korruptel)",
+              "sense": "unbekannt / möglicher Teil von 'gelatina' oder Fehler",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t33",
+              "idx": 33,
+              "surface": "disse:",
+              "lemma": "dire",
+              "form": "Verb, Indikativ Präteritum Aktiv 3. Person Singular",
+              "sense": "sagte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t34",
+              "idx": 34,
+              "surface": "\"Per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "durch / über",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t35",
+              "idx": 35,
+              "surface": "altra",
+              "lemma": "altro",
+              "form": "Adjektiv, Femininum Singular Nominativ/Akkusativ",
+              "sense": "andere",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t36",
+              "idx": 36,
+              "surface": "via",
+              "lemma": "via",
+              "form": "Substantiv, Femininum Singular Nominativ/Akkusativ",
+              "sense": "Weg / Route",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s3:t37",
+              "idx": 37,
+              "surface": "lo.",
+              "lemma": "lo",
+              "form": "Personalpronomen, 3. Person Singular Maskulinum Akkusativ",
+              "sense": "ihn / es (es)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 24,
+              "end": 25,
+              "tokenIds": [
+                "tp_17913623775030000023:s3:t24",
+                "tp_17913623775030000023:s3:t25"
+              ],
+              "lemma": "gridare avere",
+              "gloss": "schreiend haben (archaische Konstruktion)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 34,
+              "end": 36,
+              "tokenIds": [
+                "tp_17913623775030000023:s3:t34",
+                "tp_17913623775030000023:s3:t35",
+                "tp_17913623775030000023:s3:t36"
+              ],
+              "lemma": "per altra via",
+              "gloss": "auf anderem Weg / auf andere Weise",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-07T09:27:28.705Z",
+            "sentenceId": "tp_17913623775030000023:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 3820
+          },
+          "text": "Elle riguardar oltre ragion quali sono, e qual co er conte quando noi i do no'l mio dir li fosse grave, in ntico pelo, gridando: \"Gliavvo te eterne, in caldo e ge ina, disse: \"Per altra via lo.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17913623775030000023:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17913623775030000023:s4:t0",
+              "idx": 0,
+              "surface": "El",
+              "lemma": "el",
+              "form": "Artikel Plural maskulin",
+              "sense": "die",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t1",
+              "idx": 1,
+              "surface": "lui:",
+              "lemma": "lui",
+              "form": "Personalpronomen Dativ/Singular",
+              "sense": "ihm:",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t2",
+              "idx": 2,
+              "surface": "\"Caron,",
+              "lemma": "Caron",
+              "form": "Eigenname Nominativ",
+              "sense": "\"Caron,",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t3",
+              "idx": 3,
+              "surface": "non",
+              "lemma": "non",
+              "form": "Negationspartikel",
+              "sense": "nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t4",
+              "idx": 4,
+              "surface": "ti",
+              "lemma": "ti",
+              "form": "Reflexivpronomen Akkusativ/Dativ Singular",
+              "sense": "dir",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t5",
+              "idx": 5,
+              "surface": "cacci",
+              "lemma": "cacciare",
+              "form": "Verb Konjunktiv Präsens Singular 2. Person",
+              "sense": "jagst",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t6",
+              "idx": 6,
+              "surface": "per",
+              "lemma": "per",
+              "form": "Präposition",
+              "sense": "wegen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t7",
+              "idx": 7,
+              "surface": "ai",
+              "lemma": "a",
+              "form": "Präposition + Artikel Plural maskulin",
+              "sense": "den",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t8",
+              "idx": 8,
+              "surface": "nese",
+              "lemma": "nese",
+              "form": "Substantiv Plural maskulin (vermutlich Tippfehler für 'nasse')",
+              "sense": "nassen",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t9",
+              "idx": 9,
+              "surface": "gotte",
+              "lemma": "gotta",
+              "form": "Substantiv Plural feminin",
+              "sense": "Tropfen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t10",
+              "idx": 10,
+              "surface": "al",
+              "lemma": "a",
+              "form": "Präposition + Artikel Singular maskulin",
+              "sense": "dem",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t11",
+              "idx": 11,
+              "surface": "nocchieriede",
+              "lemma": "nocchieriede",
+              "form": "Substantiv Singular maskulin (vermutlich Tippfehler für 'nocchiero' oder 'riva')",
+              "sense": "Steuerermanns",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t12",
+              "idx": 12,
+              "surface": "singiar",
+              "lemma": "singiar",
+              "form": "Verb Infinitiv (vermutlich Tippfehler für 'signare' oder 'cangiare')",
+              "sense": "zu zeichnen/ändern",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t13",
+              "idx": 13,
+              "surface": "colore",
+              "lemma": "colore",
+              "form": "Substantiv Singular maskulin",
+              "sense": "Farbe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t14",
+              "idx": 14,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t15",
+              "idx": 15,
+              "surface": "diballer",
+              "lemma": "diballer",
+              "form": "Verb Infinitiv (vermutlich Tippfehler für 'ballare' oder 'riballare')",
+              "sense": "zu tanzen/abprallen",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t16",
+              "idx": 16,
+              "surface": "so",
+              "lemma": "so",
+              "form": "Possessivpronomen Singular maskulin (vermutlich 'suo')",
+              "sense": "seinem",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t17",
+              "idx": 17,
+              "surface": "'l",
+              "lemma": "il",
+              "form": "Artikel Singular maskulin",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t18",
+              "idx": 18,
+              "surface": "tempo",
+              "lemma": "tempo",
+              "form": "Substantiv Singular maskulin",
+              "sense": "Zeit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t19",
+              "idx": 19,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t20",
+              "idx": 20,
+              "surface": "'l",
+              "lemma": "il",
+              "form": "Artikel Singular maskulin",
+              "sense": "das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t21",
+              "idx": 21,
+              "surface": "semedi",
+              "lemma": "semedi",
+              "form": "Substantiv Singular maskulin (vermutlich Tippfehler für 'seme' oder 'semide')",
+              "sense": "Samen",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t22",
+              "idx": 22,
+              "surface": "salvagia",
+              "lemma": "salvagia",
+              "form": "Adjektiv Singular feminin (vermutlich 'selvaggia')",
+              "sense": "wilde",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t23",
+              "idx": 23,
+              "surface": "ch'atten",
+              "lemma": "che",
+              "form": "Relativpronomen + Verb Konjunktiv Präsens Singular (vermutlich 'che attiene')",
+              "sense": "die sich bezieht",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t24",
+              "idx": 24,
+              "surface": "de",
+              "lemma": "da",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t25",
+              "idx": 25,
+              "surface": "clas",
+              "lemma": "classe",
+              "form": "Substantiv Singular feminin (vermutlich 'classe')",
+              "sense": "Klasse",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t26",
+              "idx": 26,
+              "surface": "pple;",
+              "lemma": "popolo",
+              "form": "Substantiv Singular maskulin (vermutlich 'popolo')",
+              "sense": "Volk;",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t27",
+              "idx": 27,
+              "surface": "batte",
+              "lemma": "battere",
+              "form": "Verb Imperativ Plural",
+              "sense": "schlagt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t28",
+              "idx": 28,
+              "surface": "col",
+              "lemma": "con",
+              "form": "Präposition + Artikel Singular maskulin",
+              "sense": "mit dem",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t29",
+              "idx": 29,
+              "surface": "remo",
+              "lemma": "remo",
+              "form": "Substantiv Singular maskulin",
+              "sense": "Ruder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t30",
+              "idx": 30,
+              "surface": "qu'altri",
+              "lemma": "che",
+              "form": "Relativpronomen (vermutlich 'qual' oder 'chi')",
+              "sense": "welche",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t31",
+              "idx": 31,
+              "surface": "con",
+              "lemma": "altro",
+              "form": "Substantiv Singular maskulin",
+              "sense": "andere",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t32",
+              "idx": 32,
+              "surface": "luce",
+              "lemma": "con",
+              "form": "Präposition",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t33",
+              "idx": 33,
+              "surface": "terra",
+              "lemma": "luce",
+              "form": "Substantiv Singular feminin",
+              "sense": "Licht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t34",
+              "idx": 34,
+              "surface": "tutte",
+              "lemma": "terra",
+              "form": "Substantiv Singular feminin",
+              "sense": "Erde",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t35",
+              "idx": 35,
+              "surface": "le",
+              "lemma": "tutto",
+              "form": "Adjektiv Plural feminin",
+              "sense": "alle",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t36",
+              "idx": 36,
+              "surface": "sue",
+              "lemma": "il",
+              "form": "Artikel Plural feminin",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t37",
+              "idx": 37,
+              "surface": "Spoglie",
+              "lemma": "suo",
+              "form": "Possessivpronomen Plural feminin",
+              "sense": "seine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t38",
+              "idx": 38,
+              "surface": "si",
+              "lemma": "spoglia",
+              "form": "Substantiv Plural feminin",
+              "sense": "Beute/Zeichen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t39",
+              "idx": 39,
+              "surface": "suo",
+              "lemma": "si",
+              "form": "Reflexivpronomen Singular",
+              "sense": "sich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17913623775030000023:s4:t40",
+              "idx": 40,
+              "surface": "richiamo.",
+              "lemma": "richiamo",
+              "form": "Substantiv Singular maskulin",
+              "sense": "Ruf.",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 27,
+              "end": 29,
+              "tokenIds": [
+                "tp_17913623775030000023:s4:t27",
+                "tp_17913623775030000023:s4:t28",
+                "tp_17913623775030000023:s4:t29"
+              ],
+              "lemma": "battere col remo",
+              "gloss": "mit dem Ruder schlagen/rudern",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 34,
+              "end": 38,
+              "tokenIds": [
+                "tp_17913623775030000023:s4:t34",
+                "tp_17913623775030000023:s4:t35",
+                "tp_17913623775030000023:s4:t36",
+                "tp_17913623775030000023:s4:t37",
+                "tp_17913623775030000023:s4:t38"
+              ],
+              "lemma": "tutte le sue spoglie",
+              "gloss": "alle seine Beute/Zeichen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-07T09:37:05.257Z",
+            "sentenceId": "tp_17913623775030000023:s4",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 4090
+          },
+          "text": "El lui: \"Caron, non ti cacci per ai nese gotte al nocchieriede singiar colore e diballer so 'l tempo e 'l semedi salvagia ch'atten de clas pple; batte col remo qu'altri con luce terra tutte le sue Spoglie si suo richiamo.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-07T09:37:05.257Z",
+        "chapterId": "tp_17913623775030000023",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "f6794317b90e",
+      "analyzedAt": "2026-10-07T09:37:05.257Z",
+      "partial": true,
+      "totalSentences": 7
     }
   },
-  "generatedAt": "2026-10-05T11:44:38.487Z",
-  "chapterCount": 29
+  "generatedAt": "2026-10-07T09:37:05.265Z",
+  "chapterCount": 31
 }
