@@ -149983,6 +149983,182 @@ const STATIC_LESSONS = [
             "reason": ""
           }
         ]
+      },
+      {
+        "id": "ls_1791920636263_5_inflections",
+        "type": "inflections",
+        "title": "German Inflection Practice",
+        "desc": "Identify dictionary forms and grammatical cases.",
+        "icon": "🇩🇪",
+        "items": [
+          {
+            "sentence": "Wir setzen uns an einen kleinen Tisch in der Ecke der Bar, die mit rotem Samt bezogen ist und von einer Lampe beleuchtet wird.",
+            "surfaceForm": "kleinen",
+            "translation": "We sit down at a small table in the corner of the bar, which is upholstered with red velvet and illuminated by a lamp.",
+            "lemma": "klein",
+            "lemmaChoices": [
+              "klein",
+              "kleine",
+              "kleiner",
+              "kleinsten"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "weak declension, masculine accusative singular",
+            "formChoices": [
+              "weak declension, masculine accusative singular",
+              "strong declension, masculine nominative singular",
+              "weak declension, feminine dative singular",
+              "strong declension, neuter accusative singular"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "The adjective 'klein' takes the weak ending '-en' because it follows the definite article 'einen' (which indicates masculine accusative)."
+          },
+          {
+            "sentence": "Claude lächelt breit, sein Atem riecht nach frischem Bier.",
+            "surfaceForm": "frischem",
+            "translation": "Claude smiles broadly, his breath smells of fresh beer.",
+            "lemma": "frisch",
+            "lemmaChoices": [
+              "frisch",
+              "frische",
+              "frischer",
+              "frisches"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "weak declension, neuter dative singular",
+            "formChoices": [
+              "weak declension, neuter dative singular",
+              "strong declension, neuter nominative singular",
+              "weak declension, masculine accusative singular",
+              "strong declension, feminine dative singular"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "The adjective 'frisch' takes the weak ending '-en' because it follows the preposition 'nach' which governs the dative case."
+          },
+          {
+            "sentence": "Claude lacht laut und schüttelt den Kopf.",
+            "surfaceForm": "lacht",
+            "translation": "Claude laughs loudly and shakes his head.",
+            "lemma": "lachen",
+            "lemmaChoices": [
+              "lachen",
+              "lacht",
+              "lachtest",
+              "gelacht"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "present tense, 3rd person singular",
+            "formChoices": [
+              "present tense, 3rd person singular",
+              "past tense, 3rd person singular",
+              "present tense, 1st person plural",
+              "infinitive"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "The verb 'lachen' is conjugated in the present tense for the subject 'Claude' (he)."
+          },
+          {
+            "sentence": "Ich schüttle den Kopf.",
+            "surfaceForm": "schüttle",
+            "translation": "I shake my head.",
+            "lemma": "schütteln",
+            "lemmaChoices": [
+              "schütteln",
+              "schüttelt",
+              "schüttelte",
+              "geschüttelt"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "present tense, 1st person singular",
+            "formChoices": [
+              "present tense, 1st person singular",
+              "present tense, 3rd person singular",
+              "past tense, 1st person singular",
+              "infinitive"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "The verb 'schütteln' is conjugated in the present tense for the subject 'Ich' (I)."
+          }
+        ],
+        "_genMeta": {
+          "type": "inflections",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 4,
+          "rejected": 0,
+          "rejectReasons": {},
+          "promptTokens": 2456,
+          "completionTokens": 958,
+          "ms": 374796,
+          "at": "2026-10-13T19:43:56.263Z"
+        },
+        "_recreated": true
+      },
+      {
+        "id": "ls_1791920963728_5_comprehension",
+        "type": "comprehension",
+        "title": "Job in Germany",
+        "desc": "A mathematician's journey to find a job in Germany and his interactions with colleagues.",
+        "icon": "🧠",
+        "questions": [
+          {
+            "q": "Why has the narrator struggled to get a job in Germany so far?",
+            "choices": [
+              "He lacks a doctoral degree.",
+              "His German language skills are insufficient for applications and interviews.",
+              "He does not have experience in theoretical mathematics.",
+              "German universities do not hire foreigners."
+            ],
+            "correctIndex": 1,
+            "why": "The text states that he lacks German, which prevents him from applying, and that previous applications and interviews failed because the materials were in German and the interview speed was too fast for him."
+          },
+          {
+            "q": "What specific focus does the narrator's intensive language course have?",
+            "choices": [
+              "Only basic grammar and vocabulary.",
+              "General conversation skills for tourists.",
+              "Technical language used in mathematics and natural sciences.",
+              "History of German universities."
+            ],
+            "correctIndex": 2,
+            "why": "The narrator mentions the course is designed for professionals and emphasizes not just grammar and vocabulary, but also the technical language used in his fields."
+          },
+          {
+            "q": "How does the engineer colleague describe the role of AI in his company?",
+            "choices": [
+              "It replaces all human workers entirely.",
+              "It is only used for marketing purposes.",
+              "It helps optimize processes and improve product quality by analyzing data.",
+              "It is too complex to be useful in production."
+            ],
+            "correctIndex": 2,
+            "why": "The engineer explains that AI is used to analyze large amounts of data to recognize trends, which helps optimize production processes and improve product quality."
+          },
+          {
+            "q": "Why does the narrator refuse to drink alcohol at the bar?",
+            "choices": [
+              "He is driving home.",
+              "He claims to have an allergy.",
+              "He prefers cola over beer for health reasons.",
+              "He is on a strict diet."
+            ],
+            "correctIndex": 1,
+            "why": "When Claude offers him a drink, the narrator explicitly states, 'I cannot drink. I have an allergy,' despite Claude's skepticism."
+          }
+        ],
+        "_genMeta": {
+          "type": "comprehension",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 4,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 2927,
+          "completionTokens": 536,
+          "ms": 327340,
+          "at": "2026-10-13T19:49:23.728Z"
+        },
+        "_recreated": true
       }
     ],
     "generationStats": {
@@ -150006,7 +150182,7 @@ const STATIC_LESSONS = [
       "modelsSource": "backfill:generationStats.model (single-model label)"
     },
     "generatedAt": "2026-06-01T20:45:49.717Z",
-    "updatedAt": "2026-06-07T07:05:22.499Z",
+    "updatedAt": "2026-10-13T19:49:23.728Z",
     "id": "tp_360608166",
     "aiStory": "Wir setzen uns an einen kleinen Tisch in der Ecke des Bars, die mit rotem Samt bezogen ist und von einer leuchtenden Lampe beschenkt wird. Claude lächelt breit, sein Atem riecht nach frischem Bier. \"Ich kann es kaum erwarten, dich in unserem Team zu haben, mein Freund,\" sagt er, während er mir einen kräftigen Händedruck gibt.\n\nIch lächle zurück, obwohl ich mich ein wenig unwohl fühle. \"Danke, Claude, das bedeutet mir sehr viel. Aber ich muss dir etwas sagen.\" Ich sehe ihn ernst an. \"Ich trinke nicht.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Aber du siehst so aus, als könntest du es gut vertragen,\" sagt er, während er sein Glas anhob und einen großen Schluck nahm. Sein Gesicht verfärbt sich, und er stöhnt leise.\n\nIch schüttle den Kopf. \"Nein, wirklich. Ich kann nicht trinken. Ich habe eine Allergie.\"\n\nClaude lacht erneut, diesmal lauter. \"Eine Allergie? Das ist ja lustig! Du siehst aus, als könntest du ein ganzes Bierglas runterwürgen!\"\n\nIch grinse. \"Ich bin kein Alkoholkonsumierer, Claude. Das ist kein Scherz.\"\n\nEr lacht und deutet auf mich. \"Na gut, dann lass uns etwas anderes trinken. Vielleicht ein Cola oder so.\"\n\nIch nicke dankbar. \"Das wäre schön.\"\n\nClaude bestellt zwei Colas, und wir trinken in Ruhe. Nach ein paar Minuten fängt er an, über unser Gespräch zu reden, und ich höre ihm zu, während ich versuche, nicht zu lachen. \"Also, ich denke, wir sollten uns bald mal treffen, um die Details zu besprechen,\" sagt er, während er sein Glas leert und es auf den Tisch stellt.\n\nIch nicke. \"Das klingt gut. Ich freue mich darauf.\"\n\nClaude grinst breit. \"Und du solltest dich nicht zu sehr auf die Arbeit einlassen. Wir haben auch Zeit für Spaß.\"\n\nIch lache. \"Ich denke, ich werde mich darauf konzentrieren, meine Arbeit zu tun, ohne mich zu betrinken.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Du bist ein seltsamer Typ, weißt du das? Aber ich mag dich.\"\n\nIch grinse. \"Das freut mich zu hören, Claude. Ich mag dich auch.\"\n\nWir trinken unsere Colas aus und verabschieden uns, beide mit einem Lächeln im Gesicht. Ich gehe nach Hause, während Claude noch immer lachend in der Bar sitzt, sein Gesicht rot und seine Augen glasig. Ich schüttle den Kopf und gehe weiter, mir sicher, dass ich in diesem seltsamen, aber freundlichen Team einen wertvollen Partner gefunden habe.",
     "continuedFromId": "tp_520854021",
@@ -150488,6 +150664,193 @@ const STATIC_LESSONS = [
         "icon": "🔀",
         "desc": "A mix of questions from this chapter's other lessons",
         "perType": 3
+      },
+      {
+        "id": "ls_1791919271204_4_inflections",
+        "type": "inflections",
+        "title": "German Inflection Practice",
+        "desc": "Identify dictionary forms and grammatical cases.",
+        "icon": "🇩🇪",
+        "items": [
+          {
+            "sentence": "Ich zeige Claude einige meiner neuesten Projekte.",
+            "surfaceForm": "Projekte",
+            "translation": "I am showing Claude some of my latest projects.",
+            "lemma": "das Projekt",
+            "lemmaChoices": [
+              "das Projekt",
+              "der Projekt",
+              "die Projekt",
+              "den Projektes"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "nominative plural",
+            "formChoices": [
+              "nominative plural",
+              "nominative singular",
+              "genitive plural",
+              "dative singular"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "Plural of 'das Projekt' in the nominative case."
+          },
+          {
+            "sentence": "Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.",
+            "surfaceForm": "Trends",
+            "translation": "It is based on the latest trends in machine learning and has already been successfully tested in the pilot phase.",
+            "lemma": "der Trend",
+            "lemmaChoices": [
+              "der Trend",
+              "die Trend",
+              "den Trend",
+              "des Trends"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "dative plural",
+            "formChoices": [
+              "dative plural",
+              "nominative singular",
+              "accusative plural",
+              "genitive singular"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "Plural of 'der Trend' in the dative case (object of the preposition 'auf')."
+          },
+          {
+            "sentence": "Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.",
+            "surfaceForm": "Pilotphase",
+            "translation": "It is based on the latest trends in machine learning and has already been successfully tested in the pilot phase.",
+            "lemma": "die Pilotphase",
+            "lemmaChoices": [
+              "die Pilotphase",
+              "der Pilotphase",
+              "den Pilotphase",
+              "des Pilotphase"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "dative singular",
+            "formChoices": [
+              "dative singular",
+              "nominative singular",
+              "accusative singular",
+              "genitive singular"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "Singular of 'die Pilotphase' in the dative case (object of the preposition 'in')."
+          },
+          {
+            "sentence": "Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt.",
+            "surfaceForm": "Mathematik",
+            "translation": "I have used a combination of traditional mathematics and modern AI.",
+            "lemma": "die Mathematik",
+            "lemmaChoices": [
+              "die Mathematik",
+              "der Mathematik",
+              "den Mathematik",
+              "des Mathematik"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "genitive singular",
+            "formChoices": [
+              "genitive singular",
+              "nominative singular",
+              "accusative singular",
+              "dative plural"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "Singular of 'die Mathematik' in the genitive case (following 'aus')."
+          },
+          {
+            "sentence": "Das Ergebnis ist ein effizientersund robustes Modell, das  in in unseren Tests bereits erstaunliche Ergebnisse erbracht hat.",
+            "surfaceForm": "effizientersund",
+            "translation": "The result is an efficient and robust model that has already delivered amazing results in our tests.",
+            "lemma": "effizient",
+            "lemmaChoices": [
+              "effizient",
+              "effiziente",
+              "effizienter",
+              "effizientesten"
+            ],
+            "lemmaCorrectIndex": 0,
+            "formLabel": "comparative adjective (mixed declension)",
+            "formChoices": [
+              "comparative adjective (mixed declension)",
+              "positive adjective (mixed declension)",
+              "superlative adjective (mixed declension)",
+              "comparative noun"
+            ],
+            "formCorrectIndex": 0,
+            "explanation": "Comparative form of the adjective 'effizient', inflected for a neuter noun in the nominative case."
+          }
+        ],
+        "_genMeta": {
+          "type": "inflections",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 5,
+          "rejected": 0,
+          "rejectReasons": {},
+          "promptTokens": 2159,
+          "completionTokens": 1113,
+          "ms": 365394,
+          "at": "2026-10-13T19:21:11.204Z"
+        },
+        "_recreated": true
+      },
+      {
+        "id": "ls_1791919507795_4_comprehension",
+        "type": "comprehension",
+        "title": "Job in Germany",
+        "desc": "A mathematician's journey to improve German skills and secure a job.",
+        "icon": "🧠",
+        "questions": [
+          {
+            "q": "Why did the narrator initially struggle to apply for jobs in Germany?",
+            "choices": [
+              "He lacked a doctoral degree in natural sciences.",
+              "His German language skills were insufficient for applications and interviews.",
+              "He had no experience working at renowned universities.",
+              "The job market in Germany was completely closed to foreigners."
+            ],
+            "correctIndex": 1,
+            "why": "The text states that the lack of German prevented him from applying and that previous applications failed due to language barriers in materials and interview speed."
+          },
+          {
+            "q": "What specific aspect of the intensive language course helps the narrator most?",
+            "choices": [
+              "It focuses exclusively on grammar rules and vocabulary lists.",
+              "It teaches the specialized terminology used in mathematics and natural sciences.",
+              "It guarantees a job interview with a major tech company upon completion.",
+              "It allows him to skip basic conversations and go straight to advanced literature."
+            ],
+            "correctIndex": 1,
+            "why": "The narrator notes that the teachers emphasize not just grammar and vocabulary, but also the 'Fachsprache' (specialized language) used in his field."
+          },
+          {
+            "q": "How does the engineer colleague describe the primary benefit of using AI in his company?",
+            "choices": [
+              "It replaces all human employees to reduce costs.",
+              "It automates tasks to reduce workload and increase productivity.",
+              "It focuses solely on creating new marketing strategies.",
+              "It eliminates the need for any mathematical data analysis."
+            ],
+            "correctIndex": 1,
+            "why": "The colleague explains that AI is used to automate tasks, which saves time and resources while increasing productivity."
+          }
+        ],
+        "_genMeta": {
+          "type": "comprehension",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 3,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 2323,
+          "completionTokens": 438,
+          "ms": 236479,
+          "at": "2026-10-13T19:25:07.795Z"
+        },
+        "_recreated": true
       }
     ],
     "generationStats": {
@@ -150495,8 +150858,8 @@ const STATIC_LESSONS = [
       "backend": "ollama",
       "model": "qwen2.5:7b",
       "lessonFormat": "json",
-      "totalPromptTokens": 1441,
-      "totalCompletionTokens": 698,
+      "totalPromptTokens": 7597,
+      "totalCompletionTokens": 2851,
       "lessons": [
         {
           "promptTokens": 800,
@@ -150508,10 +150871,13 @@ const STATIC_LESSONS = [
         "translation": "qwen2.5:7b",
         "lessons": "qwen2.5:7b"
       },
-      "modelsSource": "backfill:generationStats.model (single-model label)"
+      "modelsSource": "backfill:generationStats.model (single-model label)",
+      "tokensByType": {
+        "recreate": 8309
+      }
     },
     "generatedAt": "2026-06-01T20:29:21.486Z",
-    "updatedAt": "2026-07-04T06:35:35.482Z",
+    "updatedAt": "2026-10-13T19:25:07.795Z",
     "id": "tp_520854021",
     "aiStory": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwickelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"",
     "continuedFromId": "tp_1777471350",
@@ -150937,8 +151303,8 @@ const STATIC_LESSONS = [
       "backend": "ollama",
       "model": "qwen2.5:7b",
       "lessonFormat": "json",
-      "totalPromptTokens": 1005,
-      "totalCompletionTokens": 780,
+      "totalPromptTokens": 6627,
+      "totalCompletionTokens": 2911,
       "lessons": [
         {
           "promptTokens": 384,
@@ -150950,7 +151316,10 @@ const STATIC_LESSONS = [
         "translation": "qwen2.5:7b",
         "lessons": "qwen2.5:7b"
       },
-      "modelsSource": "backfill:generationStats.model (single-model label)"
+      "modelsSource": "backfill:generationStats.model (single-model label)",
+      "tokensByType": {
+        "recreate": 7753
+      }
     },
     "generatedAt": "2026-06-01T20:08:22.113Z",
     "updatedAt": "2026-10-13T19:06:07.483Z",
@@ -184604,7 +184973,7 @@ async function init() {
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"4f0bfb9eaf2b","lessons.json":"3b92588b0ee8","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"a0dd4877229c","analysis-corrections.json":"e64c06e5700a","build-static.js":"ae3fe394cb16"};
+  APP.buildSources = {"index.html":"4f0bfb9eaf2b","lessons.json":"727c9895c803","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"a0dd4877229c","analysis-corrections.json":"e64c06e5700a","build-static.js":"ae3fe394cb16"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
