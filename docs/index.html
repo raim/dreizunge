@@ -150875,6 +150875,61 @@ const STATIC_LESSONS = [
           "at": "2026-10-13T19:02:31.453Z"
         },
         "_recreated": true
+      },
+      {
+        "id": "ls_1791918367483_3_comprehension",
+        "type": "comprehension",
+        "title": "Job in Germany & AI Insights",
+        "desc": "A mathematician seeks work in Germany while learning German and discussing AI with a colleague.",
+        "icon": "🧠",
+        "questions": [
+          {
+            "q": "Why has the narrator struggled to secure a job despite having a doctorate?",
+            "choices": [
+              "He lacks practical experience in the field.",
+              "His German language skills are insufficient for applications and interviews.",
+              "German universities do not value American degrees.",
+              "He is too focused on theoretical math rather than applied work."
+            ],
+            "correctIndex": 1,
+            "why": "The text states that missing German prevented him from applying and that previous interviews failed because the speed was too fast for him."
+          },
+          {
+            "q": "What specific benefit does the engineer colleague attribute to using AI in his company?",
+            "choices": [
+              "It completely replaces human workers in product development.",
+              "It automates tasks to reduce workload and save time and resources.",
+              "It eliminates the need for large data analysis.",
+              "It focuses solely on improving grammatical rules in documentation."
+            ],
+            "correctIndex": 1,
+            "why": "The colleague explains that AI is used to automate tasks, which reduces employee workload and saves both time and resources."
+          },
+          {
+            "q": "How does the engineer describe the relationship between AI's complexity and its mathematical foundations?",
+            "choices": [
+              "AI relies on entirely new mathematical principles unknown to traditional science.",
+              "The math is simple, so no deep understanding is required to use AI effectively.",
+              "Complex results are built upon fundamental mathematical principles like linear algebra and statistics.",
+              "Mathematical foundations are irrelevant because AI learns purely through trial and error."
+            ],
+            "correctIndex": 2,
+            "why": "The engineer clarifies that while AI models are complex, they are based on fundamental principles such as linear algebra, probability theory, and statistics."
+          }
+        ],
+        "_genMeta": {
+          "type": "comprehension",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": 1,
+          "valid": 3,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 2014,
+          "completionTokens": 455,
+          "ms": 215931,
+          "at": "2026-10-13T19:06:07.483Z"
+        },
+        "_recreated": true
       }
     ],
     "generationStats": {
@@ -150898,7 +150953,7 @@ const STATIC_LESSONS = [
       "modelsSource": "backfill:generationStats.model (single-model label)"
     },
     "generatedAt": "2026-06-01T20:08:22.113Z",
-    "updatedAt": "2026-10-13T19:02:31.454Z",
+    "updatedAt": "2026-10-13T19:06:07.483Z",
     "id": "tp_1777471350",
     "continuedFromId": "tp_1914431701",
     "storyMeta": {
@@ -184549,7 +184604,7 @@ async function init() {
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"4f0bfb9eaf2b","lessons.json":"66810801b10f","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"a0dd4877229c","analysis-corrections.json":"e64c06e5700a","build-static.js":"ae3fe394cb16"};
+  APP.buildSources = {"index.html":"4f0bfb9eaf2b","lessons.json":"3b92588b0ee8","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"a0dd4877229c","analysis-corrections.json":"e64c06e5700a","build-static.js":"ae3fe394cb16"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
