@@ -150166,8 +150166,8 @@ const STATIC_LESSONS = [
       "backend": "ollama",
       "model": "qwen2.5:7b",
       "lessonFormat": "json",
-      "totalPromptTokens": 996,
-      "totalCompletionTokens": 1544,
+      "totalPromptTokens": 9306,
+      "totalCompletionTokens": 4726,
       "lessons": [
         {
           "promptTokens": 368,
@@ -150179,10 +150179,14 @@ const STATIC_LESSONS = [
         "translation": "qwen2.5:7b",
         "lessons": "qwen2.5:7b"
       },
-      "modelsSource": "backfill:generationStats.model (single-model label)"
+      "modelsSource": "backfill:generationStats.model (single-model label)",
+      "tokensByType": {
+        "recreate": 10346,
+        "translation": 1146
+      }
     },
     "generatedAt": "2026-06-01T20:45:49.717Z",
-    "updatedAt": "2026-10-13T19:49:23.728Z",
+    "updatedAt": "2026-10-13T20:19:08.566Z",
     "id": "tp_360608166",
     "aiStory": "Wir setzen uns an einen kleinen Tisch in der Ecke des Bars, die mit rotem Samt bezogen ist und von einer leuchtenden Lampe beschenkt wird. Claude lächelt breit, sein Atem riecht nach frischem Bier. \"Ich kann es kaum erwarten, dich in unserem Team zu haben, mein Freund,\" sagt er, während er mir einen kräftigen Händedruck gibt.\n\nIch lächle zurück, obwohl ich mich ein wenig unwohl fühle. \"Danke, Claude, das bedeutet mir sehr viel. Aber ich muss dir etwas sagen.\" Ich sehe ihn ernst an. \"Ich trinke nicht.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Aber du siehst so aus, als könntest du es gut vertragen,\" sagt er, während er sein Glas anhob und einen großen Schluck nahm. Sein Gesicht verfärbt sich, und er stöhnt leise.\n\nIch schüttle den Kopf. \"Nein, wirklich. Ich kann nicht trinken. Ich habe eine Allergie.\"\n\nClaude lacht erneut, diesmal lauter. \"Eine Allergie? Das ist ja lustig! Du siehst aus, als könntest du ein ganzes Bierglas runterwürgen!\"\n\nIch grinse. \"Ich bin kein Alkoholkonsumierer, Claude. Das ist kein Scherz.\"\n\nEr lacht und deutet auf mich. \"Na gut, dann lass uns etwas anderes trinken. Vielleicht ein Cola oder so.\"\n\nIch nicke dankbar. \"Das wäre schön.\"\n\nClaude bestellt zwei Colas, und wir trinken in Ruhe. Nach ein paar Minuten fängt er an, über unser Gespräch zu reden, und ich höre ihm zu, während ich versuche, nicht zu lachen. \"Also, ich denke, wir sollten uns bald mal treffen, um die Details zu besprechen,\" sagt er, während er sein Glas leert und es auf den Tisch stellt.\n\nIch nicke. \"Das klingt gut. Ich freue mich darauf.\"\n\nClaude grinst breit. \"Und du solltest dich nicht zu sehr auf die Arbeit einlassen. Wir haben auch Zeit für Spaß.\"\n\nIch lache. \"Ich denke, ich werde mich darauf konzentrieren, meine Arbeit zu tun, ohne mich zu betrinken.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Du bist ein seltsamer Typ, weißt du das? Aber ich mag dich.\"\n\nIch grinse. \"Das freut mich zu hören, Claude. Ich mag dich auch.\"\n\nWir trinken unsere Colas aus und verabschieden uns, beide mit einem Lächeln im Gesicht. Ich gehe nach Hause, während Claude noch immer lachend in der Bar sitzt, sein Gesicht rot und seine Augen glasig. Ich schüttle den Kopf und gehe weiter, mir sicher, dass ich in diesem seltsamen, aber freundlichen Team einen wertvollen Partner gefunden habe.",
     "continuedFromId": "tp_520854021",
@@ -150203,18 +150207,20 @@ const STATIC_LESSONS = [
     },
     "translationMeta": {
       "type": "translation",
-      "model": "qwen2.5:7b",
+      "model": "qwen3.6:35b-a3b",
       "attempts": null,
-      "valid": null,
-      "promptTokens": 0,
-      "completionTokens": 0,
-      "ms": null,
-      "at": "2026-06-01T20:45:49.717Z",
-      "backfilled": true,
-      "source": "generationStats.models.translation",
-      "origin": "generated"
+      "valid": 1,
+      "rejected": 0,
+      "rejectReasons": null,
+      "promptTokens": 658,
+      "completionTokens": 488,
+      "ms": 113790,
+      "at": "2026-10-13T20:19:08.566Z",
+      "origin": "generated",
+      "source": "re-translated after a manual story edit"
     },
-    "createdBy": "admin"
+    "createdBy": "admin",
+    "storyTranslation": "We sit down at a small table in the corner of the bar, which is upholstered in red velvet and illuminated by a lamp. Claude smiles broadly, his breath smelling of fresh beer. \"I can't wait to have you on our team, my friend,\" he says, giving me a firm handshake.\n\nI smile back, although I feel a bit uncomfortable. \"Thank you, Claude, that means a lot to me. But I have to tell you something.\" I look at him seriously. \"I don't drink.\"\n\nClaude laughs loudly and shakes his head. \"But you look like someone who could handle it well,\" he says, raising his glass and taking a large sip. His face flushes, and he groans softly.\n\nI shake my head. \"No, really. I can't drink. I have an allergy.\"\n\nClaude laughs again, this time even louder. \"An allergy? That's funny! You look like you could down a whole glass of beer!\"\n\nI grin. \"I don't drink alcohol, Claude. This isn't a joke.\"\n\nHe laughs and points at me. \"Alright then, let's get something else to drink. Maybe a cola or something.\"\n\nI nod gratefully. \"That would be nice.\"\n\nClaude orders two colas, and we drink in silence. After a few minutes, he starts talking about our conversation again, and I listen while trying not to laugh. \"So, I think we should meet up soon to discuss the details,\" he says, emptying his glass and setting it on the table.\n\nI nod. \"That sounds good. I'm looking forward to it.\"\n\nClaude grins widely. \"And you shouldn't get too caught up in work. We also have time for fun.\"\n\nI laugh. \"I think I'll focus on doing my job without getting drunk.\"\n\nClaude laughs loudly and shakes his head. \"You're a weird guy, you know that? But I like you.\"\n\nI grin. \"That's good to hear, Claude. I like you too.\"\n\nWe finish our colas and say goodbye, both with smiles on our faces. I head home while Claude is still sitting in the bar laughing, his face red and his eyes glassy. I shake my head and continue walking, certain that I've found a valuable partner in this strange but friendly team."
   },
   {
     "topic": "Convincing Team",
@@ -150858,8 +150864,8 @@ const STATIC_LESSONS = [
       "backend": "ollama",
       "model": "qwen2.5:7b",
       "lessonFormat": "json",
-      "totalPromptTokens": 7597,
-      "totalCompletionTokens": 2851,
+      "totalPromptTokens": 7958,
+      "totalCompletionTokens": 3084,
       "lessons": [
         {
           "promptTokens": 800,
@@ -150873,11 +150879,12 @@ const STATIC_LESSONS = [
       },
       "modelsSource": "backfill:generationStats.model (single-model label)",
       "tokensByType": {
-        "recreate": 8309
+        "recreate": 8309,
+        "translation": 594
       }
     },
     "generatedAt": "2026-06-01T20:29:21.486Z",
-    "updatedAt": "2026-10-13T19:25:07.795Z",
+    "updatedAt": "2026-10-13T20:17:14.655Z",
     "id": "tp_520854021",
     "aiStory": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwickelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"",
     "continuedFromId": "tp_1777471350",
@@ -150898,18 +150905,20 @@ const STATIC_LESSONS = [
     },
     "translationMeta": {
       "type": "translation",
-      "model": "qwen2.5:7b",
+      "model": "qwen3.6:35b-a3b",
       "attempts": null,
-      "valid": null,
-      "promptTokens": 0,
-      "completionTokens": 0,
-      "ms": null,
-      "at": "2026-06-01T20:29:21.486Z",
-      "backfilled": true,
-      "source": "generationStats.models.translation",
-      "origin": "generated"
+      "valid": 1,
+      "rejected": 0,
+      "rejectReasons": null,
+      "promptTokens": 361,
+      "completionTokens": 233,
+      "ms": 63440,
+      "at": "2026-10-13T20:17:14.655Z",
+      "origin": "generated",
+      "source": "re-translated after a manual story edit"
     },
-    "createdBy": "admin"
+    "createdBy": "admin",
+    "storyTranslation": "I show Claude some of my latest projects. \"I have developed a new algorithm model here that significantly improves efficiency in data processing,\" I explain. \"It is based on the latest trends in machine learning and has already been successfully tested in the pilot phase.\"\n\nClaude nods with interest. \"That sounds exciting. How did you develop this model?\"\n\nI answer confidently: \"I used a combination of traditional mathematics and modern AI. I adapted the algorithms to optimize them for our specific applications. The result is an efficient and robust model that has already delivered remarkable results in our tests.\"\n\nI continue: \"I am also a team player. I understand the importance of collaboration and the value each team member can contribute. I enjoy working with others to share ideas and solve problems together.\"\n\nClaude smiles warmly. \"That sounds like someone who would work well with us. Your skills and commitment are evident. We would like to have you on our team.\"\n\nI thank him heartily: \"I am very pleased that you appreciate my work and dedication. I am ready to use my skills and passion for mathematics, coding, and AI to find innovative solutions together.\""
   },
   {
     "topic": "AI & Code Efficiency",
@@ -151303,8 +151312,8 @@ const STATIC_LESSONS = [
       "backend": "ollama",
       "model": "qwen2.5:7b",
       "lessonFormat": "json",
-      "totalPromptTokens": 6627,
-      "totalCompletionTokens": 2911,
+      "totalPromptTokens": 6907,
+      "totalCompletionTokens": 3074,
       "lessons": [
         {
           "promptTokens": 384,
@@ -151318,11 +151327,12 @@ const STATIC_LESSONS = [
       },
       "modelsSource": "backfill:generationStats.model (single-model label)",
       "tokensByType": {
-        "recreate": 7753
+        "recreate": 7753,
+        "translation": 443
       }
     },
     "generatedAt": "2026-06-01T20:08:22.113Z",
-    "updatedAt": "2026-10-13T19:06:07.483Z",
+    "updatedAt": "2026-10-13T20:16:10.964Z",
     "id": "tp_1777471350",
     "continuedFromId": "tp_1914431701",
     "storyMeta": {
@@ -151342,18 +151352,20 @@ const STATIC_LESSONS = [
     },
     "translationMeta": {
       "type": "translation",
-      "model": "qwen2.5:7b",
+      "model": "qwen3.6:35b-a3b",
       "attempts": null,
-      "valid": null,
-      "promptTokens": 0,
-      "completionTokens": 0,
-      "ms": null,
-      "at": "2026-06-01T20:08:22.113Z",
-      "backfilled": true,
-      "source": "generationStats.models.translation",
-      "origin": "generated"
+      "valid": 1,
+      "rejected": 0,
+      "rejectReasons": null,
+      "promptTokens": 280,
+      "completionTokens": 163,
+      "ms": 44614,
+      "at": "2026-10-13T20:16:10.964Z",
+      "origin": "generated",
+      "source": "re-translated after a manual story edit"
     },
-    "createdBy": "admin"
+    "createdBy": "admin",
+    "storyTranslation": "I ponder as I continue the discussion: \"I am glad that you have understood the importance of mathematical foundations. However, there is another topic I would like to discuss. How important are AI systems, particularly large language models such as Claude from Anthropic, for improving efficiency in code creation?\"\n\nHe nods understandingly: \"Yes, that is an interesting topic. Large language models like Claude have the ability to solve complex problems quickly and generate code. These models are based on advanced AI techniques, particularly text generation, which enables their application in various fields.\"\n\nI confirm: \"Exactly. These models can not only generate code but also optimize and improve it. They help increase productivity and enhance software quality. Claude and similar models leverage their extensive knowledge base and their ability to make context-aware decisions to work efficiently.\""
   },
   {
     "topic": "AI & Math Basics",
@@ -151935,8 +151947,8 @@ const STATIC_LESSONS = [
       "backend": "ollama",
       "model": "qwen2.5:7b",
       "lessonFormat": "json",
-      "totalPromptTokens": 9442,
-      "totalCompletionTokens": 4465,
+      "totalPromptTokens": 10031,
+      "totalCompletionTokens": 4850,
       "lessons": [
         {
           "lessonNum": 1,
@@ -151964,11 +151976,12 @@ const STATIC_LESSONS = [
       },
       "modelsSource": "backfill:generationStats.model (single-model label)",
       "tokensByType": {
-        "recreate": 9103
+        "recreate": 9103,
+        "translation": 974
       }
     },
     "generatedAt": "2026-06-01T19:53:43.536Z",
-    "updatedAt": "2026-10-13T18:41:17.953Z",
+    "updatedAt": "2026-10-13T20:15:26.234Z",
     "repairStats": {
       "repairCount": 1,
       "totalMs": 190634,
@@ -151995,18 +152008,20 @@ const STATIC_LESSONS = [
     },
     "translationMeta": {
       "type": "translation",
-      "model": "qwen2.5:7b",
+      "model": "qwen3.6:35b-a3b",
       "attempts": null,
-      "valid": null,
-      "promptTokens": 0,
-      "completionTokens": 0,
-      "ms": null,
-      "at": "2026-06-01T19:53:43.536Z",
-      "backfilled": true,
-      "source": "generationStats.models.translation",
-      "origin": "generated"
+      "valid": 1,
+      "rejected": 0,
+      "rejectReasons": null,
+      "promptTokens": 589,
+      "completionTokens": 385,
+      "ms": 94664,
+      "at": "2026-10-13T20:15:26.234Z",
+      "origin": "generated",
+      "source": "re-translated after a manual story edit"
     },
-    "createdBy": "admin"
+    "createdBy": "admin",
+    "storyTranslation": "I thank him for his explanations and change the subject. \"I am curious,\" I say, \"about how you understand the fundamentals of AI. It is often said that AI is based on complex mathematical models. But are these models actually as complex as they appear?\" He nods and replies: \"It is true that AI is based on complex mathematical models, but it is important to understand that these models generally rely on fundamental mathematical principles.\"\n\nI nod and ask further: \"Are there specific areas of mathematics that are particularly important for AI?\" He explains: \"Yes, AI benefits from various areas of mathematics, especially linear algebra, probability theory, and statistics. These fields help create models capable of recognizing and interpreting patterns in large datasets.\"\n\nImpressed, I ask: \"But how can the term 'machine learning' be considered neutral when it is based on such complex mathematical models?\" He answers: \"That is a good question. 'Machine learning' is indeed a neutral term that describes the process through which machines learn. It refers to the ability of systems to recognize patterns and learn from them based on inputs and outputs, without being explicitly programmed.\"\n\nI nod and continue: \"I understand that 'machine learning' focuses on the process while the mathematical foundations recede into the background. But how important are these mathematical foundations for the development and application of AI?\" He emphasizes: \"The mathematical foundations are essential. They form the basis upon which AI systems are built and function. Without a solid understanding of mathematical principles, it would be impossible to develop and optimize effective AI models.\"\n\nI thank him for his insights and conclude the conversation: \"Thank you very much for your explanations. It is interesting how AI builds on such simple mathematical principles to solve such complex tasks.\" He smiles and replies: \"I am glad you understand that. AI is a fascinating field that combines both complex mathematical concepts and simple yet important principles.\""
   },
   {
     "topic": "AI in Company",
@@ -152369,8 +152384,8 @@ const STATIC_LESSONS = [
       "backend": "ollama",
       "model": "qwen2.5:7b",
       "lessonFormat": "json",
-      "totalPromptTokens": 6150,
-      "totalCompletionTokens": 3650,
+      "totalPromptTokens": 6954,
+      "totalCompletionTokens": 4197,
       "lessons": [
         {
           "promptTokens": 353,
@@ -152384,11 +152399,12 @@ const STATIC_LESSONS = [
       },
       "modelsSource": "backfill:generationStats.model (single-model label)",
       "tokensByType": {
-        "recreate": 7584
+        "recreate": 7584,
+        "translation": 1351
       }
     },
     "generatedAt": "2026-06-01T18:09:36.193Z",
-    "updatedAt": "2026-10-13T18:15:56.792Z",
+    "updatedAt": "2026-10-13T20:13:51.071Z",
     "repairStats": {
       "repairCount": 1,
       "totalMs": 1276311,
@@ -152415,18 +152431,20 @@ const STATIC_LESSONS = [
     },
     "translationMeta": {
       "type": "translation",
-      "model": "qwen2.5:7b",
+      "model": "qwen3.6:35b-a3b",
       "attempts": null,
-      "valid": null,
-      "promptTokens": 0,
-      "completionTokens": 0,
-      "ms": null,
-      "at": "2026-06-01T18:09:36.193Z",
-      "backfilled": true,
-      "source": "generationStats.models.translation",
-      "origin": "generated"
+      "valid": 1,
+      "rejected": 0,
+      "rejectReasons": null,
+      "promptTokens": 402,
+      "completionTokens": 274,
+      "ms": 119437,
+      "at": "2026-10-13T20:13:51.071Z",
+      "origin": "generated",
+      "source": "re-translated after a manual story edit"
     },
-    "createdBy": "admin"
+    "createdBy": "admin",
+    "storyTranslation": "I am taking one of the courses specifically designed for professionals, and I am currently discussing with my colleagues how we can integrate into the German labor market. A colleague who works as an engineer shares insights about the applications of artificial intelligence at his company. He explains that AI is being used in various areas to optimize processes and increase efficiency. For example, he notes that AI is helpful in product development by supporting data analysis and forecasting.\n\nI ask him, \"I would like to know how AI is currently being used in your company.\" He replies that AI is employed in several areas within the company, including process optimization and improving product quality. He elaborates that AI is used to analyze large volumes of data to identify trends and patterns relevant to enhancing production processes.\n\nImpressed by the diversity of applications, I ask further, \"Are there specific projects where AI plays a key role?\" He confirms that such projects exist and describes one in which AI is used to automate tasks, thereby reducing employees' workload. He emphasizes that this saves both time and resources while boosting productivity.\n\nI thank him for his detailed explanations and ask finally, \"How do you see the future of AI in your industry?\" He responds optimistically, believing that AI will continue to make significant contributions to innovation and efficiency. He stresses that AI offers the opportunity to develop new solutions and improve existing processes."
   },
   {
     "topic": "Job in Germany",
@@ -152999,8 +153017,8 @@ const STATIC_LESSONS = [
       "backend": "ollama",
       "model": "qwen2.5:7b",
       "lessonFormat": "json",
-      "totalPromptTokens": 9568,
-      "totalCompletionTokens": 4919,
+      "totalPromptTokens": 10067,
+      "totalCompletionTokens": 5272,
       "lessons": [
         {
           "promptTokens": 395,
@@ -153016,11 +153034,11 @@ const STATIC_LESSONS = [
       "tokensByType": {
         "add_lesson": 4269,
         "recreate": 7578,
-        "translation": 851
+        "translation": 1703
       }
     },
     "generatedAt": "2026-06-01T17:53:08.297Z",
-    "updatedAt": "2026-10-13T18:37:36.719Z",
+    "updatedAt": "2026-10-13T20:11:51.237Z",
     "repairStats": {
       "repairCount": 1,
       "totalMs": 586714,
@@ -153053,14 +153071,14 @@ const STATIC_LESSONS = [
       "rejected": 0,
       "rejectReasons": null,
       "promptTokens": 499,
-      "completionTokens": 352,
-      "ms": 276144,
-      "at": "2026-10-13T18:37:36.719Z",
+      "completionTokens": 353,
+      "ms": 86283,
+      "at": "2026-10-13T20:11:51.237Z",
       "origin": "generated",
       "source": "re-translated after a manual story edit"
     },
     "createdBy": "admin",
-    "storyTranslation": "I am a mathematician with a PhD in the natural sciences. My research focuses lie in theoretical mathematics and quantum physics. In my home country, the United States, I have worked at and published from prestigious universities. Now I am here, in Germany, where I am looking for a job. However, there is something that has prevented me from applying for positions so far: German.\n\nI have devoted myself intensively to learning the language. Over the past few months, I have attended course after course, read books, and watched videos. My colleagues and friends here in Germany have also helped me communicate in simple conversations. Yet the job applications and interviews I have submitted so far have repeatedly disappointed me. The application materials are in German, and the interviews I have undergone proceed at a pace that is too fast for me.\n\nI am determined to improve my German. I have enrolled in an intensive language course specifically designed for professionals. The teachers here are experienced and understand the challenges I face as a professional with a PhD in the natural sciences. They emphasize not only grammatical rules and vocabulary but also the technical terminology used in mathematics and the natural sciences.\n\nIn the classes, I learn alongside other professionals who also wish to improve their language skills. We share our experiences and help each other integrate into the German working world. I am grateful for the support and motivation I find here. I know that I still have much to learn, but I am ready to work hard to achieve my goal.\n\nI am convinced that I can find an employer in Germany who will value my skills and experience. I will continue to work hard to improve my German, and I am confident that I will soon be able to apply for jobs and participate in interviews in German."
+    "storyTranslation": "I am a mathematician with a doctorate in the natural sciences. My research focuses lie in theoretical mathematics and quantum physics. In my home country, the United States, I have worked at and published from prestigious universities. Now I am here in Germany, where I am looking for a job. However, there is something that has prevented me from applying for positions so far: German.\n\nI have devoted myself intensively to learning the language. Over the past few months, I have attended course after course, read books, and watched videos. My colleagues and friends here in Germany have also helped me communicate in simple conversations. Yet the job applications and interviews I have submitted so far have repeatedly disappointed me. The application materials are in German, and the interviews I have undergone proceed at a pace that is too fast for me.\n\nI am determined to improve my German. I have enrolled in an intensive language course specifically designed for professionals. The teachers here are experienced and understand the challenges I face as a professional with a doctorate in the natural sciences. They emphasize not only grammatical rules and vocabulary but also the specialized terminology used in mathematics and the natural sciences.\n\nIn the courses, I learn alongside other professionals who also wish to improve their language skills. We share our experiences and help each other integrate into the German working world. I am grateful for the support and motivation I find here. I know that I still have much to learn, but I am ready to work hard to achieve my goal.\n\nI am convinced that I can find an employer in Germany who will value my skills and experience. I will continue to work hard to improve my German, and I am confident that I will soon be able to apply for jobs and participate in interviews in German."
   },
   {
     "topic": "Winnie  adore le miel",
@@ -184973,7 +184991,7 @@ async function init() {
   // the matching spot. APP.info.version itself is still baked, for console/API inspection only.
   // v73_b: digests of the files this bundle was built from. Read it in the browser console as
   // APP.buildSources to tell which corpus a deployed page is actually serving.
-  APP.buildSources = {"index.html":"4f0bfb9eaf2b","lessons.json":"727c9895c803","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"a0dd4877229c","analysis-corrections.json":"e64c06e5700a","build-static.js":"ae3fe394cb16"};
+  APP.buildSources = {"index.html":"4f0bfb9eaf2b","lessons.json":"475ca9498b84","ui.json":"31d8f8407646","languages.json":"eace5ede323c","scripts.json":"7ab0296b5b49","canonical-analysis.json":"a0dd4877229c","analysis-corrections.json":"e64c06e5700a","build-static.js":"ae3fe394cb16"};
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // #teacher-mode-bar no longer exists (user follow-up after v81_aa: the toggle moved into
   // #settings-modal, which carries no default hiding — no equivalent forced-visible step needed).
