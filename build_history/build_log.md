@@ -10347,7 +10347,11 @@ generate text from pasted stories. Fix this first!.
   there really isn't any.
   
 * text provencance URLs added in the generation wizard don't seem to
-  survive, for the two stories sl_1994640016 and 
+  survive, for sl_1994640016 and another story generated around the same
+  time 
+
+* an author/url link is shown on the main page in live mode, and should
+  ALSO be shown in static doc/index.html
 
 ## ONE-FUNCTION APP
 
