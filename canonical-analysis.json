@@ -26321,8 +26321,4620 @@
       "analyzedAt": "2026-10-07T09:37:05.257Z",
       "partial": true,
       "totalSentences": 7
+    },
+    "tp_17815283212820000053": {
+      "chapterId": "tp_17815283212820000053",
+      "lang": "en",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 7,
+      "tokenCount": 58,
+      "sentences": [
+        {
+          "sentenceId": "tp_17815283212820000053:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17815283212820000053:s0:t0",
+              "idx": 0,
+              "surface": "The",
+              "lemma": "the",
+              "form": "Bestimmter Artikel, Nominativ, Singular, Neutrum",
+              "sense": "der/die/das (bestimmter Artikel)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s0:t1",
+              "idx": 1,
+              "surface": "Little",
+              "lemma": "little",
+              "form": "Adjektiv, Positiv",
+              "sense": "klein / wenig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s0:t2",
+              "idx": 2,
+              "surface": "I",
+              "lemma": "I",
+              "form": "Personalpronomen, Nominativ, Singular, 1. Person",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s0:t3",
+              "idx": 3,
+              "surface": "am",
+              "lemma": "am",
+              "form": "Verb (sein), Präsens, Indikativ, 1. Person Singular",
+              "sense": "bin",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s0:t4",
+              "idx": 4,
+              "surface": "i.",
+              "lemma": "i.",
+              "form": "Unbekannt / Tippfehler (vermutlich 'I')",
+              "sense": "ich (Tippfehler für das Subjekt)",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T14:23:24.355Z",
+            "sentenceId": "tp_17815283212820000053:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "The Little I am i.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815283212820000053:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17815283212820000053:s1:t0",
+              "idx": 0,
+              "surface": "Anna",
+              "lemma": "Anna",
+              "form": "Eigennamen (Eigenname)",
+              "sense": "Vorname einer Person",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s1:t1",
+              "idx": 1,
+              "surface": "Matuszyńska,",
+              "lemma": "Matuszyńska",
+              "form": "Eigennamen (Eigenname)",
+              "sense": "Nachname einer Person",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s1:t2",
+              "idx": 2,
+              "surface": "Rainer",
+              "lemma": "Rainer",
+              "form": "Eigennamen (Eigenname)",
+              "sense": "Vorname einer Person",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s1:t3",
+              "idx": 3,
+              "surface": "Machné",
+              "lemma": "Machné",
+              "form": "Eigennamen (Eigenname)",
+              "sense": "Nachname einer Person",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T14:24:37.831Z",
+            "sentenceId": "tp_17815283212820000053:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Anna Matuszyńska, Rainer Machné",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815283212820000053:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17815283212820000053:s2:t0",
+              "idx": 0,
+              "surface": "In",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s2:t1",
+              "idx": 1,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel, Nominativ Singular Maskulinum/Neutrum oder Akkusativ Singular Neutrum",
+              "sense": "der/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s2:t2",
+              "idx": 2,
+              "surface": "world",
+              "lemma": "world",
+              "form": "Substantiv, Nominativ Singular Femininum",
+              "sense": "Welt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s2:t3",
+              "idx": 3,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s2:t4",
+              "idx": 4,
+              "surface": "birds,",
+              "lemma": "bird",
+              "form": "Substantiv, Plural",
+              "sense": "Vögel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s2:t5",
+              "idx": 5,
+              "surface": "little",
+              "lemma": "little",
+              "form": "Adjektiv, Positiv",
+              "sense": "kleine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s2:t6",
+              "idx": 6,
+              "surface": "birds",
+              "lemma": "bird",
+              "form": "Substantiv, Plural",
+              "sense": "Vögel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s2:t7",
+              "idx": 7,
+              "surface": "have",
+              "lemma": "have",
+              "form": "Verb, Präsens Indikativ Aktiv, 3. Person Plural",
+              "sense": "haben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s2:t8",
+              "idx": 8,
+              "surface": "nests.",
+              "lemma": "nest",
+              "form": "Substantiv, Plural",
+              "sense": "Nester",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 4,
+              "tokenIds": [
+                "tp_17815283212820000053:s2:t0",
+                "tp_17815283212820000053:s2:t1",
+                "tp_17815283212820000053:s2:t2",
+                "tp_17815283212820000053:s2:t3",
+                "tp_17815283212820000053:s2:t4"
+              ],
+              "lemma": "in the world of birds",
+              "gloss": "in der Vogelwelt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 5,
+              "end": 6,
+              "tokenIds": [
+                "tp_17815283212820000053:s2:t5",
+                "tp_17815283212820000053:s2:t6"
+              ],
+              "lemma": "little birds",
+              "gloss": "kleine Vögel",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T14:26:54.293Z",
+            "sentenceId": "tp_17815283212820000053:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "In the world of birds,\nlittle birds have nests.",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17815283212820000053:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17815283212820000053:s3:t0",
+              "idx": 0,
+              "surface": "In",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s3:t1",
+              "idx": 1,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel, Nominativ Singular Maskulinum/Neutrum oder Akkusativ Singular Femininum",
+              "sense": "der/die/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s3:t2",
+              "idx": 2,
+              "surface": "world",
+              "lemma": "world",
+              "form": "Substantiv, Nominativ Singular Femininum",
+              "sense": "Welt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s3:t3",
+              "idx": 3,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s3:t4",
+              "idx": 4,
+              "surface": "cats,",
+              "lemma": "cat",
+              "form": "Substantiv, Plural",
+              "sense": "Katzen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s3:t5",
+              "idx": 5,
+              "surface": "little",
+              "lemma": "little",
+              "form": "Adjektiv, Positiv",
+              "sense": "kleine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s3:t6",
+              "idx": 6,
+              "surface": "cats",
+              "lemma": "cat",
+              "form": "Substantiv, Plural",
+              "sense": "Katzen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s3:t7",
+              "idx": 7,
+              "surface": "have",
+              "lemma": "have",
+              "form": "Verb, Präsens Indikativ Plural",
+              "sense": "haben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s3:t8",
+              "idx": 8,
+              "surface": "families.",
+              "lemma": "family",
+              "form": "Substantiv, Plural",
+              "sense": "Familien",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 4,
+              "tokenIds": [
+                "tp_17815283212820000053:s3:t0",
+                "tp_17815283212820000053:s3:t1",
+                "tp_17815283212820000053:s3:t2",
+                "tp_17815283212820000053:s3:t3",
+                "tp_17815283212820000053:s3:t4"
+              ],
+              "lemma": "in the world of cats",
+              "gloss": "in der Welt der Katzen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 5,
+              "end": 6,
+              "tokenIds": [
+                "tp_17815283212820000053:s3:t5",
+                "tp_17815283212820000053:s3:t6"
+              ],
+              "lemma": "little cats",
+              "gloss": "kleine Katzen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T14:29:08.253Z",
+            "sentenceId": "tp_17815283212820000053:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "In the world of cats,\nlittle cats have families.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815283212820000053:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17815283212820000053:s4:t0",
+              "idx": 0,
+              "surface": "In",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s4:t1",
+              "idx": 1,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel, Nominativ Singular Femininum",
+              "sense": "der/die/das (definit)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s4:t2",
+              "idx": 2,
+              "surface": "world",
+              "lemma": "world",
+              "form": "Nomen, Nominativ Singular Femininum",
+              "sense": "Welt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s4:t3",
+              "idx": 3,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s4:t4",
+              "idx": 4,
+              "surface": "people,",
+              "lemma": "people",
+              "form": "Nomen, Genitiv Plural",
+              "sense": "der Menschen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s4:t5",
+              "idx": 5,
+              "surface": "grown-ups",
+              "lemma": "grown-up",
+              "form": "Nomen, Nominativ Plural",
+              "sense": "Erwachsene",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s4:t6",
+              "idx": 6,
+              "surface": "often",
+              "lemma": "often",
+              "form": "Adverb",
+              "sense": "oft",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s4:t7",
+              "idx": 7,
+              "surface": "have",
+              "lemma": "have",
+              "form": "Verb, Präsens Indikativ Plural 3. Person",
+              "sense": "haben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s4:t8",
+              "idx": 8,
+              "surface": "children.",
+              "lemma": "child",
+              "form": "Nomen, Akkusativ Plural Neutrum",
+              "sense": "Kinder",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 4,
+              "tokenIds": [
+                "tp_17815283212820000053:s4:t0",
+                "tp_17815283212820000053:s4:t1",
+                "tp_17815283212820000053:s4:t2",
+                "tp_17815283212820000053:s4:t3",
+                "tp_17815283212820000053:s4:t4"
+              ],
+              "lemma": "in the world of people",
+              "gloss": "in der Welt der Menschen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T14:31:18.196Z",
+            "sentenceId": "tp_17815283212820000053:s4",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "In the world of people,\ngrown-ups often have children.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815283212820000053:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17815283212820000053:s5:t0",
+              "idx": 0,
+              "surface": "And",
+              "lemma": "and",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t1",
+              "idx": 1,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t2",
+              "idx": 2,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel, Nominativ Singular Maskulinum/Neutrum oder Akkusativ Singular Maskulinum",
+              "sense": "der/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t3",
+              "idx": 3,
+              "surface": "world",
+              "lemma": "world",
+              "form": "Substantiv, Nominativ Singular Femininum",
+              "sense": "Welt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t4",
+              "idx": 4,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t5",
+              "idx": 5,
+              "surface": "numbers,",
+              "lemma": "number",
+              "form": "Substantiv, Genitiv Plural Femininum",
+              "sense": "Zahlen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t6",
+              "idx": 6,
+              "surface": "every",
+              "lemma": "every",
+              "form": "Determiner",
+              "sense": "jede/jeder/jedes",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t7",
+              "idx": 7,
+              "surface": "number",
+              "lemma": "number",
+              "form": "Substantiv, Nominativ Singular Maskulinum",
+              "sense": "Zahl",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t8",
+              "idx": 8,
+              "surface": "seems",
+              "lemma": "seem",
+              "form": "Verb, Präsens, 3. Person Singular Indikativ",
+              "sense": "scheint",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t9",
+              "idx": 9,
+              "surface": "to",
+              "lemma": "to",
+              "form": "Partikel (Infinitivmarker)",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t10",
+              "idx": 10,
+              "surface": "have",
+              "lemma": "have",
+              "form": "Verb, Infinitiv",
+              "sense": "haben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t11",
+              "idx": 11,
+              "surface": "a",
+              "lemma": "a",
+              "form": "unbestimmter Artikel, Nominativ/Akkusativ Singular Maskulinum/Neutrum",
+              "sense": "einen/ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s5:t12",
+              "idx": 12,
+              "surface": "place.",
+              "lemma": "place",
+              "form": "Substantiv, Akkusativ Singular Maskulinum",
+              "sense": "Platz",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 8,
+              "end": 10,
+              "tokenIds": [
+                "tp_17815283212820000053:s5:t8",
+                "tp_17815283212820000053:s5:t9",
+                "tp_17815283212820000053:s5:t10"
+              ],
+              "lemma": "seem to have",
+              "gloss": "scheinen zu haben",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 1,
+              "end": 5,
+              "tokenIds": [
+                "tp_17815283212820000053:s5:t1",
+                "tp_17815283212820000053:s5:t2",
+                "tp_17815283212820000053:s5:t3",
+                "tp_17815283212820000053:s5:t4",
+                "tp_17815283212820000053:s5:t5"
+              ],
+              "lemma": "in the world of numbers",
+              "gloss": "in der Welt der Zahlen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T14:34:40.947Z",
+            "sentenceId": "tp_17815283212820000053:s5",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1570
+          },
+          "text": "And in the world of numbers,\nevery number seems to have a place.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815283212820000053:s6",
+          "tokens": [
+            {
+              "tokenId": "tp_17815283212820000053:s6:t0",
+              "idx": 0,
+              "surface": "But",
+              "lemma": "but",
+              "form": "Konjunktion",
+              "sense": "aber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s6:t1",
+              "idx": 1,
+              "surface": "little",
+              "lemma": "little",
+              "form": "Adverb",
+              "sense": "wenig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s6:t2",
+              "idx": 2,
+              "surface": "i",
+              "lemma": "I",
+              "form": "Personalpronomen (Nominativ)",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s6:t3",
+              "idx": 3,
+              "surface": "did",
+              "lemma": "do",
+              "form": "Hilfsverb (Präteritum, Indikativ)",
+              "sense": "tat (Hilfsverb für Verneinung/Inversion)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s6:t4",
+              "idx": 4,
+              "surface": "not",
+              "lemma": "not",
+              "form": "Negationspartikel",
+              "sense": "nicht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s6:t5",
+              "idx": 5,
+              "surface": "know",
+              "lemma": "know",
+              "form": "Verb (Infinitiv)",
+              "sense": "wissen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s6:t6",
+              "idx": 6,
+              "surface": "where",
+              "lemma": "where",
+              "form": "Relativadverb",
+              "sense": "wo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s6:t7",
+              "idx": 7,
+              "surface": "hers",
+              "lemma": "hers",
+              "form": "possessives Fürwort",
+              "sense": "ihres (Platzhalter)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815283212820000053:s6:t8",
+              "idx": 8,
+              "surface": "was.",
+              "lemma": "be",
+              "form": "Verb (Präsens, Indikativ, 3. Person Singular)",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 5,
+              "tokenIds": [
+                "tp_17815283212820000053:s6:t0",
+                "tp_17815283212820000053:s6:t1",
+                "tp_17815283212820000053:s6:t2",
+                "tp_17815283212820000053:s6:t3",
+                "tp_17815283212820000053:s6:t4",
+                "tp_17815283212820000053:s6:t5"
+              ],
+              "lemma": "but little did I know",
+              "gloss": "aber wenig wusste ich (Idiomatische Inversion)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T14:36:52.700Z",
+            "sentenceId": "tp_17815283212820000053:s6",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "But little i\ndid not know where hers was.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-12T14:36:52.723Z",
+        "chapterId": "tp_17815283212820000053",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "dd198389c754",
+      "analyzedAt": "2026-10-12T14:36:52.723Z"
+    },
+    "tp_17815284454040000147": {
+      "chapterId": "tp_17815284454040000147",
+      "lang": "en",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 2,
+      "tokenCount": 56,
+      "sentences": [
+        {
+          "sentenceId": "tp_17815284454040000147:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17815284454040000147:s0:t0",
+              "idx": 0,
+              "surface": "+,",
+              "lemma": "+",
+              "form": "Zeichen (Plus)",
+              "sense": "Pluszeichen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t1",
+              "idx": 1,
+              "surface": "−,",
+              "lemma": "-",
+              "form": "Zeichen (Minus)",
+              "sense": "Minuszeichen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t2",
+              "idx": 2,
+              "surface": "∗,",
+              "lemma": "*",
+              "form": "Zeichen (Stern/Multiplikation)",
+              "sense": "Multiplikationszeichen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t3",
+              "idx": 3,
+              "surface": "/",
+              "lemma": "/",
+              "form": "Zeichen (Schrägstrich/Division)",
+              "sense": "Divisionszeichen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t4",
+              "idx": 4,
+              "surface": "In",
+              "lemma": "in",
+              "form": "Präposition mit Dativ",
+              "sense": "in (innerhalb von)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t5",
+              "idx": 5,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel (Nominativ Singular Femininum)",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t6",
+              "idx": 6,
+              "surface": "land",
+              "lemma": "land",
+              "form": "Substantiv (Nominativ Singular Femininum)",
+              "sense": "Land",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t7",
+              "idx": 7,
+              "surface": "where",
+              "lemma": "where",
+              "form": "Relativadverb",
+              "sense": "wo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t8",
+              "idx": 8,
+              "surface": "rules",
+              "lemma": "rule",
+              "form": "Verb (Präsens Plural)",
+              "sense": "Regeln",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t9",
+              "idx": 9,
+              "surface": "are",
+              "lemma": "be",
+              "form": "Hilfsverb (Präsens Plural Passiv)",
+              "sense": "werden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t10",
+              "idx": 10,
+              "surface": "made",
+              "lemma": "make",
+              "form": "Verb (Partizip II Passiv)",
+              "sense": "gemacht",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t11",
+              "idx": 11,
+              "surface": "and",
+              "lemma": "and",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t12",
+              "idx": 12,
+              "surface": "everyone",
+              "lemma": "everyone",
+              "form": "Indefinitpronomen (Nominativ Singular)",
+              "sense": "jeder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t13",
+              "idx": 13,
+              "surface": "knows",
+              "lemma": "know",
+              "form": "Verb (Präsens Singular)",
+              "sense": "kennt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t14",
+              "idx": 14,
+              "surface": "their",
+              "lemma": "their",
+              "form": "Possessivpronomen (Plural/Neutral)",
+              "sense": "ihren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t15",
+              "idx": 15,
+              "surface": "fate,",
+              "lemma": "fate",
+              "form": "Substantiv (Akkusativ Singular Femininum)",
+              "sense": "Schicksal",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t16",
+              "idx": 16,
+              "surface": "where",
+              "lemma": "where",
+              "form": "Relativadverb",
+              "sense": "wo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t17",
+              "idx": 17,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel (Nominativ Plural)",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t18",
+              "idx": 18,
+              "surface": "numbers",
+              "lemma": "number",
+              "form": "Substantiv (Nominativ Plural)",
+              "sense": "Zahlen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t19",
+              "idx": 19,
+              "surface": "co-exist,",
+              "lemma": "co-exist",
+              "form": "Verb (Präsens Plural)",
+              "sense": "koexistieren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t20",
+              "idx": 20,
+              "surface": "and",
+              "lemma": "and",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t21",
+              "idx": 21,
+              "surface": "signs",
+              "lemma": "sign",
+              "form": "Substantiv (Nominativ Plural)",
+              "sense": "Zeichen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t22",
+              "idx": 22,
+              "surface": "rule",
+              "lemma": "rule",
+              "form": "Verb (Präsens Plural)",
+              "sense": "regeln",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t23",
+              "idx": 23,
+              "surface": "how",
+              "lemma": "how",
+              "form": "Adverb (Interrogativ/Relativ)",
+              "sense": "wie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t24",
+              "idx": 24,
+              "surface": "it",
+              "lemma": "it",
+              "form": "Personalpronomen (Nominativ/Akkusativ Singular Neutrum)",
+              "sense": "es",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t25",
+              "idx": 25,
+              "surface": "is,",
+              "lemma": "be",
+              "form": "Verb (Präsens Singular)",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t26",
+              "idx": 26,
+              "surface": "little",
+              "lemma": "little",
+              "form": "Adjektiv (Attributiv)",
+              "sense": "kleine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t27",
+              "idx": 27,
+              "surface": "i",
+              "lemma": "i",
+              "form": "Substantiv (Eigenname/Variable)",
+              "sense": "die kleine i",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t28",
+              "idx": 28,
+              "surface": "wandered",
+              "lemma": "wander",
+              "form": "Verb (Präteritum Singular)",
+              "sense": "wanderte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t29",
+              "idx": 29,
+              "surface": "through",
+              "lemma": "through",
+              "form": "Präposition mit Akkusativ",
+              "sense": "durch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t30",
+              "idx": 30,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel (Akkusativ Plural Femininum)",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t31",
+              "idx": 31,
+              "surface": "streets",
+              "lemma": "street",
+              "form": "Substantiv (Akkusativ Plural Femininum)",
+              "sense": "Straßen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t32",
+              "idx": 32,
+              "surface": "with",
+              "lemma": "with",
+              "form": "Präposition mit Dativ",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t33",
+              "idx": 33,
+              "surface": "her",
+              "lemma": "her",
+              "form": "Possessivpronomen (Singular Femininum)",
+              "sense": "ihren",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t34",
+              "idx": 34,
+              "surface": "eyes",
+              "lemma": "eye",
+              "form": "Substantiv (Nominativ Plural Femininum)",
+              "sense": "Augen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t35",
+              "idx": 35,
+              "surface": "wide",
+              "lemma": "wide",
+              "form": "Adjektiv (Prädikativ/Adverbial)",
+              "sense": "weit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t36",
+              "idx": 36,
+              "surface": "open",
+              "lemma": "open",
+              "form": "Adjektiv (Prädikativ/Adverbial)",
+              "sense": "offen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t37",
+              "idx": 37,
+              "surface": "and",
+              "lemma": "and",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t38",
+              "idx": 38,
+              "surface": "heart",
+              "lemma": "heart",
+              "form": "Substantiv (Nominativ Singular Neutrum)",
+              "sense": "Herz",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t39",
+              "idx": 39,
+              "surface": "bouncing",
+              "lemma": "bounce",
+              "form": "Verb (Partizip I Präsens)",
+              "sense": "pochend/schlagend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t40",
+              "idx": 40,
+              "surface": "with",
+              "lemma": "with",
+              "form": "Präposition mit Dativ",
+              "sense": "mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t41",
+              "idx": 41,
+              "surface": "a",
+              "lemma": "a",
+              "form": "unbestimmter Artikel (Akkusativ Singular Maskulinum)",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t42",
+              "idx": 42,
+              "surface": "million",
+              "lemma": "million",
+              "form": "Substantiv/Zahlwort (Akkusativ Singular Neutrum)",
+              "sense": "Million",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s0:t43",
+              "idx": 43,
+              "surface": "beats.",
+              "lemma": "beat",
+              "form": "Substantiv (Plural Maskulinum)",
+              "sense": "Schläge",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 4,
+              "end": 10,
+              "tokenIds": [
+                "tp_17815284454040000147:s0:t4",
+                "tp_17815284454040000147:s0:t5",
+                "tp_17815284454040000147:s0:t6",
+                "tp_17815284454040000147:s0:t7",
+                "tp_17815284454040000147:s0:t8",
+                "tp_17815284454040000147:s0:t9",
+                "tp_17815284454040000147:s0:t10"
+              ],
+              "lemma": "in the land where rules are made",
+              "gloss": "in dem Land, in dem Regeln gemacht werden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 35,
+              "end": 36,
+              "tokenIds": [
+                "tp_17815284454040000147:s0:t35",
+                "tp_17815284454040000147:s0:t36"
+              ],
+              "lemma": "wide open",
+              "gloss": "weit offen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:15:36.721Z",
+            "sentenceId": "tp_17815284454040000147:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 4360
+          },
+          "text": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815284454040000147:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17815284454040000147:s1:t0",
+              "idx": 0,
+              "surface": "There’s",
+              "lemma": "there",
+              "form": "Adverb + Verb (3. Person Singular Präsens Indikativ)",
+              "sense": "es gibt / ist vorhanden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t1",
+              "idx": 1,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Artikel (unbestimmt, maskulin/feminin/neutrum Singular)",
+              "sense": "ein / eine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t2",
+              "idx": 2,
+              "surface": "comma,",
+              "lemma": "comma",
+              "form": "Nomen (Substantiv, Neutrum/Sächlich, Singular)",
+              "sense": "Komma",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t3",
+              "idx": 3,
+              "surface": "there’s",
+              "lemma": "there",
+              "form": "Adverb + Verb (3. Person Singular Präsens Indikativ)",
+              "sense": "es gibt / ist vorhanden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t4",
+              "idx": 4,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Artikel (unbestimmt, maskulin/feminin/neutrum Singular)",
+              "sense": "ein / eine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t5",
+              "idx": 5,
+              "surface": "dot,",
+              "lemma": "dot",
+              "form": "Nomen (Substantiv, Neutrum/Sächlich, Singular)",
+              "sense": "Punkt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t6",
+              "idx": 6,
+              "surface": "people",
+              "lemma": "people",
+              "form": "Nomen (Substantiv, Plural)",
+              "sense": "Leute / Menschen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t7",
+              "idx": 7,
+              "surface": "still",
+              "lemma": "still",
+              "form": "Adverb",
+              "sense": "noch / immer noch",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t8",
+              "idx": 8,
+              "surface": "confuse:",
+              "lemma": "confuse",
+              "form": "Verb (Präsens Indikativ, Plural)",
+              "sense": "verwechseln",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t9",
+              "idx": 9,
+              "surface": "which",
+              "lemma": "which",
+              "form": "Pronomen (Relativ- oder Interrogativpronomen)",
+              "sense": "welches / welche",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t10",
+              "idx": 10,
+              "surface": "one’s",
+              "lemma": "one",
+              "form": "Nomen/Pronomen (Substantiv, Neutrum/Sächlich, Singular) + Verb (3. Person Singular Präsens Indikativ)",
+              "sense": "der eine / das eine ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815284454040000147:s1:t11",
+              "idx": 11,
+              "surface": "what?",
+              "lemma": "what",
+              "form": "Pronomen (Interrogativpronomen)",
+              "sense": "was",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17815284454040000147:s1:t0",
+                "tp_17815284454040000147:s1:t1",
+                "tp_17815284454040000147:s1:t2"
+              ],
+              "lemma": "there is a comma",
+              "gloss": "es gibt ein Komma",
+              "confidence": "unresolved",
+              "reviewed": false
+            },
+            {
+              "start": 3,
+              "end": 5,
+              "tokenIds": [
+                "tp_17815284454040000147:s1:t3",
+                "tp_17815284454040000147:s1:t4",
+                "tp_17815284454040000147:s1:t5"
+              ],
+              "lemma": "there is a dot",
+              "gloss": "es gibt einen Punkt",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:20:04.387Z",
+            "sentenceId": "tp_17815284454040000147:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "There’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-12T15:20:04.414Z",
+        "chapterId": "tp_17815284454040000147",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "5f1e46f0dda6",
+      "analyzedAt": "2026-10-12T15:20:04.414Z"
+    },
+    "tp_17918182076460000525": {
+      "chapterId": "tp_17918182076460000525",
+      "lang": "it",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 8,
+      "tokenCount": 75,
+      "sentences": [
+        {
+          "sentenceId": "tp_17918182076460000525:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17918182076460000525:s0:t0",
+              "idx": 0,
+              "surface": "dare",
+              "lemma": "dare",
+              "form": "Verb; Infinitiv Präsens",
+              "sense": "geben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t1",
+              "idx": 1,
+              "surface": "le",
+              "lemma": "le",
+              "form": "Bestimmter Artikel; Plural Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t2",
+              "idx": 2,
+              "surface": "giuste",
+              "lemma": "giusto",
+              "form": "Adjektiv; Plural Femininum Positiv",
+              "sense": "richtigen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t3",
+              "idx": 3,
+              "surface": "proporzioni",
+              "lemma": "proporzione",
+              "form": "Nomen; Plural Femininum",
+              "sense": "Proportionen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t4",
+              "idx": 4,
+              "surface": "ai",
+              "lemma": "a",
+              "form": "Präposition + Bestimmter Artikel; Plural Maskulinum",
+              "sense": "den",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t5",
+              "idx": 5,
+              "surface": "soggetti",
+              "lemma": "soggetto",
+              "form": "Nomen; Plural Maskulinum",
+              "sense": "Motiven",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t6",
+              "idx": 6,
+              "surface": "qui",
+              "lemma": "qui",
+              "form": "Adverb",
+              "sense": "hier",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t7",
+              "idx": 7,
+              "surface": "esposte",
+              "lemma": "esposto",
+              "form": "Partizip Perfekt; Plural Femininum Passiv",
+              "sense": "ausgestellten",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t8",
+              "idx": 8,
+              "surface": "raffigurano",
+              "lemma": "raffigurare",
+              "form": "Verb; Indikativ Präsens 3. Person Plural",
+              "sense": "stellen dar",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t9",
+              "idx": 9,
+              "surface": "i",
+              "lemma": "i",
+              "form": "Bestimmter Artikel; Plural Maskulinum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t10",
+              "idx": 10,
+              "surface": "segni",
+              "lemma": "segno",
+              "form": "Nomen; Plural Maskulinum",
+              "sense": "Zeichen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t11",
+              "idx": 11,
+              "surface": "seguenti:",
+              "lemma": "seguente",
+              "form": "Adjektiv; Plural Maskulinum Positiv",
+              "sense": "folgenden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t12",
+              "idx": 12,
+              "surface": "avvoltoio",
+              "lemma": "avvoltoio",
+              "form": "Nomen; Singular Maskulinum",
+              "sense": "Geier",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t13",
+              "idx": 13,
+              "surface": "del",
+              "lemma": "del",
+              "form": "Präposition + Bestimmter Artikel; Singular Maskulinum",
+              "sense": "des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t14",
+              "idx": 14,
+              "surface": "Sud",
+              "lemma": "Sud",
+              "form": "Nomen; Singular Maskulinum",
+              "sense": "Südens",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t15",
+              "idx": 15,
+              "surface": "e",
+              "lemma": "e",
+              "form": "Konjunktion",
+              "sense": "und",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t16",
+              "idx": 16,
+              "surface": "cobra",
+              "lemma": "cobra",
+              "form": "Nomen; Singular Femininum",
+              "sense": "Kobra",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t17",
+              "idx": 17,
+              "surface": "del",
+              "lemma": "del",
+              "form": "Präposition + Bestimmter Artikel; Singular Maskulinum",
+              "sense": "des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t18",
+              "idx": 18,
+              "surface": "Nord",
+              "lemma": "Nord",
+              "form": "Nomen; Singular Maskulinum",
+              "sense": "Nordens",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t19",
+              "idx": 19,
+              "surface": "sul",
+              "lemma": "sul",
+              "form": "Präposition + Bestimmter Artikel; Singular Maskulinum",
+              "sense": "auf dem",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t20",
+              "idx": 20,
+              "surface": "canestro",
+              "lemma": "canestro",
+              "form": "Nomen; Singular Maskulinum",
+              "sense": "Korb",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t21",
+              "idx": 21,
+              "surface": "(nebet,",
+              "lemma": "nebet",
+              "form": "Nomen; Eigenname (Ägyptisch)",
+              "sense": "Nebet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t22",
+              "idx": 22,
+              "surface": "\"canestro\",",
+              "lemma": "canestro",
+              "form": "Nomen; Singular Maskulinum",
+              "sense": "Korb",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t23",
+              "idx": 23,
+              "surface": "neb,",
+              "lemma": "neb",
+              "form": "Nomen; Eigenname (Ägyptisch)",
+              "sense": "Neb",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t24",
+              "idx": 24,
+              "surface": "\"signore\")",
+              "lemma": "signore",
+              "form": "Nomen; Singular Maskulinum",
+              "sense": "Herr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t25",
+              "idx": 25,
+              "surface": "=",
+              "lemma": "=",
+              "form": "Zeichen (Gleichheitszeichen)",
+              "sense": "=",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t26",
+              "idx": 26,
+              "surface": "nebyty,",
+              "lemma": "nebyty",
+              "form": "Nomen; Eigenname (Ägyptisch)",
+              "sense": "Nebyty",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t27",
+              "idx": 27,
+              "surface": "\"le",
+              "lemma": "le",
+              "form": "Bestimmter Artikel; Plural Femininum",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t28",
+              "idx": 28,
+              "surface": "Due",
+              "lemma": "due",
+              "form": "Adjektiv/Zahlwort; Plural Femininum",
+              "sense": "zwei",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t29",
+              "idx": 29,
+              "surface": "Signore\"",
+              "lemma": "signore",
+              "form": "Nomen; Plural Feminikum (archaisch/religiös)",
+              "sense": "Göttinnen",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t30",
+              "idx": 30,
+              "surface": "(titolo",
+              "lemma": "titolo",
+              "form": "Nomen; Singular Maskulinum",
+              "sense": "Titel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t31",
+              "idx": 31,
+              "surface": "del",
+              "lemma": "del",
+              "form": "Präposition + Bestimmter Artikel; Singular Maskulinum",
+              "sense": "des",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s0:t32",
+              "idx": 32,
+              "surface": "faraone)",
+              "lemma": "faraone",
+              "form": "Nomen; Singular Maskulinum",
+              "sense": "Pharaos",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 3,
+              "tokenIds": [
+                "tp_17918182076460000525:s0:t0",
+                "tp_17918182076460000525:s0:t1",
+                "tp_17918182076460000525:s0:t2",
+                "tp_17918182076460000525:s0:t3"
+              ],
+              "lemma": "dare le giuste proporzioni",
+              "gloss": "die richtigen Proportionen geben",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 12,
+              "end": 14,
+              "tokenIds": [
+                "tp_17918182076460000525:s0:t12",
+                "tp_17918182076460000525:s0:t13",
+                "tp_17918182076460000525:s0:t14"
+              ],
+              "lemma": "avvoltoio del Sud",
+              "gloss": "Geier des Südens",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 16,
+              "end": 18,
+              "tokenIds": [
+                "tp_17918182076460000525:s0:t16",
+                "tp_17918182076460000525:s0:t17",
+                "tp_17918182076460000525:s0:t18"
+              ],
+              "lemma": "cobra del Nord",
+              "gloss": "Kobra des Nordens",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 27,
+              "end": 29,
+              "tokenIds": [
+                "tp_17918182076460000525:s0:t27",
+                "tp_17918182076460000525:s0:t28",
+                "tp_17918182076460000525:s0:t29"
+              ],
+              "lemma": "le Due Signore",
+              "gloss": "die Zwei Herrinnen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:43:05.635Z",
+            "sentenceId": "tp_17918182076460000525:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 3370
+          },
+          "text": "dare le giuste proporzioni ai soggetti qui esposte raffigurano i segni seguenti:\navvoltoio del Sud e cobra del Nord sul canestro (nebet, \"canestro\", neb, \"signore\") = nebyty,\n\"le Due Signore\" (titolo del faraone)",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17918182076460000525:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17918182076460000525:s1:t0",
+              "idx": 0,
+              "surface": "IN-SCENE:",
+              "lemma": "in-scene",
+              "form": "Substantiv, Neutrum, Singular, Nominativ/Akkusativ (Lehnwort)",
+              "sense": "Szenenbeschreibung / Kontextangabe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s1:t1",
+              "idx": 1,
+              "surface": "bik",
+              "lemma": "bik",
+              "form": "Substantiv, Maskulinum, Singular (Hieroglyphen-Transliteration)",
+              "sense": "Falke (ägyptischer Gottessymbol)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s1:t2",
+              "idx": 2,
+              "surface": "=",
+              "lemma": "=",
+              "form": "Gleichheitszeichen / Gleichsetzungspartikel",
+              "sense": "bedeutet gleich / ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s1:t3",
+              "idx": 3,
+              "surface": "\"falco\",",
+              "lemma": "falco",
+              "form": "Substantiv, Maskulinum, Singular (Latein/Deutsch)",
+              "sense": "Falke",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s1:t4",
+              "idx": 4,
+              "surface": "o",
+              "lemma": "o",
+              "form": "Konjunktion (archaisch/poetisch für 'oder')",
+              "sense": "oder",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s1:t5",
+              "idx": 5,
+              "surface": "Her,",
+              "lemma": "Her",
+              "form": "Eigenname, Maskulinum, Singular (ägyptischer Gott)",
+              "sense": "Hör (Gott)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s1:t6",
+              "idx": 6,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s1:t7",
+              "idx": 7,
+              "surface": "dio",
+              "lemma": "dio",
+              "form": "Substantiv, Maskulinum, Singular, Nominativ",
+              "sense": "Gott",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s1:t8",
+              "idx": 8,
+              "surface": "\"Horus\"",
+              "lemma": "Horus",
+              "form": "Eigenname, Maskulinum, Singular (ägyptischer Gott)",
+              "sense": "Horus",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 6,
+              "end": 7,
+              "tokenIds": [
+                "tp_17918182076460000525:s1:t6",
+                "tp_17918182076460000525:s1:t7"
+              ],
+              "lemma": "il dio",
+              "gloss": "der Gott",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 4,
+              "end": 5,
+              "tokenIds": [
+                "tp_17918182076460000525:s1:t4",
+                "tp_17918182076460000525:s1:t5"
+              ],
+              "lemma": "o Her",
+              "gloss": "oder Hör",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:46:22.215Z",
+            "sentenceId": "tp_17918182076460000525:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "IN-SCENE:\nbik = \"falco\", o Her, il dio \"Horus\"",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17918182076460000525:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17918182076460000525:s2:t0",
+              "idx": 0,
+              "surface": "IN-SCENE:",
+              "lemma": "in-scene",
+              "form": "Substantiv (Lehnwort), Nominativ Singular Neutrum",
+              "sense": "Szeneninterne Anmerkung / Kontexthinweis",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s2:t1",
+              "idx": 1,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "innerhalb von (Kontext: Definition)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s2:t2",
+              "idx": 2,
+              "surface": "sheft",
+              "lemma": "sheft",
+              "form": "Substantiv, Nominativ Singular Maskulinum",
+              "sense": "Schaft / Stiel (des Widders)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s2:t3",
+              "idx": 3,
+              "surface": "=",
+              "lemma": "=",
+              "form": "Gleichheitszeichen (Lexikografisches Symbol)",
+              "sense": "bedeutet gleich / wird definiert als",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s2:t4",
+              "idx": 4,
+              "surface": "\"testa",
+              "lemma": "testa",
+              "form": "Substantiv, Nominativ Singular Femininum",
+              "sense": "Kopf (des Widders)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s2:t5",
+              "idx": 5,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition (Artikelgebrauch)",
+              "sense": "von / des (Genitivverhältnis)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s2:t6",
+              "idx": 6,
+              "surface": "ariete\",",
+              "lemma": "ariete",
+              "form": "Substantiv, Genitiv Singular Maskulinum",
+              "sense": "Widders",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s2:t7",
+              "idx": 7,
+              "surface": "shefyt,",
+              "lemma": "shefyt",
+              "form": "Substantiv, Nominativ Singular Maskulinum (Variantform)",
+              "sense": "Schaft / Stiel (Alternative Schreibweise)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 4,
+              "end": 6,
+              "tokenIds": [
+                "tp_17918182076460000525:s2:t4",
+                "tp_17918182076460000525:s2:t5",
+                "tp_17918182076460000525:s2:t6"
+              ],
+              "lemma": "testa di ariete",
+              "gloss": "Widderkopf",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:48:31.138Z",
+            "sentenceId": "tp_17918182076460000525:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "IN-SCENE:\nin sheft = \"testa di ariete\", shefyt,",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17918182076460000525:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17918182076460000525:s3:t0",
+              "idx": 0,
+              "surface": "IN-SCENE:",
+              "lemma": "in-scene",
+              "form": "Substantiv (Lehnwort), Nominativ Singular Neutrum",
+              "sense": "im Bildbereich / im Szenenkontext",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s3:t1",
+              "idx": 1,
+              "surface": "rispetto",
+              "lemma": "rispetto",
+              "form": "Substantiv, Nominativ Singular Maskulinum",
+              "sense": "Respekt / Achtung",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:49:18.687Z",
+            "sentenceId": "tp_17918182076460000525:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "IN-SCENE:\nrispetto",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17918182076460000525:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17918182076460000525:s4:t0",
+              "idx": 0,
+              "surface": "IN-SCENE:",
+              "lemma": "in-scene",
+              "form": "Adjektiv (unveränderlich, Metatag)",
+              "sense": "Szeneninterne Notiz/Anmerkung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s4:t1",
+              "idx": 1,
+              "surface": "anatra",
+              "lemma": "anatra",
+              "form": "Nomen (Substantiv), Femininum, Singular",
+              "sense": "Ente",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s4:t2",
+              "idx": 2,
+              "surface": "=",
+              "lemma": "=",
+              "form": "Zeichen (Gleichheitszeichen)",
+              "sense": "bedeutet gleich / ist definiert als",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s4:t3",
+              "idx": 3,
+              "surface": "sa,",
+              "lemma": "sa",
+              "form": "Nomen (Substantiv), Maskulinum, Singular",
+              "sense": "Sohn",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s4:t4",
+              "idx": 4,
+              "surface": "\"figlio\"",
+              "lemma": "figlio",
+              "form": "Nomen (Substantiv), Maskulinum, Singular",
+              "sense": "Sohn",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 3,
+              "tokenIds": [
+                "tp_17918182076460000525:s4:t1",
+                "tp_17918182076460000525:s4:t2",
+                "tp_17918182076460000525:s4:t3"
+              ],
+              "lemma": "anatra = sa",
+              "gloss": "Ente bedeutet Sohn (Wortspiel/Definition)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17918182076460000525:s4:t3",
+                "tp_17918182076460000525:s4:t4"
+              ],
+              "lemma": "sa figlio",
+              "gloss": "Sohn (Synonyme/Klammerung)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:50:51.090Z",
+            "sentenceId": "tp_17918182076460000525:s4",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "IN-SCENE:\nanatra = sa, \"figlio\"",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17918182076460000525:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17918182076460000525:s5:t0",
+              "idx": 0,
+              "surface": "IN-SCENE:",
+              "lemma": "in-scene",
+              "form": "Substantiv (Lehnwort), Nominativ Singular Neutrum",
+              "sense": "Szenenaufbau / Bühnenbild",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s5:t1",
+              "idx": 1,
+              "surface": "rondine",
+              "lemma": "rondine",
+              "form": "Substantiv, Nominativ Singular Femininum",
+              "sense": "Schwalbe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s5:t2",
+              "idx": 2,
+              "surface": "=",
+              "lemma": "=",
+              "form": "Gleichheitszeichen",
+              "sense": "entspricht / bedeutet",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s5:t3",
+              "idx": 3,
+              "surface": "ur,",
+              "lemma": "ur",
+              "form": "Substantiv (Lehnwort), Nominativ Singular Maskulinum",
+              "sense": "Urahn / Urgroßvater",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s5:t4",
+              "idx": 4,
+              "surface": "\"grande\"",
+              "lemma": "grande",
+              "form": "Adjektiv, Nominativ Singular Maskulinum",
+              "sense": "großer",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 4,
+              "tokenIds": [
+                "tp_17918182076460000525:s5:t1",
+                "tp_17918182076460000525:s5:t2",
+                "tp_17918182076460000525:s5:t3",
+                "tp_17918182076460000525:s5:t4"
+              ],
+              "lemma": "rondine = ur grande",
+              "gloss": "Schwalbe ist der große Urahn",
+              "confidence": "low",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:52:13.549Z",
+            "sentenceId": "tp_17918182076460000525:s5",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "IN-SCENE:\nrondine = ur, \"grande\"",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17918182076460000525:s6",
+          "tokens": [
+            {
+              "tokenId": "tp_17918182076460000525:s6:t0",
+              "idx": 0,
+              "surface": "IN-SCENE:",
+              "lemma": "in-scene",
+              "form": "Substantiv (Lehnwort), Nominativ Singular Neutrum",
+              "sense": "im Bildbereich / im Szenenkontext",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s6:t1",
+              "idx": 1,
+              "surface": "passero",
+              "lemma": "passero",
+              "form": "Substantiv, Nominativ Singular Maskulinum",
+              "sense": "Spatz",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s6:t2",
+              "idx": 2,
+              "surface": "=",
+              "lemma": "=",
+              "form": "Gleichheitszeichen",
+              "sense": "bedeutet gleich / wird übersetzt als",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s6:t3",
+              "idx": 3,
+              "surface": "nedjes,",
+              "lemma": "nedjes",
+              "form": "Substantiv (Lehnwort aus dem Dialekt/Ladinischen), Nominativ Singular Neutrum",
+              "sense": "Spatz (dialectal/dialect-specific term)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s6:t4",
+              "idx": 4,
+              "surface": "\"piccolo\"",
+              "lemma": "piccolo",
+              "form": "Adjektiv, Nominativ Singular Neutrum",
+              "sense": "klein",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:53:29.527Z",
+            "sentenceId": "tp_17918182076460000525:s6",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "IN-SCENE:\npassero = nedjes, \"piccolo\"",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17918182076460000525:s7",
+          "tokens": [
+            {
+              "tokenId": "tp_17918182076460000525:s7:t0",
+              "idx": 0,
+              "surface": "IN-SCENE:",
+              "lemma": "in-scene",
+              "form": "Substantiv (Lehnwort), unbestimmt, Singular, Neutrum",
+              "sense": "Szenenbezeichnung / Einblendung",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s7:t1",
+              "idx": 1,
+              "surface": "pulcino",
+              "lemma": "pulcino",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Küken",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s7:t2",
+              "idx": 2,
+              "surface": "di",
+              "lemma": "di",
+              "form": "Präposition",
+              "sense": "von / Genitiv-Partikel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s7:t3",
+              "idx": 3,
+              "surface": "quaglia",
+              "lemma": "quaglia",
+              "form": "Substantiv, Femininum, Singular",
+              "sense": "Wachtel",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s7:t4",
+              "idx": 4,
+              "surface": "=",
+              "lemma": "=",
+              "form": "Zeichen (Gleichheitszeichen)",
+              "sense": "entspricht / ist gleich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s7:t5",
+              "idx": 5,
+              "surface": "il",
+              "lemma": "il",
+              "form": "Bestimmter Artikel, Maskulinum, Singular, Nominativ",
+              "sense": "der",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s7:t6",
+              "idx": 6,
+              "surface": "suono",
+              "lemma": "suono",
+              "form": "Substantiv, Maskulinum, Singular",
+              "sense": "Ton / Klang",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17918182076460000525:s7:t7",
+              "idx": 7,
+              "surface": "\"u\"",
+              "lemma": "\"u\"",
+              "form": "Substantiv (Buchstabe), unbestimmt, Singular",
+              "sense": "das Buchstaben-U",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 3,
+              "tokenIds": [
+                "tp_17918182076460000525:s7:t1",
+                "tp_17918182076460000525:s7:t2",
+                "tp_17918182076460000525:s7:t3"
+              ],
+              "lemma": "pulcino di quaglia",
+              "gloss": "Wachtelküken",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T15:55:21.833Z",
+            "sentenceId": "tp_17918182076460000525:s7",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "IN-SCENE:\npulcino di quaglia = il suono \"u\"",
+          "paraBreakBefore": true
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-12T15:55:21.848Z",
+        "chapterId": "tp_17918182076460000525",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "b899e309a45a",
+      "analyzedAt": "2026-10-12T15:55:21.848Z"
+    },
+    "tp_17815285515500000284": {
+      "chapterId": "tp_17815285515500000284",
+      "lang": "en",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 12,
+      "tokenCount": 56,
+      "sentences": [
+        {
+          "sentenceId": "tp_17815285515500000284:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s0:t0",
+              "idx": 0,
+              "surface": "One",
+              "lemma": "one",
+              "form": "Adjektiv; Kardinalzahl; Nominativ Singular Femininum",
+              "sense": "ein (bestimmter Zeitpunkt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t1",
+              "idx": 1,
+              "surface": "evening,",
+              "lemma": "evening",
+              "form": "Nomen; Plural? Nein, Singular; Nominativ/Akkusativ",
+              "sense": "Abend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t2",
+              "idx": 2,
+              "surface": "while",
+              "lemma": "while",
+              "form": "Konjunktion; temporal",
+              "sense": "während",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t3",
+              "idx": 3,
+              "surface": "everyone",
+              "lemma": "everyone",
+              "form": "Pronomen; indefinit; Nominativ Singular",
+              "sense": "jeder/jede",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t4",
+              "idx": 4,
+              "surface": "slept,",
+              "lemma": "sleep",
+              "form": "Verb; Präteritum; Indikativ; Aktiv; 3. Person Singular",
+              "sense": "schlief",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t5",
+              "idx": 5,
+              "surface": "little",
+              "lemma": "little",
+              "form": "Adjektiv; Komparativ? Nein, Positiv; attributiv",
+              "sense": "klein (alter/Größe)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t6",
+              "idx": 6,
+              "surface": "i",
+              "lemma": "i",
+              "form": "Eigenname; Nominativ Singular",
+              "sense": "I (Name der Figur)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t7",
+              "idx": 7,
+              "surface": "followed",
+              "lemma": "follow",
+              "form": "Verb; Präteritum; Indikativ; Aktiv; 3. Person Singular",
+              "sense": "folgte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t8",
+              "idx": 8,
+              "surface": "a",
+              "lemma": "a",
+              "form": "Artikel; unbestimmt; Nominativ/Akkusativ Singular Maskulinum/Neutrum",
+              "sense": "ein (unbestimmt)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t9",
+              "idx": 9,
+              "surface": "glowing",
+              "lemma": "glow",
+              "form": "Partizip Präsens; attributiv; Adjektivisierung",
+              "sense": "leuchtend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s0:t10",
+              "idx": 10,
+              "surface": "path.",
+              "lemma": "path",
+              "form": "Nomen; Singular; Akkusativ",
+              "sense": "Weg",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 5,
+              "end": 6,
+              "tokenIds": [
+                "tp_17815285515500000284:s0:t5",
+                "tp_17815285515500000284:s0:t6"
+              ],
+              "lemma": "little i",
+              "gloss": "kleines I (Name)",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 9,
+              "end": 10,
+              "tokenIds": [
+                "tp_17815285515500000284:s0:t9",
+                "tp_17815285515500000284:s0:t10"
+              ],
+              "lemma": "glowing path",
+              "gloss": "leuchtender Weg",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:34:01.858Z",
+            "sentenceId": "tp_17815285515500000284:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "One evening, while everyone slept,\nlittle i followed a glowing path.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s1:t0",
+              "idx": 0,
+              "surface": "It",
+              "lemma": "it",
+              "form": "Personalpronomen, Nominativ, Singular, Neutrum",
+              "sense": "es",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s1:t1",
+              "idx": 1,
+              "surface": "led",
+              "lemma": "lead",
+              "form": "Verb, Präteritum, Aktiv",
+              "sense": "führte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s1:t2",
+              "idx": 2,
+              "surface": "to",
+              "lemma": "to",
+              "form": "Präposition",
+              "sense": "zu",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s1:t3",
+              "idx": 3,
+              "surface": "another",
+              "lemma": "another",
+              "form": "Adjektiv/Indefinitpronomen",
+              "sense": "eine andere",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s1:t4",
+              "idx": 4,
+              "surface": "world.",
+              "lemma": "world",
+              "form": "Substantiv, Singular, Nominativ/Akkusativ",
+              "sense": "Welt",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 2,
+              "tokenIds": [
+                "tp_17815285515500000284:s1:t1",
+                "tp_17815285515500000284:s1:t2"
+              ],
+              "lemma": "lead to",
+              "gloss": "führen zu",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:35:17.958Z",
+            "sentenceId": "tp_17815285515500000284:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "It led to another world.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s2:t0",
+              "idx": 0,
+              "surface": "A",
+              "lemma": "a",
+              "form": "Artikel unbestimmt, Nominativ Singular",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s2:t1",
+              "idx": 1,
+              "surface": "strange",
+              "lemma": "strange",
+              "form": "Adjektiv, Positiv",
+              "sense": "seltsam",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s2:t2",
+              "idx": 2,
+              "surface": "world.",
+              "lemma": "world",
+              "form": "Substantiv, Nominativ Singular",
+              "sense": "Welt",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:36:03.337Z",
+            "sentenceId": "tp_17815285515500000284:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "A strange world.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s3:t0",
+              "idx": 0,
+              "surface": "A",
+              "lemma": "a",
+              "form": "Artikel unbestimmt, Nominativ Singular Femininum/Masculinum/Neutrum",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s3:t1",
+              "idx": 1,
+              "surface": "number",
+              "lemma": "number",
+              "form": "Substantiv, Nominativ Singular Maskulinum",
+              "sense": "Anzahl",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s3:t2",
+              "idx": 2,
+              "surface": "world.",
+              "lemma": "world.",
+              "form": "Substantiv, Nominativ Singular Femininum",
+              "sense": "Welt.",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:36:50.495Z",
+            "sentenceId": "tp_17815285515500000284:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "A number world.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s4:t0",
+              "idx": 0,
+              "surface": "At",
+              "lemma": "at",
+              "form": "Präposition",
+              "sense": "an (Ort)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s4:t1",
+              "idx": 1,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel",
+              "sense": "der/die/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s4:t2",
+              "idx": 2,
+              "surface": "end",
+              "lemma": "end",
+              "form": "Nomen (Singular)",
+              "sense": "Ende",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s4:t3",
+              "idx": 3,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s4:t4",
+              "idx": 4,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel",
+              "sense": "der/die/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s4:t5",
+              "idx": 5,
+              "surface": "road",
+              "lemma": "road",
+              "form": "Nomen (Singular)",
+              "sense": "Straße/Weg",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s4:t6",
+              "idx": 6,
+              "surface": "stood",
+              "lemma": "stand",
+              "form": "Verb (Präteritum, Singular)",
+              "sense": "stand",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s4:t7",
+              "idx": 7,
+              "surface": "a",
+              "lemma": "a",
+              "form": "unbestimmter Artikel",
+              "sense": "ein/eine",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s4:t8",
+              "idx": 8,
+              "surface": "tall",
+              "lemma": "tall",
+              "form": "Adjektiv (Positiv)",
+              "sense": "groß/wach",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s4:t9",
+              "idx": 9,
+              "surface": "Seven.",
+              "lemma": "Seven",
+              "form": "Nomen (Eigenname/Propernoun)",
+              "sense": "Sieben (Name)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 2,
+              "tokenIds": [
+                "tp_17815285515500000284:s4:t0",
+                "tp_17815285515500000284:s4:t1",
+                "tp_17815285515500000284:s4:t2"
+              ],
+              "lemma": "at the end",
+              "gloss": "am Ende",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 1,
+              "end": 5,
+              "tokenIds": [
+                "tp_17815285515500000284:s4:t1",
+                "tp_17815285515500000284:s4:t2",
+                "tp_17815285515500000284:s4:t3",
+                "tp_17815285515500000284:s4:t4",
+                "tp_17815285515500000284:s4:t5"
+              ],
+              "lemma": "the end of the road",
+              "gloss": "das Ende der Straße/des Weges",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:38:56.415Z",
+            "sentenceId": "tp_17815285515500000284:s4",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "At the end of the road\nstood a tall Seven.",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s5:t0",
+              "idx": 0,
+              "surface": "Little",
+              "lemma": "little",
+              "form": "Adjektiv, Positiv",
+              "sense": "klein (als Name oder Spitzname)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s5:t1",
+              "idx": 1,
+              "surface": "i",
+              "lemma": "I",
+              "form": "Personalpronomen, 1. Person Singular, Nominativ",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s5:t2",
+              "idx": 2,
+              "surface": "gasped.",
+              "lemma": "gasp",
+              "form": "Verb, Indikativ Präteritum, 3. Person Singular",
+              "sense": "stöhnte keuchend",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:39:44.157Z",
+            "sentenceId": "tp_17815285515500000284:s5",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Little i gasped.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s6",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s6:t0",
+              "idx": 0,
+              "surface": "He",
+              "lemma": "he",
+              "form": "Personalpronomen, Nominativ, Singular, Maskulinum",
+              "sense": "er",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s6:t1",
+              "idx": 1,
+              "surface": "looked",
+              "lemma": "look",
+              "form": "Verb, Indikativ, Präteritum, Aktiv, Singular",
+              "sense": "sah aus",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s6:t2",
+              "idx": 2,
+              "surface": "almost",
+              "lemma": "almost",
+              "form": "Adverb",
+              "sense": "fast",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s6:t3",
+              "idx": 3,
+              "surface": "like",
+              "lemma": "like",
+              "form": "Präposition",
+              "sense": "wie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s6:t4",
+              "idx": 4,
+              "surface": "her.",
+              "lemma": "her",
+              "form": "Personalpronomen, Akkusativ/Objektivfall, Singular, Femininum",
+              "sense": "sie (akk.)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 3,
+              "tokenIds": [
+                "tp_17815285515500000284:s6:t1",
+                "tp_17815285515500000284:s6:t2",
+                "tp_17815285515500000284:s6:t3"
+              ],
+              "lemma": "look like",
+              "gloss": "aussehen wie",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:40:57.070Z",
+            "sentenceId": "tp_17815285515500000284:s6",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "He looked almost like her.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s7",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s7:t0",
+              "idx": 0,
+              "surface": "“Do",
+              "lemma": "do",
+              "form": "Hilfsverb, Präsens, Plural (oder 2. Person Singular)",
+              "sense": "tun (hier als Hilfsverb für die Fragebildung)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s7:t1",
+              "idx": 1,
+              "surface": "you",
+              "lemma": "you",
+              "form": "Personalpronomen, 2. Person, Plural (oder Singular), Nominativ",
+              "sense": "du / ihr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s7:t2",
+              "idx": 2,
+              "surface": "know",
+              "lemma": "know",
+              "form": "Verb, Präsens, Infinitiv",
+              "sense": "kennen / wissen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s7:t3",
+              "idx": 3,
+              "surface": "me?”",
+              "lemma": "me",
+              "form": "Personalpronomen, 1. Person, Singular, Akkusativ",
+              "sense": "mich",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:41:57.612Z",
+            "sentenceId": "tp_17815285515500000284:s7",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "“Do you know me?”",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s8",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s8:t0",
+              "idx": 0,
+              "surface": "asked",
+              "lemma": "ask",
+              "form": "Partizip II / Präteritum (aktiv)",
+              "sense": "fragte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s8:t1",
+              "idx": 1,
+              "surface": "i.",
+              "lemma": "I",
+              "form": "Personalpronomen (1. Person Singular, Nominativ)",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:42:35.052Z",
+            "sentenceId": "tp_17815285515500000284:s8",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "asked i.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s9",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s9:t0",
+              "idx": 0,
+              "surface": "But",
+              "lemma": "but",
+              "form": "Konjunktion",
+              "sense": "aber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s9:t1",
+              "idx": 1,
+              "surface": "Seven",
+              "lemma": "Seven",
+              "form": "Eigenname (Substantiv)",
+              "sense": "Sieben (Name/Bezeichnung)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s9:t2",
+              "idx": 2,
+              "surface": "only",
+              "lemma": "only",
+              "form": "Adverb",
+              "sense": "nur",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s9:t3",
+              "idx": 3,
+              "surface": "shrugged.",
+              "lemma": "shrug",
+              "form": "Verb (Präteritum)",
+              "sense": "zuckte mit den Schultern",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:43:29.652Z",
+            "sentenceId": "tp_17815285515500000284:s9",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "But Seven only shrugged.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s10",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s10:t0",
+              "idx": 0,
+              "surface": "“No,”",
+              "lemma": "no",
+              "form": "Adverb, verneinend",
+              "sense": "nein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s10:t1",
+              "idx": 1,
+              "surface": "he",
+              "lemma": "he",
+              "form": "Personalpronomen, 3. Person Singular Maskulinum Nominativ",
+              "sense": "er",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s10:t2",
+              "idx": 2,
+              "surface": "said.",
+              "lemma": "say",
+              "form": "Verb, Präteritum Indikativ Aktiv",
+              "sense": "sagte",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:44:18.177Z",
+            "sentenceId": "tp_17815285515500000284:s10",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "“No,” he said.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815285515500000284:s11",
+          "tokens": [
+            {
+              "tokenId": "tp_17815285515500000284:s11:t0",
+              "idx": 0,
+              "surface": "“I’m",
+              "lemma": "I",
+              "form": "Personalpronomen, 1. Person Singular, Nominativ, kontrahierte Form mit Kopula",
+              "sense": "ich bin (als Identitätsaussage)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s11:t1",
+              "idx": 1,
+              "surface": "a",
+              "lemma": "a",
+              "form": "unbestimmter Artikel, maskulin/neutrum, Nominativ Singular",
+              "sense": "ein/eine (Indefinitartikel)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815285515500000284:s11:t2",
+              "idx": 2,
+              "surface": "Seven.”",
+              "lemma": "Seven",
+              "form": "Substantiv, Eigenname/Klassenbezeichnung, Nominativ Singular",
+              "sense": "Siebter (Klassenmitglied)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T19:45:13.123Z",
+            "sentenceId": "tp_17815285515500000284:s11",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "“I’m a Seven.”",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-12T19:45:13.140Z",
+        "chapterId": "tp_17815285515500000284",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "03e3ce7ca965",
+      "analyzedAt": "2026-10-12T19:45:13.140Z"
+    },
+    "tp_17815286603790000369": {
+      "chapterId": "tp_17815286603790000369",
+      "lang": "en",
+      "srcLang": "de",
+      "script": [
+        "latin"
+      ],
+      "sentenceCount": 11,
+      "tokenCount": 76,
+      "sentences": [
+        {
+          "sentenceId": "tp_17815286603790000369:s0",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s0:t0",
+              "idx": 0,
+              "surface": "“Are",
+              "lemma": "be",
+              "form": "Verb; Präsens Indikativ Plural 2. Person (invers)",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s0:t1",
+              "idx": 1,
+              "surface": "you",
+              "lemma": "you",
+              "form": "Pronomen; Personalpronomen Akkusativ/Nominativ Plural 2. Person (oder Singular formell)",
+              "sense": "du / ihr",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s0:t2",
+              "idx": 2,
+              "surface": "my",
+              "lemma": "my",
+              "form": "Pronomen; Possessivpronomen Singular 1. Person",
+              "sense": "mein",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s0:t3",
+              "idx": 3,
+              "surface": "family?”",
+              "lemma": "family",
+              "form": "Nomen; Substantiv Singular Femininum",
+              "sense": "Familie",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:02:37.584Z",
+            "sentenceId": "tp_17815286603790000369:s0",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "“Are you my family?”",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s1",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s1:t0",
+              "idx": 0,
+              "surface": "asked",
+              "lemma": "ask",
+              "form": "Partizip II / Präteritum (aktiv)",
+              "sense": "fragte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s1:t1",
+              "idx": 1,
+              "surface": "i.",
+              "lemma": "I",
+              "form": "Personalpronomen (1. Person Singular, Nominativ)",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:03:14.187Z",
+            "sentenceId": "tp_17815286603790000369:s1",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "asked i.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s2",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s2:t0",
+              "idx": 0,
+              "surface": "Seven",
+              "lemma": "Seven",
+              "form": "Eigenname im Nominativ",
+              "sense": "der Name der Person",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s2:t1",
+              "idx": 1,
+              "surface": "shook",
+              "lemma": "shake",
+              "form": "Verb, Präteritum, Aktiv, Singular",
+              "sense": "schüttelte",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s2:t2",
+              "idx": 2,
+              "surface": "his",
+              "lemma": "his",
+              "form": "Possessivpronomen, maskulin, Singular, Genitiv",
+              "sense": "sein-",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s2:t3",
+              "idx": 3,
+              "surface": "head.",
+              "lemma": "head",
+              "form": "Substantiv, Neutrum, Singular, Akkusativ",
+              "sense": "Kopf",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:04:13.709Z",
+            "sentenceId": "tp_17815286603790000369:s2",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Seven shook his head.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s3",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s3:t0",
+              "idx": 0,
+              "surface": "“I’m",
+              "lemma": "I",
+              "form": "Personalpronomen, 1. Person Singular, Nominativ, Kontraktion mit Hilfsverb",
+              "sense": "ich (bin)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s3:t1",
+              "idx": 1,
+              "surface": "sorry,”",
+              "lemma": "sorry",
+              "form": "Adjektiv, Positiv",
+              "sense": "schade / leidtun",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s3:t2",
+              "idx": 2,
+              "surface": "he",
+              "lemma": "he",
+              "form": "Personalpronomen, 3. Person Singular, Maskulinum, Nominativ",
+              "sense": "er",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s3:t3",
+              "idx": 3,
+              "surface": "said.",
+              "lemma": "say",
+              "form": "Verb, Präteritum, Aktiv",
+              "sense": "sagte",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17815286603790000369:s3:t0",
+                "tp_17815286603790000369:s3:t1"
+              ],
+              "lemma": "I'm sorry",
+              "gloss": "es tut mir leid",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:05:23.672Z",
+            "sentenceId": "tp_17815286603790000369:s3",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "“I’m sorry,” he said.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s4",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s4:t0",
+              "idx": 0,
+              "surface": "“But",
+              "lemma": "but",
+              "form": "Konjunktion",
+              "sense": "aber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s4:t1",
+              "idx": 1,
+              "surface": "I’m",
+              "lemma": "I",
+              "form": "Personalpronomen, 1. Person Singular, Nominativ",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s4:t2",
+              "idx": 2,
+              "surface": "just",
+              "lemma": "be",
+              "form": "Verb, Präsens, 1. Person Singular",
+              "sense": "bin",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s4:t3",
+              "idx": 3,
+              "surface": "a",
+              "lemma": "just",
+              "form": "Adverb",
+              "sense": "nur",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s4:t4",
+              "idx": 4,
+              "surface": "Seven.”",
+              "lemma": "a",
+              "form": "Artikel, unbestimmt, Singular",
+              "sense": "ein",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 2,
+              "tokenIds": [
+                "tp_17815286603790000369:s4:t1",
+                "tp_17815286603790000369:s4:t2"
+              ],
+              "lemma": "I am",
+              "gloss": "ich bin",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 1,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:06:52.323Z",
+            "sentenceId": "tp_17815286603790000369:s4",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "“But I’m just a Seven.”",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s5",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s5:t0",
+              "idx": 0,
+              "surface": "i",
+              "lemma": "I",
+              "form": "Personalpronomen, 1. Person Singular, Nominativ",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s5:t1",
+              "idx": 1,
+              "surface": "burst",
+              "lemma": "burst",
+              "form": "Verb, Präteritum/Partizip II, Aktiv",
+              "sense": "brach aus",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s5:t2",
+              "idx": 2,
+              "surface": "into",
+              "lemma": "into",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s5:t3",
+              "idx": 3,
+              "surface": "tears.",
+              "lemma": "tear",
+              "form": "Substantiv, Plural",
+              "sense": "Tränen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 3,
+              "tokenIds": [
+                "tp_17815286603790000369:s5:t1",
+                "tp_17815286603790000369:s5:t2",
+                "tp_17815286603790000369:s5:t3"
+              ],
+              "lemma": "burst into tears",
+              "gloss": "in Tränen ausbrechen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:07:58.933Z",
+            "sentenceId": "tp_17815286603790000369:s5",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "i burst into tears.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s6",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s6:t0",
+              "idx": 0,
+              "surface": "In",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t1",
+              "idx": 1,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel, Nominativ Singular Maskulinum/Neutrum oder Plural",
+              "sense": "der/die/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t2",
+              "idx": 2,
+              "surface": "land",
+              "lemma": "land",
+              "form": "Substantiv, Nominativ Singular Neutrum",
+              "sense": "Land",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t3",
+              "idx": 3,
+              "surface": "full",
+              "lemma": "full",
+              "form": "Adjektiv, Positiv",
+              "sense": "voll",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t4",
+              "idx": 4,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Präposition",
+              "sense": "von/mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t5",
+              "idx": 5,
+              "surface": "sevens,",
+              "lemma": "seven",
+              "form": "Substantiv, Plural",
+              "sense": "Siebener",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t6",
+              "idx": 6,
+              "surface": "full",
+              "lemma": "full",
+              "form": "Adjektiv, Positiv",
+              "sense": "voll",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t7",
+              "idx": 7,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Präposition",
+              "sense": "von/mit",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t8",
+              "idx": 8,
+              "surface": "zeros,",
+              "lemma": "zero",
+              "form": "Substantiv, Plural",
+              "sense": "Nullen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t9",
+              "idx": 9,
+              "surface": "high",
+              "lemma": "high",
+              "form": "Adjektiv, Positiv",
+              "sense": "hohe",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t10",
+              "idx": 10,
+              "surface": "numbers",
+              "lemma": "number",
+              "form": "Substantiv, Nominativ Plural",
+              "sense": "Zahlen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t11",
+              "idx": 11,
+              "surface": "are",
+              "lemma": "be",
+              "form": "Hilfsverb, Präsens Plural",
+              "sense": "sind",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t12",
+              "idx": 12,
+              "surface": "playing",
+              "lemma": "play",
+              "form": "Verb, Partizip Präsens",
+              "sense": "spielen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t13",
+              "idx": 13,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel, Akkusativ Plural",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s6:t14",
+              "idx": 14,
+              "surface": "heroes.",
+              "lemma": "hero",
+              "form": "Substantiv, Akkusativ Plural",
+              "sense": "Helden",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17815286603790000369:s6:t3",
+                "tp_17815286603790000369:s6:t4"
+              ],
+              "lemma": "full of",
+              "gloss": "voll von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 6,
+              "end": 7,
+              "tokenIds": [
+                "tp_17815286603790000369:s6:t6",
+                "tp_17815286603790000369:s6:t7"
+              ],
+              "lemma": "full of",
+              "gloss": "voll von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 11,
+              "end": 12,
+              "tokenIds": [
+                "tp_17815286603790000369:s6:t11",
+                "tp_17815286603790000369:s6:t12"
+              ],
+              "lemma": "be playing",
+              "gloss": "spielen (gerade)",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:11:53.115Z",
+            "sentenceId": "tp_17815286603790000369:s6",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1750
+          },
+          "text": "In the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.",
+          "paraBreakBefore": true
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s7",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s7:t0",
+              "idx": 0,
+              "surface": "Forty-two",
+              "lemma": "forty-two",
+              "form": "Kardinalzahl Substantiv Plural",
+              "sense": "vierundvierzig (Personen)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t1",
+              "idx": 1,
+              "surface": "thinks",
+              "lemma": "think",
+              "form": "Verb Präsens 3. Person Singular Indikativ",
+              "sense": "glaubt",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t2",
+              "idx": 2,
+              "surface": "he",
+              "lemma": "he",
+              "form": "Personalpronomen 3. Person Singular Maskulin Nominativ",
+              "sense": "er",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t3",
+              "idx": 3,
+              "surface": "is",
+              "lemma": "be",
+              "form": "Verb Präsens 3. Person Singular Indikativ",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t4",
+              "idx": 4,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel Maskulin/Neutrum Singular Nominativ",
+              "sense": "der/das",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t5",
+              "idx": 5,
+              "surface": "smartest,",
+              "lemma": "smart",
+              "form": "Adjektiv Superlativ",
+              "sense": "der Klügste",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t6",
+              "idx": 6,
+              "surface": "but",
+              "lemma": "but",
+              "form": "Koordinierende Konjunktion",
+              "sense": "aber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t7",
+              "idx": 7,
+              "surface": "no",
+              "lemma": "no",
+              "form": "Negationspronomen",
+              "sense": "kein/einer",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t8",
+              "idx": 8,
+              "surface": "one",
+              "lemma": "one",
+              "form": "Indefinitpronomen Singular",
+              "sense": "niemand",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t9",
+              "idx": 9,
+              "surface": "really",
+              "lemma": "really",
+              "form": "Adverb",
+              "sense": "wirklich",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t10",
+              "idx": 10,
+              "surface": "has",
+              "lemma": "have",
+              "form": "Verb Präsens 3. Person Singular Indikativ",
+              "sense": "hat",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t11",
+              "idx": 11,
+              "surface": "all",
+              "lemma": "all",
+              "form": "Pronomen Plural",
+              "sense": "alle",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t12",
+              "idx": 12,
+              "surface": "of",
+              "lemma": "of",
+              "form": "Präposition",
+              "sense": "von",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t13",
+              "idx": 13,
+              "surface": "the",
+              "lemma": "the",
+              "form": "bestimmter Artikel Plural Akkusativ",
+              "sense": "die",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s7:t14",
+              "idx": 14,
+              "surface": "answers.",
+              "lemma": "answer",
+              "form": "Substantiv Plural Akkusativ",
+              "sense": "Antworten",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 1,
+              "tokenIds": [
+                "tp_17815286603790000369:s7:t0",
+                "tp_17815286603790000369:s7:t1"
+              ],
+              "lemma": "forty-two think",
+              "gloss": "vierundvierzig glauben",
+              "confidence": "low",
+              "reviewed": false
+            },
+            {
+              "start": 7,
+              "end": 8,
+              "tokenIds": [
+                "tp_17815286603790000369:s7:t7",
+                "tp_17815286603790000369:s7:t8"
+              ],
+              "lemma": "no one",
+              "gloss": "niemand",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 11,
+              "end": 14,
+              "tokenIds": [
+                "tp_17815286603790000369:s7:t11",
+                "tp_17815286603790000369:s7:t12",
+                "tp_17815286603790000369:s7:t13",
+                "tp_17815286603790000369:s7:t14"
+              ],
+              "lemma": "all of the answers",
+              "gloss": "alle Antworten",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:15:57.393Z",
+            "sentenceId": "tp_17815286603790000369:s7",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1750
+          },
+          "text": "Forty-two thinks he is the smartest,\nbut no one really has all of the answers.",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s8",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s8:t0",
+              "idx": 0,
+              "surface": "But",
+              "lemma": "but",
+              "form": "Konjunktion",
+              "sense": "aber",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s8:t1",
+              "idx": 1,
+              "surface": "let’s",
+              "lemma": "let",
+              "form": "Verb (Imperativ) + Possessivpronomen (1. Person Plural)",
+              "sense": "lass uns",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s8:t2",
+              "idx": 2,
+              "surface": "see,",
+              "lemma": "see",
+              "form": "Verb (Infinitiv)",
+              "sense": "sehen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s8:t3",
+              "idx": 3,
+              "surface": "where",
+              "lemma": "where",
+              "form": "Adverb (Interrogativ)",
+              "sense": "wo",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s8:t4",
+              "idx": 4,
+              "surface": "is",
+              "lemma": "be",
+              "form": "Verb (Indikativ Präsens, 3. Person Singular)",
+              "sense": "ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s8:t5",
+              "idx": 5,
+              "surface": "i?",
+              "lemma": "I",
+              "form": "Pronomen (Personal, Nominativ, 1. Person Singular)",
+              "sense": "ich",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 2,
+              "tokenIds": [
+                "tp_17815286603790000369:s8:t1",
+                "tp_17815286603790000369:s8:t2"
+              ],
+              "lemma": "let's see",
+              "gloss": "lass uns sehen / mal sehen",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:17:44.617Z",
+            "sentenceId": "tp_17815286603790000369:s8",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "But let’s see, where is i?",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s9",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s9:t0",
+              "idx": 0,
+              "surface": "Where’s",
+              "lemma": "where",
+              "form": "Adverb + Kontrahierte Form des Hilfsverbs (ist)",
+              "sense": "Wo ist",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s9:t1",
+              "idx": 1,
+              "surface": "our",
+              "lemma": "our",
+              "form": "Possessivpronomen (1. Person Plural)",
+              "sense": "unser",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s9:t2",
+              "idx": 2,
+              "surface": "little",
+              "lemma": "little",
+              "form": "Adjektiv (Komparativstufe: Positiv)",
+              "sense": "kleiner",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s9:t3",
+              "idx": 3,
+              "surface": "guy?",
+              "lemma": "guy",
+              "form": "Substantiv (Singular)",
+              "sense": "Typ",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 1,
+              "end": 3,
+              "tokenIds": [
+                "tp_17815286603790000369:s9:t1",
+                "tp_17815286603790000369:s9:t2",
+                "tp_17815286603790000369:s9:t3"
+              ],
+              "lemma": "our little guy",
+              "gloss": "unser kleiner Kerl",
+              "confidence": "unresolved",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:19:07.489Z",
+            "sentenceId": "tp_17815286603790000369:s9",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1536
+          },
+          "text": "Where’s our little guy?",
+          "paraBreakBefore": false
+        },
+        {
+          "sentenceId": "tp_17815286603790000369:s10",
+          "tokens": [
+            {
+              "tokenId": "tp_17815286603790000369:s10:t0",
+              "idx": 0,
+              "surface": "There",
+              "lemma": "there",
+              "form": "Adverb der Existenz",
+              "sense": "es (existenzielles 'there')",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t1",
+              "idx": 1,
+              "surface": "are",
+              "lemma": "be",
+              "form": "Verb, Präsens, Plural, Indikativ",
+              "sense": "gibt es / sind vorhanden",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t2",
+              "idx": 2,
+              "surface": "some",
+              "lemma": "some",
+              "form": "Determiner, unbestimmt",
+              "sense": "einige",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t3",
+              "idx": 3,
+              "surface": "creepy",
+              "lemma": "creepy",
+              "form": "Adjektiv",
+              "sense": "gruselig",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t4",
+              "idx": 4,
+              "surface": "looking",
+              "lemma": "look",
+              "form": "Partizip Präsens (als Adjektiv)",
+              "sense": "aussehend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t5",
+              "idx": 5,
+              "surface": "guys,",
+              "lemma": "guy",
+              "form": "Nomen, Plural",
+              "sense": "Typen",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t6",
+              "idx": 6,
+              "surface": "almost",
+              "lemma": "almost",
+              "form": "Adverb",
+              "sense": "fast",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t7",
+              "idx": 7,
+              "surface": "as",
+              "lemma": "as",
+              "form": "Konjunktion (vergleichend)",
+              "sense": "wie",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t8",
+              "idx": 8,
+              "surface": "if",
+              "lemma": "if",
+              "form": "Konjunktion (konzessiv/vergleicherisch)",
+              "sense": "obwohl / als ob",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t9",
+              "idx": 9,
+              "surface": "they",
+              "lemma": "they",
+              "form": "Personalpronomen, Nominativ, Plural",
+              "sense": "sie (die Typen)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t10",
+              "idx": 10,
+              "surface": "were",
+              "lemma": "be",
+              "form": "Verb, Präteritum, Plural, Konjunktiv II",
+              "sense": "wären",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t11",
+              "idx": 11,
+              "surface": "in",
+              "lemma": "in",
+              "form": "Präposition",
+              "sense": "in (Verkleidung)",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "tokenId": "tp_17815286603790000369:s10:t12",
+              "idx": 12,
+              "surface": "disguise.",
+              "lemma": "disguise",
+              "form": "Nomen, Singular",
+              "sense": "Verkleidung",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 4,
+              "tokenIds": [
+                "tp_17815286603790000369:s10:t3",
+                "tp_17815286603790000369:s10:t4"
+              ],
+              "lemma": "creepy looking",
+              "gloss": "gruselig aussehend",
+              "confidence": "high",
+              "reviewed": false
+            },
+            {
+              "start": 7,
+              "end": 8,
+              "tokenIds": [
+                "tp_17815286603790000369:s10:t7",
+                "tp_17815286603790000369:s10:t8"
+              ],
+              "lemma": "as if",
+              "gloss": "als ob",
+              "confidence": "high",
+              "reviewed": false
+            }
+          ],
+          "phrasesDropped": 0,
+          "provenance": {
+            "stage": "CP2",
+            "pipelineVersion": 1,
+            "producedBy": "canonical-analysis.js",
+            "at": "2026-10-12T20:22:38.570Z",
+            "sentenceId": "tp_17815286603790000369:s10",
+            "model": "qwen3.6:35b-a3b",
+            "outputBudget": 1570
+          },
+          "text": "There are some creepy looking guys,\nalmost as if they were in disguise.",
+          "paraBreakBefore": false
+        }
+      ],
+      "provenance": {
+        "stage": "CP2",
+        "pipelineVersion": 1,
+        "producedBy": "canonical-analysis.js",
+        "at": "2026-10-12T20:22:38.592Z",
+        "chapterId": "tp_17815286603790000369",
+        "model": "qwen3.6:35b-a3b"
+      },
+      "sourceTextHash": "52419b138c35",
+      "analyzedAt": "2026-10-12T20:22:38.592Z"
     }
   },
-  "generatedAt": "2026-10-07T09:37:05.265Z",
-  "chapterCount": 31
+  "generatedAt": "2026-10-12T20:22:38.600Z",
+  "chapterCount": 36
 }
